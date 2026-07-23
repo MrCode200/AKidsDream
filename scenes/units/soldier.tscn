@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://ce8br630nspxi"]
+
+[ext_resource type="PackedScene" uid="uid://cjjhphs7rk7ul" path="res://scenes/units/unitBase.tscn" id="1_1voyx"]
+[ext_resource type="Script" uid="uid://1lao6p2jnlx1" path="res://scripts/units/SoldierMovement.cs" id="2_5iiku"]
+[ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://resources/Units/SoldierStats.tres" id="2_rdxj4"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_b8klk"]
+load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b8klk"]
+atlas = SubResource("CompressedTexture2D_b8klk")
+region = Rect2(80, 16, 16, 16)
+
+[node name="Soldier" unique_id=1080513067 instance=ExtResource("1_1voyx")]
+Stats = ExtResource("2_rdxj4")
+
+[node name="Sprite2D" parent="." index="0" unique_id=1259677528]
+material = null
+texture = SubResource("AtlasTexture_b8klk")
+
+[node name="MoveComponent" parent="." index="4" unique_id=1794408701]
+script = ExtResource("2_5iiku")

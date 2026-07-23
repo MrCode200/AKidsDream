@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://cjjhphs7rk7ul"]
+
+[ext_resource type="Script" uid="uid://dsl153k67ljph" path="res://scripts/units/Unit.cs" id="1_wfjo2"]
+[ext_resource type="Resource" uid="uid://co4w53u3hq3fq" path="res://resources/Units/BaseUnitStats.tres" id="2_eiew3"]
+[ext_resource type="PackedScene" uid="uid://b3l8gwl37g2l2" path="res://scenes/components/healthComponent.tscn" id="3_4vwke"]
+[ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://shaders/outline.gdshader" id="3_jrfw0"]
+[ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://scenes/components/selectableComponent.tscn" id="3_v54ow"]
+[ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://assets/sprites/atlas.png" id="4_2atpx"]
+[ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://scripts/shader/SetMaterialUponSelection.cs" id="4_s7m81"]
+[ext_resource type="PackedScene" uid="uid://737vhliypynp" path="res://scenes/components/moveComponent.tscn" id="5_y3dxc"]
+[ext_resource type="PackedScene" uid="uid://dmf4y7l2lradx" path="res://scenes/components/attackComponent.tscn" id="6_eiew3"]
+[ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://scenes/components/deathComponent.tscn" id="8_3x03u"]
+[ext_resource type="PackedScene" uid="uid://cwlxvnodmeb1q" path="res://scenes/components/turnStateComponent.tscn" id="11_ywxhe"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s7m81"]
+shader = ExtResource("3_jrfw0")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/type = 2
+shader_parameter/thickness = 1.0
+shader_parameter/flickering_speed = 2.999999932944
+shader_parameter/minimal_flickering_alpha = 0.8130000386175
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4vwke"]
+load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tk6em"]
+atlas = SubResource("CompressedTexture2D_4vwke")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
+size = Vector2(10, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tk6em"]
+size = Vector2(16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_am3og"]
+atlas = ExtResource("4_2atpx")
+region = Rect2(48, 192, 16, 16)
+
+[node name="Unit" type="CharacterBody2D" unique_id=1080513067]
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_wfjo2")
+Stats = ExtResource("2_eiew3")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1259677528 node_paths=PackedStringArray("SelectableC")]
+material = SubResource("ShaderMaterial_s7m81")
+texture = SubResource("AtlasTexture_tk6em")
+script = ExtResource("4_s7m81")
+SelectionMaterial = SubResource("ShaderMaterial_s7m81")
+SelectableC = NodePath("../SelectableComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=797591978]
+shape = SubResource("RectangleShape2D_2atpx")
+
+[node name="SelectableComponent" parent="." unique_id=1872887520 node_paths=PackedStringArray("SelectionIndicator") instance=ExtResource("3_v54ow")]
+SelectionIndicator = NodePath("SelectionIndicatorSprite")
+SelectionAction = "LeftClick"
+OnSelectCallEventBus = &"UnitSelected"
+OnDeselectCallEventBus = &"UnitDeselected"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SelectableComponent" unique_id=1804653846]
+shape = SubResource("RectangleShape2D_tk6em")
+
+[node name="SelectionIndicatorSprite" type="Sprite2D" parent="SelectableComponent" unique_id=972813331]
+texture = SubResource("AtlasTexture_am3og")
+
+[node name="HealthComponent" parent="." unique_id=1411632328 instance=ExtResource("3_4vwke")]
+
+[node name="MoveComponent" parent="." unique_id=1794408701 node_paths=PackedStringArray("Body") instance=ExtResource("5_y3dxc")]
+Body = NodePath("..")
+OnMoveCallEventBus = &"UnitMoved"
+
+[node name="AttackComponent" parent="." unique_id=1745993077 instance=ExtResource("6_eiew3")]
+
+[node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Body", "HealthC") instance=ExtResource("8_3x03u")]
+Body = NodePath("..")
+OnUnitKilledCallEventBus = &"UnitKilled"
+HealthC = NodePath("../HealthComponent")
+
+[node name="TurnStateComponent" parent="." unique_id=1084257526 node_paths=PackedStringArray("MoveC", "SelectC") instance=ExtResource("11_ywxhe")]
+MoveC = NodePath("../MoveComponent")
+SelectC = NodePath("../SelectableComponent")

@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://bp287o1x6q2gx"]
+
+[ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://scenes/board.tscn" id="1_jnam8"]
+[ext_resource type="Script" uid="uid://caf4fhhjdtr4w" path="res://scripts/managers/InputHandler.cs" id="2_cpkaj"]
+[ext_resource type="Script" uid="uid://irt720bqh762" path="res://scripts/managers/Visualizer.cs" id="3_1totg"]
+[ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://scenes/units/soldier.tscn" id="3_cpkaj"]
+[ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://assets/sprites/atlas.png" id="3_kibno"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
+texture = ExtResource("3_kibno")
+1:12/0 = 0
+2:12/0 = 0
+3:12/0 = 0
+4:12/0 = 0
+5:12/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_1totg"]
+sources/0 = SubResource("TileSetAtlasSource_cpkaj")
+
+[node name="GameWorld" type="Node2D" unique_id=402806751]
+
+[node name="SystemsLayer" type="Node" parent="." unique_id=1659508561]
+
+[node name="Board" parent="SystemsLayer" unique_id=2027072769 instance=ExtResource("1_jnam8")]
+unique_name_in_owner = true
+
+[node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226]
+position = Vector2(75, 75)
+zoom = Vector2(3, 3)
+
+[node name="InputHandler" type="Node2D" parent="SystemsLayer" unique_id=574570579 node_paths=PackedStringArray("MovementVisualizer")]
+script = ExtResource("2_cpkaj")
+MovementVisualizer = NodePath("../Visualizer")
+
+[node name="Visualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Tilemap")]
+script = ExtResource("3_1totg")
+Tilemap = NodePath("UnitMovementTiles")
+
+[node name="UnitMovementTiles" type="TileMapLayer" parent="SystemsLayer/Visualizer" unique_id=1879383876]
+modulate = Color(1, 1, 1, 0.3137255)
+tile_set = SubResource("TileSet_1totg")
+
+[node name="EntityLayer" type="Node" parent="." unique_id=2094553575]
+
+[node name="Soldier" parent="EntityLayer" unique_id=1080513067 instance=ExtResource("3_cpkaj")]
+position = Vector2(8, 24)
+collision_mask = 1
+SpawnTileLocation = Vector2i(0, 1)
+
+[node name="Soldier2" parent="EntityLayer" unique_id=180365190 instance=ExtResource("3_cpkaj")]
+position = Vector2(24, 24)
+collision_mask = 1
+Team = 1
+SpawnTileLocation = Vector2i(1, 1)
+
+[node name="Soldier3" parent="EntityLayer" unique_id=1716021651 instance=ExtResource("3_cpkaj")]
+position = Vector2(56, 40)
+collision_mask = 1
+SpawnTileLocation = Vector2i(3, 2)
+
+[node name="Soldier4" parent="EntityLayer" unique_id=1737942104 instance=ExtResource("3_cpkaj")]
+position = Vector2(72, 40)
+collision_mask = 1
+SpawnTileLocation = Vector2i(4, 2)

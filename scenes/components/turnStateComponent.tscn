@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cwlxvnodmeb1q"]
+
+[ext_resource type="Script" uid="uid://b6rxewuotie5u" path="res://scripts/components/TurnStateComponent.cs" id="1_1t3rb"]
+
+[node name="TurnStateComponent" type="Node" unique_id=1380022570]
+script = ExtResource("1_1t3rb")

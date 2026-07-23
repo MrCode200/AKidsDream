@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bjrsavixrtq2k"]
+
+[ext_resource type="Script" uid="uid://bfi8gmkdgerqb" path="res://scripts/components/SelectableComponent.cs" id="1_13myf"]
+
+[node name="SelectableComponent" type="Area2D" unique_id=1872887520]
+script = ExtResource("1_13myf")

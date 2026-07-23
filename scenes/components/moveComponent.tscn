@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://737vhliypynp"]
+
+[ext_resource type="Script" uid="uid://c20mjmnl7phja" path="res://scripts/components/MoveComponent.cs" id="1_jgcue"]
+
+[node name="MoveComponent" type="Node" unique_id=2028119170]
+script = ExtResource("1_jgcue")
