@@ -1,5 +1,5 @@
 using AKidsDream.Components;
-using AKidsDream.Scripts;
+using AKidsDream.Globals;
 using Godot;
 
 namespace AKidsDream.Units;
@@ -17,53 +17,80 @@ public partial class Unit : CharacterBody2D
 	/// The <see cref="Utils.UnitTeam"/> this unit belongs to (Player or Enemy).
 	/// Used for determining valid attack targets.
 	/// </summary>
-	[Export] public Utils.UnitTeam Team = Utils.UnitTeam.Player;
 	[Export] public StatsData Stats;
-	[Export] public Vector2I SpawnTileLocation;
-	public MoveComponent MoveC;
+	
+	/// <summary>
+	/// The current tile location of the unit.
+	/// </summary>
+	[Export] public Vector2I TileLocation;
+	
+	public MoveComponent MoveC { get; private set; }
+	public AttackComponent AttackC { get; private set; }
+	public HealthComponent HealthC { get; private set; }
+	public SelectableComponent SelectableC { get; private set; }
+	public DeathComponent DeathC { get; private set; }
+	public ActionComponent ActionC { get; private set; }
 
+	public Unit() { }
+	
+	public Unit(StatsData stats)
+	{
+		Stats = stats;
+	}
 	
 	// -- LOGIC --
+
 	public override void _Ready()
 	{
-		_getComponents();
-		_initAndInjectStatsResource();
-		_setSpawnLocation();
+		_injectReferenceAndAssignComponents();
 		_setAppearance();
 
+		AddToGroup(Global.Groups.Units.GetFieldStringValue());
+		AddToGroup((Stats.Team == Global.UnitTeam.Enemy) ? 
+			Global.Groups.EnemyUnits.GetFieldStringValue() : Global.Groups.PlayerUnits.GetFieldStringValue()
+		);
 		EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
-		GD.Print($"Unit ready at {MoveC.TileLocation}; Team: {Stats.Team}");
-	}
-	
-	private void _getComponents()
-	{
-		MoveC = GetNode<MoveComponent>("MoveComponent");
+		GD.Print($"Unit ready at {TileLocation}; Team: {Stats.Team}");
 	}
 
-	private void _initAndInjectStatsResource()
+	private void _injectReferenceAndAssignComponents()
 	{
-		Stats = (StatsData)Stats.Duplicate();
-		Stats.Team = Team;
+		AttackC = GetNode<AttackComponent>("AttackComponent");
+		if (AttackC != null)
+		{
+			AttackC.Unit = this;
+		};
 		
-		var attackComponent = GetNode<AttackComponent>("AttackComponent");
-		if (attackComponent != null) attackComponent.Stats = Stats;
+		HealthC = GetNode<HealthComponent>("HealthComponent");
+		if (HealthC != null)
+		{
+			HealthC.Stats = Stats;
+		};
 		
-		var healthComponent = GetNode<HealthComponent>("HealthComponent");
-		if (healthComponent != null) healthComponent.Stats = Stats;
+		var raw = GetNode("MoveComponent"); // untyped
+		GD.Print($"Class: {raw.GetClass()}, Script: {raw.GetScript().AsGodotObject()?.GetType().FullName}");		MoveC = GetNode<MoveComponent>("MoveComponent");
+		if (MoveC != null)
+		{
+			MoveC.Unit = this;
+		};
+
+		ActionC = GetNode<ActionComponent>("ActionComponent");
+		if (ActionC != null)
+		{
+			ActionC.MoveC = MoveC;
+			ActionC.AttackC = AttackC;
+			ActionC.SelectC = SelectableC;
+		}
+		
+		DeathC = GetNode<DeathComponent>("DeathComponent");
+		SelectableC = GetNode<SelectableComponent>("SelectableComponent");
 	}
-	
-	private void _setSpawnLocation()
-	{
-		GD.Print($"Setting spawn location for {Stats.UnitId} at {SpawnTileLocation}");
-		MoveC.Move(SpawnTileLocation, true);
-	}
-	
+
 	private void _setAppearance()
 	{
-		if (Stats.Team == Utils.UnitTeam.Enemy)
+		if (Stats.Team == Global.UnitTeam.Enemy)
 		{
-			var selectable = GetNode<SelectableComponent>("SelectableComponent");
-			selectable?.QueueFree();
+			SelectableC?.QueueFree();
 			
 			var sprite = GetNode<Sprite2D>("Sprite2D");
 			var atlasTexture  = (AtlasTexture)sprite.Texture.Duplicate();
@@ -74,3 +101,4 @@ public partial class Unit : CharacterBody2D
 		}
 	}
 }
+

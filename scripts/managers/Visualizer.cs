@@ -1,7 +1,7 @@
 using Godot;
 using AKidsDream.Units;
 
-namespace AKidsDream.Scripts;
+namespace AKidsDream.Globals;
 
 [GlobalClass]
 public partial class Visualizer : Node
@@ -22,7 +22,7 @@ public partial class Visualizer : Node
 			);
 		}
 
-		var validAttacks = unit.MoveC.ValidAttacks();
+		var validAttacks = unit.AttackC.ValidAttacks();
 		GD.Print($"AttackTile: {string.Join(", ", validAttacks)}");
 
 		foreach (var tile in validAttacks)

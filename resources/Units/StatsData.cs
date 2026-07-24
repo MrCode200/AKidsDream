@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using AKidsDream.Scripts;
+using AKidsDream.Globals;
 
 namespace AKidsDream.Units;
 
@@ -9,8 +9,9 @@ public partial class StatsData : Resource
 {
 	private static int _nextId = 0;
 
-	[Export] public int UnitId { get; private set; }
-	[Export] public Utils.UnitTeam Team;
+	public int UnitId { get; private set; }
+	[Export] public Global.UnitName UnitName;
+	[Export] public Global.UnitTeam Team;
 	
 	[Export] public int MaxHealth;
 	[Export] public int Health;

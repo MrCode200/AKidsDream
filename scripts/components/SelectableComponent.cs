@@ -1,4 +1,4 @@
-using AKidsDream.Scripts;
+using AKidsDream.Globals;
 using Godot;
 
 namespace AKidsDream.Components;
@@ -9,6 +9,7 @@ namespace AKidsDream.Components;
 /// visual indicator toggling, and emits signals when states change.
 /// </summary>
 [GlobalClass]
+[Tool]
 public partial class SelectableComponent : Area2D
 {
 	// -- CONFIGURATION --

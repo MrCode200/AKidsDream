@@ -1,22 +1,26 @@
-﻿using Godot;
+using Godot;
 
 namespace AKidsDream.Components;
 
-[GlobalClass]
-public partial class TurnStateComponent : Node
+public partial class ActionComponent : Node
 {
 	[Export] public MoveComponent MoveC;
+	[Export] public AttackComponent AttackC;
 	[Export] public SelectableComponent SelectC;
-	[Export] public int MaxMoveActions = 2;
+	[Export] public int MaxMoveActions = 1;
 	public int MoveActions { get; private set; }
 
 	public override void _Ready()
 	{
-		// BUG: Need to get MoveComponent from parent after ready, export assignment doesn't work
-		//MoveC = GetParent().GetNode<MoveComponent>("MoveComponent");
-		GD.Print(MoveC);
+		// BUG:
+		// Need to get MoveComponent from parent after ready, export assignment doesn't work
+		// Thus is injections needed by Unit.cs
+		AttackC = GetParent().GetNode<AttackComponent>("AttackComponent");
+		SelectC = GetParent().GetNode<SelectableComponent>("SelectableComponent");
+		// MoveC = GetParent().GetNode<MoveComponent>("MoveComponent");
+
 		MoveActions = MaxMoveActions;
-		MoveC.BodyMoved += (body, oldTile, newTile) => { TakeMoveAction(); };
+		MoveC.UnitMoved += (unit, oldTile, newTile) => { TakeMoveAction(); };
 	}
 	
 	public bool TakeMoveAction()

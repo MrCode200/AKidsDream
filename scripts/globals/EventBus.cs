@@ -1,12 +1,16 @@
 using AKidsDream.Units;
 using Godot;
 
-namespace AKidsDream.Scripts;
+namespace AKidsDream.Globals;
 
 public partial class EventBus : Node
 {
 	public static EventBus Instance { get; private set; }
+	// -- BOARD SIGNALS --
+	[Signal] public delegate void BoardGeneratedEventHandler();
 	
+	
+	// -- UNIT SIGNALS --
 	[Signal] public delegate void UnitSelectedEventHandler(Unit unit);
 	[Signal] public delegate void UnitDeselectedEventHandler(Unit unit);
 	[Signal] public delegate void UnitCreatedEventHandler(Unit unit);

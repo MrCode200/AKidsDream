@@ -2,57 +2,68 @@ using Godot;
 using System;
 using System.Linq;
 using AKidsDream.GameBoard;
-using AKidsDream.Scripts;
+using AKidsDream.Globals;
+using AKidsDream.Units;
+using AKidsDream.Units.FieldAccessPatterns;
 
 namespace AKidsDream.Components;
 
 [GlobalClass]
 public partial class MoveComponent : Node
 {
-	[Export] public Node2D Body;
+	[Export] public Unit Unit;
+	[Export] public AccessFieldPattern MovePattern;
 
 	[Export] public StringName OnMoveCallEventBus;
-
-	/// <summary>
-	/// The tile location of this Unit on the board.
-	/// </summary>
-	[Export] public Vector2I TileLocation;
 	
 	// -- SIGNALS --
-	[Signal] public delegate void BodyMovedEventHandler(Node2D body, Vector2I from, Vector2I to);
+	[Signal] public delegate void UnitMovedEventHandler(Unit unit, Vector2I from, Vector2I to);
 	
 	// -- LOGIC --
 	public override void _Ready()
 	{
-		Body.Position = Board.TileToWorld(TileLocation);
+		Unit.Position = Board.TileToWorldPosition(Unit.TileLocation);
 	}
 	
 	// -- MOVEMENT --
 	/// <summary>
-	/// Moves this Body to the specified target tile if the move is valid.
+	/// Moves this Unit to the specified target tile if the move is valid.
 	/// Updates the visual position after moving.
 	/// </summary>
 	/// <param name="targetTile">The destination tile coordinate.</param>
-	/// <param name="skipValidation">To Skip Validation and Move the Body to that tile (Overrides Body on the TileData).</param>
-	public void Move(Vector2I targetTile, bool skipValidation = false)
+	/// <param name="skipValidation">To Skip Validation and Move the Unit to that tile (Overrides Unit on the TileData).</param>
+	public bool Move(Vector2I targetTile, bool skipValidation = false)
 	{
 		if (!skipValidation)
 		{
-			if (!ValidateMove(targetTile)) return;
+			if (!ValidateMove(targetTile)) return false;
 		}
 
-		Vector2I oldTile = TileLocation;
-		TileLocation = targetTile;
-		Body.Position = Board.TileToWorld(targetTile);
+		Vector2I oldTile = Unit.TileLocation;
+		Unit.TileLocation = targetTile;
+		Unit.Position = Board.TileToWorldPosition(targetTile);
 		
 		if (!string.IsNullOrEmpty(OnMoveCallEventBus)) 
-			EventBus.Instance.EmitSignal(OnMoveCallEventBus, Body, oldTile, targetTile);
-		EmitSignal(SignalName.BodyMoved, Body, oldTile, targetTile);
+			EventBus.Instance.EmitSignal(OnMoveCallEventBus, Unit, oldTile, targetTile);
+		EmitSignal(SignalName.UnitMoved, Unit, oldTile, targetTile);
 		
-		GD.Print($"Moved from {TileLocation} to {targetTile}");
+		GD.Print($"Moved from {Unit.TileLocation} to {targetTile}");
+		
+		return true;
 	}
 
 	// -- VALIDATION --
+	public Vector2I[] ValidMoves()
+	{
+		if (MovePattern == null)
+		{
+			GD.PrintErr("MovePattern: No pattern configured!");
+			return Array.Empty<Vector2I>();
+		}
+
+		return MovePattern.GetTiles(Unit.TileLocation, Board.Instance, Unit.Stats);
+	}
+	
 	/// <summary>
 	/// Checks if moving to the target tile is valid.
 	/// </summary>
@@ -60,36 +71,7 @@ public partial class MoveComponent : Node
 	/// <returns>True if the tile is in valid moves or attacks, false otherwise.</returns>
 	public bool ValidateMove(Vector2I targetTile)
 	{
-		return ValidTiles().Contains(targetTile);
+		return ValidMoves().Contains(targetTile);
 	}
 
-	/// <summary>
-	/// Gets all valid tiles this Body can move to or attack.
-	/// </summary>
-	/// <returns>Combined array of valid moves and valid attack targets.</returns>
-	public Vector2I[] ValidTiles()
-	{
-		return ValidMoves().Concat(ValidAttacks()).ToArray();
-	}
-
-	// -- VIRTUAL METHODS --
-	/// <summary>
-	/// Calculates the tiles this Body can move to.
-	/// Must be overridden by derived classes.
-	/// </summary>
-	/// <returns>Array of valid move target tiles.</returns>
-	public virtual Vector2I[] ValidMoves()
-	{
-		throw new NotImplementedException("ValidMoves function not implemented");;
-	}
-
-	/// <summary>
-	/// Calculates the tiles this Body can attack.
-	/// Must be overridden by derived classes.
-	/// </summary>
-	/// <returns>Array of valid attack target tiles.</returns>
-	public virtual Vector2I[] ValidAttacks()
-	{
-		throw new NotImplementedException("ValidAttacks function not implemented");
-	}
 }

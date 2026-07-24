@@ -7,10 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://scenes/components/selectableComponent.tscn" id="3_v54ow"]
 [ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://assets/sprites/atlas.png" id="4_2atpx"]
 [ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://scripts/shader/SetMaterialUponSelection.cs" id="4_s7m81"]
-[ext_resource type="PackedScene" uid="uid://737vhliypynp" path="res://scenes/components/moveComponent.tscn" id="5_y3dxc"]
+[ext_resource type="PackedScene" uid="uid://8vnxqnx4vxe1" path="res://scenes/components/moveComponent.tscn" id="5_y3dxc"]
 [ext_resource type="PackedScene" uid="uid://dmf4y7l2lradx" path="res://scenes/components/attackComponent.tscn" id="6_eiew3"]
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://scenes/components/deathComponent.tscn" id="8_3x03u"]
-[ext_resource type="PackedScene" uid="uid://cwlxvnodmeb1q" path="res://scenes/components/turnStateComponent.tscn" id="11_ywxhe"]
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://scripts/units/FieldAccessPatterns/AdjacentPattern.cs" id="9_ockk7"]
+[ext_resource type="PackedScene" uid="uid://cwlxvnodmeb1q" path="res://scenes/components/actionComponent.tscn" id="11_ywxhe"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s7m81"]
 shader = ExtResource("3_jrfw0")
@@ -36,6 +37,15 @@ size = Vector2(16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_am3og"]
 atlas = ExtResource("4_2atpx")
 region = Rect2(48, 192, 16, 16)
+
+[sub_resource type="Resource" id="Resource_fx11m"]
+script = ExtResource("9_ockk7")
+Mode = 1
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_ockk7"]
+script = ExtResource("9_ockk7")
+metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [node name="Unit" type="CharacterBody2D" unique_id=1080513067]
 collision_mask = 0
@@ -63,21 +73,23 @@ OnDeselectCallEventBus = &"UnitDeselected"
 shape = SubResource("RectangleShape2D_tk6em")
 
 [node name="SelectionIndicatorSprite" type="Sprite2D" parent="SelectableComponent" unique_id=972813331]
+visible = false
 texture = SubResource("AtlasTexture_am3og")
 
 [node name="HealthComponent" parent="." unique_id=1411632328 instance=ExtResource("3_4vwke")]
 
-[node name="MoveComponent" parent="." unique_id=1794408701 node_paths=PackedStringArray("Body") instance=ExtResource("5_y3dxc")]
-Body = NodePath("..")
-OnMoveCallEventBus = &"UnitMoved"
-
 [node name="AttackComponent" parent="." unique_id=1745993077 instance=ExtResource("6_eiew3")]
+AttackPattern = SubResource("Resource_fx11m")
 
 [node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Body", "HealthC") instance=ExtResource("8_3x03u")]
 Body = NodePath("..")
 OnUnitKilledCallEventBus = &"UnitKilled"
 HealthC = NodePath("../HealthComponent")
 
-[node name="TurnStateComponent" parent="." unique_id=1084257526 node_paths=PackedStringArray("MoveC", "SelectC") instance=ExtResource("11_ywxhe")]
-MoveC = NodePath("../MoveComponent")
+[node name="TurnStateComponent" parent="." unique_id=1084257526 node_paths=PackedStringArray("MoveC", "AttackC", "SelectC") instance=ExtResource("11_ywxhe")]
+MoveC = NodePath("")
+AttackC = NodePath("../AttackComponent")
 SelectC = NodePath("../SelectableComponent")
+
+[node name="MoveComponent" parent="." unique_id=1261979931 instance=ExtResource("5_y3dxc")]
+MovePattern = SubResource("Resource_ockk7")

@@ -1,16 +1,16 @@
 using Godot;
 using System;
 using AKidsDream.Components;
-using AKidsDream.Scripts;
+using AKidsDream.Globals;
 using AKidsDream.Units;
 
 public partial class DeathComponent : Node
 {
-	[Signal] public delegate void UnitKilledEventHandler(Unit unit);
 	[Export] public Node Body;
 	[Export] public StringName OnUnitKilledCallEventBus;
 	[Export] public HealthComponent HealthC;
-	
+	[Signal] public delegate void UnitKilledEventHandler(Unit unit);
+
 	public override void _Ready()
 	{
 		HealthC.HealthDepleted += OnHealthDepleted;

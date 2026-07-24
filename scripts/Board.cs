@@ -1,4 +1,5 @@
-using AKidsDream.Scripts;
+using System.IO;
+using AKidsDream.Globals;
 using AKidsDream.Units;
 using Godot;
 using Godot.Collections;
@@ -15,10 +16,14 @@ public partial class Board : Node2D
 {
 	// -- REFERENCES --
 	/// <summary>
-	/// Contains the logical board data:
-	/// dimensions, tiles, units, and other gameplay information.
+	/// Name of the file containing the board state.
 	/// </summary>
-	[Export] public BoardState State;
+	[Export] public string StateFileName;
+
+	/// <summary>
+	/// If true, saves the board state when the board is removed from the scene tree.
+	/// </summary>
+	[Export] public bool SaveOnExit;
 
 	/// <summary>
 	/// TileMap layer used only for rendering the board visuals.
@@ -26,22 +31,75 @@ public partial class Board : Node2D
 	/// </summary>
 	[Export] public TileMapLayer Tilemap;
 
+	/// <summary>
+	/// Contains the logical board data:
+	/// dimensions, tiles, units, and other gameplay information.
+	/// </summary>
+	public BoardState State;
+
 	public static Board Instance { get; private set; }
 
 
 	// -- EDITOR TOOLS --
-	[ExportToolButton("Generate Board")] public Callable GenerateBoardBtn => Callable.From(GenerateBoard);
+	/// <summary>
+	/// Editor button to trigger board generation.
+	/// </summary>
+	[ExportToolButton("Generate Board")]
+	private Callable GenerateBoardBtn => Callable.From(_generateBoard);
 
 
 	// -- LIFECYCLE --
 	public override void _Ready()
 	{
 		Instance = this;
-		GenerateBoard();
+		_loadState();
+		_generateBoard();
+		_initializeUnits();
 
 		EventBus.Instance.UnitCreated += OnUnitCreated;
 		EventBus.Instance.UnitKilled += OnUnitKilled;
 		EventBus.Instance.UnitMoved += OnUnitMoved;
+
+		EventBus.Instance.EmitSignal(EventBus.SignalName.BoardGenerated);
+	}
+
+	public override void _ExitTree()
+	{
+		SaveState();
+	}
+
+	/// <summary>
+	/// Loads the board state from file, or creates a new state if the file doesn't exist.
+	/// </summary>
+	private void _loadState()
+	{
+		State = ResourceIO.Load<BoardState>(Path.Combine(Global.SavePath, StateFileName)) ?? new BoardState();
+	}
+
+	/// <summary>
+	/// Saves the current board state to file, including the initial unit positions.
+	/// Only saves if SaveOnExit is enabled.
+	/// </summary>
+	public void SaveState()
+	{
+		if (!SaveOnExit)
+			return;
+
+		State.InitialUnits.Clear();
+
+		// Iterate through BoardState tiles instead of scene tree
+		foreach (var row in State.Tiles)
+		{
+			foreach (var tile in row)
+			{
+				if (tile.Unit != null)
+				{
+					State.InitialUnits[tile.TileLocation] = tile.Unit.Stats;
+				}
+			}
+		}
+
+		ResourceIO.Save(State, Path.Combine(Global.SavePath, StateFileName));
 	}
 
 
@@ -57,7 +115,7 @@ public partial class Board : Node2D
 	/// </list>
 	/// </para>
 	/// </summary>
-	private void GenerateBoard()
+	private void _generateBoard()
 	{
 		Tilemap.Clear();
 		State.Tiles.Clear();
@@ -94,44 +152,91 @@ public partial class Board : Node2D
 
 			State.Tiles.Add(row);
 		}
+
 		GD.Print("Board generated");
 	}
-	
-	// -- Signal Handling --
-	private void OnUnitCreated(Unit unit) => AddUnit(unit, unit.MoveC.TileLocation);
-	private void OnUnitKilled(Unit unit) => RemoveUnit(unit.MoveC.TileLocation);
 
+	/// <summary>
+	/// Initializes units from the saved InitialUnits data in the board state.
+	/// Loads unit scenes and places them at their saved positions.
+	/// </summary>
+	private void _initializeUnits()
+	{
+		foreach (var (location, data) in State.InitialUnits)
+		{
+			string scenePath = $"res://scenes/units/{data.UnitName.GetFieldStringValue()}.tscn";
+			PackedScene unitScene = GD.Load<PackedScene>(scenePath);
+
+			Unit newUnit = unitScene.Instantiate<Unit>();
+			newUnit.Stats = data;
+			// Set position and TileLocation disway to skip signal emits from MoveC
+			newUnit.Position = TileToWorldPosition(location);
+			newUnit.TileLocation = location;
+
+			GetNode<Node>("/root/GameWorld/EntityLayer").AddChild(newUnit);
+			AddUnit(newUnit, location);
+		}
+	}
+
+	// -- Signal Handling --
+	/// <summary>
+	/// Handles the UnitCreated event by adding the unit to the board state.
+	/// </summary>
+	/// <param name="unit">The unit that was created.</param>
+	private void OnUnitCreated(Unit unit) => AddUnit(unit, unit.TileLocation);
+
+	/// <summary>
+	/// Handles the UnitKilled event by removing the unit from the board state.
+	/// </summary>
+	/// <param name="unit">The unit that was killed.</param>
+	private void OnUnitKilled(Unit unit) => RemoveUnit(unit.TileLocation);
+
+	/// <summary>
+	/// Handles the UnitMoved event by updating the unit's position in the board state.
+	/// </summary>
+	/// <param name="unit">The unit that moved.</param>
+	/// <param name="oldTile">The previous tile location.</param>
+	/// <param name="newTile">The new tile location.</param>
 	private void OnUnitMoved(Unit unit, Vector2I oldTile, Vector2I newTile)
 	{
 		RemoveUnit(oldTile);
 		AddUnit(unit, newTile);
 	}
-	
+
 	// -- QUERIES --
+	/// <summary>
+	/// Adds a unit to the board state at the specified tile location.
+	/// </summary>
+	/// <param name="unit">The unit to add.</param>
+	/// <param name="tileLocation">The tile coordinate where the unit should be placed.</param>
 	public void AddUnit(Unit unit, Vector2I tileLocation)
 	{
 		GD.Print($"Adding unit {unit.Stats.UnitId} to tile {tileLocation}");
 		TileData tile = State.Tiles[tileLocation.Y][tileLocation.X];
 		tile.Unit = unit;
 	}
-	
+
+	/// <summary>
+	/// Removes a unit from the board state at the specified tile location.
+	/// </summary>
+	/// <param name="tileLocation">The tile coordinate where the unit should be removed.</param>
 	public void RemoveUnit(Vector2I tileLocation)
 	{
 		GD.Print($"Removing unit from tile {tileLocation}");
 		TileData tile = State.Tiles[tileLocation.Y][tileLocation.X];
 		tile.Unit = null;
 	}
-	
+
 	/// <summary>
-	/// Gets the <see cref="UnitMovement"/> at the specified tile location.
+	/// Gets the <see cref="Unit"/> at the specified tile location.
 	/// </summary>
 	/// <param name="location">The tile coordinate to check.</param>
-	/// <returns>The <see cref="UnitMovement"/> at the location, or null if out of bounds or no unit present.</returns>
+	/// <returns>The <see cref="Unit"/> at the location, or null if out of bounds or no unit present.</returns>
 	public Unit GetUnitAt(Vector2I location)
 	{
 		return TileInBoard(location) ? State.Tiles[location.Y][location.X].Unit : null;
 	}
-	
+
 	/// <summary>
 	/// Returns the <see cref="TileData"/> from the specified tile location.
 	/// </summary>
@@ -141,7 +246,7 @@ public partial class Board : Node2D
 	{
 		return tile.X >= 0 && tile.X < State.Width && tile.Y >= 0 && tile.Y < State.Height;
 	}
-	
+
 	/// <summary>
 	/// Returns the <see cref="TileData"/> from the specified world position.
 	/// </summary>
@@ -153,18 +258,17 @@ public partial class Board : Node2D
 			(int)(worldPosition.X / Global.TileSize),
 			(int)(worldPosition.Y / Global.TileSize)
 		);
-		
+
 		return TileInBoard(tilePosition) ? State.Tiles[tilePosition.Y][tilePosition.X] : null;
 	}
-	
+
 	/// <summary>
 	/// Returns the center World Position of the given Tiles position 
 	/// </summary>
 	/// <param name="tilePosition">The position of the tile in tile coordinates <see cref="Vector2I"/>(0,0)</param>
 	/// <returns></returns>
-	public static Vector2 TileToWorld(Vector2I tilePosition)
+	public static Vector2 TileToWorldPosition(Vector2I tilePosition)
 	{
 		return tilePosition * Global.TileSize + new Vector2(Global.TileSize / 2, Global.TileSize / 2);
 	}
-
 }
