@@ -1,17 +1,18 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Godot;
 
 namespace AKidsDream.Globals;
 
 // TODO:
-// 1. Change Unit Stats name to be sth that holds general Unit Data (stats and teams and co)
-// 2.5 Seperate either logic of MoveComponent into Move and Attack (which can get disabled separately)
-// Or let move and attack move through action/unit which is the guard of what can go through and what not
-// 3. Add logic for Action Component and GameLoopManager in such a way that MoveActions and AttackActions are tracked seperately
-// Visualizer should thus only show move or attack but not both...
-// 4. Before Continuing you need to know what game you want to make 
+// 1. Create Ui, on select of Unit display UI, then show available actions, uses AbilityData.Icon;
+// 2. Update Inputhanlder and visualizer respectively
+// 3. Update so it Abilities can choose multiple tiles
+// 4. Change Unit Stats name to be sth that holds general Unit Data (stats and teams and co)
+// 5. Before Continuing you need to know what game you want to make 
 // cuz after attack still move or not or what ...
 // Add UI which shows the Turn and stops player turn and thus turn events 
+[Tool]
 public class Global
 {
     /* (Add the comments to be able to add Godot Functionality to the class
@@ -22,16 +23,17 @@ public class Global
     */
     
     // [Export(PropertyHint.Range, "1,1,1,or_greater,suffix:px")] 
-    public static int TileSize = 16;
-    public static string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
-    
+    public const int TileSize = 16;
+    public static readonly string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
+    public const string UnitScenePath = "res://scenes/units";
+
     public enum Groups
     {
-        [FieldStringValue( "Units" )]
+        [FieldValue<string>( "Units" )]
         Units,
-        [FieldStringValue("EnemyUnits")]
+        [FieldValue<string>("EnemyUnits")]
         EnemyUnits,
-        [FieldStringValue("PlayerUnits")]
+        [FieldValue<string>("PlayerUnits")]
         PlayerUnits
     }
     
@@ -43,9 +45,23 @@ public class Global
     
     public enum UnitName
     {
-        [FieldStringValue("Soldier")]
+        [FieldValue<string>("Soldier")]
         Soldier
     }
+
+    public enum AtlasCoordsSprite
+    {
+        TransparentTile,
+        GreenTile,
+        RedTile
+    }
+    
+    public static readonly Dictionary<AtlasCoordsSprite, Vector2I> AtlasCoordsSpriteVectors = new()
+    {
+        { AtlasCoordsSprite.TransparentTile, new Vector2I(0, 0) },
+        { AtlasCoordsSprite.GreenTile, new Vector2I(4, 12) },
+        { AtlasCoordsSprite.RedTile, new Vector2I(5, 12) }
+    };
     
     /* 
     public override void _Ready()

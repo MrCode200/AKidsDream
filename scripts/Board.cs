@@ -54,11 +54,12 @@ public partial class Board : Node2D
 		Instance = this;
 		_loadState();
 		_generateBoard();
-		_initializeUnits();
 
 		EventBus.Instance.UnitCreated += OnUnitCreated;
 		EventBus.Instance.UnitKilled += OnUnitKilled;
 		EventBus.Instance.UnitMoved += OnUnitMoved;
+
+		_initializeUnits();
 
 		EventBus.Instance.EmitSignal(EventBus.SignalName.BoardGenerated);
 	}
@@ -164,7 +165,7 @@ public partial class Board : Node2D
 	{
 		foreach (var (location, data) in State.InitialUnits)
 		{
-			string scenePath = $"res://scenes/units/{data.UnitName.GetFieldStringValue()}.tscn";
+			string scenePath = $"res://scenes/units/{data.UnitName.GetFieldValue<string>()}.tscn";
 			PackedScene unitScene = GD.Load<PackedScene>(scenePath);
 
 			Unit newUnit = unitScene.Instantiate<Unit>();
@@ -174,7 +175,6 @@ public partial class Board : Node2D
 			newUnit.TileLocation = location;
 
 			GetNode<Node>("/root/GameWorld/EntityLayer").AddChild(newUnit);
-			AddUnit(newUnit, location);
 		}
 	}
 

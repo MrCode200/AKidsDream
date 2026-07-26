@@ -1,6 +1,6 @@
-using Godot;
+/*using Godot;
 
-namespace AKidsDream.Components;
+namespace AKidsDream.Graveyard;
 
 public partial class ActionComponent : Node
 {
@@ -12,14 +12,12 @@ public partial class ActionComponent : Node
 
 	public override void _Ready()
 	{
-		// BUG:
-		// Need to get MoveComponent from parent after ready, export assignment doesn't work
-		// Thus is injections needed by Unit.cs
-		AttackC = GetParent().GetNode<AttackComponent>("AttackComponent");
-		SelectC = GetParent().GetNode<SelectableComponent>("SelectableComponent");
-		// MoveC = GetParent().GetNode<MoveComponent>("MoveComponent");
-
 		MoveActions = MaxMoveActions;
+		CallDeferred(nameof(_Initialize));
+	}
+	
+	private void _Initialize()
+	{
 		MoveC.UnitMoved += (unit, oldTile, newTile) => { TakeMoveAction(); };
 	}
 	
@@ -35,7 +33,7 @@ public partial class ActionComponent : Node
 		
 		return false;
 	}
-	    
+		
 	public void ResetActions()
 	{
 		MoveActions = MaxMoveActions;
@@ -54,3 +52,4 @@ public partial class ActionComponent : Node
 		}
 	}
 }
+*/

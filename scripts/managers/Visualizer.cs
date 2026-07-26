@@ -1,3 +1,5 @@
+using AKidsDream.Abilities;
+using AKidsDream.GameBoard;
 using Godot;
 using AKidsDream.Units;
 
@@ -8,30 +10,33 @@ public partial class Visualizer : Node
 {
 	[Export] public TileMapLayer Tilemap;
 	
-	public void ShowUnitValidMoves(Unit unit)
+	public void ShowReachVisualization(Unit source, Vector2I sourceTile, AbilityData ability)
 	{
-		var validMoves = unit.MoveC.ValidMoves();
-		GD.Print($"MoveTile: {string.Join(", ", validMoves)}");
-
-		foreach (var tile in validMoves)
+		var visualizationData = ability.GetReachVisualizationData(source, Board.Instance, sourceTile);
+		ShowVisualization([visualizationData]);
+	}
+	
+	public void ShowEffectVisualization(Unit source, Vector2I[] targetTiles, EffectData effect)
+	{
+		var visualizationData = effect.GetEffectVisualizationData(source, Board.Instance, targetTiles);
+		ShowVisualization([visualizationData]);
+	}
+	
+	public void ShowVisualization((Vector2I atlasCoord, Vector2I[] tiles)[] layers)
+	{
+		ClearVisualization();
+		
+		foreach (var (atlasCoord, tiles) in layers)
 		{
-			Tilemap.SetCell(
-				tile,
-				0,
-				new Vector2I(4, 12)
-			);
+			foreach (var tile in tiles)
+			{
+				Tilemap.SetCell(tile, 0, atlasCoord);
+			}
 		}
-
-		var validAttacks = unit.AttackC.ValidAttacks();
-		GD.Print($"AttackTile: {string.Join(", ", validAttacks)}");
-
-		foreach (var tile in validAttacks)
-		{
-			Tilemap.SetCell(
-				tile,
-				0,
-				new Vector2I(5, 12)
-			);
-		}
+	}
+	
+	public void ClearVisualization()
+	{
+		Tilemap.Clear();
 	}
 }

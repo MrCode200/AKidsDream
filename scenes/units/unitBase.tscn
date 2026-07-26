@@ -10,8 +10,13 @@
 [ext_resource type="PackedScene" uid="uid://8vnxqnx4vxe1" path="res://scenes/components/moveComponent.tscn" id="5_y3dxc"]
 [ext_resource type="PackedScene" uid="uid://dmf4y7l2lradx" path="res://scenes/components/attackComponent.tscn" id="6_eiew3"]
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://scenes/components/deathComponent.tscn" id="8_3x03u"]
-[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://scripts/units/FieldAccessPatterns/AdjacentPattern.cs" id="9_ockk7"]
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://resources/Units/FieldAccessPatterns/AdjacentPattern.cs" id="9_ockk7"]
 [ext_resource type="PackedScene" uid="uid://cwlxvnodmeb1q" path="res://scenes/components/actionComponent.tscn" id="11_ywxhe"]
+[ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://scenes/components/abilityComponent.tscn" id="13_mlqjw"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://resources/Units/Abilities/AbilityData.cs" id="14_6i0kk"]
+[ext_resource type="Script" uid="uid://cnajkqpahjyk1" path="res://resources/Units/Abilities/MoveSelfEffect.cs" id="15_ualfc"]
+[ext_resource type="Script" uid="uid://dqpieu0uvgg8d" path="res://resources/Units/FieldAccessPatterns/OneTilePattern.cs" id="16_2nurf"]
+[ext_resource type="Script" uid="uid://ccpad80gncajp" path="res://resources/Units/Abilities/DamageEffect.cs" id="17_3cihg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s7m81"]
 shader = ExtResource("3_jrfw0")
@@ -47,6 +52,49 @@ metadata/_custom_type_script = "uid://thbe6n87osxo"
 script = ExtResource("9_ockk7")
 metadata/_custom_type_script = "uid://thbe6n87osxo"
 
+[sub_resource type="Resource" id="Resource_ltwcm"]
+script = ExtResource("9_ockk7")
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_dd52b"]
+script = ExtResource("9_ockk7")
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_bfbw5"]
+script = ExtResource("15_ualfc")
+EffectPattern = SubResource("Resource_dd52b")
+metadata/_custom_type_script = "uid://cnajkqpahjyk1"
+
+[sub_resource type="Resource" id="Resource_fvmvw"]
+script = ExtResource("14_6i0kk")
+Name = &"Move"
+AreaPattern = SubResource("Resource_ltwcm")
+Effect = SubResource("Resource_bfbw5")
+PoolName = &"Move"
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"
+
+[sub_resource type="Resource" id="Resource_jm87i"]
+script = ExtResource("9_ockk7")
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_y1g7a"]
+script = ExtResource("16_2nurf")
+metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
+
+[sub_resource type="Resource" id="Resource_ug0g2"]
+script = ExtResource("17_3cihg")
+Amount = 1
+EffectPattern = SubResource("Resource_y1g7a")
+metadata/_custom_type_script = "uid://ccpad80gncajp"
+
+[sub_resource type="Resource" id="Resource_v21lg"]
+script = ExtResource("14_6i0kk")
+Name = &"Attack"
+AreaPattern = SubResource("Resource_jm87i")
+Effect = SubResource("Resource_ug0g2")
+PoolName = &"Combat"
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"
+
 [node name="Unit" type="CharacterBody2D" unique_id=1080513067]
 collision_mask = 0
 motion_mode = 1
@@ -78,7 +126,8 @@ texture = SubResource("AtlasTexture_am3og")
 
 [node name="HealthComponent" parent="." unique_id=1411632328 instance=ExtResource("3_4vwke")]
 
-[node name="AttackComponent" parent="." unique_id=1745993077 instance=ExtResource("6_eiew3")]
+[node name="AttackComponent" parent="." unique_id=1745993077 node_paths=PackedStringArray("Unit") instance=ExtResource("6_eiew3")]
+Unit = NodePath("..")
 AttackPattern = SubResource("Resource_fx11m")
 
 [node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Body", "HealthC") instance=ExtResource("8_3x03u")]
@@ -86,10 +135,16 @@ Body = NodePath("..")
 OnUnitKilledCallEventBus = &"UnitKilled"
 HealthC = NodePath("../HealthComponent")
 
-[node name="TurnStateComponent" parent="." unique_id=1084257526 node_paths=PackedStringArray("MoveC", "AttackC", "SelectC") instance=ExtResource("11_ywxhe")]
-MoveC = NodePath("")
+[node name="MoveComponent" parent="." unique_id=1261979931 node_paths=PackedStringArray("Unit") instance=ExtResource("5_y3dxc")]
+Unit = NodePath("..")
+MovePattern = SubResource("Resource_ockk7")
+OnMoveCallEventBus = &"UnitMoved"
+
+[node name="ActionComponent" parent="." unique_id=1380022570 node_paths=PackedStringArray("MoveC", "AttackC", "SelectC") instance=ExtResource("11_ywxhe")]
+MoveC = NodePath("../MoveComponent")
 AttackC = NodePath("../AttackComponent")
 SelectC = NodePath("../SelectableComponent")
 
-[node name="MoveComponent" parent="." unique_id=1261979931 instance=ExtResource("5_y3dxc")]
-MovePattern = SubResource("Resource_ockk7")
+[node name="AbilityComponent" parent="." unique_id=509071314 node_paths=PackedStringArray("Unit") instance=ExtResource("13_mlqjw")]
+Unit = NodePath("..")
+Abilities = Array[ExtResource("14_6i0kk")]([SubResource("Resource_fvmvw"), SubResource("Resource_v21lg")])

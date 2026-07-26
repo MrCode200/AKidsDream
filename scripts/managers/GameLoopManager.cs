@@ -16,10 +16,10 @@ public partial class GameLoopManager : Node
 	public void StartTurn()
 	{
 		// Update Actions 
-		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldStringValue()))
+		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldValue<string>()))
 		{
 			var unit = (Unit)node;
-			unit.ActionC.ResetActions();
+			unit.AbilityC.ResetPool();
 		}
 		CurrentTurn++;
 		GD.Print($"New Turn {CurrentTurn} started");
@@ -27,10 +27,10 @@ public partial class GameLoopManager : Node
 	
 	public void EndPlayerTurn()
 	{
-		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldStringValue()))
+		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldValue<string>()))
 		{
 			var unit = (Unit)node;
-			unit.ActionC.ToggleSelectComponent(false);
+			Utils.ToggleNodeProcessing(unit.SelectableC, false);
 		}
 		GD.Print($"Player Turn {CurrentTurn} ended");
 	}

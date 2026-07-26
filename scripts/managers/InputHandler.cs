@@ -8,7 +8,7 @@ using TileData = AKidsDream.GameBoard.TileData;
 
 public partial class InputHandler : Node2D
 {
-	[Export] public Visualizer MovementVisualizer;
+	[Export] public Visualizer AbilityVisualizer;
 	private Unit _currentSelectedUnit;
 
 	public override void _Ready()
@@ -24,7 +24,9 @@ public partial class InputHandler : Node2D
 			OnLeftClick();
 		}
 	}
-
+	// TODO: enableOnLeftClick Logic
+	public void OnLeftClick() { }
+	/*
 	public void OnLeftClick()
 	{
 		if (_currentSelectedUnit is not null)
@@ -58,7 +60,7 @@ public partial class InputHandler : Node2D
 			_currentSelectedUnit = null;
 		}
 	}
-
+	*/
 	public void OnUnitSelected(Unit unit)
 	{
 		if (_currentSelectedUnit != null)
@@ -71,8 +73,6 @@ public partial class InputHandler : Node2D
 		{
 			unit.DeathC.UnitKilled += OnUnitKilled;
 		}
-
-		MovementVisualizer.ShowUnitValidMoves(unit);
 	}
 
 	public void OnUnitKilled(Unit unit)
@@ -85,6 +85,6 @@ public partial class InputHandler : Node2D
 		if (unit != _currentSelectedUnit) return;
 		if (unit.DeathC is not null) unit.DeathC.UnitKilled -= OnUnitKilled;
 		_currentSelectedUnit = null;
-		MovementVisualizer.Tilemap.Clear();
+		AbilityVisualizer.ClearVisualization();
 	}
 }

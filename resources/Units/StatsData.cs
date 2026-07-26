@@ -7,8 +7,6 @@ namespace AKidsDream.Units;
 [GlobalClass]
 public partial class StatsData : Resource
 {
-	private static int _nextId = 0;
-
 	public int UnitId { get; private set; }
 	[Export] public Global.UnitName UnitName;
 	[Export] public Global.UnitTeam Team;
@@ -19,7 +17,7 @@ public partial class StatsData : Resource
 	
 	public StatsData()
 	{
-		UnitId = _nextId++;
+		UnitId = Utils.GetNextId();
 	}
 
 	/*

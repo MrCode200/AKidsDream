@@ -4,6 +4,9 @@ using Godot;
 
 namespace AKidsDream.Globals;
 
+// NOTE:
+// This is a singleton class, but contains only statics
+// Maybe Remove singleton...
 /// <summary>
 /// Global utility class providing helper functions for resource management and other common operations.
 /// This class implements the singleton pattern and should be added to the autoloaded singletons in Godot.
@@ -15,6 +18,7 @@ public partial class Utils : Node
 	/// Gets the singleton instance of the Utils class.
 	/// </summary>
 	public static Utils Instance { get; private set; }
+	private static int _nextId;
 
 	/// <summary>
 	/// Called when the node is added to the scene tree. Initializes the singleton instance.
@@ -22,6 +26,11 @@ public partial class Utils : Node
 	public override void _Ready()
 	{
 		Instance = this;
+	}
+	
+	public static int GetNextId()
+	{
+		return _nextId++;
 	}
 	
 	/// <summary>
@@ -52,76 +61,92 @@ public partial class Utils : Node
 
 		return target;
 	}
+	
+	public static void ToggleNodeProcessing(Node node, bool enable)
+	{
+		if (enable)
+		{
+			node.SetProcessMode(ProcessModeEnum.Inherit);
+		}
+		else
+		{
+			node.SetProcessMode(ProcessModeEnum.Disabled);
+		}
+	}
 }
 
+// -- ENUM EXTENSIONS --
 /// <summary>
-/// Attribute used to associate a string value with enum fields.
-/// This allows enum values to have additional string metadata that can be retrieved via extension methods.
+/// Attribute used to associate a typed value with enum fields.
+/// This allows enum values to have additional metadata that can be retrieved via extension methods.
 /// </summary>
 /// <example>
 /// <code>
 /// public enum MyEnum
 /// {
-///     [FieldStringValue("First Option")]
+///     [FieldValue<string>("First Option")]
 ///     First,
 ///     
-///     [FieldStringValue("Second Option")]
+///     [FieldValue<int>(42)]
 ///     Second
 /// }
 /// </code>
 /// </example>
 [AttributeUsage(AttributeTargets.Field)]
-public class FieldStringValue : Attribute
+public class FieldValue<T> : Attribute
 {
 	/// <summary>
-	/// Gets the string value associated with this attribute.
+	/// Gets the T value associated with this attribute.
 	/// </summary>
-	public string Value { get; }
+	public T Value { get; }
     
 	/// <summary>
-	/// Initializes a new instance of the FieldStringValue attribute.
+	/// Initializes a new instance of the FieldValue attribute.
 	/// </summary>
-	/// <param name="value">The string value to associate with the enum field.</param>
+	/// <param name="value">The T value to associate with the enum field.</param>
 	/// <exception cref="ArgumentNullException">Thrown when value is null.</exception>
-	public FieldStringValue(string value)
+	public FieldValue(T value)
 	{
 		Value = value ?? throw new ArgumentNullException(nameof(value));
 	}
 }
 
 /// <summary>
-/// Provides extension methods for enum types, specifically for retrieving FieldStringValue attributes.
+/// Provides extension methods for enum types, specifically for retrieving FieldValue attributes.
 /// </summary>
 public static class EnumExtensions
 {
 	/// <summary>
-	/// Retrieves the FieldStringValue associated with an enum field.
+	/// Retrieves the FieldValue associated with an enum field.
 	/// </summary>
-	/// <param name="value">The enum value to get the string value for.</param>
+	/// <typeparam name="T">The type of value to retrieve.</typeparam>
+	/// <param name="value">The enum value to get the typed value for.</param>
 	/// <param name="ignoreMissingValue">
-	/// If true, returns null when no FieldStringValue attribute is found.
+	/// If true, returns default(T) when no FieldValue attribute is found.
 	/// If false, throws an ArgumentException when no attribute is found.
 	/// </param>
 	/// <returns>
-	/// The string value from the FieldStringValue attribute, or null if ignoreMissingValue is true and no attribute is found.
+	/// The typed value from the FieldValue attribute, or default(T) if ignoreMissingValue is true and no attribute is found.
 	/// </returns>
 	/// <exception cref="ArgumentException">
-	/// Thrown when ignoreMissingValue is false and no FieldStringValue attribute is found on the enum field.
+	/// Thrown when ignoreMissingValue is false and no FieldValue attribute is found on the enum field.
 	/// </exception>
 	/// <example>
 	/// <code>
 	/// MyEnum value = MyEnum.First;
-	/// string stringValue = value.GetFieldStringValue(); // Returns "First Option"
+	/// string stringValue = value.GetFieldValue<string>(); // Returns "First Option"
+	/// int intValue = MyEnum.Second.GetFieldValue<int>(); // Returns 42
 	/// </code>
 	/// </example>
-	public static string GetFieldStringValue(this Enum value, bool ignoreMissingValue = false)
+	public static T GetFieldValue<T>(this Enum value, bool ignoreMissingValue = false)
 	{
 		var field = value.GetType().GetField(value.ToString());
-		var attr = field?.GetCustomAttribute<FieldStringValue>();
+		var attr = field?.GetCustomAttribute<FieldValue<T>>();
         
 		if (attr == null)
 		{
-			return ignoreMissingValue ? null : throw new ArgumentException($"No FieldStringValue attribute found for {value}");
+			if (ignoreMissingValue) return default;
+			throw new ArgumentException($"No FieldValue<{typeof(T).Name}> attribute found for {value}");
 		}
     
 		return attr.Value;    

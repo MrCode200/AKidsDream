@@ -54,7 +54,7 @@ public partial class HealthComponent : Node
 		EmitSignal(SignalName.HealthChanged, amount);
 		if (Stats.Health <= 0)
 		{
-			OnHealthDepleted();
+			EmitSignal(SignalName.HealthDepleted);
 		}
 	}
 	
@@ -69,13 +69,5 @@ public partial class HealthComponent : Node
 		Stats.Health += amount;
 		
 		EmitSignal(SignalName.HealthChanged, amount);
-	}
-	
-	/// <summary>
-	/// Kills the entity by emitting the Killed signal.
-	/// </summary>
-	public void OnHealthDepleted()
-	{
-		EmitSignal(SignalName.HealthDepleted);
 	}
 }
