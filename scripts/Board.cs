@@ -237,6 +237,11 @@ public partial class Board : Node2D
 		return TileInBoard(location) ? State.Tiles[location.Y][location.X].Unit : null;
 	}
 
+	public TileData GetTileAt(Vector2I location)
+	{
+		return TileInBoard(location) ? State.Tiles[location.Y][location.X] : null;
+	}
+
 	/// <summary>
 	/// Returns the <see cref="TileData"/> from the specified tile location.
 	/// </summary>

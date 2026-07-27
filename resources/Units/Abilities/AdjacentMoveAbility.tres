@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="AbilityData" format=3 uid="uid://dwt54bx28ktgy"]
+
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://resources/Units/FieldAccessPatterns/AdjacentPattern.cs" id="1_r0kc3"]
+[ext_resource type="Script" uid="uid://cnajkqpahjyk1" path="res://resources/Units/Abilities/MoveSelfEffect.cs" id="2_eem54"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://resources/Units/Abilities/AbilityData.cs" id="3_647bp"]
+
+[sub_resource type="Resource" id="Resource_dd52b"]
+script = ExtResource("1_r0kc3")
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_bfbw5"]
+script = ExtResource("2_eem54")
+EffectPattern = SubResource("Resource_dd52b")
+EffectAtlasCoords = 1
+metadata/_custom_type_script = "uid://cnajkqpahjyk1"
+
+[sub_resource type="Resource" id="Resource_1q66u"]
+script = ExtResource("1_r0kc3")
+AllowedTargets = 1
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[resource]
+script = ExtResource("3_647bp")
+Name = &"Move"
+Description = &"<null>"
+ReachPattern = SubResource("Resource_1q66u")
+ReachAtlasCoords = 1
+Effect = SubResource("Resource_bfbw5")
+PoolName = &"Move"
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

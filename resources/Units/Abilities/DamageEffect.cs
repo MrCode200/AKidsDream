@@ -10,7 +10,7 @@ public partial class DamageEffect : EffectData
 {
     [Export] public int Amount;
 
-    public override EffectResult Apply(Unit source, Board board, Vector2I[] targetTile)
+    public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTile)
     {
         var tiles = GetAffectedTiles(targetTile, board);
         var results = new Array<EffectResult>();
@@ -22,6 +22,7 @@ public partial class DamageEffect : EffectData
             target.HealthC.Damage(Amount);
             results.Add(new DamageResult { Target = target, Tile = tile, Amount = Amount });
         }
-        return new CompositeResult { Results = results };
+        if (results.Count == 0) return null;
+        return results.Count > 1 ? new CompositeResult { Results = results } : results[0];
     }
 }

@@ -11,34 +11,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/libraries/GdSdk.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/libraries/GdSdk.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/editorTools/SaveBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/editorTools/SaveBoard.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/StatsData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/StatsData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scenes/components/attackComponent.tscn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scenes/components/moveComponent.tscn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scenes/gameWorld.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/gameWorld.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scenes/units/soldier.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/units/soldier.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scenes/units/unitBase.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/units/unitBase.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Board.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/ActionComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/ActionComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/ActionComponent.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/ActionComponent.cs.uid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/AttackComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/components/AttackComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/HealthComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/components/HealthComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/MoveComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/MoveComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/MoveComponent.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/MoveComponent.cs.uid" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/globals/Global.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/globals/Global.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/globals/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/InputHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/InputHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/Visualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/Visualizer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/units/FieldAccessPatterns/AccessFieldPattern.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/units/FieldAccessPatterns/AccessFieldPattern.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/units/FieldAccessPatterns/AdjacentPattern.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/units/FieldAccessPatterns/AdjacentPattern.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/units/Unit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/units/Unit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,12 +36,24 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="9" />
+    <option name="cachedIndexableFilesCount" value="33" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MrCode200&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/MrCode200/AKidsDream.git&quot;,
+    &quot;accountId&quot;: &quot;96e72a4d-0d29-4920-942f-c0faf49d958e&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/9B8B841D5257EBDF611CB8F1/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSignalsGenerator/AKidsDream.Scripts.EventBus_ScriptSignals.generated.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/228bff957d5b9f32cfbedd8bf82a5d3e862ec3e051593a67913b95ae288287/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
@@ -74,6 +73,65 @@
     <urls />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0012455374548586" />
+      <entry key="MS500" value="1.7313567446692217" />
+      <entry key="S2" value="3.6016742671698934" />
+      <entry key="S5" value="4.3662280943062814" />
+      <entry key="S10" value="4.6691825579273685" />
+      <entry key="S30" value="5.071499881901016" />
+      <entry key="S60" value="9.42288637138537" />
+      <entry key="M2" value="28.61093923511196" />
+      <entry key="M5" value="83.22610450710854" />
+      <entry key="M10" value="145.46638485008563" />
+      <entry key="M15" value="212.4218573526454" />
+      <entry key="M30" value="457.58567203402885" />
+      <entry key="H1" value="858.6847287082559" />
+      <entry key="H2" value="1261.6015862222127" />
+      <entry key="H4" value="1555.2763152620455" />
+      <entry key="D1" value="1866.872436700634" />
+      <entry key="W1" value="1927.6417003533218" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="6.360906237038279E-172" />
+      <entry key="S10" value="2.5220837093637995E-86" />
+      <entry key="S30" value="2.9326022660541736E-29" />
+      <entry key="S60" value="5.415487259462688E-15" />
+      <entry key="M2" value="7.445365770106238E-8" />
+      <entry key="M5" value="0.002685404858946508" />
+      <entry key="M10" value="0.2334157898312408" />
+      <entry key="M15" value="1.254459776685294" />
+      <entry key="M30" value="7.606800276230454" />
+      <entry key="H1" value="19.81975283279817" />
+      <entry key="H2" value="32.523055596938526" />
+      <entry key="H4" value="41.84466152600476" />
+      <entry key="D1" value="51.74199428167025" />
+      <entry key="W1" value="53.671213911292575" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9149342241111441" />
+      <entry key="MS500" value="1.6975166167312385" />
+      <entry key="S2" value="3.5829879132659643" />
+      <entry key="S5" value="4.357080368624832" />
+      <entry key="S10" value="4.6642769900666945" />
+      <entry key="S30" value="5.069683702181663" />
+      <entry key="S60" value="9.420148916262953" />
+      <entry key="M2" value="28.60420729697923" />
+      <entry key="M5" value="83.21974017661358" />
+      <entry key="M10" value="145.69039988536719" />
+      <entry key="M15" value="213.66222346438582" />
+      <entry key="M30" value="465.1634651057088" />
+      <entry key="H1" value="878.4695837526638" />
+      <entry key="H2" value="1294.0967302825786" />
+      <entry key="H4" value="1597.10320472552" />
+      <entry key="D1" value="1918.6107958000318" />
+      <entry key="W1" value="1981.3123762360735" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
@@ -84,34 +142,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Executable.Player.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.codeium.enabled": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Executable.Player.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Executable.Player">
     <configuration name="Debug GDScript (Running session)" type="GDSCRIPT_DEBUG_RUN_CONFIGURATION" factoryName="GdScriptRunFactory">
       <option name="json" value="{&#10;  // Launch: &quot;Launch a new instance of the game&quot;,&#10;  // Attach: &quot;Attach to an already running game, which was started from the Godot Editor&quot;&#10;  &quot;request&quot; : &quot;Attach&quot;,&#10;  &quot;debugServer&quot; : 6006, // port should match the Debug Adapter port in the Godot Editor project settings.&#10;  &quot;scene&quot; : &quot;main&quot;, // main, current, res://path/to/file.tscn&#10;  &#10;  // &quot;playArgs&quot; : [ &quot;--editor&quot; ], // debugging a tool script&#10;  // &quot;playArgs&quot;: [&quot;--debug-collisions&quot;,&quot;--debug-navigation&quot;], // different options&#10;  &#10;  // one click deploy and debug via Godot Editor:&#10;  // &quot;platform&quot;: &quot;Android&quot;, // including Android, iOS, Web and W4 consoles&#10;  // &quot;device&quot;: &quot;0&quot;, // index of the device of a &quot;platform&quot; type&#10;}" />
@@ -188,8 +246,21 @@
       <workItem from="1785069757364" duration="7187000" />
       <workItem from="1785092318035" duration="6208000" />
       <workItem from="1785098904583" duration="116000" />
-      <workItem from="1785099045020" duration="904000" />
+      <workItem from="1785099045020" duration="1008000" />
+      <workItem from="1785137469001" duration="250000" />
+      <workItem from="1785137996203" duration="4714000" />
+      <workItem from="1785144912674" duration="300000" />
+      <workItem from="1785153045151" duration="5015000" />
     </task>
+    <task id="LOCAL-00001" summary="Changed System For Abilities">
+      <option name="closed" value="true" />
+      <created>1785100014893</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1785100014893</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,6 +270,8 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Changed System For Abilities" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed System For Abilities" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

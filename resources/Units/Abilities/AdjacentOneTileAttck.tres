@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="AbilityData" format=3 uid="uid://disl4r0w0w27p"]
+
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://resources/Units/FieldAccessPatterns/AdjacentPattern.cs" id="1_yxvpm"]
+[ext_resource type="Script" uid="uid://dqpieu0uvgg8d" path="res://resources/Units/FieldAccessPatterns/OneTilePattern.cs" id="2_mwdyp"]
+[ext_resource type="Script" uid="uid://ccpad80gncajp" path="res://resources/Units/Abilities/DamageEffect.cs" id="3_8ojy5"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://resources/Units/Abilities/AbilityData.cs" id="4_ul82g"]
+
+[sub_resource type="Resource" id="Resource_y1g7a"]
+script = ExtResource("2_mwdyp")
+metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
+
+[sub_resource type="Resource" id="Resource_ug0g2"]
+script = ExtResource("3_8ojy5")
+Amount = 1
+EffectPattern = SubResource("Resource_y1g7a")
+EffectAtlasCoords = 2
+metadata/_custom_type_script = "uid://ccpad80gncajp"
+
+[sub_resource type="Resource" id="Resource_i323e"]
+script = ExtResource("1_yxvpm")
+AllowedTargets = 6
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[resource]
+script = ExtResource("4_ul82g")
+Name = &"Attack"
+Description = null
+ReachPattern = SubResource("Resource_i323e")
+ReachAtlasCoords = 2
+Effect = SubResource("Resource_ug0g2")
+PoolName = &"Combat"
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"
