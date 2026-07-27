@@ -2,7 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://cjjhphs7rk7ul" path="res://scenes/units/unitBase.tscn" id="1_1voyx"]
 [ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://resources/Units/SoldierStats.tres" id="2_rdxj4"]
-[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://resources/Units/FieldAccessPatterns/AdjacentPattern.cs" id="3_5iiku"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://resources/Units/Abilities/AbilityData.cs" id="3_e84y0"]
+[ext_resource type="Resource" uid="uid://dwt54bx28ktgy" path="res://resources/Units/Abilities/AdjacentMoveAbility.tres" id="4_y1odh"]
+[ext_resource type="Resource" uid="uid://disl4r0w0w27p" path="res://resources/Units/Abilities/AdjacentOneTileAttck.tres" id="5_bfsu2"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_b8klk"]
 load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
@@ -10,10 +12,6 @@ load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ct
 [sub_resource type="AtlasTexture" id="AtlasTexture_b8klk"]
 atlas = SubResource("CompressedTexture2D_b8klk")
 region = Rect2(80, 16, 16, 16)
-
-[sub_resource type="Resource" id="Resource_rdxj4"]
-script = ExtResource("3_5iiku")
-metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [node name="Soldier" unique_id=1080513067 instance=ExtResource("1_1voyx")]
 Stats = ExtResource("2_rdxj4")
@@ -24,5 +22,5 @@ texture = SubResource("AtlasTexture_b8klk")
 [node name="SelectableComponent" parent="." index="2" unique_id=1872887520 node_paths=PackedStringArray("HoverIndicator")]
 HoverIndicator = NodePath("SelectionIndicatorSprite")
 
-[node name="MoveComponent" parent="." index="6" unique_id=1261979931]
-MovePattern = SubResource("Resource_rdxj4")
+[node name="AbilityComponent" parent="." index="5" unique_id=509071314]
+Abilities = Array[ExtResource("3_e84y0")]([ExtResource("4_y1odh"), ExtResource("5_bfsu2")])
