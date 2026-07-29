@@ -14,6 +14,7 @@ atlas = SubResource("CompressedTexture2D_b8klk")
 region = Rect2(80, 16, 16, 16)
 
 [node name="Soldier" unique_id=1080513067 instance=ExtResource("1_1voyx")]
+scale = Vector2(3.25, 3.25)
 Stats = ExtResource("2_rdxj4")
 
 [node name="Sprite2D" parent="." index="0" unique_id=1259677528]

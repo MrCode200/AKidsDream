@@ -11,21 +11,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/libraries/GdSdk.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/libraries/GdSdk.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/CommandExecutor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/CommandUtils.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/AddAbilityTargetCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/CastAbilityCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectAbilityCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectUnitCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/SelectAbilityCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/SelectUnitCommand.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ui/AbilityBtn.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/ui/UnitInfoBar.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AKidsDream.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AKidsDream.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/project.godot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentMoveAbility.tres" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentMoveAbility.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentOneTileAttck.tres" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentOneTileAttck.tres" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/attackComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/moveComponent.tscn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/AccessFieldPattern.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/AccessFieldPattern.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/Units/StatsData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Units/StatsData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scenes/board.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/board.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scenes/gameWorld.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/gameWorld.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scenes/units/soldier.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/units/soldier.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scenes/units/unitBase.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/scenes/units/unitBase.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Board.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/components/AbilityComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/components/AbilityComponent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/components/AttackComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/AttackComponent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/components/AttackComponent.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/AttackComponent.cs.uid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/globals/EventBus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/globals/EventBus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/globals/Global.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/globals/Global.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/globals/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/globals/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/managers/InputHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/PlayerInteractionController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/managers/InputHandler.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/PlayerInteractionController.cs.uid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/managers/Visualizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/managers/Visualizer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/units/Unit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Unit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/units/Unit.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Unit.cs.uid" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +57,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="33" />
+    <option name="cachedIndexableFilesCount" value="38" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -55,13 +76,19 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/85D1EE0F878E7BCD9279B701/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSerializationGenerator/AKidsDream.GameBoard.Board_ScriptSerialization.generated.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/9B8B841D5257EBDF611CB8F1/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSignalsGenerator/AKidsDream.Scripts.EventBus_ScriptSignals.generated.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/228bff957d5b9f32cfbedd8bf82a5d3e862ec3e051593a67913b95ae288287/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e10648195244ebfa276c71cb5b3f877c90750/48/a9db79a1/Dictionary`2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/AddAbilityTargetCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/CastAbilityCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectAbilityCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectUnitCommand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/SelectAbilityCommand.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/scripts/globals/ResourceIO.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -75,62 +102,65 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0012455374548586" />
-      <entry key="MS500" value="1.7313567446692217" />
-      <entry key="S2" value="3.6016742671698934" />
-      <entry key="S5" value="4.3662280943062814" />
-      <entry key="S10" value="4.6691825579273685" />
-      <entry key="S30" value="5.071499881901016" />
-      <entry key="S60" value="9.42288637138537" />
-      <entry key="M2" value="28.61093923511196" />
-      <entry key="M5" value="83.22610450710854" />
-      <entry key="M10" value="145.46638485008563" />
-      <entry key="M15" value="212.4218573526454" />
-      <entry key="M30" value="457.58567203402885" />
-      <entry key="H1" value="858.6847287082559" />
-      <entry key="H2" value="1261.6015862222127" />
-      <entry key="H4" value="1555.2763152620455" />
-      <entry key="D1" value="1866.872436700634" />
-      <entry key="W1" value="1927.6417003533218" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0000002211373318" />
+      <entry key="S60" value="1.0016537843839302" />
+      <entry key="M2" value="1.3322223142618816" />
+      <entry key="M5" value="21.835376362687015" />
+      <entry key="M10" value="114.28100567372451" />
+      <entry key="M15" value="228.9944059786012" />
+      <entry key="M30" value="567.1238570958835" />
+      <entry key="H1" value="1112.0371254879542" />
+      <entry key="H2" value="1980.4362802004466" />
+      <entry key="H4" value="3431.8539380084885" />
+      <entry key="D1" value="7756.26582232953" />
+      <entry key="W1" value="9348.49267037762" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="6.360906237038279E-172" />
-      <entry key="S10" value="2.5220837093637995E-86" />
-      <entry key="S30" value="2.9326022660541736E-29" />
-      <entry key="S60" value="5.415487259462688E-15" />
-      <entry key="M2" value="7.445365770106238E-8" />
-      <entry key="M5" value="0.002685404858946508" />
-      <entry key="M10" value="0.2334157898312408" />
-      <entry key="M15" value="1.254459776685294" />
-      <entry key="M30" value="7.606800276230454" />
-      <entry key="H1" value="19.81975283279817" />
-      <entry key="H2" value="32.523055596938526" />
-      <entry key="H4" value="41.84466152600476" />
-      <entry key="D1" value="51.74199428167025" />
-      <entry key="W1" value="53.671213911292575" />
+      <entry key="MS100" value="2.1152812791223805E-16" />
+      <entry key="MS500" value="7.329487780831886E-4" />
+      <entry key="S2" value="0.16453883056136848" />
+      <entry key="S5" value="0.4858557674923224" />
+      <entry key="S10" value="0.6970335483262785" />
+      <entry key="S30" value="0.8866485746884951" />
+      <entry key="S60" value="0.9435805225755919" />
+      <entry key="M2" value="1.112792028621402" />
+      <entry key="M5" value="3.9134802375031112" />
+      <entry key="M10" value="12.727896608383446" />
+      <entry key="M15" value="21.945184886254705" />
+      <entry key="M30" value="43.19911995271135" />
+      <entry key="H1" value="72.24985046072105" />
+      <entry key="H2" value="122.49589739508322" />
+      <entry key="H4" value="203.7516717983288" />
+      <entry key="D1" value="411.4695439672263" />
+      <entry key="W1" value="481.6006826303558" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9149342241111441" />
-      <entry key="MS500" value="1.6975166167312385" />
-      <entry key="S2" value="3.5829879132659643" />
-      <entry key="S5" value="4.357080368624832" />
-      <entry key="S10" value="4.6642769900666945" />
-      <entry key="S30" value="5.069683702181663" />
-      <entry key="S60" value="9.420148916262953" />
-      <entry key="M2" value="28.60420729697923" />
-      <entry key="M5" value="83.21974017661358" />
-      <entry key="M10" value="145.69039988536719" />
-      <entry key="M15" value="213.66222346438582" />
-      <entry key="M30" value="465.1634651057088" />
-      <entry key="H1" value="878.4695837526638" />
-      <entry key="H2" value="1294.0967302825786" />
-      <entry key="H4" value="1597.10320472552" />
-      <entry key="D1" value="1918.6107958000318" />
-      <entry key="W1" value="1981.3123762360735" />
+      <entry key="MS100" value="4.230562584385035E-16" />
+      <entry key="MS500" value="8.611441658726649E-4" />
+      <entry key="S2" value="0.23654242580780674" />
+      <entry key="S5" value="0.8301943495346378" />
+      <entry key="S10" value="1.282877745208051" />
+      <entry key="S30" value="1.7231318796441675" />
+      <entry key="S60" value="1.8597200572879855" />
+      <entry key="M2" value="2.398313302136895" />
+      <entry key="M5" value="25.70774270767882" />
+      <entry key="M10" value="126.95617913936526" />
+      <entry key="M15" value="250.88237792336088" />
+      <entry key="M30" value="610.2675617976961" />
+      <entry key="H1" value="1184.2370237965351" />
+      <entry key="H2" value="2102.883055970929" />
+      <entry key="H4" value="3635.5589568759315" />
+      <entry key="D1" value="8167.7173230064855" />
+      <entry key="W1" value="9830.090259380779" />
     </decayedShown>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -142,34 +172,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Executable.Player.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Executable.Player.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.codeium.enabled": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.editor",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Executable.Player">
     <configuration name="Debug GDScript (Running session)" type="GDSCRIPT_DEBUG_RUN_CONFIGURATION" factoryName="GdScriptRunFactory">
       <option name="json" value="{&#10;  // Launch: &quot;Launch a new instance of the game&quot;,&#10;  // Attach: &quot;Attach to an already running game, which was started from the Godot Editor&quot;&#10;  &quot;request&quot; : &quot;Attach&quot;,&#10;  &quot;debugServer&quot; : 6006, // port should match the Debug Adapter port in the Godot Editor project settings.&#10;  &quot;scene&quot; : &quot;main&quot;, // main, current, res://path/to/file.tscn&#10;  &#10;  // &quot;playArgs&quot; : [ &quot;--editor&quot; ], // debugging a tool script&#10;  // &quot;playArgs&quot;: [&quot;--debug-collisions&quot;,&quot;--debug-navigation&quot;], // different options&#10;  &#10;  // one click deploy and debug via Godot Editor:&#10;  // &quot;platform&quot;: &quot;Android&quot;, // including Android, iOS, Web and W4 consoles&#10;  // &quot;device&quot;: &quot;0&quot;, // index of the device of a &quot;platform&quot; type&#10;}" />
@@ -180,7 +210,7 @@
       <method v="2" />
     </configuration>
     <configuration name="Editor" type="RunExe" factoryName=".NET Executable">
-      <option name="EXE_PATH" value="D:/MyFolders/Apps/Godot_v4.6.2-stable_mono_win64/Godot_v4.6.2-stable_mono_win64.exe" />
+      <option name="EXE_PATH" value="D:\MyFolders\Apps\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64.exe" />
       <option name="PROGRAM_PARAMETERS" value="--path &quot;./&quot; --editor" />
       <option name="WORKING_DIRECTORY" value="C:\Users\Navid\Documents\a-kids-dream\AKidsDream" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -196,7 +226,7 @@
       </method>
     </configuration>
     <configuration name="Player" type="RunExe" factoryName=".NET Executable">
-      <option name="EXE_PATH" value="D:/MyFolders/Apps/Godot_v4.6.2-stable_mono_win64/Godot_v4.6.2-stable_mono_win64.exe" />
+      <option name="EXE_PATH" value="D:\MyFolders\Apps\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64.exe" />
       <option name="PROGRAM_PARAMETERS" value="--path &quot;./&quot;" />
       <option name="WORKING_DIRECTORY" value="C:\Users\Navid\Documents\a-kids-dream\AKidsDream" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -250,7 +280,17 @@
       <workItem from="1785137469001" duration="250000" />
       <workItem from="1785137996203" duration="4714000" />
       <workItem from="1785144912674" duration="300000" />
-      <workItem from="1785153045151" duration="5015000" />
+      <workItem from="1785153045151" duration="5230000" />
+      <workItem from="1785183413324" duration="8091000" />
+      <workItem from="1785222673212" duration="3189000" />
+      <workItem from="1785234466140" duration="9328000" />
+      <workItem from="1785255711300" duration="8588000" />
+      <workItem from="1785267469927" duration="3590000" />
+      <workItem from="1785272482184" duration="1635000" />
+      <workItem from="1785274492927" duration="17000" />
+      <workItem from="1785311665611" duration="14369000" />
+      <workItem from="1785342346720" duration="2271000" />
+      <workItem from="1785344643071" duration="4003000" />
     </task>
     <task id="LOCAL-00001" summary="Changed System For Abilities">
       <option name="closed" value="true" />
@@ -260,7 +300,23 @@
       <option name="project" value="LOCAL" />
       <updated>1785100014893</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added Target FIlter&#10;Added Error Results &#10;Added Checks for CountTarget &#10;&#10;fixed bugs&#10;Fixed MaterialSelectionToggle in Editor state persisting&#10;Removed ToDo's to miro">
+      <option name="closed" value="true" />
+      <created>1785159469612</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1785159469612</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added Target FIlter&#10;Added Error Results&#10;Added Checks for CountTarget&#10;&#10;fixed bugs&#10;Fixed MaterialSelectionToggle in Editor state persisting&#10;Removed ToDo's to miro">
+      <option name="closed" value="true" />
+      <created>1785159538829</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1785159538829</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,7 +327,9 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Changed System For Abilities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed System For Abilities" />
+    <MESSAGE value="Added Target FIlter&#10;Added Error Results &#10;Added Checks for CountTarget &#10;&#10;fixed bugs&#10;Fixed MaterialSelectionToggle in Editor state persisting&#10;Removed ToDo's to miro" />
+    <MESSAGE value="Added Target FIlter&#10;Added Error Results&#10;Added Checks for CountTarget&#10;&#10;fixed bugs&#10;Fixed MaterialSelectionToggle in Editor state persisting&#10;Removed ToDo's to miro" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Target FIlter&#10;Added Error Results&#10;Added Checks for CountTarget&#10;&#10;fixed bugs&#10;Fixed MaterialSelectionToggle in Editor state persisting&#10;Removed ToDo's to miro" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -290,5 +348,9 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

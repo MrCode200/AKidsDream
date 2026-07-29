@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://resources/Units/FieldAccessPatterns/AdjacentPattern.cs" id="1_yxvpm"]
 [ext_resource type="Script" uid="uid://dqpieu0uvgg8d" path="res://resources/Units/FieldAccessPatterns/OneTilePattern.cs" id="2_mwdyp"]
 [ext_resource type="Script" uid="uid://ccpad80gncajp" path="res://resources/Units/Abilities/DamageEffect.cs" id="3_8ojy5"]
+[ext_resource type="Texture2D" uid="uid://drcdhjji3p528" path="res://assets/sprites/UI Elements/UI Elements/Icons/Icon_05.png" id="3_kt5n8"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://resources/Units/Abilities/AbilityData.cs" id="4_ul82g"]
 
 [sub_resource type="Resource" id="Resource_y1g7a"]
@@ -13,7 +14,7 @@ metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 script = ExtResource("3_8ojy5")
 Amount = 1
 EffectPattern = SubResource("Resource_y1g7a")
-EffectAtlasCoords = 2
+EffectAtlasCoords = 4
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 
 [sub_resource type="Resource" id="Resource_i323e"]
@@ -23,10 +24,11 @@ metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [resource]
 script = ExtResource("4_ul82g")
+Icon = ExtResource("3_kt5n8")
 Name = &"Attack"
-Description = null
+Description = &"Attacks 1 Unit dealing 1 Damage"
 ReachPattern = SubResource("Resource_i323e")
-ReachAtlasCoords = 2
+ReachAtlasCoords = 4
 Effect = SubResource("Resource_ug0g2")
 PoolName = &"Combat"
 metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

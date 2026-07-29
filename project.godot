@@ -21,6 +21,7 @@ EventBus="*uid://bjmcgayj4xwls"
 Utils="*uid://b2lrkaxk3rk1c"
 SignalLens="*uid://85rkx60vm7a7"
 Console="*uid://ouiu5xh1cs8n"
+CommandExecutor="*uid://bmvyosbiktsyd"
 
 [dotnet]
 

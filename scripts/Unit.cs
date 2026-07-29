@@ -13,7 +13,11 @@ namespace AKidsDream.Units;
 public partial class Unit : CharacterBody2D
 {
     // -- PROPERTIES --
+    public int UnitId { get; private set; }
+
     [Export] public StatsData Stats;
+    [Export] public Global.UnitName UnitName;
+    [Export] public Global.UnitTeam Team;
 
     /// <summary>
     /// The current tile location of the unit.
@@ -25,8 +29,6 @@ public partial class Unit : CharacterBody2D
     [Signal]
     public delegate void UnitMovedEventHandler(Unit unit, Vector2I from, Vector2I to);
 
-
-    public AttackComponent AttackC { get; private set; }
     public HealthComponent HealthC { get; private set; }
     public SelectableComponent SelectableC { get; private set; }
     public DeathComponent DeathC { get; private set; }
@@ -38,6 +40,7 @@ public partial class Unit : CharacterBody2D
 
     public Unit(StatsData stats)
     {
+        UnitId = Utils.GetNextId();
         Stats = stats;
     }
 
@@ -49,19 +52,18 @@ public partial class Unit : CharacterBody2D
         _setAppearance();
 
         AddToGroup(Global.Groups.Units.GetFieldValue<string>());
-        AddToGroup((Stats.Team == Global.UnitTeam.Enemy)
+        AddToGroup((Team == Global.UnitTeam.Enemy)
             ? Global.Groups.EnemyUnits.GetFieldValue<string>()
             : Global.Groups.PlayerUnits.GetFieldValue<string>()
         );
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
-        GD.Print($"Unit ready at {TileLocation}; Team: {Stats.Team}");
+        GD.Print($"Unit ready at {TileLocation}; Team: {Team}");
     }
 
     private void _injectReferenceAndAssignComponents()
     {
         DeathC = GetNode<DeathComponent>("DeathComponent");
         SelectableC = GetNode<SelectableComponent>("SelectableComponent");
-        AttackC = GetNode<AttackComponent>("AttackComponent");
         AbilityC = GetNode<AbilityComponent>("AbilityComponent");
 
         HealthC = GetNode<HealthComponent>("HealthComponent");
@@ -73,7 +75,7 @@ public partial class Unit : CharacterBody2D
 
     private void _setAppearance()
     {
-        if (Stats.Team == Global.UnitTeam.Enemy)
+        if (Team == Global.UnitTeam.Enemy)
         {
             SelectableC?.QueueFree();
 

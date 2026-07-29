@@ -15,7 +15,9 @@ public class Global
 	*/
 	
 	// [Export(PropertyHint.Range, "1,1,1,or_greater,suffix:px")] 
-	public const int TileSize = 16;
+	// NOTE: can result in floating point error for specific numbers
+	public const float TileMapScale = 3.25f;
+	public const int TileSize = (int)(16 * TileMapScale); // 16 * 3.25(scale) = 52
 	public static readonly string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
 	public const string UnitScenePath = "res://scenes/units";
 
@@ -32,7 +34,8 @@ public class Global
 	public enum UnitTeam
 	{
 		Player,
-		Enemy
+		Enemy,
+		Neutral
 	}
 	
 	public enum UnitName
@@ -41,9 +44,17 @@ public class Global
 		Soldier
 	}
 
+	public enum InputMapActions
+	{
+		LeftClick
+	}
+
 	public enum AtlasCoordsSprite
 	{
 		TransparentTile,
+		BeigeTile,
+		DarkVioletTile,
+		// FrameTile,
 		GreenTile,
 		RedTile,
 		PurpleTile
@@ -52,6 +63,9 @@ public class Global
 	public static readonly Dictionary<AtlasCoordsSprite, Vector2I> AtlasCoordsSpriteVectors = new()
 	{
 		{ AtlasCoordsSprite.TransparentTile, new Vector2I(0, 0) },
+		{ AtlasCoordsSprite.BeigeTile, new Vector2I(1, 0) },
+		{ AtlasCoordsSprite.DarkVioletTile, new Vector2I(2, 0) },
+		// { AtlasCoordsSprite.FrameTile, new Vector2I(3, 0) },
 		{ AtlasCoordsSprite.GreenTile, new Vector2I(4, 0) },
 		{ AtlasCoordsSprite.RedTile, new Vector2I(5, 0) },
 		{ AtlasCoordsSprite.PurpleTile, new Vector2I(6, 0) },

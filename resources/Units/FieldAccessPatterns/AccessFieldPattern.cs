@@ -40,13 +40,13 @@ public abstract partial class AccessFieldPattern : Resource
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Friend) &&
-                tileData?.Unit?.Stats.Team == Global.UnitTeam.Player)
+                tileData?.Unit?.Team == Global.UnitTeam.Player)
             {
                 return true;
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Enemy) &&
-                tileData?.Unit?.Stats.Team == Global.UnitTeam.Enemy)
+                tileData?.Unit?.Team == Global.UnitTeam.Enemy)
             {
                 return true;
             }

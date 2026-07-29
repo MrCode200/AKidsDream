@@ -5,6 +5,7 @@ using AKidsDream.Globals;
 using Godot;
 using AKidsDream.Units;
 using AKidsDream.Units.FieldAccessPatterns;
+using Godot.Collections;
 
 namespace AKidsDream.Abilities;
 
@@ -15,20 +16,45 @@ public abstract partial class EffectData : Resource
     [Export] public Global.AtlasCoordsSprite EffectAtlasCoords;
 
     /// <summary>
-    /// The minimum amount of Tiles the User needs to select.
+    /// The minimum number of Tiles the User needs to select.
     /// </summary>
-    [Export] public int MinTargets = 1;
-
+    private int _minTargets = 1;
+    [Export] public int MinTargets
+    {
+        get => _minTargets;
+        set
+        {
+            _minTargets = value;
+            if (_minTargets > MaxTargets)
+                MaxTargets = _minTargets;
+        }
+    }
     /// <summary>
-    /// The maximum amount of Tiles the User needs to select.
+    /// The maximum number of Tiles the User needs to select.
     /// </summary>
-    [Export] public int MaxTargets = 1;
-
+    private int _maxTargets = 1;
+    [Export] public int MaxTargets
+    {
+        get => _maxTargets;
+        set
+        {
+            _maxTargets = value;
+            if (_maxTargets < MinTargets)
+                MinTargets = _maxTargets;
+        }
+    }
+    
     /// <summary>
     /// Whether the User can select the same Tile multiple times.
     /// </summary>
     [Export] public bool AllowDuplicateTiles;
-
+    
+    /// <summary>
+    /// Returns the Tiles that will be affected by the effect.
+    /// </summary>
+    /// <param name="targetTiles">The tiles the player has selected</param>
+    /// <param name="board">The board containing TileData's</param>
+    /// <returns>An array of <see cref="Vector2I"/> which is the TileData.TileLocation</returns>
     protected Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board)
     {
         if (EffectPattern == null)

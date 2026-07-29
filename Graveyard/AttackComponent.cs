@@ -1,3 +1,4 @@
+/*
 using Godot;
 using System;
 using System.Linq;
@@ -78,3 +79,4 @@ public partial class AttackComponent : Node
 		return true;
 	}
 }
+*/

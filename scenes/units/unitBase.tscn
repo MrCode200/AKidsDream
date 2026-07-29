@@ -10,6 +10,13 @@
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://scenes/components/deathComponent.tscn" id="8_3x03u"]
 [ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://scenes/components/abilityComponent.tscn" id="13_mlqjw"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4vwke"]
+load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tk6em"]
+atlas = SubResource("CompressedTexture2D_4vwke")
+region = Rect2(80, 0, 16, 16)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s7m81"]
 shader = ExtResource("3_jrfw0")
 shader_parameter/color = Color(0, 0, 0, 1)
@@ -17,13 +24,6 @@ shader_parameter/type = 2
 shader_parameter/thickness = 1.0
 shader_parameter/flickering_speed = 2.999999932944
 shader_parameter/minimal_flickering_alpha = 0.8130000386175
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4vwke"]
-load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tk6em"]
-atlas = SubResource("CompressedTexture2D_4vwke")
-region = Rect2(80, 0, 16, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
 size = Vector2(10, 12)
@@ -40,9 +40,9 @@ collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_wfjo2")
 Stats = ExtResource("2_eiew3")
+OnMoveCallEventBus = &"UnitMoved"
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1259677528 node_paths=PackedStringArray("SelectableC")]
-material = SubResource("ShaderMaterial_s7m81")
 texture = SubResource("AtlasTexture_tk6em")
 script = ExtResource("4_s7m81")
 SelectionMaterial = SubResource("ShaderMaterial_s7m81")
@@ -53,7 +53,6 @@ shape = SubResource("RectangleShape2D_2atpx")
 
 [node name="SelectableComponent" parent="." unique_id=1872887520 node_paths=PackedStringArray("SelectionIndicator") instance=ExtResource("3_v54ow")]
 SelectionIndicator = NodePath("SelectionIndicatorSprite")
-SelectionAction = "LeftClick"
 OnSelectCallEventBus = &"UnitSelected"
 OnDeselectCallEventBus = &"UnitDeselected"
 

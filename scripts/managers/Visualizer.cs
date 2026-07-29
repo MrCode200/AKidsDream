@@ -1,42 +1,62 @@
 using AKidsDream.Abilities;
 using AKidsDream.GameBoard;
+using AKidsDream.Globals;
 using Godot;
 using AKidsDream.Units;
 
-namespace AKidsDream.Globals;
+namespace AKidsDream.Managers;
 
 [GlobalClass]
 public partial class Visualizer : Node
 {
-	[Export] public TileMapLayer Tilemap;
-	
-	public void ShowReachVisualization(Unit source, Vector2I sourceTile, AbilityData ability)
+	[Export] public TileMapLayer ReachTilemap;
+	[Export] public TileMapLayer EffectTilemap;
+
+	public override void _Ready()
 	{
+		EffectTilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
+		ReachTilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
+	}
+
+	public void ShowReachVisualization(Unit source, Vector2I sourceTile, AbilityData ability, bool clearPrevious = true)
+	{
+		if (clearPrevious) ClearReachTilemap();
 		var visualizationData = ability.GetReachVisualizationData(source, Board.Instance, sourceTile);
-		ShowVisualization([visualizationData]);
+		ShowVisualization(ReachTilemap, [visualizationData]);
 	}
 	
-	public void ShowEffectVisualization(Unit source, Vector2I[] targetTiles, EffectData effect)
+	public void ShowEffectVisualization(Unit source, Vector2I[] targetTiles, EffectData effect, bool clearPrevious = true)
 	{
+		if (clearPrevious) ClearEffectTilemap();
 		var visualizationData = effect.GetEffectVisualizationData(source, Board.Instance, targetTiles);
-		ShowVisualization([visualizationData]);
+		ShowVisualization(EffectTilemap, [visualizationData]);
 	}
 	
-	public void ShowVisualization((Vector2I atlasCoord, Vector2I[] tiles)[] layers)
+	public static void ShowVisualization(TileMapLayer tilemap, (Vector2I atlasCoord, Vector2I[] tiles)[] layers)
 	{
-		ClearVisualization();
-		
 		foreach (var (atlasCoord, tiles) in layers)
 		{
 			foreach (var tile in tiles)
 			{
-				Tilemap.SetCell(tile, 0, atlasCoord);
+				// GD.Print($"Setting tile {tile} to {atlasCoord}");
+				tilemap.SetCell(tile, 0, atlasCoord);
 			}
 		}
 	}
-	
-	public void ClearVisualization()
+
+	public void ClearTilemaps()
 	{
-		Tilemap.Clear();
+		ClearEffectTilemap();
+		ClearReachTilemap();
+	}
+	
+	public void ClearEffectTilemap()
+	{
+		EffectTilemap.Clear();
+	}
+	
+	public void ClearReachTilemap()
+	{
+		ReachTilemap.Clear();
 	}
 }

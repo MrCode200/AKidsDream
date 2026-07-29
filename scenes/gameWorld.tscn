@@ -1,10 +1,13 @@
 [gd_scene format=3 uid="uid://bp287o1x6q2gx"]
 
 [ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://scenes/board.tscn" id="1_jnam8"]
-[ext_resource type="Script" uid="uid://caf4fhhjdtr4w" path="res://scripts/managers/InputHandler.cs" id="2_cpkaj"]
+[ext_resource type="Script" uid="uid://byoh3ljptnybl" path="res://scripts/stateMachines/StateMachine.cs" id="2_5cnm3"]
+[ext_resource type="Script" uid="uid://caf4fhhjdtr4w" path="res://scripts/managers/PlayerInteractionController.cs" id="2_cpkaj"]
 [ext_resource type="Script" uid="uid://irt720bqh762" path="res://scripts/managers/Visualizer.cs" id="3_1totg"]
 [ext_resource type="Texture2D" uid="uid://ttl3cvsve1lc" path="res://assets/sprites/tiles.png" id="4_cpkaj"]
+[ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://scripts/globals/CommandExecutor/CommandExecutor.cs" id="4_ypqj4"]
 [ext_resource type="Script" uid="uid://c2vkehvslp083" path="res://scripts/managers/GameLoopManager.cs" id="5_1totg"]
+[ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://scenes/UI/unitInfoBar.tscn" id="5_d2vp3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
 texture = ExtResource("4_cpkaj")
@@ -30,25 +33,43 @@ sources/0 = SubResource("TileSetAtlasSource_cpkaj")
 
 [node name="Board" parent="SystemsLayer" unique_id=2027072769 instance=ExtResource("1_jnam8")]
 unique_name_in_owner = true
-StateFileName = "DevBoardSave.tres"
 
 [node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226]
-position = Vector2(75, 75)
-zoom = Vector2(3, 3)
+position = Vector2(234, 294)
 
-[node name="InputHandler" type="Node2D" parent="SystemsLayer" unique_id=574570579 node_paths=PackedStringArray("MovementVisualizer")]
+[node name="StateMachine" type="Node" parent="SystemsLayer" unique_id=2146957956]
+script = ExtResource("2_5cnm3")
+
+[node name="PlayerInteractionController" type="Node2D" parent="SystemsLayer" unique_id=574570579 node_paths=PackedStringArray("AbilityVisualizer", "StateMachine")]
 script = ExtResource("2_cpkaj")
-MovementVisualizer = NodePath("../Visualizer")
+AbilityVisualizer = NodePath("../Visualizer")
+StateMachine = NodePath("../StateMachine")
 
-[node name="Visualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Tilemap")]
+[node name="Visualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("ReachTilemap", "EffectTilemap")]
 script = ExtResource("3_1totg")
-Tilemap = NodePath("UnitMovementTiles")
+ReachTilemap = NodePath("ReachAbilityTiles")
+EffectTilemap = NodePath("EffectTiles")
 
-[node name="UnitMovementTiles" type="TileMapLayer" parent="SystemsLayer/Visualizer" unique_id=1879383876]
+[node name="ReachAbilityTiles" type="TileMapLayer" parent="SystemsLayer/Visualizer" unique_id=1879383876]
 modulate = Color(1, 1, 1, 0.3137255)
+scale = Vector2(3.25, 3.25)
 tile_set = SubResource("TileSet_1totg")
+
+[node name="EffectTiles" type="TileMapLayer" parent="SystemsLayer/Visualizer" unique_id=910760774]
+modulate = Color(1, 1, 1, 0.3137255)
+scale = Vector2(3.25, 3.25)
+tile_set = SubResource("TileSet_1totg")
+
+[node name="CommandExecutor" type="Node" parent="SystemsLayer" unique_id=716602167 node_paths=PackedStringArray("Visualizer")]
+script = ExtResource("4_ypqj4")
+Visualizer = NodePath("../Visualizer")
 
 [node name="GameLoopManager" type="Node" parent="SystemsLayer" unique_id=1524335731]
 script = ExtResource("5_1totg")
 
 [node name="EntityLayer" type="Node" parent="." unique_id=2094553575]
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=140492902]
+layer = 50
+
+[node name="UnitInforBar" parent="UILayer" unique_id=925057221 instance=ExtResource("5_d2vp3")]

@@ -74,10 +74,18 @@ public partial class AbilityComponent : Node
 
 	/// <summary>
 	/// Casts the specified <see cref="AbilityData"/>.Effect(<see cref="EffectData"/>) on the targeted tiles.
+	/// To get the <see cref="EffectResult"/>. Subscribe to the <see cref="AbilityAppliedEventHandler"/> signal.
 	/// </summary>
 	/// <param name="name">The name of the <see cref="AbilityData"/></param>
 	/// <param name="targetTiles">Onto which tiles the <see cref="AbilityData"/>.Effect(<see cref="EffectData"/>) should be applied</param>
-	/// <returns>True if the ability was cast, False if the ability could not be cast on the selected tiles</returns>
+	/// <returns>True if the ability was cast, False if the ability could not be cast on the selected tiles.
+	/// <list type="number">
+	/// <item>True if the ability was cast</item>
+	/// <item>False if the ability could not be afforded</item>
+	/// <item>False if the ability wasn't registered</item>
+	/// <item>False if the tiles aren't in the reach pattern</item>
+	/// <item>False if not enough Points are in the Pool</item>
+	/// </list></returns>
 	public bool Cast(StringName name, Vector2I[] targetTiles)
 	{
 		var ability = GetAbility(name);

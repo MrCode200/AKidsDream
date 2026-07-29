@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://dktd8vy0gf1h0"]
+
+[ext_resource type="Script" uid="uid://cqe1bd67046kn" path="res://scripts/ui/UnitInfoBar.cs" id="1_hvlrc"]
+[ext_resource type="Texture2D" uid="uid://3oytot28kllb" path="res://assets/sprites/UI Elements/UI Elements/Papers/SpecialPaperJoint.png" id="1_yac0r"]
+[ext_resource type="PackedScene" uid="uid://bg45tgydfujx" path="res://scenes/UI/abilityBtn.tscn" id="2_00si8"]
+[ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://assets/sprites/UI Elements/UI Elements/Ribbons/SmallRibbons_Joint.png" id="3_bvm5s"]
+[ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://assets/sprites/UI Elements/UI Elements/Icons/Big Heart Idle (18x14).png" id="4_hvlrc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1j5su"]
+shadow_size = 9
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7u43g"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(0, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uss1p"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(18, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vs4i0"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(36, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lutvp"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(54, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wc4hn"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(72, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c6ds"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(126, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2npn"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(108, 0, 18, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v41yv"]
+atlas = ExtResource("4_hvlrc")
+region = Rect2(90, 0, 18, 14)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gc5hf"]
+animations = [{
+"frames": [{
+"duration": 30.0,
+"texture": SubResource("AtlasTexture_7u43g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uss1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vs4i0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lutvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wc4hn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5c6ds")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2npn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v41yv")
+}],
+"loop": true,
+"name": &"HeartBeat",
+"speed": 8.0
+}]
+
+[node name="UnitInforBar" type="Control" unique_id=925057221 node_paths=PackedStringArray("UnitNameLabel", "UnitHealthLabel", "AbilityContainer")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_hvlrc")
+UnitNameLabel = NodePath("UnitInforBoard/UnitBanner/UnitName")
+UnitHealthLabel = NodePath("UnitInforBoard/HealthAmount")
+AbilityContainer = NodePath("AbilityContainer")
+AbilityBtnScene = ExtResource("2_00si8")
+
+[node name="UnitInforBoard" type="NinePatchRect" parent="." unique_id=185800890]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -142.0
+offset_right = 360.0
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("1_yac0r")
+region_rect = Rect2(2, 4, 173, 151)
+patch_margin_left = 54
+patch_margin_top = 43
+patch_margin_right = 54
+patch_margin_bottom = 43
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="UnitBanner" type="NinePatchRect" parent="UnitInforBoard" unique_id=703081564]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.0
+offset_top = -31.0
+offset_right = 110.0
+offset_bottom = 24.0
+grow_horizontal = 2
+texture = ExtResource("3_bvm5s")
+region_rect = Rect2(66, 132, 188, 60)
+patch_margin_left = 62
+patch_margin_right = 62
+
+[node name="UnitName" type="Label" parent="UnitInforBoard/UnitBanner" unique_id=801129393]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -66.25
+offset_top = -16.5
+offset_right = 67.5
+offset_bottom = 6.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Unit  Name"
+label_settings = SubResource("LabelSettings_1j5su")
+horizontal_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="UnitInforBoard" unique_id=1696185627]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_top = -17.0
+offset_bottom = -17.0
+grow_horizontal = 2
+
+[node name="HeartAnimatedSprite" type="AnimatedSprite2D" parent="UnitInforBoard/CenterContainer" unique_id=302565983]
+position = Vector2(-79, 29)
+scale = Vector2(3.3, 3)
+sprite_frames = SubResource("SpriteFrames_gc5hf")
+animation = &"HeartBeat"
+frame_progress = 0.86981684
+
+[node name="HealthAmount" type="Label" parent="UnitInforBoard" unique_id=31394976]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_right = -65.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "2"
+label_settings = SubResource("LabelSettings_1j5su")
+
+[node name="AbilityContainer" type="HBoxContainer" parent="." unique_id=708369522]
+layout_mode = 0
+offset_left = -239.0
+offset_top = -133.0
+offset_right = 230.0
+offset_bottom = -20.0
+alignment = 2
