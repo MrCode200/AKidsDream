@@ -20,9 +20,9 @@ public sealed class CommandResult
     public static CommandResult Fail(IGameCommand command, string reason) => new() { Command = command, Success = false, FailureReason = reason };
 }
 
-public sealed class GameContext(Board board, EventBus eventBus, Visualizer visualizer)
+public sealed class GameContext(Board board, EventBus eventBus, AbilityVisualizer abilityVisualizer)
 {
     public Board Board { get; init; } = board;
     public EventBus EventBus { get; init; } = eventBus;
-    public Visualizer Visualizer { get; init; } = visualizer;
+    public AbilityVisualizer AbilityVisualizer { get; init; } = abilityVisualizer;
 }

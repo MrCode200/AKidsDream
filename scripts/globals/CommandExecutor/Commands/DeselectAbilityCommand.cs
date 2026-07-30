@@ -9,7 +9,7 @@ public class DeselectAbilityCommand(Unit caster) : IGameCommand
         if (caster is null)
             return CommandResult.Fail(this, "No caster was provided.");
 
-        context.Visualizer.ClearTilemaps();
+        context.AbilityVisualizer.ClearTilemaps();
         
         return CommandResult.Ok(this);
     }

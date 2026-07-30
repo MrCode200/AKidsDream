@@ -17,7 +17,7 @@ public class CastAbilityCommand(
         if (targetTiles is null || targetTiles.Length == 0)
             return CommandResult.Fail(this, "No target tiles were provided.");
 
-        bool success = caster.AbilityC.Cast(abilityName, targetTiles);
+        bool success = caster.AbilityC.Cast(abilityName, targetTiles, context.Board);
 
         if (!success)
             return CommandResult.Fail(this, "Ability could not be cast");

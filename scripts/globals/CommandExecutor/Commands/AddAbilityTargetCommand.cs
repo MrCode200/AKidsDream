@@ -27,7 +27,7 @@ public sealed class AddAbilityTargetCommand(
         
         selectedTargets.Add(targetTile);
         
-        context.Visualizer.ShowEffectVisualization(
+        context.AbilityVisualizer.ShowEffectVisualization(
             caster,
             [.. selectedTargets],
             ability.Effect

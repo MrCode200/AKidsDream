@@ -1,7 +1,5 @@
-using System;
 using System.Linq;
 using AKidsDream.GameBoard;
-using AKidsDream.Globals;
 using Godot;
 
 namespace AKidsDream.Units.FieldAccessPatterns;
@@ -15,7 +13,7 @@ public partial class AdjacentPattern : AccessFieldPattern
 			.Select(i => new Vector2I(i % 3 - 1, i / 3 - 1))
 			.Where(tile => tile != Vector2I.Zero)
 			.Select(offset => origin + offset)
-			.Where(move => Board.Instance.TileInBoard(move))
+			.Where(board.TileInBoard)
 			.ToArray();
 	}
 }

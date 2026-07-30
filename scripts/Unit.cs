@@ -10,19 +10,20 @@ namespace AKidsDream.Units;
 /// Handles initialization & movement validation.
 /// </summary>
 [GlobalClass]
+[Tool]
 public partial class Unit : CharacterBody2D
 {
     // -- PROPERTIES --
     public int UnitId { get; private set; }
 
-    [Export] public StatsData Stats;
     [Export] public Global.UnitName UnitName;
     [Export] public Global.UnitTeam Team;
-
     /// <summary>
     /// The current tile location of the unit.
     /// </summary>
     [Export] public Vector2I TileLocation;
+
+    [Export] public UnitStatsData UnitStats;
 
     [Export] public StringName OnMoveCallEventBus;
 
@@ -38,23 +39,43 @@ public partial class Unit : CharacterBody2D
     {
     }
 
-    public Unit(StatsData stats)
+    public void Init(
+        Global.UnitName unitName, 
+        Global.UnitTeam team,
+        Vector2I tileLocation,
+        UnitStatsData unitStats,
+        int unitId = 0
+        )
     {
-        UnitId = Utils.GetNextId();
-        Stats = stats;
+        if (unitId == 0)
+            UnitId = Utils.GetNextId();
+        else
+        {
+            UnitId = unitId;
+            GD.PushWarning("unitId is passed on creation of Unit. This is not recommended.");
+        }
+        
+        UnitStats = unitStats;
+        UnitName = unitName;
+        Team = team;
+        TileLocation = tileLocation;
     }
 
     // -- LOGIC --
 
     public override void _Ready()
     {
+        Position = Board.TileToWorldPosition(TileLocation);
+        
+        if (Engine.IsEditorHint()) return;
+
         _injectReferenceAndAssignComponents();
         _setAppearance();
 
-        AddToGroup(Global.Groups.Units.GetFieldValue<string>());
+        AddToGroup(nameof(Global.Groups.Units));
         AddToGroup((Team == Global.UnitTeam.Enemy)
-            ? Global.Groups.EnemyUnits.GetFieldValue<string>()
-            : Global.Groups.PlayerUnits.GetFieldValue<string>()
+            ? nameof(Global.Groups.EnemyUnits)
+            : nameof(Global.Groups.PlayerUnits)
         );
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
         GD.Print($"Unit ready at {TileLocation}; Team: {Team}");
@@ -69,7 +90,7 @@ public partial class Unit : CharacterBody2D
         HealthC = GetNode<HealthComponent>("HealthComponent");
         if (HealthC is not null)
         {
-            HealthC.Stats = Stats;
+            HealthC.UnitStats = UnitStats;
         }
     }
 

@@ -7,8 +7,9 @@ using AKidsDream.Units;
 namespace AKidsDream.Managers;
 
 [GlobalClass]
-public partial class Visualizer : Node
+public partial class AbilityVisualizer : Node
 {
+	[Export] public Board Board;
 	[Export] public TileMapLayer ReachTilemap;
 	[Export] public TileMapLayer EffectTilemap;
 
@@ -21,14 +22,14 @@ public partial class Visualizer : Node
 	public void ShowReachVisualization(Unit source, Vector2I sourceTile, AbilityData ability, bool clearPrevious = true)
 	{
 		if (clearPrevious) ClearReachTilemap();
-		var visualizationData = ability.GetReachVisualizationData(source, Board.Instance, sourceTile);
+		var visualizationData = ability.GetReachVisualizationData(source, Board, sourceTile);
 		ShowVisualization(ReachTilemap, [visualizationData]);
 	}
 	
 	public void ShowEffectVisualization(Unit source, Vector2I[] targetTiles, EffectData effect, bool clearPrevious = true)
 	{
 		if (clearPrevious) ClearEffectTilemap();
-		var visualizationData = effect.GetEffectVisualizationData(source, Board.Instance, targetTiles);
+		var visualizationData = effect.GetEffectVisualizationData(source, Board, targetTiles);
 		ShowVisualization(EffectTilemap, [visualizationData]);
 	}
 	

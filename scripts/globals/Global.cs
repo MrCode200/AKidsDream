@@ -15,7 +15,7 @@ public class Global
 	*/
 	
 	// [Export(PropertyHint.Range, "1,1,1,or_greater,suffix:px")] 
-	// NOTE: can result in floating point error for specific numbers
+	// NOTE: could result in floating point error for specific numbers
 	public const float TileMapScale = 3.25f;
 	public const int TileSize = (int)(16 * TileMapScale); // 16 * 3.25(scale) = 52
 	public static readonly string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
@@ -23,11 +23,8 @@ public class Global
 
 	public enum Groups
 	{
-		[FieldValue<string>( "Units" )]
 		Units,
-		[FieldValue<string>("EnemyUnits")]
 		EnemyUnits,
-		[FieldValue<string>("PlayerUnits")]
 		PlayerUnits
 	}
 	
@@ -39,8 +36,7 @@ public class Global
 	}
 	
 	public enum UnitName
-	{
-		[FieldValue<string>("Soldier")]
+	{ 
 		Soldier
 	}
 

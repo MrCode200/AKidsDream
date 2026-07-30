@@ -20,7 +20,7 @@ public partial class GameLoopManager : Node
 	public void StartNewTurn()
 	{
 		// Update Actions 
-		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldValue<string>()))
+		foreach (var node in GetTree().GetNodesInGroup(nameof(Global.Groups.PlayerUnits)))
 		{
 			var unit = (Unit)node;
 			unit.AbilityC.ResetPool();
@@ -31,10 +31,9 @@ public partial class GameLoopManager : Node
 	
 	public void EndPlayerTurn()
 	{
-		foreach (var node in GetTree().GetNodesInGroup(Global.Groups.PlayerUnits.GetFieldValue<string>()))
+		foreach (var node in GetTree().GetNodesInGroup(nameof(Global.Groups.PlayerUnits)))
 		{
 			var unit = (Unit)node;
-			Utils.ToggleNodeProcessing(unit.SelectableC, false);
 		}
 
 		PlayerPlayed = true;

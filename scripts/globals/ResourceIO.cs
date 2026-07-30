@@ -4,7 +4,7 @@ using Godot;
 
 namespace AKidsDream.Globals;
 
-public class ResourceIO
+public static class ResourceIO
 {
     public static void EnsureDirectoryExists(string path)
     {
@@ -17,21 +17,45 @@ public class ResourceIO
         }
     }
     
-    public static T Load<T>(string path) where T : Resource
+    /// <summary>
+    /// Loads a resource from the specified path.
+    /// </summary>
+    /// <param name="path">The path to the save file</param>
+    /// <typeparam name="T">The resource to load, returns null if no such save file was found.</typeparam>
+    /// <returns>The Resource as T or null</returns>
+    public static T? Load<T>(string path) where T : Resource
     {
-        EnsureDirectoryExists(path);
-        T resource = ResourceLoader.Load<T>(path);
-        if (resource == null)
+        path = SetFileExtension(path, ".tres");
+        if (string.IsNullOrEmpty(path))
         {
-            GD.Print($"Failed to load resource from {path}");
+            GD.PrintErr("Path is not set, cannot save resource");
             return null;
         }
-        GD.Print($"Resource loaded from {path}");
-        return resource;
+        
+        EnsureDirectoryExists(path);
+        // try catch
+        try
+        {
+            T resource = ResourceLoader.Load<T>(path);
+            if (resource == null)
+            {
+                GD.Print($"Failed to load resource from {path}");
+                return null;
+            }
+            GD.Print($"Resource loaded from {path}");
+            return resource;
+        }
+        catch (InvalidCastException e)
+        {
+            GD.PrintErr($"Resource at {path} is not of type {typeof(T)}: {e.Message}");
+            return null;
+        }
     }
 
     public static Error Save(Resource resource, string path)
     {
+        path = SetFileExtension(path, ".tres");
+
         if (string.IsNullOrEmpty(path))
         {
             GD.PrintErr("Path is not set, cannot save resource");
@@ -47,5 +71,16 @@ public class ResourceIO
             GD.PrintErr($"Failed to save resource: {result}");
         
         return result;
+    }
+    
+    public static string? SetFileExtension(string path, string extension)
+    {
+        if (string.IsNullOrEmpty(path)) return null;
+        
+        path = path.TrimEnd('/').TrimEnd('\\');
+        path = Path.ChangeExtension(path, extension);
+        GD.Print($"File extension set to {extension} for {path}");
+        
+        return path;
     }
 }

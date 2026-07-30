@@ -18,7 +18,7 @@ public class SelectAbilityCommand(
         if (ability is null)
             return CommandResult.Fail(this, $"Ability '{abilityName}' for '{caster.UnitName}' was not found.");
 
-        context.Visualizer.ShowReachVisualization(
+        context.AbilityVisualizer.ShowReachVisualization(
             caster,
             caster.TileLocation,
             ability

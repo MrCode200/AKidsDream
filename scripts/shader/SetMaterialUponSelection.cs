@@ -14,6 +14,8 @@ public partial class SetMaterialUponSelection : Sprite2D
 	
 	public override void _Ready()
 	{
+		if (Engine.IsEditorHint()) return;
+		
 		Material = null;
 		SelectableC.Selected += (selected) => { Material = selected ? SelectionMaterial : null; };
 	}

@@ -1,36 +1,35 @@
 using System;
 using System.Reflection;
-using AKidsDream.GameBoard;
 using Godot;
-using TileData = AKidsDream.GameBoard.TileData;
+using Array = Godot.Collections.Array;
 
 namespace AKidsDream.Globals;
 
-// NOTE:
-// This is a singleton class, but contains only statics
-// Maybe Remove singleton...
 /// <summary>
 /// Global utility class providing helper functions for resource management and other common operations.
 /// This class implements the singleton pattern and should be added to the autoloaded singletons in Godot.
 /// </summary>
 [Tool]
-public partial class Utils : Node2D
+public partial class Utils
 {
-    /// <summary>
-    /// Gets the singleton instance of the Utils class.
-    /// </summary>
-    public static Utils Instance { get; private set; }
-
     private static int _nextId;
+    // CHECK:
+    // Track all id's in a list and check for duplicates, set _nextId always to the highest value id in list?
+    // Or just track highest/set Id on creation loading of board...
 
-    /// <summary>
-    /// Called when the node is added to the scene tree. Initializes the singleton instance.
-    /// </summary>
-    public override void _Ready()
+    public static void SetNextId(int id)
     {
-        Instance = this;
+        if (id < _nextId)
+            GD.PushWarning("NextId is set to less than to the current id. " +
+                           "This can cause issues with id generation.");
+        _nextId = id;
     }
 
+    /// <summary>
+    /// A super simple incremental id generator, local to this class.
+    /// Doesn't do any id checks.
+    /// </summary>
+    /// <returns>The next available id</returns>
     public static int GetNextId()
     {
         return _nextId++;
@@ -46,7 +45,7 @@ public partial class Utils : Node2D
     /// This method copies all storage properties except for resource_path, resource_name, and script.
     /// It uses Godot's property list to dynamically copy properties.
     /// </remarks>
-    public static T RebuildTyped<T>(Resource source) where T : Resource, new()
+    public static T RebuildResourceAsT<T>(Resource source) where T : Resource, new()
     {
         if (source == null) return null;
 
@@ -59,22 +58,38 @@ public partial class Utils : Node2D
             if ((usage & PropertyUsageFlags.Storage) == 0) continue;
             if (name is "resource_path" or "resource_name" or "script") continue;
 
-            target.Set(name, source.Get(name));
+            var value = source.Get(name);
+
+            // Handle Array<Resource> properties by rebuilding each element
+            if (value.VariantType == Variant.Type.Array)
+            {
+                var array = value.AsGodotArray();
+                if (array.Count > 0)
+                {
+                    var firstElement = array[0];
+                    
+                    if (firstElement is Resource)
+                    {
+                        var rebuiltArray = new Array();
+                        foreach (Resource item in array)
+                        {
+                            if (item != null)
+                            {
+                                var rebuilt = RebuildResourceAsT<T>(item);
+                                rebuiltArray.Add(rebuilt);
+                            }
+                        }
+
+                        target.Set(name, rebuiltArray);
+                        continue;
+                    }
+                }
+            }
+
+            target.Set(name, value);
         }
 
         return target;
-    }
-
-    public static void ToggleNodeProcessing(Node node, bool enable)
-    {
-        if (enable)
-        {
-            node.SetProcessMode(ProcessModeEnum.Inherit);
-        }
-        else
-        {
-            node.SetProcessMode(ProcessModeEnum.Disabled);
-        }
     }
 }
 

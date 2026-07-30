@@ -6,18 +6,19 @@ using AKidsDream.Managers;
 
 namespace AKidsDream.Commands;
 
+[GlobalClass]
 public partial class CommandExecutor : Node
 {
-    [Export] public Visualizer Visualizer;
+    [Export] public AbilityVisualizer AbilityVisualizer;
+    [Export] public Board Board;
     private GameContext _context;
 
     public override void _Ready()
     {
-        // CHECK: Is really needed? As it's a singleton?'
         _context = new GameContext(
-            Board.Instance,
+            Board,
             EventBus.Instance,
-            Visualizer
+            AbilityVisualizer
         );
     }
 

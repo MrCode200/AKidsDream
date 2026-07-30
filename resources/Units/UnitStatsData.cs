@@ -5,7 +5,8 @@ using AKidsDream.Globals;
 namespace AKidsDream.Units;
 
 [GlobalClass]
-public partial class StatsData : Resource
+[Tool]
+public partial class UnitStatsData : Resource
 {
 	[Export] public int MaxHealth;
 	[Export] public int Health;

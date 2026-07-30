@@ -64,12 +64,13 @@ public partial class AbilityComponent : Node
 	/// Ignores Cost checks. To do Cost checks use <see cref="CanAfford(StringName)"></see>.
 	/// </summary>
 	/// <param name="name">The name of the <see cref="AbilityData"/>.</param>
+	/// <param name="board">The board instance</param>
 	/// <returns></returns>
-	public Vector2I[] ValidTiles(StringName name)
+	public Vector2I[] ValidTiles(StringName name, Board board)
 	{
 		var action = GetAbility(name);
 		if (action?.ReachPattern is null) return Array.Empty<Vector2I>();
-		return action.ReachPattern.GetTiles(Unit.TileLocation, Board.Instance);
+		return action.ReachPattern.GetTiles(Unit.TileLocation, board);
 	}
 
 	/// <summary>
@@ -78,6 +79,7 @@ public partial class AbilityComponent : Node
 	/// </summary>
 	/// <param name="name">The name of the <see cref="AbilityData"/></param>
 	/// <param name="targetTiles">Onto which tiles the <see cref="AbilityData"/>.Effect(<see cref="EffectData"/>) should be applied</param>
+	/// <param name="board">The board instance, passed as dependency for other functions.</param>
 	/// <returns>True if the ability was cast, False if the ability could not be cast on the selected tiles.
 	/// <list type="number">
 	/// <item>True if the ability was cast</item>
@@ -86,15 +88,15 @@ public partial class AbilityComponent : Node
 	/// <item>False if the tiles aren't in the reach pattern</item>
 	/// <item>False if not enough Points are in the Pool</item>
 	/// </list></returns>
-	public bool Cast(StringName name, Vector2I[] targetTiles)
+	public bool Cast(StringName name, Vector2I[] targetTiles, Board board)
 	{
 		var ability = GetAbility(name);
 		if (ability is null) return false;
 		foreach (Vector2I tile in targetTiles)
-			if (!CanAfford(name) || !ValidTiles(name).Contains(tile)) return false;
+			if (!CanAfford(name) || !ValidTiles(name, board).Contains(tile)) return false;
 
 		RemainingAbilityPoints[ability.PoolName] -= ability.Cost;
-		var result = ability.Effect.Apply(Unit, Board.Instance, targetTiles);
+		var result = ability.Effect.Apply(Unit, board, targetTiles);
 		EmitSignal(SignalName.AbilityApplied, Unit, ability, result);
 		return true;
 	}

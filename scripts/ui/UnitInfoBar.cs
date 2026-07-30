@@ -26,8 +26,8 @@ public partial class UnitInfoBar : Control
 		
 		foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();
 		
-		UnitNameLabel.Text = unit.UnitName.GetFieldValue<string>();
-		UnitHealthLabel.Text = unit.Stats.Health.ToString();
+		UnitNameLabel.Text = nameof(unit.UnitName);
+		UnitHealthLabel.Text = unit.UnitStats.Health.ToString();
 		
 		AbilityComponent abilityC = unit.AbilityC;
 		foreach (AbilityData ability in abilityC.Abilities)

@@ -17,7 +17,7 @@ public partial class DamageEffect : EffectData
 
         foreach (var tile in tiles)
         {
-            var target = Board.Instance.GetUnitAt(tile);
+            var target = board.GetUnitAt(tile);
             if (target == null) continue;
             target.HealthC.Damage(Amount);
             results.Add(new DamageResult { Target = target, Tile = tile, Amount = Amount });

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjjhphs7rk7ul"]
 
-[ext_resource type="Script" uid="uid://dsl153k67ljph" path="res://scripts/units/Unit.cs" id="1_wfjo2"]
+[ext_resource type="Script" uid="uid://dsl153k67ljph" path="res://scripts/Unit.cs" id="1_wfjo2"]
 [ext_resource type="Resource" uid="uid://co4w53u3hq3fq" path="res://resources/Units/BaseUnitStats.tres" id="2_eiew3"]
 [ext_resource type="PackedScene" uid="uid://b3l8gwl37g2l2" path="res://scenes/components/healthComponent.tscn" id="3_4vwke"]
 [ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://shaders/outline.gdshader" id="3_jrfw0"]
@@ -39,7 +39,7 @@ region = Rect2(48, 192, 16, 16)
 collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_wfjo2")
-Stats = ExtResource("2_eiew3")
+UnitStats = ExtResource("2_eiew3")
 OnMoveCallEventBus = &"UnitMoved"
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1259677528 node_paths=PackedStringArray("SelectableC")]

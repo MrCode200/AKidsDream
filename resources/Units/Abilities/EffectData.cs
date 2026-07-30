@@ -80,7 +80,7 @@ public abstract partial class EffectData : Resource
         Vector2I[] targetTiles
     )
     {
-        // TODO: Handle AllowDuplicateTiles
+        // TODO: Handle visualization of duplicate tiles
         var tiles = GetAffectedTiles(targetTiles, board);
         return (Global.AtlasCoordsSpriteVectors[EffectAtlasCoords], tiles);
     }

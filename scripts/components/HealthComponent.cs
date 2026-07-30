@@ -14,7 +14,7 @@ public partial class HealthComponent : Node
 	/// <summary>
 	/// The stats data containing health information for this component.
 	/// </summary>
-	public StatsData Stats;
+	public UnitStatsData UnitStats;
 	
 	/// <summary>
 	/// Emitted when the health value changes.
@@ -35,10 +35,10 @@ public partial class HealthComponent : Node
 	/// <param name="amount">The new maximum health value.</param>
 	public void SetMaxHealth(int amount)
 	{
-		Stats.MaxHealth = amount;
-		if (Stats.Health > amount)
+		UnitStats.MaxHealth = amount;
+		if (UnitStats.Health > amount)
 		{
-			Stats.Health = amount;
+			UnitStats.Health = amount;
 		}
 	}
 	
@@ -50,9 +50,9 @@ public partial class HealthComponent : Node
 	/// <param name="amount">The amount of damage to apply.</param>
 	public void Damage(int amount)
 	{
-		Stats.Health -= amount;
+		UnitStats.Health -= amount;
 		EmitSignal(SignalName.HealthChanged, amount);
-		if (Stats.Health <= 0)
+		if (UnitStats.Health <= 0)
 		{
 			EmitSignal(SignalName.HealthDepleted);
 		}
@@ -65,8 +65,8 @@ public partial class HealthComponent : Node
 	/// <param name="amount">The amount of health to restore.</param>
 	public void Heal(int amount)
 	{
-		amount = Math.Min(Stats.MaxHealth - Stats.Health, amount);
-		Stats.Health += amount;
+		amount = Math.Min(UnitStats.MaxHealth - UnitStats.Health, amount);
+		UnitStats.Health += amount;
 		
 		EmitSignal(SignalName.HealthChanged, amount);
 	}
