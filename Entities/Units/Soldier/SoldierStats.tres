@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="StatsData" format=3 uid="uid://cejcwp3udo64y"]
+
+[ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="1_n11pi"]
+
+[resource]
+script = ExtResource("1_n11pi")
+MaxHealth = 2
+Health = 2
+Attack = 1
+metadata/_custom_type_script = "uid://8ujfv88riuka"

@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://cyhkas8bsi7kd"]
+
+[ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://Entities/Board/board.tscn" id="1_jnam8"]
+[ext_resource type="Script" uid="uid://c85ubqn5h1vee" path="res://Core/Managers/GameManager.cs" id="1_ypqj4"]
+[ext_resource type="Script" uid="uid://byoh3ljptnybl" path="res://Common/StateManagement/StateMachine.cs" id="2_5cnm3"]
+[ext_resource type="Script" uid="uid://caf4fhhjdtr4w" path="res://Core/Managers/PlayerInteractionController.cs" id="2_cpkaj"]
+[ext_resource type="Texture2D" uid="uid://ttl3cvsve1lc" path="res://Entities/Board/Assets/tiles.png" id="4_cpkaj"]
+[ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://Core/Managers/CommandsSystem/CommandExecutor.cs" id="4_ypqj4"]
+[ext_resource type="Script" uid="uid://c2vkehvslp083" path="res://Core/Managers/GameLoopManager.cs" id="5_1totg"]
+[ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://UI/UnitInfoBar/UnitInfoBar.tscn" id="5_d2vp3"]
+[ext_resource type="Script" uid="uid://irt720bqh762" path="res://Core/Managers/AbilityVisualizer.cs" id="5_ypqj4"]
+[ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
+texture = ExtResource("4_cpkaj")
+1:12/0 = 0
+2:12/0 = 0
+3:12/0 = 0
+4:12/0 = 0
+5:12/0 = 0
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_1totg"]
+sources/0 = SubResource("TileSetAtlasSource_cpkaj")
+
+[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("EntityLayer", "GameBoard")]
+script = ExtResource("1_ypqj4")
+LoadFileName = "DevBoardSave.tres"
+EntityLayer = NodePath("EntityLayer")
+SaveOnExit = false
+GameBoard = NodePath("SystemsLayer/Board")
+
+[node name="SystemsLayer" type="Node" parent="." unique_id=1659508561]
+
+[node name="Board" parent="SystemsLayer" unique_id=2027072769 instance=ExtResource("1_jnam8")]
+unique_name_in_owner = true
+
+[node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226]
+position = Vector2(234, 294)
+
+[node name="PlayerInteractionController" type="Node2D" parent="SystemsLayer" unique_id=574570579 node_paths=PackedStringArray("Board", "AbilityVisualizer", "StateMachine", "CommandExecutor")]
+script = ExtResource("2_cpkaj")
+Board = NodePath("../Board")
+AbilityVisualizer = NodePath("../AbilityVisualizer")
+StateMachine = NodePath("StateMachine")
+CommandExecutor = NodePath("../CommandExecutor")
+
+[node name="StateMachine" type="Node" parent="SystemsLayer/PlayerInteractionController" unique_id=2146957956]
+script = ExtResource("2_5cnm3")
+
+[node name="AbilityVisualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Board", "ReachTilemap", "EffectTilemap")]
+script = ExtResource("5_ypqj4")
+Board = NodePath("../Board")
+ReachTilemap = NodePath("ReachAbilityTiles")
+EffectTilemap = NodePath("EffectTiles")
+
+[node name="ReachAbilityTiles" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1879383876]
+modulate = Color(1, 1, 1, 0.3137255)
+scale = Vector2(3.25, 3.25)
+tile_set = SubResource("TileSet_1totg")
+
+[node name="EffectTiles" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=910760774]
+modulate = Color(1, 1, 1, 0.3137255)
+scale = Vector2(3.25, 3.25)
+tile_set = SubResource("TileSet_1totg")
+
+[node name="CommandExecutor" type="Node" parent="SystemsLayer" unique_id=716602167 node_paths=PackedStringArray("AbilityVisualizer", "Board")]
+script = ExtResource("4_ypqj4")
+AbilityVisualizer = NodePath("../AbilityVisualizer")
+Board = NodePath("../Board")
+
+[node name="GameLoopManager" type="Node" parent="SystemsLayer" unique_id=1524335731]
+script = ExtResource("5_1totg")
+
+[node name="EntityLayer" type="Node" parent="." unique_id=2094553575]
+
+[node name="Soldier" parent="EntityLayer" unique_id=1080513067 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+Team = 1
+
+[node name="@CharacterBody2D@64682" parent="EntityLayer" unique_id=189345892 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+Team = 1
+
+[node name="@CharacterBody2D@64683" parent="EntityLayer" unique_id=1875434622 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+Team = 1
+
+[node name="@CharacterBody2D@64684" parent="EntityLayer" unique_id=42849170 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+
+[node name="@CharacterBody2D@64685" parent="EntityLayer" unique_id=702691326 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+
+[node name="@CharacterBody2D@64686" parent="EntityLayer" unique_id=796098502 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+
+[node name="@CharacterBody2D@64687" parent="EntityLayer" unique_id=956935496 instance=ExtResource("9_n2opw")]
+position = Vector2(26, 26)
+
+[node name="@CharacterBody2D@64688" parent="EntityLayer" unique_id=96342139 instance=ExtResource("9_n2opw")]
+position = Vector2(130, 78)
+Team = 1
+TileLocation = Vector2i(2, 1)
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=140492902]
+layer = 50
+
+[node name="UnitInforBar" parent="UILayer" unique_id=925057221 instance=ExtResource("5_d2vp3")]

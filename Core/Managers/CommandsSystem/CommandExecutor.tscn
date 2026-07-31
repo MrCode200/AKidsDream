@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bi4vdosjbf80i"]
+
+[ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://uncategorized/managers/CommandsSystem/CommandExecutor.cs" id="1_pphwv"]
+
+[node name="CommandExecutor" type="Node" unique_id=1426876349]
+script = ExtResource("1_pphwv")
