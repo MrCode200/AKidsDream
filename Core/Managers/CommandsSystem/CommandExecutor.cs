@@ -3,6 +3,8 @@ using System;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers;
+using AKidsDream.Common.Logging;
+using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -12,6 +14,7 @@ public partial class CommandExecutor : Node
     [Export] public AbilityVisualizer AbilityVisualizer;
     [Export] public Board Board;
     private GameContext _context;
+    private readonly ILogger _log = GameLogger.For<CommandExecutor>();
 
     public override void _Ready()
     {
@@ -20,10 +23,32 @@ public partial class CommandExecutor : Node
             EventBus.Instance,
             AbilityVisualizer
         );
+        _log.Here().Info("CommandExecutor initialized with GameContext");
     }
 
     public CommandResult Execute(IGameCommand command)
     {
-        return command.Execute(_context);
+        _log.Here().Debug(
+            "Executing command {CommandType}",
+            command.GetType().Name
+            );
+        
+        var result = command.Execute(_context);
+        
+        if (!result.Success)
+        {
+            _log.Here().Warn(
+                "Command {CommandType} failed with reason: {FailureReason}",
+                command.GetType().Name,
+                result.FailureReason);
+        }
+        else
+        {
+            _log.Here().Debug(
+                "Command {CommandType} succeeded",
+                command.GetType().Name);
+        }
+        
+        return result;
     }
 }

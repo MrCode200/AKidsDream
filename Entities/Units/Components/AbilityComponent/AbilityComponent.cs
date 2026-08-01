@@ -4,7 +4,9 @@ using Godot;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Common.Logging;
 using Godot.Collections;
+using Serilog;
 using Array = System.Array;
 
 namespace AKidsDream.Units.Resources.Components;
@@ -14,6 +16,8 @@ namespace AKidsDream.Units.Resources.Components;
 public partial class AbilityComponent : Node
 {
 	[Export] public Unit Unit;
+
+	private ILogger _log = GameLogger.For<AbilityComponent>();
 
 	/// <summary>
 	/// Contains the current ability points for each pool.
@@ -35,6 +39,9 @@ public partial class AbilityComponent : Node
 
 	public override void _Ready()
 	{
+		_log = _log.ForContext("UnitName", Unit?.UnitName)
+			.ForContext("UnitId", Unit?.UnitId);
+		if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
 		ResetPool();
 	}
 
@@ -93,12 +100,37 @@ public partial class AbilityComponent : Node
 	public bool Cast(StringName name, Vector2I[] targetTiles, Board board)
 	{
 		var ability = GetAbility(name);
-		if (ability is null) return false;
-		foreach (Vector2I tile in targetTiles)
-			if (!CanAfford(name) || !ValidTiles(name, board).Contains(tile)) return false;
+		if (ability is null)
+		{
+			_log.Here().Warn("Ability '{AbilityName}' not found", name);
+			return false;
+		}
 
-		RemainingAbilityPoints[ability.PoolName] -= ability.Cost;
+		if (targetTiles.Any(tile => !CanAfford(name) || !ValidTiles(name, board).Contains(tile)))
+		{
+			_log.Here().Debug("Cannot cast ability '{AbilityName}': cannot afford or tile not in reach", ability.Name);
+			return false;
+		}
+
 		var result = ability.Effect.Apply(Unit, board, targetTiles);
+
+		if (result is ErrorResult errorResult)
+		{
+			_log.Here().Error("Ability '{AbilityName}' execution with effect: {EffectType} failed with {Error}", 
+				ability.Name, errorResult.Error, errorResult.Effect.GetType().Name);
+		}
+		else
+		{
+			_log.Here().Info(
+				"Cast ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
+				ability.Name,
+				targetTiles.Length,
+				ability.Cost,
+				ability.PoolName);
+			RemainingAbilityPoints[ability.PoolName] -= ability.Cost;
+		}
+
+
 		EmitSignal(SignalName.AbilityCast, Unit, ability, result);
 		EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCast, Unit, ability, result);
 		return true;

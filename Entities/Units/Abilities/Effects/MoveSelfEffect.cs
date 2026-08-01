@@ -1,6 +1,9 @@
-﻿using AKidsDream.GameBoard;
+﻿#nullable enable
+using AKidsDream.Common.Logging;
+using AKidsDream.GameBoard;
 using AKidsDream.Units.Resources;
 using Godot;
+using Serilog;
 
 namespace AKidsDream.Abilities.Effects;
 
@@ -12,8 +15,12 @@ public partial class MoveSelfEffect : EffectData
         var tiles = GetAffectedTiles(targetTiles, board);
         if (tiles.Length != 1)
         {
-            GD.PrintErr("MoveSelfEffect: More than one tile affected by the pattern");
-            return null;
+            return new ErrorResult 
+            { 
+                Source = source, 
+                Effect = this, 
+                Error = $"MoveSelfEffect pattern returned multiple tiles: {tiles.Length}" 
+            };        
         }
         
         Vector2I from = source.TileLocation;

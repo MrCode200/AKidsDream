@@ -1,5 +1,7 @@
 using System;
 using Godot;
+using AKidsDream.Common.Logging;
+using Serilog;
 
 namespace AKidsDream.Units.Resources.Components;
 
@@ -15,6 +17,8 @@ public partial class HealthComponent : Node
 	/// The stats data containing health information for this component.
 	/// </summary>
 	public UnitStatsData UnitStats;
+
+	private ILogger _log = GameLogger.For<HealthComponent>();
 	
 	/// <summary>
 	/// Emitted when the health value changes.
@@ -26,6 +30,14 @@ public partial class HealthComponent : Node
 	/// Emitted when the entity is killed (health reaches 0 or below).
 	/// </summary>
 	[Signal] public delegate void HealthDepletedEventHandler();
+
+	public override void _Ready()
+	{
+		var unit = Owner as Unit;
+		_log = _log.ForContext("UnitName", unit?.UnitName)
+			.ForContext("UnitId", unit?.UnitId)
+			.ForContext("Team", unit?.Team);
+	}
 	
 	/// <summary>
 	/// Sets the maximum health value.
@@ -39,6 +51,14 @@ public partial class HealthComponent : Node
 		if (UnitStats.Health > amount)
 		{
 			UnitStats.Health = amount;
+			_log.Here().Debug(
+				"Max health set to {MaxHealth}, current health capped to {CurrentHealth}",
+				amount,
+				UnitStats.Health);
+		}
+		else
+		{
+			_log.Here().Debug("Max health set to {MaxHealth}", amount);
 		}
 	}
 	
@@ -50,8 +70,17 @@ public partial class HealthComponent : Node
 	/// <param name="amount">The amount of damage to apply.</param>
 	public void Damage(int amount)
 	{
+		var previousHealth = UnitStats.Health;
 		UnitStats.Health -= amount;
 		EmitSignal(SignalName.HealthChanged, amount);
+
+		_log.Here().Info(
+			"Took {DamageAmount} damage, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
+			amount,
+			previousHealth,
+			UnitStats.Health,
+			UnitStats.MaxHealth);
+
 		if (UnitStats.Health <= 0)
 		{
 			EmitSignal(SignalName.HealthDepleted);
@@ -65,9 +94,20 @@ public partial class HealthComponent : Node
 	/// <param name="amount">The amount of health to restore.</param>
 	public void Heal(int amount)
 	{
+		var previousHealth = UnitStats.Health;
 		amount = Math.Min(UnitStats.MaxHealth - UnitStats.Health, amount);
 		UnitStats.Health += amount;
 		
+		if (amount > 0)
+		{
+			_log.Here().Info(
+				"Healed {HealAmount} health, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
+				amount,
+				previousHealth,
+				UnitStats.Health,
+				UnitStats.MaxHealth);
+		}
+
 		EmitSignal(SignalName.HealthChanged, amount);
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers;
+using AKidsDream.Common.Logging;
 using Godot.Collections;
+using Serilog;
 
 namespace AKidsDream.Commands;
 

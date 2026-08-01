@@ -1,4 +1,6 @@
-﻿using AKidsDream.Units.Resources;
+﻿using AKidsDream.Common.Logging;
+using AKidsDream.Units.Resources;
+using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -8,7 +10,13 @@ public sealed class SelectUnitCommand(Unit unit) : IGameCommand
     {
         if (unit is null)
             return CommandResult.Fail(this, "Unit is null");
-        
+
+        Log.ForContext<SelectUnitCommand>().Here().Info(
+            "Selected unit '{UnitName}' (id: {UnitId}) at {TileLocation}",
+            unit.UnitName,
+            unit.UnitId,
+            unit.TileLocation);
+
         unit.SelectableC.IsSelected = true;
         
         return CommandResult.Ok(this);

@@ -1,5 +1,7 @@
-﻿using AKidsDream.Units.Resources;
+﻿using AKidsDream.Common.Logging;
+using AKidsDream.Units.Resources;
 using Godot;
+using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -21,6 +23,13 @@ public class CastAbilityCommand(
 
         if (!success)
             return CommandResult.Fail(this, "Ability could not be cast");
+
+        Log.ForContext<CastAbilityCommand>().Here().Info(
+            "Casted ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId}) at {TargetCount} target(s)",
+            abilityName,
+            caster.UnitName,
+            caster.UnitId,
+            targetTiles.Length);
         
         return CommandResult.Ok(this);
     }

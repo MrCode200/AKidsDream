@@ -1,15 +1,18 @@
-﻿using System.Linq;
+﻿#nullable enable
+using System.Linq;
+using AKidsDream.Common.Logging;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 using AKidsDream.Units.Resources;
+using Serilog;
 
 namespace AKidsDream.Abilities.Effects;
 
 [GlobalClass]
 public abstract partial class EffectData : Resource
 {
-    [Export] public AccessFieldPattern EffectPattern;
+    [Export] public AccessFieldPattern? EffectPattern;
     [Export] public Global.AtlasCoordsSprite EffectAtlasCoords;
 
     /// <summary>
@@ -52,11 +55,11 @@ public abstract partial class EffectData : Resource
     /// <param name="targetTiles">The tiles the player has selected</param>
     /// <param name="board">The board containing TileData's</param>
     /// <returns>An array of <see cref="Vector2I"/> which is the TileData.TileLocation</returns>
-    protected Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board)
+    protected virtual Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board)
     {
         if (EffectPattern == null)
         {
-            GD.PrintErr("EffectPattern is null");
+            Log.ForContext<EffectData>().Here().Error("EffectPattern is null {EffectType}", GetType().Name);
             return [];
         }
 
@@ -71,7 +74,7 @@ public abstract partial class EffectData : Resource
     /// <param name="source">The <see cref="Unit"/> who the Ability belongs to</param>
     /// <param name="board">The <see cref="Board"/></param>
     /// <param name="targetTiles">An array of <see cref="Vector2I"/> representing the selected Tiles</param>
-    public (Vector2I atlasCoord, Vector2I[] tiles) GetEffectVisualizationData(
+    public virtual (Vector2I atlasCoord, Vector2I[] tiles) GetEffectVisualizationData(
         Unit source,
         Board board,
         Vector2I[] targetTiles
@@ -95,8 +98,9 @@ public abstract partial class EffectData : Resource
     {
         if (HasValidTargetCount(targetTiles)) return ApplyEffect(source, board, targetTiles);
 
-        GD.PrintErr($"Invalid amount of targets: {targetTiles.Length}");
-        return new InvalidTargetCountErrorResult()
+        Log.ForContext<EffectData>().Here().Error("Invalid target count {ActualCount} {MinTargets} {MaxTargets} {EffectType}", 
+            targetTiles.Length, MinTargets, MaxTargets, GetType().Name);
+        return new InvalidTargetCountErrorResult
         {
             Source = source, Effect = this, Error = $"Invalid amount of targets: {targetTiles.Length}",
             Actual = targetTiles.Length

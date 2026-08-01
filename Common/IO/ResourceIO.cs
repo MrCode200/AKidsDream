@@ -1,11 +1,16 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using Godot;
+using AKidsDream.Common.Logging;
+using Serilog;
 
 namespace AKidsDream.Managers.SaveSystems;
 
 public static class ResourceIO
 {
+    private static ILogger _log = GameLogger.For(typeof(ResourceIO)); 
+    
     public static void EnsureDirectoryExists(string path)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
@@ -14,6 +19,7 @@ public static class ResourceIO
         if (!DirAccess.DirExistsAbsolute(dirPath))
         {
             DirAccess.MakeDirAbsolute(dirPath);
+            _log.Here().Debug("Created directory {DirPath}", dirPath);
         }
     }
     
@@ -28,7 +34,7 @@ public static class ResourceIO
         path = SetFileExtension(path, ".tres");
         if (string.IsNullOrEmpty(path))
         {
-            GD.PrintErr("Path is not set, cannot save resource");
+            _log.Here().Error("Path is not set, cannot load resource");
             return null;
         }
         
@@ -36,18 +42,18 @@ public static class ResourceIO
         // try catch
         try
         {
-            T resource = ResourceLoader.Load<T>(path);
+            var resource = ResourceLoader.Load<T>(path);
             if (resource == null)
             {
-                GD.Print($"Failed to load resource from {path}");
+                _log.Here().Warn("Failed to load resource from {Path}", path);
                 return null;
             }
-            GD.Print($"Resource loaded from {path}");
+            _log.Here().Debug("Resource loaded from {Path} {ResourceType}", path, typeof(T).Name);
             return resource;
         }
         catch (InvalidCastException e)
         {
-            GD.PrintErr($"Resource at {path} is not of type {typeof(T)}: {e.Message}");
+            _log.Here().Error(e, "Resource at {Path} is not of type {ExpectedType}", path, typeof(T).Name);
             return null;
         }
     }
@@ -58,7 +64,7 @@ public static class ResourceIO
 
         if (string.IsNullOrEmpty(path))
         {
-            GD.PrintErr("Path is not set, cannot save resource");
+            _log.Here().Error("Path is not set, cannot save resource");
             return Error.InvalidParameter;
         }
         
@@ -66,9 +72,9 @@ public static class ResourceIO
 
         Error result = ResourceSaver.Save(resource, path);
         if (result == Error.Ok)
-            GD.Print($"Resource saved to {path}");
+            _log.Here().Debug("Resource saved to {Path} {ResourceType}", path, resource.GetType().Name);
         else
-            GD.PrintErr($"Failed to save resource: {result}");
+            _log.Here().Error("Failed to save resource to {Path} {Error}", path, result);
         
         return result;
     }
@@ -76,10 +82,11 @@ public static class ResourceIO
     public static string? SetFileExtension(string path, string extension)
     {
         if (string.IsNullOrEmpty(path)) return null;
+        if (path.EndsWith(extension)) return path;
         
         path = path.TrimEnd('/').TrimEnd('\\');
         path = Path.ChangeExtension(path, extension);
-        GD.Print($"File extension set to {extension} for {path}");
+        _log.Here().Debug("File extension set to {Extension} for {Path}", extension, path);
         
         return path;
     }

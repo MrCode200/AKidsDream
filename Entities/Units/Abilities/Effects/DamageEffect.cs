@@ -9,7 +9,7 @@ namespace AKidsDream.Abilities.Effects;
 public partial class DamageEffect : EffectData
 {
     [Export] public int Amount;
-
+    
     public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTile)
     {
         var tiles = GetAffectedTiles(targetTile, board);
@@ -22,7 +22,8 @@ public partial class DamageEffect : EffectData
             target.HealthC.Damage(Amount);
             results.Add(new DamageResult { Target = target, Tile = tile, Amount = Amount });
         }
-        if (results.Count == 0) return null;
+        if (results.Count == 0) 
+            return new CompositeResult { Results = [] };
         return results.Count > 1 ? new CompositeResult { Results = results } : results[0];
     }
 }

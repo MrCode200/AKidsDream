@@ -1,5 +1,7 @@
 using Godot;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Common.Logging;
+using Serilog;
 
 namespace AKidsDream.Units.Resources.Components;
 
@@ -7,22 +9,28 @@ namespace AKidsDream.Units.Resources.Components;
 [Icon("res://Assets/Node Icons/icon-skull-50.png")]
 public partial class DeathComponent : Node
 {
-	[Export] public Node Body;
+	[Export] public Unit Unit;
 	[Export] public StringName OnUnitKilledCallEventBus;
 	[Export] public HealthComponent HealthC;
 	[Signal] public delegate void UnitKilledEventHandler(Unit unit);
 
+	private ILogger _log = GameLogger.For<DeathComponent>();
+
 	public override void _Ready()
 	{
+		_log = _log.ForContext("UnitName", Unit.UnitName)
+			.ForContext("UnitId", Unit.UnitId)
+			.ForContext("Team", Unit.Team);
 		HealthC.HealthDepleted += OnHealthDepleted;
 	}
 
 	private void OnHealthDepleted()
 	{
-		EmitSignal(SignalName.UnitKilled, Body);
+		_log.Here().Info("Unit killed");
+
+		EmitSignal(SignalName.UnitKilled, Unit);
 		if (!string.IsNullOrEmpty(OnUnitKilledCallEventBus))
-			EventBus.Instance.EmitSignal(OnUnitKilledCallEventBus, Body);
-		Body.QueueFree();
-		GD.Print("Unit killed");
+			EventBus.Instance.EmitSignal(OnUnitKilledCallEventBus, Unit);
+		Unit.QueueFree();
 	}
 }

@@ -1,4 +1,6 @@
-﻿using AKidsDream.Units.Resources;
+﻿using AKidsDream.Common.Logging;
+using AKidsDream.Units.Resources;
+using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -8,6 +10,11 @@ public class DeselectAbilityCommand(Unit caster) : IGameCommand
     {
         if (caster is null)
             return CommandResult.Fail(this, "No caster was provided.");
+
+        Log.ForContext<DeselectAbilityCommand>().Here().Info(
+            "Deselected ability for unit '{UnitName}' (id: {UnitId})",
+            caster.UnitName,
+            caster.UnitId);
 
         context.AbilityVisualizer.ClearTilemaps();
         

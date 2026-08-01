@@ -1,13 +1,13 @@
-[gd_scene format=3 uid="uid://cjjhphs7rk7ul"]
+[gd_scene format=3 uid="uid://cmiql00ctnb8s"]
 
 [ext_resource type="Script" uid="uid://dsl153k67ljph" path="res://Entities/Units/BaseUnit/Unit.cs" id="1_wfjo2"]
-[ext_resource type="PackedScene" uid="uid://b3l8gwl37g2l2" path="res://Entities/Units/Components/Health Component/HealthComponent.tscn" id="3_4vwke"]
+[ext_resource type="PackedScene" uid="uid://b3l8gwl37g2l2" path="res://Entities/Units/Components/HealthComponent/HealthComponent.tscn" id="3_4vwke"]
 [ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="3_jrfw0"]
-[ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://Common/Components/Selectable Component/selectableComponent.tscn" id="3_v54ow"]
+[ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://Common/Components/SelectableComponent/selectableComponent.tscn" id="3_v54ow"]
 [ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://Assets/sprites/atlas.png" id="4_2atpx"]
 [ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://Common/Components/AddonsScripts/SetMaterialUponSelection.cs" id="4_s7m81"]
-[ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://Entities/Units/Components/Death Component/DeathComponent.tscn" id="8_3x03u"]
-[ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://Entities/Units/Components/Ability Component/AbilityComponent.tscn" id="13_mlqjw"]
+[ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://Entities/Units/Components/DeathComponent/DeathComponent.tscn" id="8_3x03u"]
+[ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://Entities/Units/Components/AbilityComponent/AbilityComponent.tscn" id="13_mlqjw"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4vwke"]
 load_path = "res://.godot/imported/units.png-4961909c5b17fdc6b2297fd78b08cd2b.ctex"
@@ -63,8 +63,8 @@ texture = SubResource("AtlasTexture_am3og")
 
 [node name="HealthComponent" parent="." unique_id=1411632328 instance=ExtResource("3_4vwke")]
 
-[node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Body", "HealthC") instance=ExtResource("8_3x03u")]
-Body = NodePath("..")
+[node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Unit", "HealthC") instance=ExtResource("8_3x03u")]
+Unit = NodePath("..")
 OnUnitKilledCallEventBus = &"UnitKilled"
 HealthC = NodePath("../HealthComponent")
 

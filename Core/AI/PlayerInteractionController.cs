@@ -8,7 +8,9 @@ using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
 using AKidsDream.Units.Resources;
+using AKidsDream.Common.Logging;
 using Godot;
+using Serilog;
 using TileData = AKidsDream.Managers.SaveSystem.Resources;
 
 namespace AKidsDream.Managers;
@@ -24,15 +26,12 @@ No Ability Selected:
 
 Ability Selected:
 1. Clicking outside the ability reach cancels the active ability.
-   The click is consumed and does not select another unit on the same frame. (Config Option)
+   The click is consumed and does not select another unit on the same frame. (Config Option) // CONFIG:
 2. Clicking inside the reach pattern targets that tile.
-   Upon reaching Max Targets Selected, cast automatically. (Config Option)
+   Upon reaching Max Targets Selected, cast automatically. (Config Option) // CONFIG:
 3. Hovering inside the reach pattern previews the effect.
 4. After casting, the unit remains selected and ability state is cleared.
 */
-// TODO:
-// Either disable button, or put incode check if AbilityC.CanAfford(ability) -> bool
-// So it doesn't show the ability and thus Hover, if it the player can't afford it anyways
 public sealed class PlayerInteractionPayload(
 	InputEvent inputEvent,
 	TileData.TileData? tileAtMousePos,
@@ -55,6 +54,8 @@ public partial class PlayerInteractionController : Node2D
 	[Export] public required AbilityVisualizer AbilityVisualizer;
 	[Export] public required StateMachine StateMachine;
 	[Export] public CommandExecutor CommandExecutor;
+
+	public readonly ILogger Log = GameLogger.For<PlayerInteractionController>();
 
 	public Unit? CurrentSelectedUnit;
 	public AbilityData? CurrentSelectedAbility;
@@ -251,7 +252,10 @@ public class OnAbilitySelected(PlayerInteractionController pic) : IState
 	{
 		if (ViolatesDuplicateTargetRule(tileLocation))
 		{
-			GD.PrintErr("Tile already targeted");
+			pic.Log.Here().Debug(
+				"Tile {TileLocation} already targeted for ability '{AbilityName}'",
+				tileLocation,
+				_ability!.Name);
 			return;
 		}
 
@@ -266,7 +270,14 @@ public class OnAbilitySelected(PlayerInteractionController pic) : IState
 
 		// If reached Max Targets, cast the ability.
 		if (_targetedTiles.Count >= _ability!.Effect.MaxTargets)
+		{
+			pic.Log
+				.ForContext("UnitName", pic.CurrentSelectedUnit?.UnitName)
+				.ForContext("UnitId", pic.CurrentSelectedUnit?.UnitId)
+				.Here()
+				.Debug("Max targets reached for ability '{AbilityName}', Auto-Casting...", _ability.Name);
 			CastAbility();
+		}
 	}
 
 	// -- HELPERS --
@@ -312,8 +323,13 @@ public class OnAbilitySelected(PlayerInteractionController pic) : IState
 
 	private void CancelAbilityFromClick()
 	{
+		pic.Log.Here().Debug(
+			"Ability '{AbilityName}' cancelled due to click outside reach for unit '{UnitName}' (id: {UnitId})",
+			_ability?.Name,
+			pic.CurrentSelectedUnit?.UnitName,
+			pic.CurrentSelectedUnit?.UnitId);
 		pic.ClearCurrentAbility();
-		pic.GetViewport().SetInputAsHandled(); // So that on click doesn't select Unit again, when cancelled.
+		pic.GetViewport().SetInputAsHandled(); // So that on click doesn't select Unit again when canceled.
 		ChangeState(this, "NoAbilitySelected", false);
 	}
 }

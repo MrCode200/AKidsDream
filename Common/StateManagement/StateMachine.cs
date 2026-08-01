@@ -1,16 +1,18 @@
 using System;
 using Godot;
 using System.Collections.Generic;
+using AKidsDream.Common.Logging;
+using Serilog;
 
 namespace AKidsDream.StateMachines;
 
 public interface IState
 {
 	public Action<IState, string, bool> ChangeState { get; set; }
-	public virtual void Enter() { }
-	public virtual void Exit() { }
-	public virtual void Update(object payload) { }
-	public virtual void PhysicsUpdate(double delta) { }
+	public void Enter() { }
+	public void Exit() { }
+	public void Update(object payload) { }
+	public void PhysicsUpdate(double delta) { }
 }
 
 public partial class StateMachine : Node
@@ -19,10 +21,14 @@ public partial class StateMachine : Node
 	public string CurrentStateName => _currentState?.GetType().Name;
 	private IState _currentState;
 	private bool _isRegisteringNodeStatesFromReady;
+	private ILogger _log = GameLogger.For<StateMachine>();
 
 
 	public override void _Ready()
 	{
+		_log = _log.ForContext("StateMachinePath", GetPath());
+		_log.Here().Debug("StateMachine initializing");
+
 		_isRegisteringNodeStatesFromReady = true;
 
 		foreach (var child in GetChildren())
@@ -37,10 +43,12 @@ public partial class StateMachine : Node
 	{
 		if (_currentState != null)
 		{
+			_log.Here().Debug("Exiting state '{CurrentState}'", CurrentStateName);
 			_currentState.Exit();
 			_currentState.ChangeState = null;
 			_currentState = null;
 		}
+		_log.Here().Debug("StateMachine destroyed");
 	}
 
 	/// <summary>
@@ -52,13 +60,13 @@ public partial class StateMachine : Node
 	{
 		if (state == null)
 		{
-			GD.PushError("Cannot add a null state.");
+			_log.Here().Error("Cannot add a null state");
 			return;
 		}
 
 		if (state is Node && !_isRegisteringNodeStatesFromReady)
 		{
-			GD.PushError("Cannot add Node states through AddState. Node states must be added as children in the scene tree.");
+			_log.Here().Error("Cannot add Node states through AddState. Node states must be added as children in the scene tree.");
 			return;
 		}
 
@@ -66,12 +74,13 @@ public partial class StateMachine : Node
 
 		if (_states.ContainsKey(stateName))
 		{
-			GD.PushWarning($"State {stateName} already exists. Overwriting...");
+			_log.Here().Warn("State '{StateName}' already exists. Overwriting...", stateName);
 			RemoveState(stateName);
 		}
 		
 		state.ChangeState = ChangeState;
 		_states.Add(stateName, state);
+		_log.Here().Debug("Added state '{StateName}'", stateName);
 	}
 
 	/// <summary>
@@ -84,11 +93,12 @@ public partial class StateMachine : Node
 		if (!_states.ContainsKey(stateName)) return;
 		if (_states[stateName] is Node)
 		{
-			GD.PushError("Cannot remove Node states through RemoveState. Node states are managed by the scene tree.");
+			_log.Here().Error("Cannot remove Node states through RemoveState. Node states are managed by the scene tree.");
 			return;
 		}
 		_states[stateName].ChangeState = null;
 		_states.Remove(stateName);
+		_log.Here().Debug("Removed state '{StateName}'", stateName);
 	}
 
 	/// <summary>
@@ -114,20 +124,30 @@ public partial class StateMachine : Node
 	{
 		if (!force && state.GetType().Name != _currentState?.GetType().Name)
 		{
-			GD.PushError($"Trying to change state to {stateName}, but caller: {state.GetType().Name} is not current state: {_currentState?.GetType().Name}.");
+			_log.Here().Error(
+				"Trying to change state to '{TargetState}', but caller '{CallerState}' is not current state '{CurrentState}'",
+				stateName,
+				state.GetType().Name,
+				_currentState?.GetType().Name);
 			return;
 		}
 		if (!_states.TryGetValue(stateName, out var value))
 		{
-			GD.PushError($"State {stateName} does not exist. Not changing state.");
+			_log.Here().Error("State '{StateName}' does not exist. Not changing state.", stateName);
 			return;
 		}
 
+		var previousState = CurrentStateName;
 		_currentState?.Exit();
 
 		_currentState = value; 
 		
 		_currentState.Enter();
+
+		_log.Here().Debug(
+			"Changed state from '{PreviousState}' to '{NewState}'",
+			previousState ?? "None",
+			stateName);
 	}
 	
 	/// <summary>

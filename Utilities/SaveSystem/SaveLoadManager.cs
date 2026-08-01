@@ -1,17 +1,21 @@
 using System;
 using System.IO;
 using System.Linq;
+using AKidsDream.Common.Logging;
 using AKidsDream.GameBoard;
 using AKidsDream.Units.Resources;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Utilities;
 using Godot;
 using Godot.Collections;
+using Serilog;
 
 namespace AKidsDream.Managers.SaveSystems;
 
 public static class SaveLoadManager
 {
+	private static readonly ILogger _log = GameLogger.For(typeof(SaveLoadManager));
+
 	/// <summary>
 	/// Loads the game state from a file.
 	/// </summary>
@@ -21,21 +25,41 @@ public static class SaveLoadManager
 	{
 		if (removeExistingUnits)
 		{
+			var unitsRemovedCount = entityLayer.GetChildCount();
 			foreach (var unit in entityLayer.GetChildren())
 			{
 				unit.QueueFree();
-				GD.Print($"Removed existing unit {unit.Name}");
 			}
+			_log.ForContext("StateFileName", stateFileName)
+				.ForContext("EntityLayer", entityLayer.Name)
+				.Here()
+				.Debug(
+					"Removed {UnitCount} existing units from '{EntityLayer}' while loading '{StateFileName}'",
+					unitsRemovedCount,
+					entityLayer.Name,
+					stateFileName);
 		}
 		
 		var state = ResourceIO.Load<GameStateData>(Path.Combine(Global.SavePath, stateFileName)) ?? new GameStateData();
 
-		GD.Print($"Initializing units from {stateFileName}");
+		_log.ForContext("StateFileName", stateFileName)
+			.Here()
+			.Info(
+				"Loading game state from '{StateFileName}' with {UnitCount} units",
+				stateFileName,
+				state.UnitStateResources?.Count ?? 0);
+
 		var initializedUnits = _initializeUnits(entityLayer, state.UnitStateResources);
 
 		int highestId = initializedUnits.Select(unit => unit.UnitId).DefaultIfEmpty(0).Max();
 		Utils.SetNextId(highestId + 1);
-		GD.Print($"Set nextId to {highestId + 1}");
+		_log.ForContext("HighestId", highestId)
+			.ForContext("NextId", highestId + 1)
+			.Here()
+			.Debug(
+				"Set next unit ID to {NextId} (highest loaded ID: {HighestId})",
+				highestId + 1,
+				highestId);
 
 		board.Init(state.BoardStateData, initializedUnits);
 	}
@@ -62,6 +86,13 @@ public static class SaveLoadManager
 		}
 
 		ResourceIO.Save(state, Path.Combine(Global.SavePath, saveFileName));
+		_log.ForContext("SaveFileName", saveFileName)
+			.ForContext("UnitCount", state.UnitStateResources.Count)
+			.Here()
+			.Info(
+				"Saved game state to '{SaveFileName}' with {UnitCount} units",
+				saveFileName,
+				state.UnitStateResources.Count);
 	}
 
 	/// <summary>
@@ -80,13 +111,17 @@ public static class SaveLoadManager
 			var scenePath = $"res://Entities/Units/{unitName}/{unitName}.tscn";
 			var unitScene = GD.Load<PackedScene>(scenePath);
 
+			var unitId = 0;
+			if (state.UnitId >= 1)
+				unitId = state.UnitId;
+					
 			var newUnit = unitScene.Instantiate<Unit>();
 			newUnit.Init(
 				state.UnitName,
 				state.Team,
 				state.TileLocation,
 				state.UnitStats,
-				state.UnitId
+				unitId
 			);
 
 			// Set position and TileLocation disway to skip signal emitting from MoveC
@@ -95,7 +130,15 @@ public static class SaveLoadManager
 			initializedUnits.Add(newUnit);
 
 			parent.AddChild(newUnit);
-			GD.Print($"Initialized unit {state.UnitName} at {state.TileLocation} with Parent {parent.Name}");
+			_log.ForContext("UnitId", state.UnitId)
+				.ForContext("TileLocation", state.TileLocation)
+				.ForContext("Parent", parent.Name)
+				.Here()
+				.Debug(
+					"Initialized unit '{UnitName}' at {TileLocation} in '{Parent}'",
+					state.UnitName,
+					state.TileLocation,
+					parent.Name);
 		}
 
 		return initializedUnits;

@@ -2,10 +2,12 @@ using Godot;
 using System;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
+using AKidsDream.Common.Logging;
 using AKidsDream.Units.Resources.Components;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Units.Resources;
 using Godot.Collections;
+using Serilog;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
@@ -15,6 +17,7 @@ public partial class UnitInfoBar : Control
 	[Export] public Label UnitHealthLabel;
 	[Export] public HBoxContainer AbilityContainer;
 	[Export] public PackedScene AbilityBtnScene;
+	private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
 	
 	private Dictionary<StringName, AbilityBtn> _abilityButtonsMap = new();
 
@@ -44,7 +47,6 @@ public partial class UnitInfoBar : Control
 
 			if (!abilityC.CanAfford(ability.Name))
 			{
-				GD.Print($"Ability {ability.Name} is not affordable.");
 				newAbilityBtn.Disabled = true;
 			}
 			
@@ -56,7 +58,10 @@ public partial class UnitInfoBar : Control
 	private void OnAbiltyCast(Unit caster, AbilityData ability, EffectResult effectResult)
 	{
 		if (caster.AbilityC.CanAfford(ability.Name)) return;
-		GD.Print($"Ability {ability.Name} is not affordable.");
+		_log.ForContext("UnitName", caster.UnitName)
+			.ForContext("UnitId", caster.UnitId)
+			.Here().Info("Ability '{Ability}' is not affordable anymore", 
+			ability.Name);
 		_abilityButtonsMap[ability.Name].Disabled = true;
 	}
 }

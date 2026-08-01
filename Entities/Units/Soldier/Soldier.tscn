@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ce8br630nspxi"]
 
-[ext_resource type="PackedScene" uid="uid://cjjhphs7rk7ul" path="res://Entities/Units/BaseUnit/UnitBase.tscn" id="1_jxj1f"]
+[ext_resource type="PackedScene" uid="uid://cmiql00ctnb8s" path="res://Entities/Units/BaseUnit/UnitBase.tscn" id="1_jxj1f"]
 [ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://Entities/Units/Soldier/SoldierStats.tres" id="2_cord0"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="2_x3wfe"]
 [ext_resource type="Resource" uid="uid://dwt54bx28ktgy" path="res://Entities/Units/Soldier/Abilities/SoldierMoveAbility.tres" id="3_40uuh"]

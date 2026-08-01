@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using AKidsDream.Abilities;
-using AKidsDream.Abilities.Effects;
+using AKidsDream.Common.Logging;
 using AKidsDream.Units.Resources;
 using Godot;
+using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -25,6 +26,13 @@ public sealed class AddAbilityTargetCommand(
         if (!ability!.Effect.AllowDuplicateTiles &&
             selectedTargets.Contains(targetTile))
             return CommandResult.Fail(this, "Target already targeted. Ability doesn't support duplicate targets.");
+
+        Log.ForContext<AddAbilityTargetCommand>().Here().Info(
+            "Added target {TargetTile} for ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
+            targetTile,
+            abilityName,
+            caster.UnitName,
+            caster.UnitId);
         
         selectedTargets.Add(targetTile);
         

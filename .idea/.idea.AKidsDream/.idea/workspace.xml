@@ -10,190 +10,42 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="Set _unitsById = new();&#10;After removing Singleton from Board, SaveLoadBoardETool.cs broke, thus remaking save to be custom written.main&#10;Updated AttackAbility to target only enemy.&#10;Added Board check for id already registered, if true overwrite old unit with same Id.">
-      <change afterPath="$PROJECT_DIR$/Common/Utilities/Utils.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/UnitEnums.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/TypeExtensions/EnumExtensions.cs" afterDir="false" />
+    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Common/Logging/GameLogger.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Common/Logging/Utils/ShortSourceContextEnricher.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Graveyard/RemoveSourceContextEnricher.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Graveyard/testLogger.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AKidsDream.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AKidsDream.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graveyard/ActionComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Graveyard/ActionComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-attack-50.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-attack-50.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-engine-50.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-engine-50.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-heart-50.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-heart-50.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-person-48.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-person-48.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-skull-50.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icon-skull-50.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icons-sword-50.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/icons/icons-sword-50.svg.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Banner/Banner.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Banner/Slots.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Ribbons/Ribbon_Black.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Ribbons/Ribbon_Blue.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Ribbons/Ribbon_Purple.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Ribbons/Ribbon_Red.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Banners from the store page/Ribbons/Ribbon_Yellow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Banners/Banner.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Banners/Banner_Slots.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Bars/BigBar_Base.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Bars/BigBar_Fill.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Bars/SmallBar_Base.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Bars/SmallBar_Fill.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigBlueButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigBlueButton_Pressed_Joint.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigBlueButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigBlueButton_Regular_Jont.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigRedButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/BigRedButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallBlueRoundButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallBlueRoundButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallBlueSquareButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallBlueSquareButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallRedRoundButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallRedRoundButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallRedSquareButton_Pressed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/SmallRedSquareButton_Regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/TinyRoundBlueButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/TinyRoundRedButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/TinySquareBlueButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Buttons/TinySquareRedButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Cursors/Cursor_01.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Cursors/Cursor_02.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Cursors/Cursor_03.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Cursors/Cursor_04.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_01.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_02.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_03.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_04.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_05.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_06.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_07.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_08.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_09.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_11.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_13.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_14.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_15.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_17.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_18.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_19.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_20.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_21.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_22.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_23.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_24.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Human Avatars/Avatars_25.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Big Heart Idle (18x14).png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_01.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_02.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_03.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_04.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_05.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_06.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_07.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_08.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_09.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_11.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Icons/Icon_12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Papers/RegularPaper.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Papers/SpecialPape1PixelPaddingr.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Papers/SpecialPaper.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Papers/SpecialPaperJoint.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Ribbons/BigRibbons.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Ribbons/SmallRibbons.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Ribbons/SmallRibbons_Joint.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Swords/Swords.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/UI Elements/UI Elements/Wood Table/WoodTable_Slots.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/atlas.png.import" beforeDir="false" afterPath="$PROJECT_DIR$/assets/sprites/atlas.png.import" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/tiles.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/units.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/sprites/units.png.import" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/editorTools/SaveLoadBoardETool.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/editorTools/SaveLoadBoardETool.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/project.godot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/GameBoard/BoardState.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/GameBoard/BoardState.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/GameBoard/TileData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/GameBoard/TileData.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/AbilityData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentMoveAbility.tres" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/AdjacentOneTileAttck.tres" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/DamageEffect.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/EffectResults.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/Abilities/MoveSelfEffect.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/BaseUnitStats.tres" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/AccessFieldPattern.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/AdjacentPattern.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/FieldAccessPatterns/OneTilePattern.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/SoldierStats.tres" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/UnitStatsData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Units/UnitStatsData.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/stateResources/GameStateData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/stateResources/UnitStateData.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/UI/abilityBtn.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/UI/unitInfoBar.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/board.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/abilityComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/actionComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/deathComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/healthBarComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/healthComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/components/selectableComponent.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/gameWorld.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/units/soldier.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scenes/units/unitBase.tscn" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Board.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Board.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/GameManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Unit.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Unit.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/AbilityComponent.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/DeathComponent.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/DeathComponent.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/HealthBarComponent.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/HealthBarComponent.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/HealthComponent.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/HealthComponent.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/SelectableComponent.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/components/SelectableComponent.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/CommandExecutor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/CommandUtils.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/AddAbilityTargetCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/CastAbilityCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectAbilityCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/DeselectUnitCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/SelectAbilityCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/CommandExecutor/Commands/SelectUnitCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/EventBus.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/EventBus.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/Global.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/Global.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/ResourceIO.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/ResourceIO.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/SaveLoadManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/Utils.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/globals/Utils.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Utilities/Utils.cs.uid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/AbilityVisualizer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/AbilityVisualizer.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/GameLoopManager.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/PlayerInteractionController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/managers/PlayerInteractionController.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/shader/SetMaterialUponSelection.cs.uid" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/stateMachines/StateMachine.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/ui/AbilityBtn.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/ui/UnitInfoBar.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/outline.gdshader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/outline.gdshader.uid" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/IO/ResourceIO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/IO/ResourceIO.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/StateManagement/StateMachine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/StateManagement/StateMachine.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandExecutor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandExecutor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandUtils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandUtils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/AddAbilityTargetCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/AddAbilityTargetCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/CastAbilityCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/CastAbilityCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/DeselectAbilityCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/DeselectAbilityCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/DeselectUnitCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/DeselectUnitCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectAbilityCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectAbilityCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectUnitCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectUnitCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/PlayerInteractionController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/AI/PlayerInteractionController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/PlayerInteractionController.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Core/AI/PlayerInteractionController.cs.uid" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Board/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Board/Board.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/DamageEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/DamageEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/EffectData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/EffectData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/MoveSelfEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/MoveSelfEffect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs.uid" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/UnitBase.tscn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Components/AbilityComponent/AbilityComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/AbilityComponent/AbilityComponent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Components/DeathComponent/DeathComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/DeathComponent/DeathComponent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Components/HealthComponent/HealthComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/HealthComponent/HealthComponent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/UnitInfoBar/UnitInfoBar.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UI/UnitInfoBar/UnitInfoBar.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,10 +56,11 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="42" />
+    <option name="cachedIndexableFilesCount" value="43" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
+    <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -225,11 +78,12 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/85D1EE0F878E7BCD9279B701/Godot.SourceGenerators/Godot.SourceGenerators.ScriptMethodsGenerator/AKidsDream.GameBoard.Board_ScriptMethods.generated.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/85D1EE0F878E7BCD9279B701/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSerializationGenerator/AKidsDream.GameBoard.Board_ScriptSerialization.generated.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/85D1EE0F878E7BCD9279B701/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSignalsGenerator/AKidsDream.Units.Resources.Components.AbilityComponent_ScriptSignals.generated.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/9B8B841D5257EBDF611CB8F1/Godot.SourceGenerators/Godot.SourceGenerators.ScriptSignalsGenerator/AKidsDream.Scripts.EventBus_ScriptSignals.generated.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e10648195244ebfa276c71cb5b3f877c90750/13/e7214950/CallerMemberNameAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3e10648195244ebfa276c71cb5b3f877c90750/48/a9db79a1/Dictionary`2.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4881db23b1834147bd6855274699690d580800/5f/7b7cde75/Array`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/835bac92dfd94732839efbaa77664df25e8000/e8/09e08273/DelegateUtils.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Common/Logging/Utils/RemovePropertyEnricher.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Entities/Units/UnitEnums.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Utilities/TypeExtensions/EnumExtensions.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -244,61 +98,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="2.4871951600065296" />
-      <entry key="MS500" value="6.176771883389946" />
-      <entry key="S2" value="17.580535652899755" />
-      <entry key="S5" value="36.779278399295364" />
-      <entry key="S10" value="61.95104330021757" />
-      <entry key="S30" value="103.44627529570072" />
-      <entry key="S60" value="120.5712048227948" />
-      <entry key="M2" value="130.72640000371723" />
-      <entry key="M5" value="141.5170177720272" />
-      <entry key="M10" value="188.3552603291119" />
-      <entry key="M15" value="262.78299738945367" />
-      <entry key="M30" value="475.23473038867644" />
-      <entry key="H1" value="775.5024352214899" />
-      <entry key="H2" value="1226.6875200057564" />
-      <entry key="H4" value="2226.2185534615824" />
-      <entry key="D1" value="8245.844097104567" />
-      <entry key="W1" value="11614.821602146034" />
+      <entry key="MS100" value="1.5769762964782135" />
+      <entry key="MS500" value="5.033343930498092" />
+      <entry key="S2" value="17.318031783457062" />
+      <entry key="S5" value="35.210847169868295" />
+      <entry key="S10" value="54.443913308051314" />
+      <entry key="S30" value="96.47036247580256" />
+      <entry key="S60" value="129.1346868842683" />
+      <entry key="M2" value="161.07217877386617" />
+      <entry key="M5" value="196.92046385996687" />
+      <entry key="M10" value="222.51103258014325" />
+      <entry key="M15" value="240.74528956463678" />
+      <entry key="M30" value="292.91031290703694" />
+      <entry key="H1" value="403.89244865396086" />
+      <entry key="H2" value="704.0954907001204" />
+      <entry key="H4" value="1530.9550724394956" />
+      <entry key="D1" value="8306.83477983738" />
+      <entry key="W1" value="13394.59122462186" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="2.651381471759478E-87" />
-      <entry key="S5" value="2.340932476688768E-35" />
-      <entry key="S10" value="4.838318382133148E-18" />
-      <entry key="S30" value="1.6913423462375784E-6" />
-      <entry key="S60" value="0.0013014783273454535" />
-      <entry key="M2" value="0.0391021417100986" />
-      <entry key="M5" value="0.8333412797707939" />
-      <entry key="M10" value="4.464837476116256" />
-      <entry key="M15" value="8.571197126233463" />
-      <entry key="M30" value="19.036065500366295" />
-      <entry key="H1" value="38.42944876957886" />
-      <entry key="H2" value="81.5812432304876" />
-      <entry key="H4" value="174.18448818672067" />
-      <entry key="D1" value="571.6667551814709" />
-      <entry key="W1" value="760.7330980035105" />
+      <entry key="MS500" value="1.0441951777373643E-78" />
+      <entry key="S2" value="3.196652529396122E-20" />
+      <entry key="S5" value="1.5940955284098367E-8" />
+      <entry key="S10" value="1.3502250785323478E-4" />
+      <entry key="S30" value="0.11326582415960298" />
+      <entry key="S60" value="0.91685783480639" />
+      <entry key="M2" value="3.443164348291579" />
+      <entry key="M5" value="10.301243123182084" />
+      <entry key="M10" value="17.934700153616948" />
+      <entry key="M15" value="23.70450050440719" />
+      <entry key="M30" value="36.711661992394525" />
+      <entry key="H1" value="55.27944666845528" />
+      <entry key="H2" value="87.99534220358555" />
+      <entry key="H4" value="161.3799516824033" />
+      <entry key="D1" value="644.7425381960405" />
+      <entry key="W1" value="958.9732823306231" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="2.4058784557594057" />
-      <entry key="MS500" value="6.131047635113131" />
-      <entry key="S2" value="17.545316473822112" />
-      <entry key="S5" value="36.74865791857026" />
-      <entry key="S10" value="61.92443762830628" />
-      <entry key="S30" value="103.4310416991849" />
-      <entry key="S60" value="120.56353585689075" />
-      <entry key="M2" value="130.76016732564273" />
-      <entry key="M5" value="142.34104477415477" />
-      <entry key="M10" value="192.7961986113996" />
-      <entry key="M15" value="271.3232126918049" />
-      <entry key="M30" value="494.2367953550577" />
-      <entry key="H1" value="813.8997453329466" />
-      <entry key="H2" value="1308.2362907299052" />
-      <entry key="H4" value="2400.3671963669813" />
-      <entry key="D1" value="8817.488245602577" />
-      <entry key="W1" value="12375.550247469711" />
+      <entry key="MS100" value="1.4577442257093856" />
+      <entry key="MS500" value="4.972702785334975" />
+      <entry key="S2" value="17.270276371793802" />
+      <entry key="S5" value="35.17222186401479" />
+      <entry key="S10" value="54.413781356757795" />
+      <entry key="S30" value="96.55806172820775" />
+      <entry key="S60" value="130.01259681030317" />
+      <entry key="M2" value="164.46427319543673" />
+      <entry key="M5" value="207.17081232916686" />
+      <entry key="M10" value="240.39931983144933" />
+      <entry key="M15" value="264.4041555995805" />
+      <entry key="M30" value="329.57734648415686" />
+      <entry key="H1" value="459.13207473849263" />
+      <entry key="H2" value="792.055844820264" />
+      <entry key="H4" value="1692.3015812865726" />
+      <entry key="D1" value="8951.552674169463" />
+      <entry key="W1" value="14353.559072822392" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -339,7 +193,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.toDoOptions&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AcpAgentsConfigurable&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -456,6 +310,14 @@
       <workItem from="1785489274709" duration="50000" />
       <workItem from="1785495873671" duration="765000" />
       <workItem from="1785499956107" duration="1707000" />
+      <workItem from="1785516004619" duration="13678000" />
+      <workItem from="1785530681569" duration="56000" />
+      <workItem from="1785530766992" duration="1253000" />
+      <workItem from="1785532582215" duration="1507000" />
+      <workItem from="1785566689619" duration="8521000" />
+      <workItem from="1785584158948" duration="2411000" />
+      <workItem from="1785593884001" duration="4161000" />
+      <workItem from="1785607422277" duration="2181000" />
     </task>
     <task id="LOCAL-00001" summary="Changed System For Abilities">
       <option name="closed" value="true" />
@@ -529,30 +391,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs</url>
-          <line>136</line>
-          <properties documentPath="C:\Users\Navid\Documents\a-kids-dream\AKidsDream\Utilities\Editor Tools\SaveLoadGameETool.cs" containingFunctionPresentation="Method '_loadBoard'" />
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs</url>
-          <line>133</line>
-          <properties documentPath="C:\Users\Navid\Documents\a-kids-dream\AKidsDream\Utilities\Editor Tools\SaveLoadGameETool.cs" containingFunctionPresentation="Method '_loadBoard'" />
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs</url>
-          <line>134</line>
-          <properties documentPath="C:\Users\Navid\Documents\a-kids-dream\AKidsDream\Utilities\Editor Tools\SaveLoadGameETool.cs" containingFunctionPresentation="Method '_loadBoard'" />
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs</url>
-          <line>135</line>
-          <properties documentPath="C:\Users\Navid\Documents\a-kids-dream\AKidsDream\Utilities\Editor Tools\SaveLoadGameETool.cs" containingFunctionPresentation="Method '_loadBoard'" />
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>

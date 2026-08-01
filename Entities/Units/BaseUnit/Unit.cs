@@ -1,8 +1,10 @@
+using AKidsDream.Common.Logging;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Units.Resources.Components;
 using AKidsDream.Utilities;
 using Godot;
+using Serilog;
 
 namespace AKidsDream.Units.Resources;
 
@@ -19,6 +21,7 @@ public partial class Unit : CharacterBody2D
 
     [Export] public Global.UnitName UnitName;
     [Export] public Global.UnitTeam Team;
+
     /// <summary>
     /// The current tile location of the unit.
     /// </summary>
@@ -36,30 +39,46 @@ public partial class Unit : CharacterBody2D
     public DeathComponent DeathC { get; private set; }
     public AbilityComponent AbilityC { get; private set; }
 
+    private ILogger _log = GameLogger.For<Unit>();
+
     public Unit()
     {
     }
 
     public void Init(
-        Global.UnitName unitName, 
+        Global.UnitName unitName,
         Global.UnitTeam team,
         Vector2I tileLocation,
         UnitStatsData unitStats,
         int unitId = 0
-        )
+    )
     {
+        var externalIdPassed = false;
+        
         if (unitId == 0)
             UnitId = Utils.GetNextId();
         else
         {
+            externalIdPassed = true;
             UnitId = unitId;
-            GD.PushWarning("unitId is passed on creation of Unit. This is not recommended.");
         }
-        
+
         UnitName = unitName;
         Team = team;
         TileLocation = tileLocation;
         if (unitStats is not null) UnitStats = unitStats;
+
+        // Set static context for all future log calls
+        _log = _log.ForContext("UnitId", UnitId)
+            .ForContext("UnitName", UnitName)
+            .ForContext("Team", Team);
+        
+        if (externalIdPassed)
+            _log.ForContext("TileLocation", TileLocation)
+                .Here()
+                .Warn(
+                    "Unit Initialized With External Id at {TileLocation} with ID: {UnitId}",
+                    TileLocation);
     }
 
     // -- LOGIC --
@@ -68,7 +87,7 @@ public partial class Unit : CharacterBody2D
     {
         Position = Board.TileToWorldPosition(TileLocation);
         _setEnemyLogicAndAppearance();
-        
+
         if (Engine.IsEditorHint()) return;
 
         _injectReferenceAndAssignComponents();
@@ -79,7 +98,9 @@ public partial class Unit : CharacterBody2D
             : nameof(Global.Groups.PlayerUnits)
         );
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
-        GD.Print($"Unit ready at {TileLocation}; Team: {Team}");
+        // _log.ForContext("TileLocation", TileLocation) // Too verbose, instead, log when creating/spawning Unit(s)...
+        //    .Here()
+        //    .Info("UnitReady at {TileLocation}", TileLocation);
     }
 
     private void _injectReferenceAndAssignComponents()
@@ -121,7 +142,10 @@ public partial class Unit : CharacterBody2D
             EventBus.Instance.EmitSignal(OnMoveCallEventBus, this, oldTile, targetTile);
         EmitSignal(SignalName.UnitMoved, this, oldTile, targetTile);
 
-        GD.Print($"Moved from {TileLocation} to {targetTile}");
+        _log.ForContext("FromTile", oldTile)
+            .ForContext("ToTile", targetTile)
+            .Here()
+            .Debug("Moved from {FromTile} to {ToTile}", oldTile, targetTile);
 
         return true;
     }
