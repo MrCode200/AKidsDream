@@ -5,10 +5,10 @@ using AKidsDream.Units.Resources;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
-public partial class AbilityBtn : Control
+public partial class AbilityButton : Control
 {
 	[Export] public Label AbilityName;
-	[Export] public Button AbilityButton;
+	[Export] public Button Button;
 	public AbilityData Ability;
 	public Unit Unit;
 
@@ -19,13 +19,13 @@ public partial class AbilityBtn : Control
 		 set
 		 {
 			 _disabled = value;
-			 AbilityButton.Disabled = value;
+			 Button.Disabled = value;
 		 }
 	}
 	
 	public override void _Ready()
 	{
-		AbilityButton.Pressed += OnAbilityButtonPressed;
+		Button.Pressed += OnAbilityButtonPressed;
 	}
 
 	public void DisplayAbility(Unit unit, AbilityData ability)
@@ -34,8 +34,8 @@ public partial class AbilityBtn : Control
 		
 		Ability = ability;
 		AbilityName.Text = ability.Name;
-		AbilityButton.Icon = ability.Icon;
-		AbilityButton.TooltipText = ability.Description;
+		Button.Icon = ability.Icon;
+		Button.TooltipText = ability.Description;
 	}
 	
 	private void OnAbilityButtonPressed()

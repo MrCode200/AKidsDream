@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using Godot;
 using System.Collections.Generic;
@@ -11,15 +12,17 @@ public interface IState
 	public Action<IState, string, bool> ChangeState { get; set; }
 	public void Enter() { }
 	public void Exit() { }
-	public void Update(object payload) { }
+	public void Update(object? payload) { }
 	public void PhysicsUpdate(double delta) { }
 }
 
 public partial class StateMachine : Node
 {
-	private Dictionary<string, IState> _states = new();
-	public string CurrentStateName => _currentState?.GetType().Name;
-	private IState _currentState;
+	private readonly Dictionary<string, IState> _states = new();
+	
+	private IState? _currentState;
+	public string? CurrentStateName => _currentState?.GetType().Name;
+	
 	private bool _isRegisteringNodeStatesFromReady;
 	private ILogger _log = GameLogger.For<StateMachine>();
 
@@ -58,7 +61,7 @@ public partial class StateMachine : Node
 	/// <param name="state">The state to add. Must not be a Node.</param>
 	public void AddState(IState state)
 	{
-		if (state == null)
+		if (state == null!)
 		{
 			_log.Here().Error("Cannot add a null state");
 			return;
@@ -153,7 +156,7 @@ public partial class StateMachine : Node
 	/// <summary>
 	/// Calls Update on the current state.
 	/// </summary>
-	public void Update(object payload = null)
+	public void Update(object? payload = null)
 	{
 		_currentState?.Update(payload);
 	}

@@ -2,7 +2,7 @@ shader_type canvas_item;
 
 uniform vec4 color:source_color = vec4(0.0, 0.0, 0.0, 1.0);
 uniform int type: hint_enum("Disable", "Round", "Square") = 2;
-uniform float thickness:hint_range(0, 1) = 1.0;
+uniform float thickness:hint_range(0, 10) = 1.0;
 // uniform vec4 flicker_color: source_color = vec4(0.0, 0.0, 0.0, 0.0); // Add maybe later
 uniform float flickering_speed: hint_range(0.0, 25.0, .01);
 uniform float minimal_flickering_alpha: hint_range(0.0, 1);

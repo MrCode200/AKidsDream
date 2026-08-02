@@ -33,21 +33,21 @@ public abstract partial class AccessFieldPattern : Resource
 
         tiles = tiles.Where(tile =>
         {
-            var tileData = board.GetTileAt(tile);
+            if(!board.TryGetTileAt(tile, out var tileData)) return false;
 
-            if (AllowedTargets.HasFlag(TargetFilter.EmptyTiles) && tileData?.Unit == null)
+            if (AllowedTargets.HasFlag(TargetFilter.EmptyTiles) && tileData.Unit == null)
             {
                 return true;
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Friend) &&
-                tileData?.Unit?.Team == Global.UnitTeam.Player)
+                tileData.Unit?.Team == Global.UnitTeam.Player)
             {
                 return true;
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Enemy) &&
-                tileData?.Unit?.Team == Global.UnitTeam.Enemy)
+                tileData.Unit?.Team == Global.UnitTeam.Enemy)
             {
                 return true;
             }

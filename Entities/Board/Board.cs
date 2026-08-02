@@ -1,3 +1,5 @@
+#nullable enable
+using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers.SaveSystem.Resources;
@@ -64,7 +66,7 @@ public partial class Board : Node2D
         Tilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
         _generateBoard();
 
-        foreach (var newUnit in initialUnits)
+        foreach (var newUnit in initialUnits ?? [])
             AddUnit(newUnit);
 
         if (Engine.IsEditorHint()) return;
@@ -77,14 +79,13 @@ public partial class Board : Node2D
             "Board '{BoardName}' initialized with {UnitCount} Units",
             Name,
             _unitsById.Count);
-        
+
         EventBus.Instance.EmitSignal(EventBus.SignalName.BoardGenerated);
     }
 
 
     // -- GENERATION --
 
-    // TODO: Move Logic to a independent Loader/Saver Node, so it can save other things such as Utils.CurrentId, Round Number, each players mana and upgrades, and etc.
     /// <summary>
     /// <para>Creates the board grid based on the dimensions defined in <see cref="StateData"/>.</para>
     /// 
@@ -131,7 +132,7 @@ public partial class Board : Node2D
 
 
                 // Create visual representation in the TileMap.
-                Tilemap.SetCell(
+                Tilemap!.SetCell(
                     tileLocation,
                     0,
                     Global.AtlasCoordsSpriteVectors[atlasTile]
@@ -194,20 +195,13 @@ public partial class Board : Node2D
         {
             unit.TileLocation = tileLocation.Value;
         }
-
-        _log.Here().Debug(
-            "Adding unit '{UnitName}' (id: {UnitId}) at {TileLocation} to board '{BoardName}'",
-            unit.UnitName,
-            unit.UnitId,
-            unit.TileLocation,
-            Name
-        );
+        
         TileData tile = StateData.Tiles[unit.TileLocation.Y][unit.TileLocation.X];
         tile.Unit = unit;
 
-        if (_unitsById.ContainsKey(unit.UnitId))
+        // Check for duplicate unit id, if found, replace old registration
+        if (_unitsById.TryGetValue(unit.UnitId, out var oldUnit))
         {
-            var oldUnit = _unitsById[unit.UnitId];
             _log.Here().Warn(
                 "Duplicate unit id detected while adding unit to board; " +
                 "replacing existing registration '{OldUnitName}' (id: {OldUnitId}) at {OldTileLocation} " +
@@ -223,6 +217,13 @@ public partial class Board : Node2D
         }
 
         _unitsById.Add(unit.UnitId, unit);
+        _log.Here().Debug(
+            "Added unit '{UnitName}' (id: {UnitId}) at {TileLocation} to board '{BoardName}'",
+            unit.UnitName,
+            unit.UnitId,
+            unit.TileLocation,
+            Name
+        );
     }
 
     /// <summary>
@@ -233,45 +234,81 @@ public partial class Board : Node2D
     {
         TileData tile = StateData.Tiles[tileLocation.Y][tileLocation.X];
         var removedUnit = tile.Unit;
-        
+
+        _unitsById.Remove(removedUnit?.UnitId ?? -1);
+        tile.Unit = null;
+
         _log.Here().Debug(
-            "Removing unit '{UnitName}' (id: {UnitId}) from {TileLocation} in board '{BoardName}'",
+            "Removed unit '{UnitName}' (id: {UnitId}) from {TileLocation} in board '{BoardName}'",
             removedUnit?.UnitName,
             removedUnit?.UnitId,
             tileLocation,
-            Name);   
-        
-        tile.Unit = null;
-    }
-
-    public Unit? GetUnitById(int id)
-    {
-        return CollectionExtensions.GetValueOrDefault(_unitsById, id);
+            Name);
     }
 
     /// <summary>
-    /// Gets the <see cref="Unit"/> at the specified tile location.
+    /// Tries to get the <see cref="Unit"/> with the specified identifier.
+    /// </summary>
+    /// <param name="id">The identifier of the unit to look up.</param>
+    /// <param name="unit">
+    /// When this method returns <c>true</c>, contains the unit with the specified identifier;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if a unit with the given identifier exists; otherwise, <c>false</c>.
+    /// </returns>
+    public bool TryGetUnitById(int id, [NotNullWhen(true)] out Unit? unit)
+    {
+        return _unitsById.TryGetValue(id, out unit);
+    }
+
+    /// <summary>
+    /// Tries to get the <see cref="Unit"/> at the specified tile location.
     /// </summary>
     /// <param name="location">The tile coordinate to check.</param>
-    /// <returns>The <see cref="Unit"/> at the location, or null if out of bounds or no unit present.</returns>
-    public Unit? GetUnitAt(Vector2I location)
+    /// <param name="unit">
+    /// When this method returns, contains the unit at the specified location,
+    /// or <c>null</c> if the location is out of bounds or has no unit.
+    /// </param>
+    /// <returns><c>true</c> if a unit exists at the location; otherwise, <c>false</c>.</returns>
+    public bool TryGetUnitAt(Vector2I location, [NotNullWhen(true)] out Unit? unit)
     {
-        return TileInBoard(location) ? StateData.Tiles[location.Y][location.X].Unit : null;
-    }
+        unit = null;
+        if (!TileInBoard(location)) return false;
 
-    public TileData? GetTileAt(Vector2I location)
-    {
-        return TileInBoard(location) ? StateData.Tiles[location.Y][location.X] : null;
+        unit = StateData.Tiles[location.Y][location.X].Unit;
+        return true;
     }
 
     /// <summary>
-    /// Returns the <see cref="TileData"/> from the specified tile location.
+    /// Tries to get the <see cref="TileData"/> at the specified tile location.
     /// </summary>
-    /// <param name="tile"></param>
-    /// <returns>The <see cref="TileData"/> at the given Board Location></returns>
-    public bool TileInBoard(Vector2I tile)
+    /// <param name="location">The tile coordinate to check.</param>
+    /// <param name="tile">
+    /// When this method returns <c>true</c>, contains the tile data at the specified location;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <returns><c>true</c> if the location is within the board bounds; otherwise, <c>false</c>.</returns>
+    public bool TryGetTileAt(Vector2I location, [NotNullWhen(true)] out TileData? tile)
     {
-        return tile.X >= 0 && tile.X < StateData.Width && tile.Y >= 0 && tile.Y < StateData.Height;
+        tile = null;
+        if (!TileInBoard(location)) return false;
+
+        tile = StateData.Tiles[location.Y][location.X];
+        return true;
+    }
+
+    /// <summary>
+    /// Determines whether the specified tile location is within the board bounds.
+    /// </summary>
+    /// <param name="tileLocation">The tile coordinate to check.</param>
+    /// <returns><c>true</c> if the location is inside the board; otherwise, <c>false</c>.</returns>
+    public bool TileInBoard(Vector2I tileLocation)
+    {
+        return tileLocation.X >= 0 &&
+               tileLocation.X < StateData.Width &&
+               tileLocation.Y >= 0 &&
+               tileLocation.Y < StateData.Height;
     }
 
     /// <summary>

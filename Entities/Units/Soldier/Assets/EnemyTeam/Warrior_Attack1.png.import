@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d07uplkvojro4"
-path="res://.godot/imported/BigBlueButton_Regular.png-bced75fae1c8beb03b39ef996f8251cc.ctex"
+uid="uid://cm4h2edhxq5pu"
+path="res://.godot/imported/Warrior_Attack1.png-dd98ddede8070c92a674db3b09dfb33e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://UI/UnitInfoBar/AbilityBtn/BigBlueButton_Regular.png"
-dest_files=["res://.godot/imported/BigBlueButton_Regular.png-bced75fae1c8beb03b39ef996f8251cc.ctex"]
+source_file="res://Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Attack1.png"
+dest_files=["res://.godot/imported/Warrior_Attack1.png-dd98ddede8070c92a674db3b09dfb33e.ctex"]
 
 [params]
 

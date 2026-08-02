@@ -10,7 +10,7 @@ namespace AKidsDream.Units.Resources;
 
 /// <summary>
 /// Base class for all unit types in the game.
-/// Handles initialization & movement validation.
+/// Handles initialization and movement validation.
 /// </summary>
 [GlobalClass]
 [Tool]
@@ -31,19 +31,18 @@ public partial class Unit : CharacterBody2D
 
     [Export] public StringName OnMoveCallEventBus;
 
+
     [Signal]
     public delegate void UnitMovedEventHandler(Unit unit, Vector2I from, Vector2I to);
 
+    [Export] public AnimatedSprite2D AnimationsPlayer;
     public HealthComponent HealthC { get; private set; }
     public SelectableComponent SelectableC { get; private set; }
     public DeathComponent DeathC { get; private set; }
     public AbilityComponent AbilityC { get; private set; }
+    
 
     private ILogger _log = GameLogger.For<Unit>();
-
-    public Unit()
-    {
-    }
 
     public void Init(
         Global.UnitName unitName,
@@ -57,6 +56,11 @@ public partial class Unit : CharacterBody2D
         
         if (unitId == 0)
             UnitId = Utils.GetNextId();
+        else if (unitId < 0)
+        {
+            GD.PushWarning("UnitId cannot be negative. Using default id.");
+            UnitId = Utils.GetNextId();
+        }
         else
         {
             externalIdPassed = true;
@@ -98,7 +102,7 @@ public partial class Unit : CharacterBody2D
             : nameof(Global.Groups.PlayerUnits)
         );
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
-        // _log.ForContext("TileLocation", TileLocation) // Too verbose, instead, log when creating/spawning Unit(s)...
+        // _log.ForContext("TileLocation", TileLocation) // To verbose, instead, log when creating/spawning Unit(s)...
         //    .Here()
         //    .Info("UnitReady at {TileLocation}", TileLocation);
     }
@@ -122,19 +126,14 @@ public partial class Unit : CharacterBody2D
         {
             SelectableC?.QueueFree();
 
-            var sprite = GetNode<Sprite2D>("Sprite2D");
-            var atlasTexture = (AtlasTexture)sprite.Texture.Duplicate();
-            sprite.Texture = atlasTexture;
-            // Moves Atlas Region 16 pixel down without changing anything else
-            // NOTE: needs to be changed when changing Textures!
-            atlasTexture.Region = atlasTexture.Region with { Position = atlasTexture.Region.Position with { Y = 0 } };
+            AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace("Player", Team.ToString()));
         }
     }
 
     // --- LOGIC ---
     public bool Move(Vector2I targetTile)
     {
-        Vector2I oldTile = TileLocation;
+        var oldTile = TileLocation;
         TileLocation = targetTile;
         Position = Board.TileToWorldPosition(targetTile);
 

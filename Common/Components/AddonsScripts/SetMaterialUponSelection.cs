@@ -4,7 +4,7 @@ using Godot;
 namespace AKidsDream.Shaders;
 
 [Tool]
-public partial class SetMaterialUponSelection : Sprite2D
+public partial class SetMaterialUponSelection : AnimatedSprite2D
 {
 	[Export] public ShaderMaterial SelectionMaterial;
 	[Export] public SelectableComponent SelectableC;

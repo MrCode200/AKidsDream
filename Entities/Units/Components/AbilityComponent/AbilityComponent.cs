@@ -122,7 +122,7 @@ public partial class AbilityComponent : Node
 		else
 		{
 			_log.Here().Info(
-				"Cast ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
+				"Casted ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
 				ability.Name,
 				targetTiles.Length,
 				ability.Cost,

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bg45tgydfujx"]
 
-[ext_resource type="Script" uid="uid://bxppoo78as3rs" path="res://UI/Unit Info Bar/Ability Btn/AbilityBtn.cs" id="1_6y4ib"]
-[ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/Unit Info Bar/Ability Btn/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
+[ext_resource type="Script" uid="uid://bxppoo78as3rs" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.cs" id="1_6y4ib"]
+[ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/UnitInfoBar/AbilityButton/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g0mcq"]
@@ -11,7 +11,7 @@ atlas = ExtResource("3_6y4ib")
 shadow_size = 9
 shadow_color = Color(0, 0, 0, 1)
 
-[node name="AblityBtn" type="Control" unique_id=1982473900 node_paths=PackedStringArray("AbilityName", "AbilityButton")]
+[node name="AblityBtn" type="Control" unique_id=1982473900 node_paths=PackedStringArray("AbilityName", "Button")]
 custom_minimum_size = Vector2(112, 80)
 layout_mode = 3
 anchors_preset = 8
@@ -28,7 +28,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 script = ExtResource("1_6y4ib")
 AbilityName = NodePath("AbilityName")
-AbilityButton = NodePath("Button")
+Button = NodePath("Button")
 
 [node name="ButtonRegular" type="NinePatchRect" parent="." unique_id=43269389]
 layout_mode = 1

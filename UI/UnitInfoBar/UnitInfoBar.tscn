@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://dktd8vy0gf1h0"]
 
-[ext_resource type="Script" uid="uid://cqe1bd67046kn" path="res://UI/Unit Info Bar/UnitInfoBar.cs" id="1_hvlrc"]
+[ext_resource type="Script" uid="uid://cqe1bd67046kn" path="res://UI/UnitInfoBar/UnitInfoBar.cs" id="1_hvlrc"]
 [ext_resource type="Texture2D" uid="uid://3oytot28kllb" path="res://UI/Assets/UI Elements/Papers/SpecialPaperJoint.png" id="1_yac0r"]
-[ext_resource type="PackedScene" uid="uid://bg45tgydfujx" path="res://UI/Unit Info Bar/Ability Btn/AbilityBtn.tscn" id="2_00si8"]
-[ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://UI/Unit Info Bar/Assets/SmallRibbons_Joint.png" id="3_bvm5s"]
-[ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://UI/Unit Info Bar/Assets/Big Heart Idle (18x14).png" id="4_hvlrc"]
+[ext_resource type="PackedScene" uid="uid://bg45tgydfujx" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.tscn" id="2_00si8"]
+[ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://UI/UnitInfoBar/Assets/SmallRibbons_Joint.png" id="3_bvm5s"]
+[ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://UI/UnitInfoBar/Assets/Big Heart Idle (18x14).png" id="4_hvlrc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1j5su"]
 shadow_size = 9
