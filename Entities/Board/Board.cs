@@ -7,7 +7,6 @@ using AKidsDream.Units.Resources;
 using Godot;
 using Godot.Collections;
 using Serilog;
-using CollectionExtensions = System.Collections.Generic.CollectionExtensions;
 using TileData = AKidsDream.Managers.SaveSystem.Resources.TileData;
 
 namespace AKidsDream.GameBoard;
@@ -35,7 +34,7 @@ public partial class Board : Node2D
 
     private ILogger _log = GameLogger.For<Board>();
 
-    private Dictionary<int, Unit> _unitsById = new();
+    private readonly System.Collections.Generic.Dictionary<UnitId, Unit> _unitsById = new();
 
 
     // -- EDITOR TOOLS --
@@ -52,7 +51,7 @@ public partial class Board : Node2D
 
 
     // -- LIFECYCLE --
-    public void Init(BoardStateData boardStateData, Array<Unit> initialUnits)
+    public void Init(BoardStateData boardStateData, Array<Unit>? initialUnits = null)
     {
         StateData = boardStateData;
 
@@ -79,8 +78,6 @@ public partial class Board : Node2D
             "Board '{BoardName}' initialized with {UnitCount} Units",
             Name,
             _unitsById.Count);
-
-        EventBus.Instance.EmitSignal(EventBus.SignalName.BoardGenerated);
     }
 
 
@@ -235,7 +232,7 @@ public partial class Board : Node2D
         TileData tile = StateData.Tiles[tileLocation.Y][tileLocation.X];
         var removedUnit = tile.Unit;
 
-        _unitsById.Remove(removedUnit?.UnitId ?? -1);
+        _unitsById.Remove(removedUnit?.UnitId ?? UnitId.None);
         tile.Unit = null;
 
         _log.Here().Debug(
@@ -257,7 +254,7 @@ public partial class Board : Node2D
     /// <returns>
     /// <c>true</c> if a unit with the given identifier exists; otherwise, <c>false</c>.
     /// </returns>
-    public bool TryGetUnitById(int id, [NotNullWhen(true)] out Unit? unit)
+    public bool TryGetUnitById(UnitId id, [NotNullWhen(true)] out Unit? unit)
     {
         return _unitsById.TryGetValue(id, out unit);
     }

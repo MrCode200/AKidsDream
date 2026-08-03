@@ -1,7 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
 using AKidsDream.Common.Logging;
+using AKidsDream.Core.Managers;
+using AKidsDream.Core.Teams;
+using AKidsDream.Core.Controllers;
 using Serilog;
 
 namespace AKidsDream.Managers;
@@ -9,68 +13,63 @@ namespace AKidsDream.Managers;
 [GlobalClass]
 public partial class GameLoopManager : Node
 {
-	private readonly ILogger _log = GameLogger.For<GameLoopManager>();
+	[Export] public ControllerFactory ControllerFactory;
 
 	public int CurrentTurn;
-	public bool PlayerPlayed;
-	public bool EnemyPlayed;
-	// public bool PlayersTurn;
+	private SortedDictionary<PlayerId, PlayerData> _turnOrder = new();
+	private PlayerId _activePlayerId;
+	private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
 
 	public override void _Ready()
 	{
-		EventBus.Instance.EndTurnBtnPressed += EndPlayerTurn;
-		EventBus.Instance.BoardGenerated += () =>
-		{
-			if (CurrentTurn == 0)
-			{
-				_log.Here().Info("Board generated, starting first turn if CurrentTurn is 0");
-				StartNewTurn();
-			}
-		};
+		EventBus.Instance.GameInitialized += OnGameInitialized;
 	}
 
-	public void StartNewTurn()
+	private void OnGameInitialized()
 	{
-		// Update Actions 
-		_log.Here().Info("Resetting ability pools"); 
-		// CHECK:
-		// if it should become a command,
-		// will create clutter, though if command logs itself
-		// Probably only if I ever add Ability which allows the resetting of ability pools else redundant
-		// (? as only called here function reset)
-		foreach (var node in GetTree().GetNodesInGroup(nameof(Global.Groups.PlayerUnits)))
+		SetTurnOrder(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers());
+		_activePlayerId = _turnOrder.Keys.First();
+		SendEventBusSignals(null, _activePlayerId);
+		_turnOrder[_activePlayerId].Controller.StartTurn();
+	}
+
+	private void SetTurnOrder(PlayerData[] players)
+	{
+		_turnOrder = new SortedDictionary<PlayerId, PlayerData>(
+			players.ToDictionary(p => p.PlayerId, p => p)
+		);
+	}
+
+	public void EndPlayerTurn(PlayerId playerId)
+	{
+		if (playerId != _activePlayerId)
 		{
-			var unit = (Unit)node;
-			unit.AbilityC.ResetPool();
+			Log.Here().Warn("Player {PlayerId} tried to end turn, but it's not their turn", playerId);
+			return;
 		}
-		PlayerPlayed = false;
-		EnemyPlayed = false;
 
-		CurrentTurn++;
-		_log.Here().Info("Turn {TurnNumber} started", CurrentTurn);
-		EventBus.Instance.EmitSignal(EventBus.SignalName.NewTurnStarted, CurrentTurn);
+		_turnOrder[_activePlayerId].Controller.EndTurn();
+
+		var idList = _turnOrder.Keys.ToList();
+		var nextPlayerId = idList[(idList.IndexOf(playerId) + 1) % idList.Count];
+		_activePlayerId = nextPlayerId;
+
+		SendEventBusSignals(playerId, nextPlayerId);
+
+		_turnOrder[_activePlayerId].Controller.StartTurn();
 	}
 
-	public void EndPlayerTurn()
+	private void SendEventBusSignals(PlayerId? oldPlayerId, PlayerId newPlayerId)
 	{
-		PlayerPlayed = true;
-		_log.Here().Info("Player turn {TurnNumber} ended", CurrentTurn);
-		CheckIfToStartNewTurn();
-		EventBus.Instance.EmitSignal(EventBus.SignalName.PlayerTurnEnded);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.NewTurnStarted, newPlayerId.Value, CurrentTurn);
+		if (newPlayerId == GameManager.Instance.LocalPlayerId)
+			EventBus.Instance.EmitSignal(EventBus.SignalName.LocalPlayerTurnStarted, newPlayerId.Value, CurrentTurn);
+		else if (oldPlayerId == GameManager.Instance.LocalPlayerId)
+			EventBus.Instance.EmitSignal(EventBus.SignalName.LocalPlayerTurnEnded, newPlayerId.Value, CurrentTurn);
 	}
 
-	public void EndEnemyTurn()
+	public override void _ExitTree()
 	{
-		_log.Here().Info("Enemy turn {TurnNumber} ended", CurrentTurn);
-		CheckIfToStartNewTurn();
-		EventBus.Instance.EmitSignal(EventBus.SignalName.EnemyTurnEnded);
-	}
-
-	private void CheckIfToStartNewTurn()
-	{
-		if (PlayerPlayed && EnemyPlayed)
-		{
-			StartNewTurn();
-		}
+		EventBus.Instance.GameInitialized -= OnGameInitialized;
 	}
 }

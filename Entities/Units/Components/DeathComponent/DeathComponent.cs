@@ -19,8 +19,7 @@ public partial class DeathComponent : Node
 	public override void _Ready()
 	{
 		_log = _log.ForContext("UnitName", Unit.UnitName)
-			.ForContext("UnitId", Unit.UnitId)
-			.ForContext("Team", Unit.Team);
+			.ForContext("UnitId", Unit.UnitId);
 		HealthC.HealthDepleted += OnHealthDepleted;
 	}
 

@@ -26,13 +26,6 @@ public static class Global
 		PlayerUnits
 	}
 	
-	public enum UnitTeam
-	{
-		Player,
-		Enemy,
-		Neutral
-	}
-	
 	public enum UnitName
 	{ 
 		Soldier

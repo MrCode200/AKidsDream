@@ -1,0 +1,92 @@
+﻿#nullable enable
+using System.Diagnostics.CodeAnalysis;
+using AKidsDream.Common.Logging;
+using AKidsDream.Core.Controllers;
+using AKidsDream.GameBoard;
+using AKidsDream.Units.Resources;
+using Godot;
+using Godot.Collections;
+using Serilog;
+
+namespace AKidsDream.Managers.SaveSystems.Rehydration;
+
+/// <summary>
+/// Sole responsibility: build live <see cref="Unit"/> scene instances from saved
+/// <see cref="UnitStateData"/> and add them under the given parent node.
+/// Ownership validation is delegated to <see cref="UnitOwnershipResolver"/>; scene
+/// loading and instantiation live here.
+/// </summary>
+public static class UnitStateInitializer
+{
+    private static readonly ILogger Log = GameLogger.For(typeof(UnitStateInitializer));
+
+    public static Array<Unit> InitializeUnits(Node parent, Array<UnitStateData>? savedUnits)
+    {
+        var initializedUnits = new Array<Unit>();
+
+        if (savedUnits == null)
+            return initializedUnits;
+
+        foreach (var state in savedUnits)
+        {
+            if (TryCreateUnit(parent, state, out var unit))
+                initializedUnits.Add(unit);
+        }
+
+        return initializedUnits;
+    }
+
+    private static bool TryCreateUnit(Node parent, UnitStateData state, [NotNullWhen(true)] out Unit? unit)
+    {
+        unit = null;
+
+        if (!UnitOwnershipResolver.TryResolve(state, out var ownership))
+            return false;
+
+        var unitName = state.UnitName.ToString();
+        var unitScene = LoadUnitScene(unitName);
+        if (unitScene == null)
+            return false;
+
+        UnitId? unitId = state.UnitId >= 1 ? new UnitId(state.UnitId) : null;
+        var newUnit = unitScene.Instantiate<Unit>();
+
+        newUnit.Init(
+            state.UnitName,
+            ownership.Value.OwnerId,
+            ownership.Value.TeamId,
+            state.TileLocation,
+            state.UnitStats,
+            unitId
+        );
+        
+        // Set position directly (rather than via movement) to skip the signal emission
+        // that a normal Unit move would trigger during initial load.
+        newUnit.Position = Board.TileToWorldPosition(state.TileLocation);
+        
+        parent.AddChild(newUnit);
+        
+        Log.ForContext("UnitId", state.UnitId)
+            .ForContext("TileLocation", state.TileLocation)
+            .ForContext("Parent", parent.Name)
+            .Here()
+            .Debug("Initialized unit '{UnitName}' at {TileLocation} in '{Parent}'",
+                state.UnitName, state.TileLocation, parent.Name);
+ 
+        unit = newUnit;
+        return true;
+    }
+
+    private static PackedScene? LoadUnitScene(string unitName)
+    {
+        var scenePath = $"res://Entities/Units/{unitName}/{unitName}.tscn";
+        var unitScene = GD.Load<PackedScene>(scenePath);
+
+        if (unitScene == null)
+        {
+            Log.Here().Warn("Failed to load unit scene at '{ScenePath}' for '{UnitName}'", scenePath, unitName);
+        }
+
+        return unitScene;
+    }
+}

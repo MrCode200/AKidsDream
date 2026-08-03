@@ -2,7 +2,7 @@
 using System;
 using AKidsDream.StateMachines;
 
-namespace AKidsDream.Managers.AI;
+namespace AKidsDream.Controllers;
 
 /*
  * Enemy Turn Observation:

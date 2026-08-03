@@ -105,10 +105,15 @@ public partial class AbilityComponent : Node
 			_log.Here().Warn("Ability '{AbilityName}' not found", name);
 			return false;
 		}
-
-		if (targetTiles.Any(tile => !CanAfford(name) || !ValidTiles(name, board).Contains(tile)))
+		if (!CanAfford(name))
 		{
-			_log.Here().Debug("Cannot cast ability '{AbilityName}': cannot afford or tile not in reach", ability.Name);
+			_log.Here().Debug("Cannot cast ability '{AbilityName}': cannot afford", ability.Name);
+			return false;
+		}
+		
+		if (targetTiles.Any(tile => !ValidTiles(name, board).Contains(tile)))
+		{
+			_log.Here().Debug("Cannot cast ability '{AbilityName}': tile not in reach", ability.Name);
 			return false;
 		}
 

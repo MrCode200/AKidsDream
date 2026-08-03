@@ -1,146 +1,124 @@
+#nullable enable
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using AKidsDream.Common.Logging;
+using AKidsDream.Core.Managers;
+using AKidsDream.Core.Teams;
+using AKidsDream.Managers;
+using AKidsDream.Core.Controllers;
 using AKidsDream.GameBoard;
 using AKidsDream.Units.Resources;
 using AKidsDream.Managers.SaveSystem.Resources;
-using AKidsDream.Utilities;
+using AKidsDream.Managers.SaveSystems.Rehydration;
 using Godot;
 using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.Managers.SaveSystems;
 
+/// <summary>
+/// Coordinates loading and saving a full game state. This class only orchestrates
+/// the sequence of steps — the actual work is delegated to focused collaborators:
+/// <see cref="GameStateRepository"/> (disk I/O),
+/// (scene-tree cleanup), and <see cref="UnitStateInitializer"/> (unit construction,
+/// which in turn uses <see cref="UnitOwnershipResolver"/> for validation).
+/// </summary>
 public static class SaveLoadManager
 {
-	private static readonly ILogger _log = GameLogger.For(typeof(SaveLoadManager));
+    private static readonly ILogger Log = GameLogger.For(typeof(SaveLoadManager));
 
-	/// <summary>
-	/// Loads the game state from a file.
-	/// </summary>
-	/// <param name="stateFileName">The filename to be loaded</param>
-	/// <param name="board">The board, which gets used to init itself.</param>
-	public static void LoadGameState(string stateFileName, Board board, Node entityLayer, bool removeExistingUnits = true)
-	{
-		if (removeExistingUnits)
-		{
-			var unitsRemovedCount = entityLayer.GetChildCount();
-			foreach (var unit in entityLayer.GetChildren())
-			{
-				unit.QueueFree();
-			}
-			_log.ForContext("StateFileName", stateFileName)
-				.ForContext("EntityLayer", entityLayer.Name)
-				.Here()
-				.Debug(
-					"Removed {UnitCount} existing units from '{EntityLayer}' while loading '{StateFileName}'",
-					unitsRemovedCount,
-					entityLayer.Name,
-					stateFileName);
-		}
-		
-		var state = ResourceIO.Load<GameStateData>(Path.Combine(Global.SavePath, stateFileName)) ?? new GameStateData();
+    /// <summary>
+    /// Loads the game state from a file.
+    /// </summary>
+    /// <param name="stateFileName">The filename to be loaded</param>
+    /// <param name="board">The board, which gets used to init itself.</param>
+    /// <param name="entityLayer">To where the child Unit Nodes should be added to</param>
+    /// <param name="removeExistingUnits">Used only for GameDevelopment purposes, to create a clean Board when loading</param>
+    public static void LoadGameState(string stateFileName, Board board, Node entityLayer,
+        bool removeExistingUnits = true)
+    {
+        if (removeExistingUnits) // DEV purpose only
+        {
+            var unitsRemovedCount = entityLayer.GetChildCount();
+            foreach (var unit in entityLayer.GetChildren())
+            {
+                unit.QueueFree();
+            }
 
-		_log.ForContext("StateFileName", stateFileName)
-			.Here()
-			.Info(
-				"Loading game state from '{StateFileName}' with {UnitCount} units",
-				stateFileName,
-				state.UnitStateResources?.Count ?? 0);
+            Log.ForContext("StateFileName", stateFileName)
+                .ForContext("EntityLayer", entityLayer.Name)
+                .Here()
+                .Debug(
+                    "Removed {UnitCount} existing units from '{EntityLayer}' while loading '{StateFileName}'",
+                    unitsRemovedCount,
+                    entityLayer.Name,
+                    stateFileName);
+        }
 
-		var initializedUnits = _initializeUnits(entityLayer, state.UnitStateResources);
+        var state = GameStateRepository.Load(stateFileName);
+        GameManager.Instance.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
+        GameManager.Instance.InitializeControllers(state.PlayerData);
 
-		int highestId = initializedUnits.Select(unit => unit.UnitId).DefaultIfEmpty(0).Max();
-		Utils.SetNextId(highestId + 1);
-		_log.ForContext("HighestId", highestId)
-			.ForContext("NextId", highestId + 1)
-			.Here()
-			.Debug(
-				"Set next unit ID to {NextId} (highest loaded ID: {HighestId})",
-				highestId + 1,
-				highestId);
+        Log.ForContext("StateFileName", stateFileName)
+            .Here()
+            .Info(
+                "Loading game state from '{StateFileName}' with {UnitCount} units",
+                stateFileName,
+                state.UnitStateResources?.Count ?? 0);
 
-		board.Init(state.BoardStateData, initializedUnits);
-	}
+        AssignNextIds(state.UnitStateResources!, state.PlayerData, state.TeamData);
+        var initializedUnits = UnitStateInitializer.InitializeUnits(entityLayer, state.UnitStateResources);
+        board.Init(state.BoardStateData, initializedUnits);
+    }
 
-	/// <summary>
-	/// Saves the current state of the board.
-	/// </summary>
-	/// <param name="board">The Board instance of the current game</param>
-	/// <param name="saveFileName">The name of the save file.
-	/// If null Generates: GameState + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")</param>
-	/// <returns>True on success, else false.</returns>
-	public static void SaveState(Board board, string saveFileName = null)
-	{
-		saveFileName ??= "GameState" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
-		var state = new GameStateData();
+    /// <summary>
+    /// Saves the current state of the board.
+    /// </summary>
+    /// <param name="board">The Board instance of the current game</param>
+    /// <param name="saveFileName">The name of the save file.
+    /// If null Generates: GameState + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")</param>
+    /// <returns>True on success, else false.</returns>
+    public static void SaveState(Board board, string? saveFileName = null)
+    {
+        saveFileName ??= "GameState" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+        var state = new GameStateData
+        {
+            PlayerData = new Array<PlayerData>(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers()),
+            TeamData = new Array<TeamData>(GameManager.Instance.PlayerTeamRegistry.GetAllTeams()),
+            TeamRelations = GameManager.Instance.TeamRelationResolver.Relations,
+            BoardStateData = board.StateData
+        };
 
-		state.BoardStateData = board.StateData;
-		// Iterate through BoardState tiles instead of scene tree
-		foreach (var unit in board.GetAllUnits())
-		{
-			state.UnitStateResources.Add(
-				UnitStateData.Create(unit)
-			);
-		}
+        // Iterate through BoardState tiles instead of scene tree
+        foreach (var unit in board.GetAllUnits())
+        {
+            state.UnitStateResources.Add(UnitStateData.Create(unit));
+        }
 
-		ResourceIO.Save(state, Path.Combine(Global.SavePath, saveFileName));
-		_log.ForContext("SaveFileName", saveFileName)
-			.ForContext("UnitCount", state.UnitStateResources.Count)
-			.Here()
-			.Info(
-				"Saved game state to '{SaveFileName}' with {UnitCount} units",
-				saveFileName,
-				state.UnitStateResources.Count);
-	}
+        GameStateRepository.Save(state, saveFileName);
+    }
 
-	/// <summary>
-	/// Initializes units from the saved <see cref="UnitStateData"/> data in the <see cref="GameStateData"/>.
-	/// Loads unit scenes, adds them to the scene tree, and sets their initial state.
-	/// <Returns>An array of initialized units.</Returns>
-	/// </summary>
-	private static Array<Unit> _initializeUnits(Node parent, Array<UnitStateData> initialUnits)
-	{
-		if (initialUnits == null) return [];
-		
-		Array<Unit> initializedUnits = [];
-		foreach (var state in initialUnits)
-		{
-			var unitName = state.UnitName.ToString();
-			var scenePath = $"res://Entities/Units/{unitName}/{unitName}.tscn";
-			var unitScene = GD.Load<PackedScene>(scenePath);
+    private static void AssignNextIds(IEnumerable<UnitStateData> units, IEnumerable<PlayerData> players,
+        IEnumerable<TeamData> teams)
+    {
+        var highestUnitId = units.Select(u => u.UnitId).DefaultIfEmpty(1).Max();
+        UnitId.SetNextId(highestUnitId + 1);
 
-			var unitId = 0;
-			if (state.UnitId >= 1)
-				unitId = state.UnitId;
-					
-			var newUnit = unitScene.Instantiate<Unit>();
-			newUnit.Init(
-				state.UnitName,
-				state.Team,
-				state.TileLocation,
-				state.UnitStats,
-				unitId
-			);
+        var highestPlayerId = players.Select(p => p.PlayerId.Value).DefaultIfEmpty(1).Max();
+        PlayerId.SetNextId(highestPlayerId + 1);
 
-			// Set position and TileLocation disway to skip signal emitting from MoveC
-			newUnit.Position = Board.TileToWorldPosition(state.TileLocation);
+        var highestTeamId = teams.Select(t => t.TeamId.Value).DefaultIfEmpty(1).Max();
+        TeamId.SetNextId(highestTeamId + 1);
 
-			initializedUnits.Add(newUnit);
 
-			parent.AddChild(newUnit);
-			_log.ForContext("UnitId", state.UnitId)
-				.ForContext("TileLocation", state.TileLocation)
-				.ForContext("Parent", parent.Name)
-				.Here()
-				.Debug(
-					"Initialized unit '{UnitName}' at {TileLocation} in '{Parent}'",
-					state.UnitName,
-					state.TileLocation,
-					parent.Name);
-		}
-
-		return initializedUnits;
-	}
+        Log.ForContext("HighestUnitId", highestUnitId)
+            .ForContext("HighestPlayerId", highestPlayerId)
+            .ForContext("HighestTeamId", highestTeamId)
+            .Here()
+            .Debug(
+                "Set nextId for UnitId to {HighestUnitId}, PlayerId to {HighestPlayerId}, TeamId to {HighestTeamId}",
+                highestUnitId + 1, highestPlayerId + 1, highestTeamId + 1
+            );
+    }
 }

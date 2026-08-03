@@ -1,4 +1,6 @@
 using AKidsDream.Common.Logging;
+using AKidsDream.Core.Managers;
+using AKidsDream.Managers;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Units.Resources.Components;
@@ -17,10 +19,14 @@ namespace AKidsDream.Units.Resources;
 public partial class Unit : CharacterBody2D
 {
     // -- PROPERTIES --
-    public int UnitId { get; private set; }
+    public UnitId UnitId { get; private set; }
 
     [Export] public Global.UnitName UnitName;
-    [Export] public Global.UnitTeam Team;
+    
+    [Export] public int TeamIdInt;
+    [Export] public int OwnerIdInt;
+    public PlayerId OwnerId => new(OwnerIdInt);
+    public TeamId TeamId => new(TeamIdInt);
 
     /// <summary>
     /// The current tile location of the unit.
@@ -40,49 +46,54 @@ public partial class Unit : CharacterBody2D
     public SelectableComponent SelectableC { get; private set; }
     public DeathComponent DeathC { get; private set; }
     public AbilityComponent AbilityC { get; private set; }
-    
+
 
     private ILogger _log = GameLogger.For<Unit>();
 
     public void Init(
         Global.UnitName unitName,
-        Global.UnitTeam team,
+        PlayerId playerId,
+        TeamId teamId,
         Vector2I tileLocation,
         UnitStatsData unitStats,
-        int unitId = 0
+        UnitId? unitId = null
     )
     {
         var externalIdPassed = false;
-        
-        if (unitId == 0)
-            UnitId = Utils.GetNextId();
-        else if (unitId < 0)
-        {
-            GD.PushWarning("UnitId cannot be negative. Using default id.");
-            UnitId = Utils.GetNextId();
-        }
+
+        if (unitId is null)
+            UnitId = UnitId.GetNextId();
         else
         {
+            // externalId shouldn't be a bug... (LoadSaveSystem)
             externalIdPassed = true;
-            UnitId = unitId;
+            UnitId = unitId.Value;
         }
 
         UnitName = unitName;
-        Team = team;
+        OwnerIdInt = playerId.Value;
+        TeamIdInt = teamId.Value;
         TileLocation = tileLocation;
         if (unitStats is not null) UnitStats = unitStats;
 
+        AddToGroup(nameof(Global.Groups.Units));
+        AddToGroup(teamId.ToString());
+        
+        _setEnemyLogicAndAppearance();
+        
         // Set static context for all future log calls
         _log = _log.ForContext("UnitId", UnitId)
             .ForContext("UnitName", UnitName)
-            .ForContext("Team", Team);
-        
+            .ForContext("PlayerId", OwnerIdInt);
+
         if (externalIdPassed)
             _log.ForContext("TileLocation", TileLocation)
                 .Here()
                 .Warn(
                     "Unit Initialized With External Id at {TileLocation} with ID: {UnitId}",
                     TileLocation);
+        
+        EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
     }
 
     // -- LOGIC --
@@ -90,18 +101,10 @@ public partial class Unit : CharacterBody2D
     public override void _Ready()
     {
         Position = Board.TileToWorldPosition(TileLocation);
-        _setEnemyLogicAndAppearance();
 
         if (Engine.IsEditorHint()) return;
 
         _injectReferenceAndAssignComponents();
-
-        AddToGroup(nameof(Global.Groups.Units));
-        AddToGroup((Team == Global.UnitTeam.Enemy)
-            ? nameof(Global.Groups.EnemyUnits)
-            : nameof(Global.Groups.PlayerUnits)
-        );
-        EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
         // _log.ForContext("TileLocation", TileLocation) // To verbose, instead, log when creating/spawning Unit(s)...
         //    .Here()
         //    .Info("UnitReady at {TileLocation}", TileLocation);
@@ -114,19 +117,17 @@ public partial class Unit : CharacterBody2D
         AbilityC = GetNode<AbilityComponent>("AbilityComponent");
 
         HealthC = GetNode<HealthComponent>("HealthComponent");
-        if (HealthC is not null)
-        {
-            HealthC.UnitStats = UnitStats;
-        }
+        HealthC.UnitStats = UnitStats;
+        
     }
 
     private void _setEnemyLogicAndAppearance()
     {
-        if (Team == Global.UnitTeam.Enemy)
+        if (GameManager.Instance.IsHostileToLocalPlayer(TeamId))
         {
             SelectableC?.QueueFree();
 
-            AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace("Player", Team.ToString()));
+            AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace("Player", "Enemy"));
         }
     }
 

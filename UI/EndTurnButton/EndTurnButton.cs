@@ -5,14 +5,22 @@ namespace AKidsDream.UI;
 
 public partial class EndTurnButton : TextureButton
 {
+	private void OnLocalPlayerTurnEnded(int _, int __) => Disabled = false;
+
 	public override void _Ready()
 	{
-		EventBus.Instance.NewTurnStarted += (int _) => Disabled = false;
+		EventBus.Instance.LocalPlayerTurnStarted += OnLocalPlayerTurnEnded;
 	}
 
 	public override void _Pressed()
 	{
-		EventBus.Instance.EmitSignal(EventBus.SignalName.EndTurnBtnPressed);
+		// TODO: make end turn command...
+		
 		Disabled = true;
+	}
+
+	public override void _ExitTree()
+	{
+		EventBus.Instance.LocalPlayerTurnStarted -= OnLocalPlayerTurnEnded;
 	}
 }

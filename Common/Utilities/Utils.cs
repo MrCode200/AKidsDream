@@ -9,28 +9,8 @@ namespace AKidsDream.Utilities;
 /// Global utility class providing helper functions for resource management and other common operations.
 /// </summary>
 [Tool]
-public  class Utils
+public static class Utils
 {
-    private static int _nextId;
-
-    public static void SetNextId(int id)
-    {
-        if (id < _nextId)
-            GD.PushWarning("NextId is set to less than to the current id. " +
-                           "This can cause issues with id generation.");
-        _nextId = id;
-    }
-
-    /// <summary>
-    /// A super simple incremental id generator, local to this class.
-    /// Doesn't do any id checks.
-    /// </summary>
-    /// <returns>The next available id</returns>
-    public static int GetNextId()
-    {
-        return _nextId++;
-    }
-
     /// <summary>
     /// Rebuilds a resource by copying all properties from a source resource to a new typed instance.
     /// </summary>

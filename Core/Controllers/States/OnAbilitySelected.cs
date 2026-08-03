@@ -9,7 +9,7 @@ using AKidsDream.StateMachines;
 using Godot;
 using Serilog;
 
-namespace AKidsDream.Managers.AI;
+namespace AKidsDream.Controllers;
 
 /*
 Ability Selected:

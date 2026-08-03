@@ -42,6 +42,7 @@ public readonly struct CallerLogger
     public void Warn(string template, params object[] args)  => Write(LogEventLevel.Warning, null, template, args);
     public void Error(string template, params object[] args) => Write(LogEventLevel.Error, null, template, args);
     public void Error(Exception ex, string template, params object[] args) => Write(LogEventLevel.Error, ex, template, args);
+    public void Fatal(string template, params object[] args) => Write(LogEventLevel.Fatal, null, template, args);
     public void Fatal(Exception ex, string template, params object[] args) => Write(LogEventLevel.Fatal, ex, template, args);
 
     private void Write(LogEventLevel level, Exception ex, string template, object[] args) =>

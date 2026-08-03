@@ -6,11 +6,14 @@ using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
 using AKidsDream.Units.Resources;
 using AKidsDream.Common.Logging;
+using AKidsDream.Core.Teams;
+using AKidsDream.Managers;
+using AKidsDream.Core.Controllers;
 using Godot;
 using Serilog;
 using TileData = AKidsDream.Managers.SaveSystem.Resources;
 
-namespace AKidsDream.Managers.AI;
+namespace AKidsDream.Controllers;
 
 /*
 Handles Clicks based on Rules:
@@ -29,7 +32,7 @@ Ability Selected:
 3. Hovering inside the reach pattern previews the effect.
 4. After casting, the unit remains selected and ability state is cleared.
 */
-public sealed class PlayerInteractionPayload(
+public readonly struct PlayerInteractionPayload(
     InputEvent inputEvent,
     TileData.TileData? tileAtMousePos,
     bool isLeftClickPressed
@@ -45,39 +48,68 @@ public sealed class PlayerInteractionPayload(
     public bool HasUnit => UnitAtMousePos is not null;
 }
 
-public partial class PlayerInteractionController : Node2D
+//TODO: each player should create their own StateMachine as a child...
+public partial class PlayerInteractionController : Node2D, IPlayerController
 {
     [Export] public Board Board = null!;
     [Export] public AbilityVisualizer AbilityVisualizer = null!;
     [Export] public StateMachine StateMachine = null!;
-    [Export] public GameLoopManager GameLoopManager = null!;
     [Export] public CommandExecutor CommandExecutor = null!;
-
-    private static readonly ILogger _log = GameLogger.For<PlayerInteractionController>(); 
-    // CHECK:
-    // When Implemented all logic
-    // PlayerInteractionController has no logs, is that intended or should there be for something some logs? (or do the states already handle all logs when needed...
 
     public Unit? CurrentSelectedUnit;
     public AbilityData? CurrentSelectedAbility;
+    
+    private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>(); 
+    private bool _playerTurnEnded;
+    // CHECK:
+    // When Implemented all logic
+    // PlayerInteractionController has no logs, is that intended or should there be for something some logs? (or do the states already handle all logs when needed...
+    
+    public PlayerInteractionController() {}
 
+    public PlayerInteractionController(PlayerControllerContext context, PlayerData playerData)
+    {
+        // _playerId = playerData.PlayerId;
+        
+        Board = context.Board;
+        AbilityVisualizer = context.AbilityVisualizer;
+        StateMachine = context.StateMachine;
+        CommandExecutor = context.CommandExecutor;
+    }
+    
     public override void _Ready()
     {
         EventBus.Instance.AbilityBtnPressed += OnAbilityBtnPressed;
-        EventBus.Instance.PlayerTurnEnded += () =>
-        {
-            ClearCurrentAbility();
-            DeselectCurrentUnit();
-        };
 
         StateMachine.AddState(new NoAbilitySelected(this));
         StateMachine.AddState(new OnAbilitySelected(this));
         StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
     }
 
+    public override void _ExitTree()
+    {
+        EventBus.Instance.AbilityBtnPressed -= OnAbilityBtnPressed;
+    }
+
+    public void StartTurn()
+    {
+        StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
+        _playerTurnEnded = false;
+    }
+
+    public void EndTurn()
+    {
+        ClearCurrentAbility();
+        DeselectCurrentUnit();
+        StateMachine.ChangeState(null, nameof(EnemyTurnObservation), true);
+        _playerTurnEnded = true;
+    }
+    
+    // -- INPUT --
+
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (GameLoopManager.PlayerPlayed)
+        if (_playerTurnEnded)
             return;
         // User still may want information on the Enemy/its own units, how to handle that (more states :///)
         StateMachine.Update(CreatePayload(@event));
@@ -96,7 +128,7 @@ public partial class PlayerInteractionController : Node2D
 
     private void OnAbilityBtnPressed(Unit unit, AbilityData ability)
     {
-        if (GameLoopManager.PlayerPlayed) return;
+        if (_playerTurnEnded) return;
         CurrentSelectedAbility = ability;
 
         CommandExecutor.Execute(new SelectAbilityCommand(
@@ -106,6 +138,8 @@ public partial class PlayerInteractionController : Node2D
 
         StateMachine.ChangeState(null, nameof(OnAbilitySelected), true);
     }
+    
+    // -- --
 
     public void SelectUnit(Unit unit)
     {

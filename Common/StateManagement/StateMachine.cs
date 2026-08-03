@@ -48,7 +48,7 @@ public partial class StateMachine : Node
 		{
 			_log.Here().Debug("Exiting state '{CurrentState}'", CurrentStateName);
 			_currentState.Exit();
-			_currentState.ChangeState = null;
+			_currentState.ChangeState = null!;
 			_currentState = null;
 		}
 		_log.Here().Debug("StateMachine destroyed");
@@ -99,7 +99,7 @@ public partial class StateMachine : Node
 			_log.Here().Error("Cannot remove Node states through RemoveState. Node states are managed by the scene tree.");
 			return;
 		}
-		_states[stateName].ChangeState = null;
+		_states[stateName].ChangeState = null!;
 		_states.Remove(stateName);
 		_log.Here().Debug("Removed state '{StateName}'", stateName);
 	}
@@ -123,14 +123,14 @@ public partial class StateMachine : Node
 	/// <param name="state">The state that called the transition. Gets ignored if <see cref="force"/> is true</param>
 	/// <param name="stateName">The name of the state to transition to.</param>
 	/// <param name="force">If false, checks if the function call comes from the currently active state.</param>
-	public void ChangeState(IState state, string stateName, bool force = false)
+	public void ChangeState(IState? state, string stateName, bool force = false)
 	{
-		if (!force && state.GetType().Name != _currentState?.GetType().Name)
+		if (!force && state?.GetType().Name != _currentState?.GetType().Name)
 		{
 			_log.Here().Error(
 				"Trying to change state to '{TargetState}', but caller '{CallerState}' is not current state '{CurrentState}'",
 				stateName,
-				state.GetType().Name,
+				state?.GetType().Name,
 				_currentState?.GetType().Name);
 			return;
 		}

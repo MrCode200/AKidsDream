@@ -6,10 +6,10 @@ namespace AKidsDream.Units.Resources;
 [Tool]
 public partial class UnitStateData : Resource
 {
-    // CHECK: if public or private
     [Export] public int UnitId;
+    [Export] public int OwnerId;
+    
     [Export] public Global.UnitName UnitName;
-    [Export] public Global.UnitTeam Team;
     [Export] public Vector2I TileLocation;
     [Export] public UnitStatsData UnitStats;
 
@@ -17,9 +17,9 @@ public partial class UnitStateData : Resource
     {
         return new UnitStateData
         {
-            UnitId = unit.UnitId,
+            UnitId = unit.UnitId.Value,
+            OwnerId = unit.OwnerIdInt,
             UnitName = unit.UnitName,
-            Team = unit.Team,
             TileLocation = unit.TileLocation,
             UnitStats = (UnitStatsData)unit.UnitStats.Duplicate()
         };

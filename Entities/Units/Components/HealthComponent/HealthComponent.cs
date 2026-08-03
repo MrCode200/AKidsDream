@@ -35,8 +35,7 @@ public partial class HealthComponent : Node
 	{
 		var unit = Owner as Unit;
 		_log = _log.ForContext("UnitName", unit?.UnitName)
-			.ForContext("UnitId", unit?.UnitId)
-			.ForContext("Team", unit?.Team);
+			.ForContext("UnitId", unit?.UnitId);
 	}
 	
 	/// <summary>

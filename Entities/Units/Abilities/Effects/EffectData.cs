@@ -24,6 +24,7 @@ public abstract partial class EffectData : Resource
         get => _minTargets;
         set
         {
+            // Clamp value to be at most MaxTargets
             _minTargets = value;
             if (_minTargets > MaxTargets)
                 MaxTargets = _minTargets;
@@ -38,6 +39,7 @@ public abstract partial class EffectData : Resource
         get => _maxTargets;
         set
         {
+            // Clamp value to be at least MinTargets
             _maxTargets = value;
             if (_maxTargets < MinTargets)
                 MinTargets = _maxTargets;

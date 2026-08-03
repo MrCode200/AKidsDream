@@ -3,14 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://Entities/Board/board.tscn" id="1_jnam8"]
 [ext_resource type="Script" uid="uid://c85ubqn5h1vee" path="res://Core/Managers/GameManager.cs" id="1_ypqj4"]
 [ext_resource type="Script" uid="uid://byoh3ljptnybl" path="res://Common/StateManagement/StateMachine.cs" id="2_5cnm3"]
-[ext_resource type="Script" uid="uid://caf4fhhjdtr4w" path="res://Core/AI/PlayerInteractionController.cs" id="2_cpkaj"]
 [ext_resource type="Texture2D" uid="uid://ttl3cvsve1lc" path="res://Entities/Board/Assets/tiles.png" id="4_cpkaj"]
 [ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://Core/Managers/CommandsSystem/CommandExecutor.cs" id="4_ypqj4"]
 [ext_resource type="Script" uid="uid://c2vkehvslp083" path="res://Core/Managers/GameLoopManager.cs" id="5_1totg"]
 [ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://UI/UnitInfoBar/UnitInfoBar.tscn" id="5_d2vp3"]
 [ext_resource type="Script" uid="uid://irt720bqh762" path="res://Core/Managers/AbilityVisualizer.cs" id="5_ypqj4"]
+[ext_resource type="Script" uid="uid://dqhgr3soqc73f" path="res://Core/Controllers/ControllerFactory.cs" id="7_30lfw"]
 [ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
-[ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="11_j3kke"]
 [ext_resource type="PackedScene" uid="uid://ddst6dppshn3c" path="res://UI/EndTurnButton/EndTurnButton.tscn" id="12_7hfl2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
@@ -31,56 +30,9 @@ texture = ExtResource("4_cpkaj")
 [sub_resource type="TileSet" id="TileSet_1totg"]
 sources/0 = SubResource("TileSetAtlasSource_cpkaj")
 
-[sub_resource type="Resource" id="Resource_7mm23"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_tbb0a"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_h2jqh"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_dwt37"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_ontqi"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_0d0vr"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_ib0xc"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[sub_resource type="Resource" id="Resource_56pwf"]
-script = ExtResource("11_j3kke")
-MaxHealth = 2
-Health = 2
-metadata/_custom_type_script = "uid://8ujfv88riuka"
-
-[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("EntityLayer", "GameBoard")]
+[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "EntityLayer", "GameBoard")]
 script = ExtResource("1_ypqj4")
+ControllerFactory = NodePath("SystemsLayer/ControllerFactory")
 LoadFileName = "DevBoardSave.tres"
 EntityLayer = NodePath("EntityLayer")
 SaveOnExit = false
@@ -93,17 +45,6 @@ unique_name_in_owner = true
 
 [node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226]
 position = Vector2(234, 294)
-
-[node name="PlayerInteractionController" type="Node2D" parent="SystemsLayer" unique_id=574570579 node_paths=PackedStringArray("Board", "AbilityVisualizer", "StateMachine", "GameLoopManager", "CommandExecutor")]
-script = ExtResource("2_cpkaj")
-Board = NodePath("../Board")
-AbilityVisualizer = NodePath("../AbilityVisualizer")
-StateMachine = NodePath("StateMachine")
-GameLoopManager = NodePath("../GameLoopManager")
-CommandExecutor = NodePath("../CommandExecutor")
-
-[node name="StateMachine" type="Node" parent="SystemsLayer/PlayerInteractionController" unique_id=2146957956]
-script = ExtResource("2_5cnm3")
 
 [node name="AbilityVisualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Board", "ReachTilemap", "EffectTilemap")]
 script = ExtResource("5_ypqj4")
@@ -126,57 +67,33 @@ script = ExtResource("4_ypqj4")
 AbilityVisualizer = NodePath("../AbilityVisualizer")
 Board = NodePath("../Board")
 
-[node name="GameLoopManager" type="Node" parent="SystemsLayer" unique_id=1524335731]
+[node name="GameLoopManager" type="Node" parent="SystemsLayer" unique_id=1524335731 node_paths=PackedStringArray("ControllerFactory")]
 script = ExtResource("5_1totg")
+ControllerFactory = NodePath("../ControllerFactory")
+
+[node name="ControllerFactory" type="Node" parent="SystemsLayer" unique_id=2102470731 node_paths=PackedStringArray("Board", "AbilityVisualizer", "StateMachine", "CommandExecutor")]
+script = ExtResource("7_30lfw")
+Board = NodePath("../Board")
+AbilityVisualizer = NodePath("../AbilityVisualizer")
+StateMachine = NodePath("StateMachine")
+CommandExecutor = NodePath("../CommandExecutor")
+
+[node name="StateMachine" type="Node" parent="SystemsLayer/ControllerFactory" unique_id=2146957956]
+script = ExtResource("2_5cnm3")
 
 [node name="EntityLayer" type="Node" parent="." unique_id=2094553575]
 
-[node name="@CharacterBody2D@20609" parent="EntityLayer" unique_id=1080513067 instance=ExtResource("9_n2opw")]
-position = Vector2(78, 78)
-Team = 1
-TileLocation = Vector2i(1, 1)
-UnitStats = SubResource("Resource_7mm23")
-
-[node name="@CharacterBody2D@20610" parent="EntityLayer" unique_id=1454045607 instance=ExtResource("9_n2opw")]
-position = Vector2(26, 78)
+[node name="Soldier" parent="EntityLayer" unique_id=1080513067 instance=ExtResource("9_n2opw")]
+position = Vector2(22, 72)
+TeamIdInt = 2
+OwnerIdInt = 2
 TileLocation = Vector2i(0, 1)
-UnitStats = SubResource("Resource_tbb0a")
 
-[node name="@CharacterBody2D@20611" parent="EntityLayer" unique_id=1901243022 instance=ExtResource("9_n2opw")]
-position = Vector2(286, 182)
-Team = 1
-TileLocation = Vector2i(5, 3)
-UnitStats = SubResource("Resource_h2jqh")
-
-[node name="@CharacterBody2D@20612" parent="EntityLayer" unique_id=172294664 instance=ExtResource("9_n2opw")]
-position = Vector2(182, 130)
-Team = 1
-TileLocation = Vector2i(3, 2)
-UnitStats = SubResource("Resource_dwt37")
-
-[node name="@CharacterBody2D@20613" parent="EntityLayer" unique_id=413818449 instance=ExtResource("9_n2opw")]
-position = Vector2(234, 182)
-TileLocation = Vector2i(4, 3)
-UnitStats = SubResource("Resource_ontqi")
-
-[node name="@CharacterBody2D@20614" parent="EntityLayer" unique_id=44247983 instance=ExtResource("9_n2opw")]
-position = Vector2(234, 130)
-Team = 1
-TileLocation = Vector2i(4, 2)
-UnitStats = SubResource("Resource_0d0vr")
-
-[node name="@CharacterBody2D@20615" parent="EntityLayer" unique_id=599336565 instance=ExtResource("9_n2opw")]
-position = Vector2(78, 286)
-TileLocation = Vector2i(1, 5)
-UnitStats = SubResource("Resource_ib0xc")
-
-[node name="@CharacterBody2D@20616" parent="EntityLayer" unique_id=880459772 instance=ExtResource("9_n2opw")]
-position = Vector2(182, 234)
-TileLocation = Vector2i(3, 4)
-UnitStats = SubResource("Resource_56pwf")
-
-[node name="Soldier" parent="EntityLayer" unique_id=2094659973 instance=ExtResource("9_n2opw")]
-position = Vector2(26, 26)
+[node name="Soldier2" parent="EntityLayer" unique_id=2133163599 instance=ExtResource("9_n2opw")]
+position = Vector2(86, 77)
+TeamIdInt = 1
+OwnerIdInt = 1
+TileLocation = Vector2i(1, 1)
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=140492902]
 layer = 50

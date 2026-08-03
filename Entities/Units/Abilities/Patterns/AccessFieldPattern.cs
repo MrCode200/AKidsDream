@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
+using AKidsDream.Core.Managers;
+using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Units.Resources;
 using Godot;
 
 namespace AKidsDream.Abilities.Effects;
@@ -14,11 +17,13 @@ namespace AKidsDream.Abilities.Effects;
 public enum TargetFilter
 {
     EmptyTiles = 1 << 0,
-    Friend = 1 << 1,
-    Enemy = 1 << 2,
+    
+    OwnedUnits = 1 << 1,
+    Friendly = 1 << 2,
+    Hostile = 1 << 3,
 
-    AnyUnit = Friend | Enemy,
-    AnyTile = EmptyTiles | Friend | Enemy,
+    AnyUnit = Friendly | Hostile,
+    AnyTile = EmptyTiles | Friendly | Hostile,
 }
 
 [GlobalClass]
@@ -39,15 +44,24 @@ public abstract partial class AccessFieldPattern : Resource
             {
                 return true;
             }
-
-            if (AllowedTargets.HasFlag(TargetFilter.Friend) &&
-                tileData.Unit?.Team == Global.UnitTeam.Player)
+            
+            if (AllowedTargets.HasFlag(TargetFilter.OwnedUnits) &&
+                tileData.Unit is not null &&
+                GameManager.Instance.IsLocalPlayer(tileData.Unit.OwnerId))
+            {
+                return true;
+            }
+            
+            if (AllowedTargets.HasFlag(TargetFilter.Friendly) &&
+                tileData.Unit is not null &&
+                !GameManager.Instance.IsHostileToLocalPlayer(tileData.Unit.TeamId))
             {
                 return true;
             }
 
-            if (AllowedTargets.HasFlag(TargetFilter.Enemy) &&
-                tileData.Unit?.Team == Global.UnitTeam.Enemy)
+            if (AllowedTargets.HasFlag(TargetFilter.Hostile) &&
+                tileData.Unit is not null &&
+                GameManager.Instance.IsHostileToLocalPlayer(tileData.Unit.TeamId))
             {
                 return true;
             }
