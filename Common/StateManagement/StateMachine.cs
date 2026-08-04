@@ -29,9 +29,6 @@ public partial class StateMachine : Node
 
 	public override void _Ready()
 	{
-		_log = _log.ForContext("StateMachinePath", GetPath());
-		_log.Here().Debug("StateMachine initializing");
-
 		_isRegisteringNodeStatesFromReady = true;
 
 		foreach (var child in GetChildren())
@@ -40,6 +37,8 @@ public partial class StateMachine : Node
 		}
 		
 		_isRegisteringNodeStatesFromReady = false;
+		_log = _log.ForContext("StateMachinePath", GetPath());
+		_log.Here().Debug("StateMachine initialized at: {StateMachinePath}");
 	}
 
 	public override void _ExitTree()

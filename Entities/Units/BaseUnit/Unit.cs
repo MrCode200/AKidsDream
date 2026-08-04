@@ -22,7 +22,7 @@ public partial class Unit : CharacterBody2D
     public UnitId UnitId { get; private set; }
 
     [Export] public Global.UnitName UnitName;
-    
+
     [Export] public int TeamIdInt;
     [Export] public int OwnerIdInt;
     public PlayerId OwnerId => new(OwnerIdInt);
@@ -78,9 +78,10 @@ public partial class Unit : CharacterBody2D
 
         AddToGroup(nameof(Global.Groups.Units));
         AddToGroup(teamId.ToString());
-        
-        _setEnemyLogicAndAppearance();
-        
+
+        // Move logic later to animationComponent
+        _setAppearance();
+
         // Set static context for all future log calls
         _log = _log.ForContext("UnitId", UnitId)
             .ForContext("UnitName", UnitName)
@@ -92,7 +93,7 @@ public partial class Unit : CharacterBody2D
                 .Warn(
                     "Unit Initialized With External Id at {TileLocation} with ID: {UnitId}",
                     TileLocation);
-        
+
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
     }
 
@@ -118,17 +119,14 @@ public partial class Unit : CharacterBody2D
 
         HealthC = GetNode<HealthComponent>("HealthComponent");
         HealthC.UnitStats = UnitStats;
-        
     }
 
-    private void _setEnemyLogicAndAppearance()
+    private void _setAppearance()
     {
-        if (GameManager.Instance.IsHostileToLocalPlayer(TeamId))
-        {
-            SelectableC?.QueueFree();
-
-            AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace("Player", "Enemy"));
-        }
+        GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(OwnerId, out var ownerData);
+        AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace(
+            nameof(Global.UnitColor.Blue),
+            ownerData.UnitColor.ToString()));
     }
 
     // --- LOGIC ---

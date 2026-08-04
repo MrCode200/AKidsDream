@@ -10,42 +10,48 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="Added Team Logic and Player logic using PlayerId, TeamId, and UnitId (using Id base struct, and structs as identifiers, of IIdTag)&#10;Update GameDataState to hold Players Teams and TeamRelations&#10;Update Loading and Saving System with utility classes&#10;Changed All Arrays to be from Godot.Collections; Dictionaries are mainly System as Godot doesn't support all types.">
-      <change afterPath="$PROJECT_DIR$/Core/Controllers/ControllerFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/PlayerTeamRegistry.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/Resources/PlayerData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/Resources/TeamData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/TeamRelationResolver.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/Identifiers.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/GameStateRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitOwnershipResolver.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitStateInitializer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/TypeExtensions/DictionaryExtension.cs" afterDir="false" />
+    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Common/Logging/GameLogger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Logging/GameLogger.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Common/StateManagement/StateMachine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/StateManagement/StateMachine.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Common/Utilities/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Utilities/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/AI/PlayerInteractionController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/AI/PlayerInteractionController.cs.uid" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs.uid" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/AI/States/EnemyTurnObservation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/States/EnemyTurnObservation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/AI/States/NoAbilitySelected.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/States/NoAbilitySelected.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/AI/States/OnAbilitySelected.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/States/OnAbilitySelected.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Globals/EventBus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Globals/EventBus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Globals/Global.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Globals/Global.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Managers/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/gameWorld.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Core/gameWorld.tscn" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Board/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Board/Board.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/TeamSystem/PlayerTeamRegistry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/PlayerTeamRegistry.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/TeamSystem/Resources/PlayerData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/Resources/PlayerData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Managers/TeamSystem/TeamRelationResolver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/TeamSystem/TeamRelationResolver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/AbilityData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/AbilityData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/DamageEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/DamageEffect.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/EffectData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/EffectData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/MoveSelfEffect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Effects/MoveSelfEffect.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Patterns/AccessFieldPattern.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Patterns/AccessFieldPattern.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/UnitBase.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/BaseUnit/UnitBase.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/Units/Components/AbilityComponent/AbilityComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/AbilityComponent/AbilityComponent.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/Units/Components/DeathComponent/DeathComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/DeathComponent/DeathComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/Components/HealthComponent/HealthComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Components/HealthComponent/HealthComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/EndTurnButton/EndTurnButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UI/EndTurnButton/EndTurnButton.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Attack1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Attack1.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Attack2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Attack2.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Guard.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Guard.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Idle.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Idle.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Run.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Run.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Attack1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Attack1.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Attack2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Attack2.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Guard.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Guard.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Idle.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Idle.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Run.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Run.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitStateInitializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitStateInitializer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/UnitStateData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/UnitStateData.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,6 +94,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/835bac92dfd94732839efbaa77664df25e8000/e8/09e08273/DelegateUtils.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1d8ee5292f3b8d5be2576117f7c1a8b44fa44ab93315dd2df51dbf573e789/ValueType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5acc345db3c207bc9d886a36ff14867ef8d65557432172c2a42f19aeac04d1b/Nullable.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/71246fd56f7999d0787c963da3362569a1129b41237bf6d1930bffe452552/Node.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b4e8a68211f6ed45d46971fde64b4a6391cdb586a18ad3afde5359aecd667d4c/ResourceSaver.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Entities/Units/UnitEnums.cs" root0="FORCE_HIGHLIGHTING" />
@@ -105,61 +112,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="3.1478050234891745E-23" />
-      <entry key="MS500" value="3.159682934479112E-5" />
-      <entry key="S2" value="0.08261386299792899" />
-      <entry key="S5" value="0.5292934795793998" />
-      <entry key="S10" value="1.15472209702425" />
-      <entry key="S30" value="3.929099760524935" />
-      <entry key="S60" value="22.141082106776473" />
-      <entry key="M2" value="68.55018266582515" />
-      <entry key="M5" value="140.7393965365641" />
-      <entry key="M10" value="185.42844955966063" />
-      <entry key="M15" value="207.66901284360102" />
-      <entry key="M30" value="242.38321537926214" />
-      <entry key="H1" value="330.3404738664931" />
-      <entry key="H2" value="671.4713658879" />
-      <entry key="H4" value="1573.233177588671" />
-      <entry key="D1" value="9460.384938730824" />
-      <entry key="W1" value="18426.59447711629" />
+      <entry key="MS100" value="1.1727813930414084" />
+      <entry key="MS500" value="2.4318827187415533" />
+      <entry key="S2" value="5.681421679935558" />
+      <entry key="S5" value="11.356728853300142" />
+      <entry key="S10" value="18.35033886691837" />
+      <entry key="S30" value="28.89168353855047" />
+      <entry key="S60" value="33.004627269498144" />
+      <entry key="M2" value="36.21618432356279" />
+      <entry key="M5" value="61.10539779660033" />
+      <entry key="M10" value="114.32327574154537" />
+      <entry key="M15" value="153.09233582623654" />
+      <entry key="M30" value="218.54574275421268" />
+      <entry key="H1" value="323.15738483873207" />
+      <entry key="H2" value="661.916973580147" />
+      <entry key="H4" value="1554.5339851488043" />
+      <entry key="D1" value="9440.706976510413" />
+      <entry key="W1" value="18448.50390141575" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000000000752258" />
-      <entry key="S2" value="1.0031358488561912" />
-      <entry key="S5" value="1.1411072954587904" />
-      <entry key="S10" value="1.6010486739267082" />
-      <entry key="S30" value="2.725416141872036" />
-      <entry key="S60" value="3.325433908865179" />
-      <entry key="M2" value="3.8490404394767617" />
-      <entry key="M5" value="4.517401683041479" />
-      <entry key="M10" value="5.1503740049944335" />
-      <entry key="M15" value="5.546152868712993" />
-      <entry key="M30" value="6.3545719318684615" />
-      <entry key="H1" value="11.66863492162966" />
-      <entry key="H2" value="40.9877017585609" />
-      <entry key="H4" value="131.03396502806248" />
-      <entry key="D1" value="819.0790700330525" />
-      <entry key="W1" value="1470.0429267511367" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.878717187340418E-115" />
+      <entry key="S5" value="1.4666522234657597E-46" />
+      <entry key="S10" value="1.8151180131883123E-23" />
+      <entry key="S30" value="6.122558371291025E-8" />
+      <entry key="S60" value="4.984233457667052E-4" />
+      <entry key="M2" value="0.047122410864265746" />
+      <entry key="M5" value="0.7763163275528306" />
+      <entry key="M10" value="2.1350781343614327" />
+      <entry key="M15" value="3.083484996233789" />
+      <entry key="M30" value="4.7381772371216" />
+      <entry key="H1" value="10.075869944116684" />
+      <entry key="H2" value="38.087706155470016" />
+      <entry key="H4" value="126.31342406061682" />
+      <entry key="D1" value="814.085649919067" />
+      <entry key="W1" value="1468.75929112712" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="6.487723701643124E-4" />
-      <entry key="MS500" value="0.2303661104224647" />
-      <entry key="S2" value="0.7148224697015877" />
-      <entry key="S5" value="1.3145347778735843" />
-      <entry key="S10" value="2.4230620437664667" />
-      <entry key="S30" value="6.454125484843722" />
-      <entry key="S60" value="25.341701032216864" />
-      <entry key="M2" value="72.32214432113474" />
-      <entry key="M5" value="145.21580324769272" />
-      <entry key="M10" value="190.55140302237945" />
-      <entry key="M15" value="213.19342635451335" />
-      <entry key="M30" value="248.72367006862996" />
-      <entry key="H1" value="341.9959787342213" />
-      <entry key="H2" value="712.4373027482246" />
-      <entry key="H4" value="1704.2345338778928" />
-      <entry key="D1" value="10279.432093963935" />
-      <entry key="W1" value="19896.629108804376" />
+      <entry key="MS100" value="0.21842267815834662" />
+      <entry key="MS500" value="1.8712461950288248" />
+      <entry key="S2" value="5.333745370797961" />
+      <entry key="S5" value="11.141989461273504" />
+      <entry key="S10" value="18.220733779300723" />
+      <entry key="S30" value="28.84134044691436" />
+      <entry key="S60" value="32.97880249740515" />
+      <entry key="M2" value="36.24890258038761" />
+      <entry key="M5" value="61.86920733217352" />
+      <entry key="M10" value="116.44424258821184" />
+      <entry key="M15" value="156.16190202523092" />
+      <entry key="M30" value="223.27247601931788" />
+      <entry key="H1" value="333.2214577567449" />
+      <entry key="H2" value="699.9842250615457" />
+      <entry key="H4" value="1680.815860335605" />
+      <entry key="D1" value="10254.760887045257" />
+      <entry key="W1" value="19917.254901987377" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -175,36 +182,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Executable.Editor.executor": "Debug",
-    ".NET Executable.Player.executor": "Run",
-    "GDScript Start and Debug.Debug GDScript (Running session).executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.codeium.enabled": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Executable.Editor.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Executable.Player.executor&quot;: &quot;Run&quot;,
+    &quot;GDScript Start and Debug.Debug GDScript (Running session).executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Executable.Player">
     <configuration name="Debug GDScript (Running session)" type="GDSCRIPT_DEBUG_RUN_CONFIGURATION" factoryName="GdScriptRunFactory">
       <option name="json" value="{&#10;  // Launch: &quot;Launch a new instance of the game&quot;,&#10;  // Attach: &quot;Attach to an already running game, which was started from the Godot Editor&quot;&#10;  &quot;request&quot; : &quot;Attach&quot;,&#10;  &quot;debugServer&quot; : 6006, // port should match the Debug Adapter port in the Godot Editor project settings.&#10;  &quot;scene&quot; : &quot;main&quot;, // main, current, res://path/to/file.tscn&#10;  &#10;  // &quot;playArgs&quot; : [ &quot;--editor&quot; ], // debugging a tool script&#10;  // &quot;playArgs&quot;: [&quot;--debug-collisions&quot;,&quot;--debug-navigation&quot;], // different options&#10;  &#10;  // one click deploy and debug via Godot Editor:&#10;  // &quot;platform&quot;: &quot;Android&quot;, // including Android, iOS, Web and W4 consoles&#10;  // &quot;device&quot;: &quot;0&quot;, // index of the device of a &quot;platform&quot; type&#10;}" />
@@ -333,7 +340,8 @@
       <workItem from="1785692208021" duration="12852000" />
       <workItem from="1785741745666" duration="9845000" />
       <workItem from="1785761202698" duration="3946000" />
-      <workItem from="1785776106450" duration="13766000" />
+      <workItem from="1785776106450" duration="14029000" />
+      <workItem from="1785834102217" duration="2650000" />
     </task>
     <task id="LOCAL-00001" summary="Changed System For Abilities">
       <option name="closed" value="true" />
@@ -391,7 +399,15 @@
       <option name="project" value="LOCAL" />
       <updated>1785671991086</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added Team Logic and Player logic using PlayerId, TeamId, and UnitId (using Id base struct, and structs as identifiers, of IIdTag)&#10;Update GameDataState to hold Players Teams and TeamRelations&#10;Update Loading and Saving System with utility classes&#10;Changed All Arrays to be from Godot.Collections; Dictionaries are mainly System as Godot doesn't support all types.&#10;Etool support for saving game thrown out the window (try with command create game, save game on exit, load game as copy etc... for testing...)">
+      <option name="closed" value="true" />
+      <created>1785796421147</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1785796421147</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -408,7 +424,8 @@
     <MESSAGE value="Remade Save System&#10;Added GameManager.cs&#10;Added SaveLoadManager.cs and GameStateData.cs which holds UnitStateData.cs and BoardState.cs&#10;Renamed Visualizer.cs to AbilityVisualizer.cs&#10;Updatet SaveLoadBoardETool.cs to use SaveLoadManager.cs&#10;Made multiple Resources, Unit and co into [Tool]&#10;Removed Board being a singleton, passed Instance in chain of function calls" />
     <MESSAGE value="Added Logging&#10;Added GameLogger.cs" />
     <MESSAGE value="Added EndTurnButton.cs Logic&#10;Changed Board.cs API to use TryGet...()&#10;moved States for PlayerInteractionController.cs into its own folder &#10;Changed Sprite2D into animated Sprite2D" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added EndTurnButton.cs Logic&#10;Changed Board.cs API to use TryGet...()&#10;moved States for PlayerInteractionController.cs into its own folder &#10;Changed Sprite2D into animated Sprite2D" />
+    <MESSAGE value="Added Team Logic and Player logic using PlayerId, TeamId, and UnitId (using Id base struct, and structs as identifiers, of IIdTag)&#10;Update GameDataState to hold Players Teams and TeamRelations&#10;Update Loading and Saving System with utility classes&#10;Changed All Arrays to be from Godot.Collections; Dictionaries are mainly System as Godot doesn't support all types.&#10;Etool support for saving game thrown out the window (try with command create game, save game on exit, load game as copy etc... for testing...)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Team Logic and Player logic using PlayerId, TeamId, and UnitId (using Id base struct, and structs as identifiers, of IIdTag)&#10;Update GameDataState to hold Players Teams and TeamRelations&#10;Update Loading and Saving System with utility classes&#10;Changed All Arrays to be from Godot.Collections; Dictionaries are mainly System as Godot doesn't support all types.&#10;Etool support for saving game thrown out the window (try with command create game, save game on exit, load game as copy etc... for testing...)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -16,7 +16,7 @@ public partial class GameLoopManager : Node
 	[Export] public ControllerFactory ControllerFactory;
 
 	public int CurrentTurn;
-	private SortedDictionary<PlayerId, PlayerData> _turnOrder = new();
+	private Dictionary<PlayerId, PlayerData> _turnOrder = new();
 	private PlayerId _activePlayerId;
 	private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
 
@@ -35,9 +35,7 @@ public partial class GameLoopManager : Node
 
 	private void SetTurnOrder(PlayerData[] players)
 	{
-		_turnOrder = new SortedDictionary<PlayerId, PlayerData>(
-			players.ToDictionary(p => p.PlayerId, p => p)
-		);
+		_turnOrder = players.ToDictionary(p => p.PlayerId, p => p);
 	}
 
 	public void EndPlayerTurn(PlayerId playerId)

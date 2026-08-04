@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.Core.Controllers;
+using AKidsDream.Core.Managers;
 using Godot.Collections;
 using Serilog;
 
@@ -16,6 +17,7 @@ public class PlayerTeamRegistry
     private readonly System.Collections.Generic.Dictionary<PlayerId, PlayerData> _players = new();
     private readonly System.Collections.Generic.Dictionary<TeamId, TeamData> _teams = new();
     
+    // -- GETTER/SETTERS --
     public void RegisterPlayer(PlayerData player)
     {
         if (_players.ContainsKey(player.PlayerId)) 
@@ -68,4 +70,31 @@ public class PlayerTeamRegistry
     {
         return [.. _teams.Values];
     }
+    
+    // -- HELPERS --
+
+    /// <summary>
+    /// Returns true if the target player is hostile to the local player.
+    /// </summary>
+    /// <param name="callerPlayerId">The player to check hostility against</param>
+    /// <param name="otherPlayerId">The local player's ID</param>
+    /// <param name="teamRelationResolver">The team relation resolver to check team relations</param>
+    /// <returns>True if hostile, false if friendly or if relation cannot be determined</returns>
+    public bool IsHostileToPlayer(PlayerId callerPlayerId, PlayerId otherPlayerId)
+    {
+        if (!TryGetPlayersTeamId(callerPlayerId, out var callerTeamId))
+        {
+            Log.Here().Warn("Caller player {PlayerId} not registered, assuming hostile", callerPlayerId);
+            return true;
+        }
+
+        if (!TryGetPlayersTeamId(otherPlayerId, out var otherTeamId))
+        {
+            Log.Here().Warn("Other player {PlayerId} not registered, assuming hostile", otherPlayerId);
+            return true;
+        }
+
+        return !GameManager.Instance.TeamRelationResolver.IsFriendly(otherTeamId.Value, callerTeamId.Value);
+    }
+
 }

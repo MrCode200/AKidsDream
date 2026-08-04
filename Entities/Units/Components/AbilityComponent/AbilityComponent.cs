@@ -79,7 +79,7 @@ public partial class AbilityComponent : Node
 	{
 		var action = GetAbility(name);
 		if (action?.ReachPattern is null) return Array.Empty<Vector2I>();
-		return action.ReachPattern.GetTiles(Unit.TileLocation, board);
+		return action.ReachPattern.GetTiles(Unit.TileLocation, board, Unit.OwnerId);
 	}
 
 	/// <summary>

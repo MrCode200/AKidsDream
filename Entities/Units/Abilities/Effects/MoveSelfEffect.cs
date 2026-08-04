@@ -12,7 +12,7 @@ public partial class MoveSelfEffect : EffectData
 {
     public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTiles)
     {
-        var tiles = GetAffectedTiles(targetTiles, board);
+        var tiles = GetAffectedTiles(targetTiles, board, source.OwnerId);
         if (tiles.Length != 1)
         {
             return new ErrorResult 

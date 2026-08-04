@@ -61,10 +61,6 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     
     private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>(); 
     private bool _playerTurnEnded;
-    // CHECK:
-    // When Implemented all logic
-    // PlayerInteractionController has no logs, is that intended or should there be for something some logs? (or do the states already handle all logs when needed...
-    
     public PlayerInteractionController() {}
 
     public PlayerInteractionController(PlayerControllerContext context, PlayerData playerData)
@@ -79,6 +75,9 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     
     public override void _Ready()
     {
+        StateMachine = new StateMachine();
+        AddChild(StateMachine);
+        
         EventBus.Instance.AbilityBtnPressed += OnAbilityBtnPressed;
 
         StateMachine.AddState(new NoAbilitySelected(this));

@@ -31,7 +31,7 @@ public abstract partial class AccessFieldPattern : Resource
 {
     [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.AnyTile;
 
-    public Vector2I[] GetTiles(Vector2I origin, Board board)
+    public Vector2I[] GetTiles(Vector2I origin, Board board, PlayerId casterId)
     {
         var tiles = GetTilesUnfiltered(origin, board);
         if (tiles.Length == 0 || AllowedTargets == TargetFilter.AnyTile) return tiles;
@@ -54,14 +54,14 @@ public abstract partial class AccessFieldPattern : Resource
             
             if (AllowedTargets.HasFlag(TargetFilter.Friendly) &&
                 tileData.Unit is not null &&
-                !GameManager.Instance.IsHostileToLocalPlayer(tileData.Unit.TeamId))
+                !GameManager.Instance.PlayerTeamRegistry.IsHostileToPlayer(casterId, tileData.Unit.OwnerId))
             {
                 return true;
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Hostile) &&
                 tileData.Unit is not null &&
-                GameManager.Instance.IsHostileToLocalPlayer(tileData.Unit.TeamId))
+                GameManager.Instance.PlayerTeamRegistry.IsHostileToPlayer(casterId, tileData.Unit.OwnerId))
             {
                 return true;
             }

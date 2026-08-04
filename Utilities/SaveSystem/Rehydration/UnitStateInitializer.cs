@@ -66,12 +66,9 @@ public static class UnitStateInitializer
         
         parent.AddChild(newUnit);
         
-        Log.ForContext("UnitId", state.UnitId)
-            .ForContext("TileLocation", state.TileLocation)
-            .ForContext("Parent", parent.Name)
-            .Here()
+        Log.Here()
             .Debug("Initialized unit '{UnitName}' at {TileLocation} in '{Parent}'",
-                state.UnitName, state.TileLocation, parent.Name);
+                newUnit.UnitName, newUnit.TileLocation, parent.Name);
  
         unit = newUnit;
         return true;

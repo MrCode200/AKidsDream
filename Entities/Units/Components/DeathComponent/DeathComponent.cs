@@ -23,6 +23,11 @@ public partial class DeathComponent : Node
 		HealthC.HealthDepleted += OnHealthDepleted;
 	}
 
+	public override void _ExitTree()
+	{
+		HealthC.HealthDepleted -= OnHealthDepleted;
+	}
+
 	private void OnHealthDepleted()
 	{
 		_log.Here().Info("Unit killed");
