@@ -12,7 +12,7 @@ public partial class DamageEffect : EffectData
     
     public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTile)
     {
-        var tiles = GetAffectedTiles(targetTile, board);
+        var tiles = GetAffectedTiles(targetTile, board, source.OwnerId);
         var results = new Array<EffectResult>();
 
         foreach (var tile in tiles)

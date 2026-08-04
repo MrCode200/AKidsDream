@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Controllers;
+using Godot;
 using Serilog;
 
 namespace AKidsDream.Core.Teams;
@@ -52,6 +53,7 @@ public class TeamRelationResolver
     /// </summary>
     public bool IsFriendly(TeamId team1, TeamId team2)
     {
+        if (team1 == team2) return true;
         if (!TryGetRelation(team1, team2, out var relation)) return false;
         return relation == TeamRelation.Ally;
     }

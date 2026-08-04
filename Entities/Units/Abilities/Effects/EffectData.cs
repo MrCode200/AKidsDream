@@ -57,7 +57,7 @@ public abstract partial class EffectData : Resource
     /// <param name="targetTiles">The tiles the player has selected</param>
     /// <param name="board">The board containing TileData's</param>
     /// <returns>An array of <see cref="Vector2I"/> which is the TileData.TileLocation</returns>
-    protected virtual Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board)
+    protected virtual Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board, PlayerId casterId)
     {
         if (EffectPattern == null)
         {
@@ -66,7 +66,7 @@ public abstract partial class EffectData : Resource
         }
 
         return targetTiles
-            .SelectMany(tile => EffectPattern.GetTiles(tile, board))
+            .SelectMany(tile => EffectPattern.GetTiles(tile, board, casterId))
             .ToArray();
     }
 
@@ -83,7 +83,7 @@ public abstract partial class EffectData : Resource
     )
     {
         // TODO: Handle visualization of duplicate tiles
-        var tiles = GetAffectedTiles(targetTiles, board);
+        var tiles = GetAffectedTiles(targetTiles, board, source.OwnerId);
         return (Global.AtlasCoordsSpriteVectors[EffectAtlasCoords], tiles);
     }
 

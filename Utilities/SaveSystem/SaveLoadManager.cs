@@ -85,6 +85,7 @@ public static class SaveLoadManager
         var state = new GameStateData
         {
             PlayerData = new Array<PlayerData>(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers()),
+            LocalPlayerIdInt = GameManager.Instance.LocalPlayerId.Value,
             TeamData = new Array<TeamData>(GameManager.Instance.PlayerTeamRegistry.GetAllTeams()),
             TeamRelations = GameManager.Instance.TeamRelationResolver.Relations,
             BoardStateData = board.StateData

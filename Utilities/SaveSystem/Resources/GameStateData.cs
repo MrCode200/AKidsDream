@@ -14,6 +14,7 @@ public partial class GameStateData : Resource
     // TODO: GameRound
     [Export] public BoardStateData BoardStateData = new();
     [Export] public Array<PlayerData> PlayerData = [];
+    [Export] public int LocalPlayerIdInt;
     [Export] public Array<TeamData> TeamData = [];
     [Export] private Dictionary<Vector2I, TeamRelation> _teamRelations = new();
     [Export] public Array<UnitStateData> UnitStateResources = [];

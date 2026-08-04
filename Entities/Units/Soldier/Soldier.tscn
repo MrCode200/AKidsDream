@@ -4,10 +4,10 @@
 [ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://Entities/Units/Soldier/SoldierStats.tres" id="2_cord0"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="2_x3wfe"]
 [ext_resource type="Resource" uid="uid://dwt54bx28ktgy" path="res://Entities/Units/Soldier/Abilities/SoldierMoveAbility.tres" id="3_40uuh"]
-[ext_resource type="Texture2D" uid="uid://ct8pbpg8oho82" path="res://Entities/Units/Soldier/Assets/EnemyTeam/Warrior_Idle.png" id="4_3pasa"]
+[ext_resource type="Texture2D" uid="uid://ct8pbpg8oho82" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Idle.png" id="4_3pasa"]
 [ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="4_e8lk0"]
 [ext_resource type="Resource" uid="uid://disl4r0w0w27p" path="res://Entities/Units/Soldier/Abilities/SoldierAttackAbility.tres" id="4_f1fyr"]
-[ext_resource type="Texture2D" uid="uid://densaodoirxq7" path="res://Entities/Units/Soldier/Assets/PlayerTeam/Warrior_Idle.png" id="5_6jrt0"]
+[ext_resource type="Texture2D" uid="uid://densaodoirxq7" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png" id="5_6jrt0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pasa"]
 shader = ExtResource("4_e8lk0")
@@ -16,38 +16,6 @@ shader_parameter/type = 2
 shader_parameter/thickness = 2.6000001235
 shader_parameter/flickering_speed = 3.499999921768
 shader_parameter/minimal_flickering_alpha = 0.670000031825
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iyid7"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ravdk"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_35v56"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_07yln"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yktuj"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dd3ui"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rvklf"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(1152, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kbimq"]
-atlas = ExtResource("4_3pasa")
-region = Rect2(1344, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bhfaj"]
 atlas = ExtResource("5_6jrt0")
@@ -81,37 +49,40 @@ region = Rect2(1152, 0, 192, 192)
 atlas = ExtResource("5_6jrt0")
 region = Rect2(1344, 0, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_iyid7"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ravdk"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35v56"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07yln"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yktuj"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dd3ui"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvklf"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbimq"]
+atlas = ExtResource("4_3pasa")
+region = Rect2(1344, 0, 192, 192)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_jo37d"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_iyid7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ravdk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_35v56")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_07yln")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yktuj")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dd3ui")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rvklf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kbimq")
-}],
-"loop": true,
-"name": &"EnemySoldierIdle",
-"speed": 8.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bhfaj")
@@ -138,7 +109,36 @@ animations = [{
 "texture": SubResource("AtlasTexture_d6u0c")
 }],
 "loop": true,
-"name": &"PlayerSoldierIdle",
+"name": &"BlueSoldierIdle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iyid7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ravdk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35v56")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07yln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yktuj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dd3ui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvklf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kbimq")
+}],
+"loop": true,
+"name": &"RedSoldierIdle",
 "speed": 8.0
 }]
 
@@ -149,8 +149,8 @@ UnitStats = ExtResource("2_cord0")
 material = SubResource("ShaderMaterial_3pasa")
 scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_jo37d")
-animation = &"EnemySoldierIdle"
-autoplay = "PlayerSoldierIdle"
+animation = &"BlueSoldierIdle"
+autoplay = "BlueSoldierIdle"
 SelectionMaterial = SubResource("ShaderMaterial_3pasa")
 
 [node name="SelectableComponent" parent="." index="2" unique_id=1872887520 node_paths=PackedStringArray("HoverIndicator")]

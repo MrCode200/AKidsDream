@@ -26,6 +26,12 @@ public static class Global
 		PlayerUnits
 	}
 	
+	public enum UnitColor
+	{
+		Blue,
+		Red
+	}
+	
 	public enum UnitName
 	{ 
 		Soldier

@@ -14,24 +14,38 @@ namespace AKidsDream.Core.Managers;
 
 // Upon Creation GameManager get a Payload of information on how to set up the game...
 // The following is a placeholder
- 
+
 public class GameCreationPayload
 {
     public readonly string LoadGameFileName = "DevSave.tres";
     public readonly int LocalPlayerId = 1;
     public readonly Vector2I BoardSize = new(9, 9);
- 
+
     // NOTE make for Local Player ID 1, so that on fallback (local not set) it returns the correct player id
-    public readonly Array<PlayerData> Players = [
-        new PlayerData(new PlayerId(1), "MrMagic", new TeamId(1), ControllerType.PlayerInteractionController),
-        new PlayerData(new PlayerId(2), "MrSorceress", new TeamId(2), ControllerType.PlayerInteractionController)
+    public readonly Array<PlayerData> Players =
+    [
+        new PlayerData(
+            new PlayerId(1),
+            "MrMagic",
+            new TeamId(1),
+            Global.UnitColor.Blue,
+            ControllerType.PlayerInteractionController
+        ),
+        new PlayerData(
+            new PlayerId(2),
+            "MrSorceress",
+            new TeamId(2),
+            Global.UnitColor.Red,
+            ControllerType.PlayerInteractionController
+        )
     ];
- 
-    public readonly Array<TeamData> Teams = [
+
+    public readonly Array<TeamData> Teams =
+    [
         new TeamData(new TeamId(1)),
         new TeamData(new TeamId(2))
     ];
- 
+
     public readonly System.Collections.Generic.Dictionary<(TeamId, TeamId), TeamRelation> TeamRelations = new()
     {
         { (new TeamId(1), new TeamId(2)), TeamRelation.Enemy },
@@ -39,7 +53,6 @@ public class GameCreationPayload
 }
 
 // 2. Implement, if need help go claude
-// TODO: Update GameLoopManager to be more dynamic (so each player gets their turn)
 // TODO: Make Turn Ending Command(yes very probably good idea?)
 // TODO: Make its processing happen first, over all other nodes...
 
@@ -52,9 +65,9 @@ public partial class GameManager : Node2D
     public readonly TeamRelationResolver TeamRelationResolver = new();
     private PlayerId _localPlayerId;
     public PlayerId LocalPlayerId => _localPlayerId;
-    
+
     public static GameManager Instance => _instance;
-    
+
     [Export] public string LoadFileName = "OldSave.tres";
     [Export] public string SaveFileName = "NewSave.tres";
     [Export] public Node EntityLayer;
@@ -69,7 +82,7 @@ public partial class GameManager : Node2D
     public override void _Ready()
     {
         _instance = this;
-        
+
         var gameCreationPayload = new GameCreationPayload();
         // Prefer an explicit LoadFileName set in the inspector; fall back to the
         // creation payload's suggestion only if that's unset.
@@ -109,7 +122,7 @@ public partial class GameManager : Node2D
     public override void _ExitTree()
     {
         _instance = null;
-        
+
         if (SaveOnExit)
         {
             _log.Here().Info(
@@ -127,24 +140,25 @@ public partial class GameManager : Node2D
     }
 
     // -- INITIALIZATION METHODS --
-    
-    public void InitializeRegistries(Array<PlayerData> players, Array<TeamData> teams, System.Collections.Generic.Dictionary<(TeamId, TeamId), TeamRelation> teamRelations)
+
+    public void InitializeRegistries(Array<PlayerData> players, Array<TeamData> teams,
+        System.Collections.Generic.Dictionary<(TeamId, TeamId), TeamRelation> teamRelations)
     {
         foreach (var playerData in players)
-            PlayerTeamRegistry.RegisterPlayer(playerData);    
-        
+            PlayerTeamRegistry.RegisterPlayer(playerData);
+
         foreach (var teamData in teams)
             PlayerTeamRegistry.RegisterTeam(teamData);
-        
+
         _log.Here().Info("Registered {PlayerCount} players and {TeamCount} teams", players.Count, teams.Count);
-        
+
         foreach (var (pair, relation) in teamRelations)
             TeamRelationResolver.SetRelation(pair.Item1, pair.Item2, relation);
-        
+
         _log.Here().Info("Registered {TeamRelationCount} team relations", teamRelations.Count);
     }
-    
-    
+
+
     private void InitializeNewBoard(GameCreationPayload gameCreationPayload)
     {
         var newBoardState = new BoardStateData
@@ -152,25 +166,25 @@ public partial class GameManager : Node2D
             Width = gameCreationPayload.BoardSize.X,
             Height = gameCreationPayload.BoardSize.Y
         };
-        
+
         GameBoard.Init(newBoardState);
     }
-    
+
     // -- HELPER METHODS --
-    
+
     public bool IsLocalPlayer(PlayerId playerId) => playerId == _localPlayerId;
-    
-    public bool IsHostileToLocalPlayer(TeamId teamId)
+
+    public bool IsHostileToLocalPlayer(PlayerId targetPlayerId)
     {
         if (!TryGetLocalPlayerTeam(out var localTeamId))
         {
             _log.Here().Error("Local player not set, assuming hostile");
             return true;
         }
- 
-        return !TeamRelationResolver.IsFriendly(localTeamId.Value, teamId);
+
+        return PlayerTeamRegistry.IsHostileToPlayer(targetPlayerId, _localPlayerId);
     }
-    
+
     public bool TryGetLocalPlayerTeam([NotNullWhen(true)] out TeamId? teamId)
     {
         return PlayerTeamRegistry.TryGetPlayersTeamId(_localPlayerId, out teamId);

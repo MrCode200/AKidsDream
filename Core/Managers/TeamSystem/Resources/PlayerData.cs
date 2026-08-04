@@ -1,4 +1,5 @@
 ﻿using AKidsDream.Core.Controllers;
+using AKidsDream.Managers.SaveSystems;
 using Godot;
 
 namespace AKidsDream.Core.Teams;
@@ -9,6 +10,7 @@ public partial class PlayerData : Resource
     [Export] public int PlayerIdInt;
     [Export] public string PlayerName;
     [Export] public int TeamIdInt;
+    [Export] public Global.UnitColor UnitColor;
     [Export] public ControllerType ControllerType;
     
     public PlayerId PlayerId => new(PlayerIdInt);
@@ -17,11 +19,12 @@ public partial class PlayerData : Resource
     
     public PlayerData() { }
     
-    public PlayerData(PlayerId playerId, string playerName, TeamId teamId, ControllerType controllerType)
+    public PlayerData(PlayerId playerId, string playerName, TeamId teamId, Global.UnitColor unitColor, ControllerType controllerType)
     {
         PlayerIdInt = playerId.Value;
         PlayerName = playerName;
         TeamIdInt = teamId.Value;
+        UnitColor = unitColor;
         ControllerType = controllerType;
     }
 }
