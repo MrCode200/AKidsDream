@@ -1,0 +1,84 @@
+AKidsDream Non-Commercial License
+
+Copyright © 2026 Navid Yaghmaei
+Original repository: https://github.com/MrCode200/AKidsDream
+
+1. Permission
+
+Permission is granted to any person obtaining a copy of this software and
+associated files (the “Software”) to use, copy, modify, and redistribute the
+Software, subject to the conditions below.
+
+2. Non-commercial use only
+
+The Software may be used only for personal, educational, research, or other
+non-commercial purposes.
+
+Commercial use is not permitted without prior written permission from
+Navid Yaghmaei.
+
+Commercial use includes, but is not limited to:
+
+- Selling the Software or any modified version of it.
+- Including the Software in a paid product or service.
+- Using the Software in a commercial game, application, or project.
+- Using the Software to provide paid services.
+- Redistributing the Software for commercial advantage or monetary gain.
+
+3. Attribution and original repository
+
+Every copy, redistribution, or modified version of the Software must:
+
+- Retain this copyright notice.
+- Clearly credit Navid Yaghmaei as the original author.
+- Clearly identify this repository as the original source.
+- Include a visible link to the original repository:
+  https://github.com/MrCode200/AKidsDream
+
+The attribution and repository link must remain included in the source code,
+documentation, credits, or another location reasonably visible to users.
+
+4. Modified versions
+
+Anyone who modifies the Software must clearly state that modifications were
+made.
+
+Modified versions must not falsely claim to be the original AKidsDream project
+or imply that Navid Yaghmaei endorses the modifications.
+
+Modified versions must include an attribution similar to the following:
+
+“Based on AKidsDream by Navid Yaghmaei:
+https://github.com/MrCode200/AKidsDream”
+
+5. Redistribution
+
+Redistribution of the original or modified Software is permitted only for
+non-commercial purposes and only if all conditions in this license are
+followed.
+
+Redistributed copies must include a complete copy of this license.
+
+6. Third-party content
+
+This license applies only to material created by Navid Yaghmaei and included
+in this repository.
+
+Third-party libraries, plugins, assets, fonts, code, and other materials may
+be subject to separate licenses. Their original license terms must be followed.
+
+7. Permission for commercial use
+
+Commercial use may be authorized only through explicit prior written
+permission from Navid Yaghmaei.
+
+8. Disclaimer
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
