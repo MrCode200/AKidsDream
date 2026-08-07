@@ -20,7 +20,7 @@ current intent
  */
 
 // Rename to ReadOnlyInspection, if needed for more general use case
-public class EnemyTurnObservation : IState
+public class EnemyTurnObservation(PlayerInteractionController pic) : IState
 {
     public Action<IState, string, bool> ChangeState { get; set; } = null!;
     

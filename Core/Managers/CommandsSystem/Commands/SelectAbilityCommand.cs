@@ -19,19 +19,20 @@ public class SelectAbilityCommand(
 
         if (ability is null)
             return CommandResult.Fail(this, $"Ability '{abilityName}' for '{caster.UnitName}' was not found.");
-
-        Log.ForContext<SelectAbilityCommand>().Here().Info(
-            "Selected ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
-            abilityName,
-            caster.UnitName,
-            caster.UnitId);
-
+        
         context.AbilityVisualizer.ShowReachVisualization(
             caster,
             caster.TileLocation,
             ability
         );
-        
+
+        Log.ForContext<SelectAbilityCommand>().Here().Info(
+            "Selected ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
+            abilityName,
+            caster.UnitName,
+            caster.UnitId
+        );
+
         return CommandResult.Ok(this);
     }
 }

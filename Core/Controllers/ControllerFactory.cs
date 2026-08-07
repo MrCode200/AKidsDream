@@ -24,13 +24,11 @@ public interface IPlayerController
 public sealed class PlayerControllerContext(
 	Board board,
 	AbilityVisualizer abilityVisualizer,
-	StateMachine stateMachine,
 	CommandExecutor commandExecutor
 )
 {
 	public Board Board => board;
 	public AbilityVisualizer AbilityVisualizer => abilityVisualizer;
-	public StateMachine StateMachine => stateMachine;
 	public CommandExecutor CommandExecutor => commandExecutor;
 };
 
@@ -38,13 +36,12 @@ public partial class ControllerFactory : Node
 {
 	[Export] public Board Board = null!;
 	[Export] public AbilityVisualizer AbilityVisualizer = null!;
-	[Export] public StateMachine StateMachine = null!;
 	[Export] public CommandExecutor CommandExecutor = null!;
 	private PlayerControllerContext? _context;
 
 	private void SetContext()
 	{
-		_context = new PlayerControllerContext(Board, AbilityVisualizer, StateMachine, CommandExecutor);
+		_context = new PlayerControllerContext(Board, AbilityVisualizer, CommandExecutor);
 	}
 
 	// -- FACTORY --

@@ -13,6 +13,7 @@ public partial class CommandExecutor : Node
 {
     [Export] public AbilityVisualizer AbilityVisualizer;
     [Export] public Board Board;
+    [Export] public GameLoopManager GameLoopManager;
     private GameContext _context;
     private readonly ILogger _log = GameLogger.For<CommandExecutor>();
 
@@ -21,6 +22,7 @@ public partial class CommandExecutor : Node
         _context = new GameContext(
             Board,
             EventBus.Instance,
+            GameLoopManager,
             AbilityVisualizer
         );
         _log.Here().Info("CommandExecutor initialized with GameContext");

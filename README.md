@@ -1,44 +1,100 @@
-GD Console: https://www.youtube.com/watch?v=M_ymfQtZad4
+# Project Resources & Guidelines
 
-CallableStateMachine: https://gist.github.com/firebelley/96f2f82e3feaa2756fe647d8b9843174
+## 📚 References
 
-For entities i would like the baseNode as well as the derived Nodes when logging to be distinctable via
-log() -> to set id and id Name (ex: Unit{ 1 }) to be printed
-should i use libaries if not how to implement
+| Resource             | Description                                 | Link                                                                             |
+|----------------------|---------------------------------------------|----------------------------------------------------------------------------------|
+| GD Console           | Godot developer console addon tutorial      | [Watch video](https://www.youtube.com/watch?v=M_ymfQtZad4)                       |
+| CallableStateMachine | Lightweight state machine gist for Godot C# | [View gist](https://gist.github.com/firebelley/96f2f82e3feaa2756fe647d8b9843174) |
 
-If log order becomes messy add canonical logging
 
-Before Logging:
+## 📝 Changelog Guidelines
 
-Level	Usage
-Verbose	Verbose is the noisiest level, rarely (if ever) enabled for a production app.
-Debug	Debug is used for internal system events that are not necessarily observable from the outside, but useful when determining how something happened.
-Information	Information events describe things happening in the system that correspond to its responsibilities and functions. Generally these are the observable actions the system can perform.
-Warning	When service is degraded, endangered, or may be behaving outside of its expected parameters, Warning level events are used.
-Error	When functionality is unavailable or expectations broken, an Error event is used.
-Fatal	The most critical level, Fatal events demand immediate attention.
+Format: `type(scope): short imperative description`
 
-How to log:
-1. Prefer structured logging with named properties instead of plain text.
-   Example: Log.Information("LevelStarted {LevelName} {PlayerId}", levelName, playerId);
-    Always include relevant parameters so I can filter logs later.
-2. When catching exceptions (log at Error or Fatal and include exception details).
-    When branching into unusual or fallback behavior (log at Warning).
-   Add logs at key points of the game flow, not everywhere:
-3. Each log entry should provide useful context:
-   Who: player ID, entity ID, or network peer.
-What: action or operation name (“SaveGame”, “LoadScene”, “ApplyDamage”).
-Where: scene name, node path, or system/component name.
-Why/Result: success/failure, error message, key parameters.
-4. if not critical try to Avoid expensive string operations inside tight loops.
-Don’t log every frame or every physics tick unless I explicitly ask for verbose debugging. 
-5. Avoid log spam and duplication:
-   Don’t log the same error on every layer of the call stack; log it where it is handled.
+Add `!` after `(scope)` to mark breaking changes, e.g. `feat(units)!: remove legacy movement API`
 
-Prefer one clear Error or Fatal log with full context over many partial messages.
-Identify important methods and systems (scene management, save/load, combat, inventory, UI flows) and insert appropriate Serilog calls with the right log level.
-Improve existing log messages to be structured, clear, and context‑rich (who/what/where/why).
-Remove or downgrade noisy logs that don’t help with debugging or monitoring. (includes GD.Print PushError etc.)
-When you add logging around exception handling, show how to include the exception (Log.Error(ex, "...") or Log.Fatal(ex, "...")) and what contextual properties to include.
-When you suggest changes, explain briefly why each log statement is useful and why you chose that log level.
+| Change type                         | Prefix                 | Example                                           |
+|-------------------------------------|------------------------|---------------------------------------------------|
+| New feature                         | `feat:`                | `feat(units): add overwatch ability`              |
+| Bug fix                             | `fix:`                 | `fix(board): prevent units moving through walls`  |
+| Internal change, no behavior change | `refactor:`            | `refactor(events): extract turn-state handler`    |
+| Intentional removal                 | `refactor:` / `chore:` | `refactor(ai): remove deprecated target selector` |
+| Documentation                       | `docs:`                | `docs(readme): add local setup steps`             |
+| Tests                               | `test:`                | `test(combat): cover critical-hit calculation`    |
+| Formatting only                     | `style:`               | `style: format unit-stat classes`                 |
+| Performance                         | `perf:`                | `perf(pathfinding): cache reachable tiles`        |
+| Tooling / dependencies              | `chore:`               | `chore: update Godot C# tooling`                  |
+| CI pipeline                         | `ci:`                  | `ci: run tests on pull requests`                  |
+| Build / export config               | `build:`               | `build: configure Windows export preset`          |
 
+---
+
+## 📊 Logging Guidelines
+
+### 🎚️ Log Levels
+
+| Level           | Usage                                                                                             |
+|-----------------|---------------------------------------------------------------------------------------------------|
+| **Verbose**     | Noisiest level; rarely enabled in production.                                                     |
+| **Debug**       | Internal system events, not observable externally, but useful for tracing how something happened. |
+| **Information** | Observable actions the system performs, tied to its core responsibilities.                        |
+| **Warning**     | Service is degraded, endangered, or behaving outside expected parameters.                         |
+| **Error**       | Functionality is unavailable or an expectation is broken.                                         |
+| **Fatal**       | Most critical level; demands immediate attention.                                                 |
+
+
+### 🧩 Project implemented Logging
+
+For distinguishable logs across base and derived `Node` types:
+
+1. **Initialize logger** using the [GameLogger](cci:2://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Common/Logging/GameLogger.cs:53:0-168:1) factory:
+   ```csharp
+   private ILogger _log = GameLogger.For<Type>();
+   ```
+
+2. **Enrich with entity context** during initialization (e.g., in [Init()](cci:1://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Entities/Units/BaseUnit/Unit.cs:55:4-108:5)):
+   ```csharp
+   _log = _log.ForContext("UnitId", UnitId)
+       .ForContext("UnitName", UnitName)
+       .ForContext("PlayerId", OwnerIdInt);
+   ```
+
+3. **Use the [.Here()](cci:1://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Common/Logging/GameLogger.cs:22:4-25:47) extension** for automatic caller context (Method:Line):
+   ```csharp
+   _log.Here().Debug("Unit ready at {TileLocation}", TileLocation);
+   ```
+
+4. **Output format** includes:
+    - Timestamp: `[HH:mm:ss]`
+    - Short class name: [Unit](cci:2://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Entities/Units/BaseUnit/Unit.cs:16:0-180:1)
+    - Method and line: `Move:174`
+    - Log level: `DBG` / `INF` / `WRN` / `ERR` / `FTL`
+    - Entity context: `[UnitName:UnitId]`
+    - Structured message with named properties
+ 
+### ❓ How to Log
+
+1. **Prefer structured logging** with named properties instead of plain text:
+   ```csharp
+   Log.Here().Info("LevelStarted {LevelName} {PlayerId}", levelName, playerId);
+   ```
+   Always include relevant parameters so logs can be filtered later.
+
+2. **Exceptions & fallbacks:**
+    - Catching an exception → log at `Error` or `Fatal` with exception details.
+    - Branching into unusual/fallback behavior → log at `Warning`.
+    - Add logs at key points in the game flow — not everywhere.
+
+3. **Each log entry should answer:**
+    - **Who** — player ID, entity ID, or network peer.
+    - **What** — action/operation (`SaveGame`, `LoadScene`, `ApplyDamage`).
+    - **Where** — scene name, node path, or system/component.
+    - **Why/Result** — success/failure, error message, key parameters.
+
+4. **Performance:**
+    - Avoid expensive string operations inside tight loops (if not critical).
+    - Don't log every frame/physics tick unless explicitly debugging verbosely.
+
+5. **Avoid log spam and duplication:**
+    - Don't log the same error at every layer of the call stack — log it where it's handled.

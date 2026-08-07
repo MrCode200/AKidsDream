@@ -1,11 +1,7 @@
 using System;
 using System.Linq;
 using AKidsDream.Core.Managers;
-using AKidsDream.Managers;
-using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.GameBoard;
-using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
 using Godot;
 
 namespace AKidsDream.Abilities.Effects;
@@ -13,16 +9,49 @@ namespace AKidsDream.Abilities.Effects;
 // NOTE:
 // Avoid 1 << 31
 // when adding more than just RelationShipFilters and different Enums (TargetTypeFilter, UnitTagFilter, etc.)
+
+/// <summary>
+/// Defines filtering criteria for ability target selection on the game board.
+/// </summary>
+/// <remarks>
+/// This enum uses the <see cref="FlagsAttribute"/> to allow combining multiple filters.
+/// <para><b>Important:</b> When adding more filters beyond relationship types, avoid using bit 31 (1 &lt;&lt; 31)
+/// to prevent overflow issues with the flags system.</para>
+/// </remarks>
 [Flags]
 public enum TargetFilter
 {
+    /// <summary>
+    /// Targets empty tiles on the board (tiles without any unit).
+    /// </summary>
     EmptyTiles = 1 << 0,
-    
+
+    /// <summary>
+    /// Targets units owned by the local player.
+    /// </summary>
+    /// <remarks>
+    /// This is a subset of <see cref="Friendly"/> targets, as owned units are always friendly.
+    /// </remarks>
     OwnedUnits = 1 << 1,
+
+    /// <summary>
+    /// Targets all friendly units, including both owned units and allied units.
+    /// </summary>
     Friendly = 1 << 2,
+
+    /// <summary>
+    /// Targets hostile (enemy) units.
+    /// </summary>
     Hostile = 1 << 3,
 
+    /// <summary>
+    /// Targets any unit, regardless of relationship (friendly or hostile).
+    /// </summary>
     AnyUnit = Friendly | Hostile,
+
+    /// <summary>
+    /// Targets any tile on the board, including empty tiles and tiles with units.
+    /// </summary>
     AnyTile = EmptyTiles | Friendly | Hostile,
 }
 
@@ -47,7 +76,7 @@ public abstract partial class AccessFieldPattern : Resource
             
             if (AllowedTargets.HasFlag(TargetFilter.OwnedUnits) &&
                 tileData.Unit is not null &&
-                GameManager.Instance.IsLocalPlayer(tileData.Unit.OwnerId))
+                tileData.Unit.OwnerId == casterId)
             {
                 return true;
             }

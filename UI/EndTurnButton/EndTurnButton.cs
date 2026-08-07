@@ -1,3 +1,5 @@
+using AKidsDream.Core.Controllers;
+using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
@@ -5,22 +7,38 @@ namespace AKidsDream.UI;
 
 public partial class EndTurnButton : TextureButton
 {
-	private void OnLocalPlayerTurnEnded(int _, int __) => Disabled = false;
+	private PlayerId? _currentTurnPlayerId;
 
 	public override void _Ready()
 	{
-		EventBus.Instance.LocalPlayerTurnStarted += OnLocalPlayerTurnEnded;
+		EventBus.Instance.TurnStarted += OnTurnStarted;
+		Disabled = true;
+	}
+	
+	public override void _ExitTree()
+	{
+		EventBus.Instance.TurnStarted -= OnTurnStarted;
+	}
+
+	// -- LOGIC --
+
+	private void OnTurnStarted(int playerIdInt, int round)
+	{
+		_currentTurnPlayerId = new PlayerId(playerIdInt);
+		Disabled = !HasPlayerInteractionController(playerIdInt);
 	}
 
 	public override void _Pressed()
 	{
-		// TODO: make end turn command...
-		
+		if (_currentTurnPlayerId is null) return;
 		Disabled = true;
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EndTurnButtonPressed, _currentTurnPlayerId.Value.Value);
 	}
 
-	public override void _ExitTree()
+
+	private static bool HasPlayerInteractionController(int playerIdInt)
 	{
-		EventBus.Instance.LocalPlayerTurnStarted -= OnLocalPlayerTurnEnded;
+		GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(new PlayerId(playerIdInt), out var playerData);
+		return playerData?.ControllerType == ControllerType.PlayerInteractionController;
 	}
 }

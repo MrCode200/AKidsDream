@@ -1,10 +1,11 @@
-﻿#nullable enable
+#nullable enable
 using System;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
 using AKidsDream.Units.Resources;
+using Serilog;
 
 namespace AKidsDream.Controllers;
 
@@ -48,7 +49,7 @@ public class NoAbilitySelected(PlayerInteractionController pic) : IState
         }
 
         // 2. Clicking another friendly Unit selects that unit and deselects the previous one.
-        if (GameManager.Instance.IsLocalPlayer(clickedUnit.OwnerId))
+        if (!GameManager.Instance.PlayerTeamRegistry.IsHostileToPlayer(pic.PlayerId, clickedUnit.OwnerId))
         {
             pic.SelectUnit(clickedUnit);
             return;

@@ -11,9 +11,12 @@ public partial class EventBus : Node
 	
 	// -- GAME SIGNALS --
 	[Signal] public delegate void GameInitializedEventHandler();
-	[Signal] public delegate void NewTurnStartedEventHandler(int playerIdInt, int newTurn);
-	[Signal] public delegate void LocalPlayerTurnStartedEventHandler(int playerIdInt, int newTurn);
-	[Signal] public delegate void LocalPlayerTurnEndedEventHandler(int playerIdInt, int newTurn);
+	[Signal] public delegate void NewRoundStartedEventHandler(int playerIdInt, int newRound);
+	
+	[Signal] public delegate void TurnStartedEventHandler(int playerIdInt, int round);
+	[Signal] public delegate void TurnEndedEventHandler(int playerIdInt, int round);
+	// [Signal] public delegate void ActivePlayerChangedEventHandler(int previousPlayerIdInt, int currentPlayerIdInt, int round);
+	[Signal] public delegate void RoundStartedEventHandler(int round);
 	
 	// -- UNIT SIGNALS --
 	// NOTE: Unit Created gets emitted on _Ready not on Unit.Init(...);
@@ -28,6 +31,7 @@ public partial class EventBus : Node
 	
 	// -- UI SIGNALS --
 	[Signal] public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);
+	[Signal] public delegate void EndTurnButtonPressedEventHandler(int callerPlayerIdInt);
 
 	public override void _Ready()
 	{

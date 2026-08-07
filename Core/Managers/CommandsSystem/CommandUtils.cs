@@ -1,9 +1,6 @@
 ﻿using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers;
-using AKidsDream.Common.Logging;
-using Godot.Collections;
-using Serilog;
 
 namespace AKidsDream.Commands;
 
@@ -17,14 +14,27 @@ public sealed class CommandResult
     public IGameCommand Command;
     public bool Success { get; init; }
     public string FailureReason { get; init; }
-    
+
     public static CommandResult Ok(IGameCommand command) => new() { Command = command, Success = true };
-    public static CommandResult Fail(IGameCommand command, string reason) => new() { Command = command, Success = false, FailureReason = reason };
+
+    public static CommandResult Fail(IGameCommand command, string reason) =>
+        new() { Command = command, Success = false, FailureReason = reason };
 }
 
-public sealed class GameContext(Board board, EventBus eventBus, AbilityVisualizer abilityVisualizer)
+public sealed class GameContext(
+    Board board,
+    EventBus eventBus,
+    GameLoopManager gameLoopManager,
+    AbilityVisualizer abilityVisualizer
+)
 {
     public Board Board { get; init; } = board;
     public EventBus EventBus { get; init; } = eventBus;
+    public GameLoopManager GameLoopManager { get; init; } = gameLoopManager;
     public AbilityVisualizer AbilityVisualizer { get; init; } = abilityVisualizer;
+
+    public override string ToString()
+    {
+        return $"Board: {Board}, EventBus: {EventBus}, GameLoopManager: {GameLoopManager}, AbilityVisualizer: {AbilityVisualizer}";
+    }
 }

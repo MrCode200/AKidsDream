@@ -35,27 +35,8 @@ public static class SaveLoadManager
     /// <param name="board">The board, which gets used to init itself.</param>
     /// <param name="entityLayer">To where the child Unit Nodes should be added to</param>
     /// <param name="removeExistingUnits">Used only for GameDevelopment purposes, to create a clean Board when loading</param>
-    public static void LoadGameState(string stateFileName, Board board, Node entityLayer,
-        bool removeExistingUnits = true)
+    public static void LoadGameState(string stateFileName, Board board, Node entityLayer)
     {
-        if (removeExistingUnits) // DEV purpose only
-        {
-            var unitsRemovedCount = entityLayer.GetChildCount();
-            foreach (var unit in entityLayer.GetChildren())
-            {
-                unit.QueueFree();
-            }
-
-            Log.ForContext("StateFileName", stateFileName)
-                .ForContext("EntityLayer", entityLayer.Name)
-                .Here()
-                .Debug(
-                    "Removed {UnitCount} existing units from '{EntityLayer}' while loading '{StateFileName}'",
-                    unitsRemovedCount,
-                    entityLayer.Name,
-                    stateFileName);
-        }
-
         var state = GameStateRepository.Load(stateFileName);
         GameManager.Instance.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
         GameManager.Instance.InitializeControllers(state.PlayerData);

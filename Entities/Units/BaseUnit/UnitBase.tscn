@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://Common/Components/SelectableComponent/selectableComponent.tscn" id="3_v54ow"]
 [ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://Assets/sprites/atlas.png" id="4_2atpx"]
 [ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://Common/Components/AddonsScripts/SetMaterialUponSelection.cs" id="4_bhfaj"]
-[ext_resource type="Texture2D" uid="uid://densaodoirxq7" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png" id="4_okks6"]
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://Entities/Units/Components/DeathComponent/DeathComponent.tscn" id="8_3x03u"]
 [ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://Entities/Units/Components/AbilityComponent/AbilityComponent.tscn" id="13_mlqjw"]
 
@@ -18,69 +17,8 @@ shader_parameter/thickness = 2.6000001235
 shader_parameter/flickering_speed = 3.499999921768
 shader_parameter/minimal_flickering_alpha = 0.670000031825
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_bhfaj"]
-atlas = ExtResource("4_okks6")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oeoug"]
-atlas = ExtResource("4_okks6")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j835c"]
-atlas = ExtResource("4_okks6")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cqabt"]
-atlas = ExtResource("4_okks6")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gxuao"]
-atlas = ExtResource("4_okks6")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_k7oyk"]
-atlas = ExtResource("4_okks6")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kg7qp"]
-atlas = ExtResource("4_okks6")
-region = Rect2(1152, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d6u0c"]
-atlas = ExtResource("4_okks6")
-region = Rect2(1344, 0, 192, 192)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_r5yor"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bhfaj")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_oeoug")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_j835c")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cqabt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gxuao")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_k7oyk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kg7qp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_d6u0c")
-}],
-"loop": true,
-"name": &"PlayerSoldierIdle",
-"speed": 8.0
-}]
+animations = []
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
 size = Vector2(51.9, 51.9)
@@ -103,7 +41,7 @@ AnimationsPlayer = NodePath("AnimatedSprite2D")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=452479933 node_paths=PackedStringArray("SelectableC")]
 material = SubResource("ShaderMaterial_oeoug")
 sprite_frames = SubResource("SpriteFrames_r5yor")
-animation = &"PlayerSoldierIdle"
+animation = &""
 script = ExtResource("4_bhfaj")
 SelectionMaterial = SubResource("ShaderMaterial_oeoug")
 SelectableC = NodePath("../SelectableComponent")

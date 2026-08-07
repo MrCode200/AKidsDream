@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Controllers;
@@ -40,6 +40,10 @@ public static class UnitStateInitializer
     {
         unit = null;
 
+        Log.Here()
+            .Debug("Attempting to create unit '{UnitName}' at {TileLocation}",
+                state.UnitName, state.TileLocation);
+
         if (!UnitOwnershipResolver.TryResolve(state, out var ownership))
             return false;
 
@@ -65,10 +69,6 @@ public static class UnitStateInitializer
         newUnit.Position = Board.TileToWorldPosition(state.TileLocation);
         
         parent.AddChild(newUnit);
-        
-        Log.Here()
-            .Debug("Initialized unit '{UnitName}' at {TileLocation} in '{Parent}'",
-                newUnit.UnitName, newUnit.TileLocation, parent.Name);
  
         unit = newUnit;
         return true;

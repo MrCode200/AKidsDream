@@ -58,18 +58,18 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 
     public Unit? CurrentSelectedUnit;
     public AbilityData? CurrentSelectedAbility;
+    public PlayerId PlayerId;
     
     private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>(); 
-    private bool _playerTurnEnded;
+    private bool _isMyTurn;
     public PlayerInteractionController() {}
 
     public PlayerInteractionController(PlayerControllerContext context, PlayerData playerData)
     {
-        // _playerId = playerData.PlayerId;
+        PlayerId = playerData.PlayerId;
         
         Board = context.Board;
         AbilityVisualizer = context.AbilityVisualizer;
-        StateMachine = context.StateMachine;
         CommandExecutor = context.CommandExecutor;
     }
     
@@ -79,10 +79,14 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         AddChild(StateMachine);
         
         EventBus.Instance.AbilityBtnPressed += OnAbilityBtnPressed;
+        EventBus.Instance.EndTurnButtonPressed += OnEndTurnButtonPressed;
 
         StateMachine.AddState(new NoAbilitySelected(this));
         StateMachine.AddState(new OnAbilitySelected(this));
-        StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
+        StateMachine.AddState(new EnemyTurnObservation(this));
+        StateMachine.ChangeState(null, nameof(EnemyTurnObservation), true);
+        
+        Log.Here().Info("PlayerController for {PlayerId} initialized", PlayerId);
     }
 
     public override void _ExitTree()
@@ -93,22 +97,24 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     public void StartTurn()
     {
         StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
-        _playerTurnEnded = false;
+        _isMyTurn = true;
     }
 
     public void EndTurn()
     {
-        ClearCurrentAbility();
-        DeselectCurrentUnit();
+        if (CurrentSelectedAbility is not null)
+            ClearCurrentAbility();
+        if (CurrentSelectedUnit is not null)
+            DeselectCurrentUnit();
         StateMachine.ChangeState(null, nameof(EnemyTurnObservation), true);
-        _playerTurnEnded = true;
+        _isMyTurn = false;
     }
     
     // -- INPUT --
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (_playerTurnEnded)
+        if (!_isMyTurn)
             return;
         // User still may want information on the Enemy/its own units, how to handle that (more states :///)
         StateMachine.Update(CreatePayload(@event));
@@ -127,7 +133,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 
     private void OnAbilityBtnPressed(Unit unit, AbilityData ability)
     {
-        if (_playerTurnEnded) return;
+        if (!_isMyTurn) return;
         CurrentSelectedAbility = ability;
 
         CommandExecutor.Execute(new SelectAbilityCommand(
@@ -136,6 +142,12 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         ));
 
         StateMachine.ChangeState(null, nameof(OnAbilitySelected), true);
+    }
+    
+    public void OnEndTurnButtonPressed(int callerPlayerIdInt)
+    {
+        if (callerPlayerIdInt != PlayerId.Value) return;
+        CommandExecutor.Execute(new EndTurnCommand(PlayerId));
     }
     
     // -- --

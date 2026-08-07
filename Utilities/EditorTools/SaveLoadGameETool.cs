@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AKidsDream.Core.Controllers;
@@ -8,7 +7,6 @@ using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Managers.SaveSystems.Rehydration;
 using AKidsDream.Units.Resources;
 using Godot;
 using Godot.Collections;
@@ -27,7 +25,6 @@ public partial class SaveLoadGameETool : EditorScript
     private string _loadFileName = DefaultSaveName;
     private bool _includeBoardState = true;
     private bool _includeUnits = true;
-    private bool _removeExistingUnitsOnLoad = true;
     private bool _reassignUnitOwnersAfterLoad = true;
     private bool _loadWithoutGameManager = false;
     
@@ -72,7 +69,6 @@ public partial class SaveLoadGameETool : EditorScript
 
         container.AddChild(_createToggle("Include Board State", _includeBoardState, value => _includeBoardState = value));
         container.AddChild(_createToggle("Include Units", _includeUnits, value => _includeUnits = value));
-        container.AddChild(_createToggle("Remove Existing Units On Load", _removeExistingUnitsOnLoad, value => _removeExistingUnitsOnLoad = value));
         container.AddChild(_createToggle("Reassign Unit Owners After Load", _reassignUnitOwnersAfterLoad, value => _reassignUnitOwnersAfterLoad = value));
         container.AddChild(_createToggle("Load Without GameManager", _loadWithoutGameManager, value => _loadWithoutGameManager = value));
         
@@ -230,8 +226,7 @@ public partial class SaveLoadGameETool : EditorScript
         SaveLoadManager.LoadGameState(
             _loadFileName,
             board,
-            entityLayer,
-            removeExistingUnits: _removeExistingUnitsOnLoad);
+            entityLayer);
 
         if (_reassignUnitOwnersAfterLoad)
         {

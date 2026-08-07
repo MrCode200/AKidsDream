@@ -40,6 +40,8 @@ public partial class Unit : CharacterBody2D
 
     [Signal]
     public delegate void UnitMovedEventHandler(Unit unit, Vector2I from, Vector2I to);
+    [Signal]
+    public delegate void UnitInitializedEventHandler();
 
     [Export] public AnimatedSprite2D AnimationsPlayer;
     public HealthComponent HealthC { get; private set; }
@@ -49,6 +51,7 @@ public partial class Unit : CharacterBody2D
 
 
     private ILogger _log = GameLogger.For<Unit>();
+    public bool Initialized { get; private set; }
 
     public void Init(
         Global.UnitName unitName,
@@ -79,8 +82,16 @@ public partial class Unit : CharacterBody2D
         AddToGroup(nameof(Global.Groups.Units));
         AddToGroup(teamId.ToString());
 
-        // Move logic later to animationComponent
-        _setAppearance();
+        Initialized = true;
+
+        EmitSignal(SignalName.UnitInitialized);
+        
+        // If _Ready was already called before Init, call _Ready again to set appearance
+        if (IsNodeReady())
+        {
+            Log.Error("Init() called after _Ready(). Recalling _Ready() to set appearance.");
+            _Ready();
+        }
 
         // Set static context for all future log calls
         _log = _log.ForContext("UnitId", UnitId)
@@ -99,16 +110,29 @@ public partial class Unit : CharacterBody2D
 
     // -- LOGIC --
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         Position = Board.TileToWorldPosition(TileLocation);
 
         if (Engine.IsEditorHint()) return;
 
+        if (!Initialized)
+        {
+            Log.Debug("_Ready() called before Init(). Waiting for initialization...");
+            await ToSignal(this, SignalName.UnitInitialized);
+            Log.Debug("Initialization complete, proceeding with _Ready() logic.");
+        }
+
+        EventBus.Instance.NewRoundStarted += OnNewRoundStarted;
         _injectReferenceAndAssignComponents();
-        // _log.ForContext("TileLocation", TileLocation) // To verbose, instead, log when creating/spawning Unit(s)...
-        //    .Here()
-        //    .Info("UnitReady at {TileLocation}", TileLocation);
+        _setAppearance();
+        _log.Here()
+            .Debug("Unit ready at {TileLocation}", TileLocation);
+    }
+
+    public override void _ExitTree()
+    {
+        EventBus.Instance.NewRoundStarted -= OnNewRoundStarted;
     }
 
     private void _injectReferenceAndAssignComponents()
@@ -124,9 +148,16 @@ public partial class Unit : CharacterBody2D
     private void _setAppearance()
     {
         GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(OwnerId, out var ownerData);
-        AnimationsPlayer.Play(AnimationsPlayer.GetAnimation().ToString().Replace(
+        var animationName = AnimationsPlayer.GetAnimation().ToString().Replace(
             nameof(Global.UnitColor.Blue),
-            ownerData.UnitColor.ToString()));
+            ownerData.UnitColor.ToString());
+        AnimationsPlayer.Play(animationName);
+    }
+    
+    // -- Signal Handlers --
+    private void OnNewRoundStarted(int playerIdInt, int round)
+    {
+        AbilityC.ResetPool();
     }
 
     // --- LOGIC ---

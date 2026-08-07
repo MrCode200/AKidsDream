@@ -8,6 +8,7 @@
 
 [sub_resource type="Resource" id="Resource_y1g7a"]
 script = ExtResource("1_376yn")
+AllowedTargets = 15
 metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 
 [sub_resource type="Resource" id="Resource_ug0g2"]
@@ -19,7 +20,7 @@ metadata/_custom_type_script = "uid://ccpad80gncajp"
 
 [sub_resource type="Resource" id="Resource_i323e"]
 script = ExtResource("4_f1dca")
-AllowedTargets = 4
+AllowedTargets = 8
 metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [resource]
