@@ -39,10 +39,6 @@ public class GameStateRepository
             throw new InvalidDataException(
                 $"Save file '{stateFileName}' could not be parsed. The file is likely corrupted.");
         }
-
-        state.PlayerData ??= [];
-        state.TeamData ??= [];
-        state.UnitStateResources ??= [];
         
         return state;
     }

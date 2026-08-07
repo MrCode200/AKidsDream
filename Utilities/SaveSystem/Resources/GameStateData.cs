@@ -11,7 +11,9 @@ namespace AKidsDream.Managers.SaveSystem.Resources;
 [Tool]
 public partial class GameStateData : Resource
 {
-    // TODO: GameRound
+    [Export] public int GameRound;  
+    [Export] private Dictionary<int, PlayerData> _playerTurnOrder;
+    [Export] public int ActivePlayerIdInt;
     [Export] public BoardStateData BoardStateData = new();
     [Export] public Array<PlayerData> PlayerData = [];
     [Export] public int LocalPlayerIdInt;
@@ -19,6 +21,24 @@ public partial class GameStateData : Resource
     [Export] private Dictionary<Vector2I, TeamRelation> _teamRelations = new();
     [Export] public Array<UnitStateData> UnitStateResources = [];
 
+    public System.Collections.Generic.Dictionary<PlayerId, PlayerData> PlayerTurnOrder
+    {
+        get
+        {
+            return _playerTurnOrder.ToDictionary(
+                x => new PlayerId(x.Key),
+                x => x.Value
+            );
+        }
+        set
+        {
+            _playerTurnOrder = value.ToDictionary(
+                x => x.Key.Value,
+                x => x.Value
+            ).ToGodotDictionary();
+        }
+    }
+    
     public System.Collections.Generic.Dictionary<(TeamId, TeamId), TeamRelation> TeamRelations
     {
         get

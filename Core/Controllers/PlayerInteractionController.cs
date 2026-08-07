@@ -48,7 +48,6 @@ public readonly struct PlayerInteractionPayload(
     public bool HasUnit => UnitAtMousePos is not null;
 }
 
-//TODO: each player should create their own StateMachine as a child...
 public partial class PlayerInteractionController : Node2D, IPlayerController
 {
     [Export] public Board Board = null!;

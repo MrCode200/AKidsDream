@@ -10,43 +10,16 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="FIXED PlayerInteractionController.cs check for if its their turn&#10;FIXED NoAbilitySelected.cs check for if its the players unit&#10;ADDED EndTurnCommand and button logic">
-      <change afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/EndTurnCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack1.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack2.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Guard.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Run.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack2.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/RedSoldier/Warrior_Guard.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/RedSoldier/Warrior_Idle.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Assets/RedSoldier/Warrior_Run.png.import" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/ConsoleCommands/ConsoleManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Utilities/ConsoleCommands/UnitCrudConsoleCommands.cs" afterDir="false" />
+    <list default="true" id="95dbaa24-5aa4-4bc5-bcf4-132b6e251cea" name="Changes" comment="docs(controller): removed TODO for statemachine child&#10;feat(game-state): Added Turn Number as state">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AKidsDream/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Controllers/ControllerFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/ControllerFactory.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/PlayerInteractionController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Controllers/States/EnemyTurnObservation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/States/EnemyTurnObservation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Controllers/States/NoAbilitySelected.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Controllers/States/NoAbilitySelected.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Globals/EventBus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Globals/EventBus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandExecutor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandExecutor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandUtils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/CommandUtils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectAbilityCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/CommandsSystem/Commands/SelectAbilityCommand.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameLoopManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Managers/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Managers/GameManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/gameWorld.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Core/gameWorld.tscn" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/Abilities/Patterns/AccessFieldPattern.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Abilities/Patterns/AccessFieldPattern.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/BaseUnit/Unit.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/BaseUnit/UnitBase.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/BaseUnit/UnitBase.tscn" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Abilities/SoldierAttackAbility.tres" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Abilities/SoldierAttackAbility.tres" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/Entities/Units/Soldier/Soldier.tscn" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/EndTurnButton/EndTurnButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UI/EndTurnButton/EndTurnButton.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/EditorTools/SaveLoadGameETool.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitStateInitializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/UnitStateInitializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/GameStateRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Rehydration/GameStateRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/Resources/GameStateData.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/SaveSystem/SaveLoadManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/project.godot" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,61 +81,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000061969939908" />
-      <entry key="MS500" value="1.0908875588141147" />
-      <entry key="S2" value="1.6105152865201653" />
-      <entry key="S5" value="2.114451638460312" />
-      <entry key="S10" value="2.4594378435249586" />
-      <entry key="S30" value="2.795873415912716" />
-      <entry key="S60" value="2.9630435690601415" />
-      <entry key="M2" value="3.328205877481936" />
-      <entry key="M5" value="5.584713020794551" />
-      <entry key="M10" value="10.310330312057335" />
-      <entry key="M15" value="14.767481273308308" />
-      <entry key="M30" value="35.57205801091477" />
-      <entry key="H1" value="117.75279018701725" />
-      <entry key="H2" value="377.4024739565247" />
-      <entry key="H4" value="1126.785424615689" />
-      <entry key="D1" value="8933.215786641045" />
-      <entry key="W1" value="18522.925368199038" />
+      <entry key="MS100" value="1.0000000000000135" />
+      <entry key="MS500" value="1.0016918181478054" />
+      <entry key="S2" value="1.2645914267560865" />
+      <entry key="S5" value="2.0941354952017823" />
+      <entry key="S10" value="3.1288593041447257" />
+      <entry key="S30" value="4.837041939936957" />
+      <entry key="S60" value="5.754187465471783" />
+      <entry key="M2" value="7.09760441918816" />
+      <entry key="M5" value="18.38053634455523" />
+      <entry key="M10" value="44.47254946166459" />
+      <entry key="M15" value="64.92368189242175" />
+      <entry key="M30" value="106.94976879132807" />
+      <entry key="H1" value="192.64268363369797" />
+      <entry key="H2" value="440.07877814735775" />
+      <entry key="H4" value="1165.0481287157002" />
+      <entry key="D1" value="8945.50368413737" />
+      <entry key="W1" value="18618.026632777717" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="2.727504014881193E-309" />
-      <entry key="S10" value="5.222551115002318E-155" />
-      <entry key="S30" value="3.7379107780196004E-52" />
-      <entry key="S60" value="1.9415520928099136E-26" />
-      <entry key="M2" value="1.611675324753422E-13" />
-      <entry key="M5" value="1.803265213903303E-5" />
-      <entry key="M10" value="0.012954227352525254" />
-      <entry key="M15" value="0.1361543366775988" />
-      <entry key="M30" value="1.8091890086383908" />
-      <entry key="H1" value="8.226716464394078" />
-      <entry key="H2" value="27.8010982334515" />
-      <entry key="H4" value="95.64307618240063" />
-      <entry key="D1" value="774.5202090245579" />
-      <entry key="W1" value="1481.1091496072474" />
+      <entry key="MS100" value="2.3457885692340824E-83" />
+      <entry key="MS500" value="3.433834711795276E-17" />
+      <entry key="S2" value="1.4825610100419403E-4" />
+      <entry key="S5" value="0.05598569883443631" />
+      <entry key="S10" value="0.4171707343142895" />
+      <entry key="S30" value="1.8654617121061359" />
+      <entry key="S60" value="2.9648249040221586" />
+      <entry key="M2" value="4.093646947684409" />
+      <entry key="M5" value="7.464668028206772" />
+      <entry key="M10" value="12.039986177988215" />
+      <entry key="M15" value="14.838254936846875" />
+      <entry key="M30" value="19.596586385592925" />
+      <entry key="H1" value="27.090767304149953" />
+      <entry key="H2" value="46.227465810721405" />
+      <entry key="H4" value="111.61581791370807" />
+      <entry key="D1" value="788.2760219493415" />
+      <entry key="W1" value="1502.3120859329663" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9201934326247169" />
-      <entry key="MS500" value="1.073138279100637" />
-      <entry key="S2" value="1.6041679568746676" />
-      <entry key="S5" value="2.111064173088677" />
-      <entry key="S10" value="2.4574365754174408" />
-      <entry key="S30" value="2.79510306020352" />
-      <entry key="S60" value="2.962624855464451" />
-      <entry key="M2" value="3.327957544001359" />
-      <entry key="M5" value="5.58456546332219" />
-      <entry key="M10" value="10.323076620686264" />
-      <entry key="M15" value="14.903024032640614" />
-      <entry key="M30" value="37.37766952036569" />
-      <entry key="H1" value="125.97110714322146" />
-      <entry key="H2" value="405.18911265298766" />
-      <entry key="H4" value="1222.4045117717767" />
-      <entry key="D1" value="9707.705689526962" />
-      <entry key="W1" value="20004.026143088187" />
+      <entry key="MS100" value="1.4656783879166506E-6" />
+      <entry key="MS500" value="0.06825986657715968" />
+      <entry key="S2" value="0.6610078901721715" />
+      <entry key="S5" value="1.728169536057687" />
+      <entry key="S10" value="3.246672199242275" />
+      <entry key="S30" value="6.537969406529162" />
+      <entry key="S60" value="8.610466532387083" />
+      <entry key="M2" value="11.119369186191994" />
+      <entry key="M5" value="25.786976650651116" />
+      <entry key="M10" value="56.46132124831623" />
+      <entry key="M15" value="79.71848837223874" />
+      <entry key="M30" value="126.51635799867002" />
+      <entry key="H1" value="219.71118558002505" />
+      <entry key="H2" value="486.28522839418304" />
+      <entry key="H4" value="1276.6372842923856" />
+      <entry key="D1" value="9733.74902384994" />
+      <entry key="W1" value="20120.330248867227" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -347,7 +320,8 @@
       <workItem from="1785862932113" duration="4473000" />
       <workItem from="1785868962092" duration="5079000" />
       <workItem from="1786105038238" duration="3698000" />
-      <workItem from="1786109464958" duration="9019000" />
+      <workItem from="1786109464958" duration="9508000" />
+      <workItem from="1786141690416" duration="1686000" />
     </task>
     <task id="LOCAL-00001" summary="Changed System For Abilities">
       <option name="closed" value="true" />
@@ -429,7 +403,15 @@
       <option name="project" value="LOCAL" />
       <updated>1785836982182</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fix(turns): Check turn state in PlayerInteractionController before processing input.&#10;&#10;fix(units): validate unit ownership against acting player&#10;&#10;feat(commands): add EndTurnCommand &#10;&#10;feat(ui): wire end-turn button to EndTurnCommand&#10;&#10;refactor(filters): make owned-unit filter relative to casterId">
+      <option name="closed" value="true" />
+      <created>1786120550191</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1786120550191</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -449,7 +431,8 @@
     <MESSAGE value="Added Team Logic and Player logic using PlayerId, TeamId, and UnitId (using Id base struct, and structs as identifiers, of IIdTag)&#10;Update GameDataState to hold Players Teams and TeamRelations&#10;Update Loading and Saving System with utility classes&#10;Changed All Arrays to be from Godot.Collections; Dictionaries are mainly System as Godot doesn't support all types.&#10;Etool support for saving game thrown out the window (try with command create game, save game on exit, load game as copy etc... for testing...)" />
     <MESSAGE value="Fixed Bugs, &#10;Added Utility IsHostileToPlayer &#10;Solved Filter bug where it filtered to local player, not relative to caster player &#10;Changed System to use for units UnitColors enum, &#10;Added UnitColor field to PlayerData.cs" />
     <MESSAGE value="Fixed Bugs,&#10;Added Utility IsHostileToPlayer&#10;Solved Filter bug where it filtered to local player, not relative to caster player&#10;Changed System to use for units UnitColors enum,&#10;Added UnitColor field to PlayerData.cs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed Bugs,&#10;Added Utility IsHostileToPlayer&#10;Solved Filter bug where it filtered to local player, not relative to caster player&#10;Changed System to use for units UnitColors enum,&#10;Added UnitColor field to PlayerData.cs" />
+    <MESSAGE value="fix(turns): Check turn state in PlayerInteractionController before processing input.&#10;&#10;fix(units): validate unit ownership against acting player&#10;&#10;feat(commands): add EndTurnCommand &#10;&#10;feat(ui): wire end-turn button to EndTurnCommand&#10;&#10;refactor(filters): make owned-unit filter relative to casterId" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(turns): Check turn state in PlayerInteractionController before processing input.&#10;&#10;fix(units): validate unit ownership against acting player&#10;&#10;feat(commands): add EndTurnCommand &#10;&#10;feat(ui): wire end-turn button to EndTurnCommand&#10;&#10;refactor(filters): make owned-unit filter relative to casterId" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

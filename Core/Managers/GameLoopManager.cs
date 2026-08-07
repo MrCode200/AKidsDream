@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -5,6 +6,7 @@ using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
+using AKidsDream.Managers.SaveSystem.Resources;
 using Serilog;
 
 namespace AKidsDream.Managers;
@@ -14,28 +16,48 @@ public partial class GameLoopManager : Node
 {
 	public int CurrentRound;
 	public PlayerId ActivePlayerId { get; private set; }
-	private Dictionary<PlayerId, PlayerData> _turnOrder = new();
+	private Dictionary<PlayerId, PlayerData> _playerTurnOrder = new();
+	public Dictionary<PlayerId, PlayerData> PlayerTurnOrder() => new(_playerTurnOrder);
+	
 	private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
-
-	public override void _Ready()
+	private bool _stateLoaded;
+	
+	public void LoadState(GameStateData state)
 	{
-		EventBus.Instance.GameInitialized += OnGameInitialized;
+		CurrentRound = state.GameRound;
+		_playerTurnOrder = state.PlayerTurnOrder;
+		ActivePlayerId = new PlayerId(state.ActivePlayerIdInt);
+		_stateLoaded = true; // Flag to skip default initialization in _Ready
 	}
-
-	private void OnGameInitialized()
+	
+	public override async void _Ready()
 	{
-		SetTurnOrder(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers());
-		ActivePlayerId = _turnOrder.Keys.First();
-		CurrentRound = 1;
-		Log.Here().Info("GameLoopManager initialized, starting Player is {ActivePlayerId}", ActivePlayerId);
-		_turnOrder[ActivePlayerId].Controller.StartTurn();
-		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
-			ActivePlayerId.Value, CurrentRound);
+		try
+		{
+			await ToSignal(EventBus.Instance, EventBus.SignalName.GameInitialized);
+		
+			if (!_stateLoaded)
+			{
+				// Default initialization for new games
+				SetTurnOrder(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers());
+				ActivePlayerId = _playerTurnOrder.Keys.First();
+				CurrentRound = 1;
+			}
+		
+			Log.Here().Info("GameLoopManager initialized, starting Player is {ActivePlayerId}", ActivePlayerId);
+			_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
+			EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
+				ActivePlayerId.Value, CurrentRound);
+		}
+		catch (Exception e)
+		{
+			Log.Here().Error("A unexpected error occurred in GameLoopManager _Ready: {exception}", e);
+		}
 	}
 
 	private void SetTurnOrder(PlayerData[] players)
 	{
-		_turnOrder = players.ToDictionary(p => p.PlayerId, p => p);
+		_playerTurnOrder = players.ToDictionary(p => p.PlayerId, p => p);
 	}
 
 	public bool EndPlayerTurn(PlayerId playerId)
@@ -46,11 +68,11 @@ public partial class GameLoopManager : Node
 			return false;
 		}
 
-		_turnOrder[ActivePlayerId].Controller.EndTurn();
+		_playerTurnOrder[ActivePlayerId].Controller.EndTurn();
 		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnEnded, 
 			ActivePlayerId.Value, CurrentRound);
 
-		var idList = _turnOrder.Keys.ToList();
+		var idList = _playerTurnOrder.Keys.ToList();
 		var nextPlayerId = idList[(idList.IndexOf(playerId) + 1) % idList.Count];
 		ActivePlayerId = nextPlayerId;
 		
@@ -58,7 +80,7 @@ public partial class GameLoopManager : Node
 		
 		Log.Here().Info("Player {PlayerId} ended turn, starting {NextPlayerId}", playerId, nextPlayerId);
 
-		_turnOrder[ActivePlayerId].Controller.StartTurn();
+		_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
 		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
 			ActivePlayerId.Value, CurrentRound);
 		return true;
@@ -76,10 +98,5 @@ public partial class GameLoopManager : Node
 			EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted, 
 				nextPlayerId.Value, CurrentRound);
 		}
-	}
-
-	public override void _ExitTree()
-	{
-		EventBus.Instance.GameInitialized -= OnGameInitialized;
 	}
 }

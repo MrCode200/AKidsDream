@@ -5,8 +5,6 @@ using System.Linq;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
-using AKidsDream.Managers;
-using AKidsDream.Core.Controllers;
 using AKidsDream.GameBoard;
 using AKidsDream.Units.Resources;
 using AKidsDream.Managers.SaveSystem.Resources;
@@ -33,38 +31,60 @@ public static class SaveLoadManager
     /// </summary>
     /// <param name="stateFileName">The filename to be loaded</param>
     /// <param name="board">The board, which gets used to init itself.</param>
+    /// <param name="gameLoopManager">The GameLoopManager, which gets used to init itself.</param>
     /// <param name="entityLayer">To where the child Unit Nodes should be added to</param>
-    /// <param name="removeExistingUnits">Used only for GameDevelopment purposes, to create a clean Board when loading</param>
-    public static void LoadGameState(string stateFileName, Board board, Node entityLayer)
+    public static void LoadGameState(
+        string stateFileName, 
+        Board board, 
+        GameLoopManager gameLoopManager,  
+        Node entityLayer
+        )
     {
-        var state = GameStateRepository.Load(stateFileName);
+        Log.ForContext("StateFileName", stateFileName)
+            .Here()
+            .Debug("Loading game state from '{StateFileName}'", stateFileName);
+
+        GameStateData state;
+        try
+        {
+            state = GameStateRepository.Load(stateFileName);
+        }
+        catch (Exception ex)
+        {
+            Log.ForContext("StateFileName", stateFileName)
+                .Here()
+                .Fatal(ex, "Failed to load game state from '{StateFileName}'", stateFileName);
+            throw;
+        }
         GameManager.Instance.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
         GameManager.Instance.InitializeControllers(state.PlayerData);
 
-        Log.ForContext("StateFileName", stateFileName)
-            .Here()
-            .Info(
-                "Loading game state from '{StateFileName}' with {UnitCount} units",
-                stateFileName,
-                state.UnitStateResources?.Count ?? 0);
+        gameLoopManager.LoadState(state);
 
         AssignNextIds(state.UnitStateResources!, state.PlayerData, state.TeamData);
         var initializedUnits = UnitStateInitializer.InitializeUnits(entityLayer, state.UnitStateResources);
         board.Init(state.BoardStateData, initializedUnits);
+
+        Log.Here()
+            .Debug("LoadGameState completed successfully");
     }
 
     /// <summary>
     /// Saves the current state of the board.
     /// </summary>
     /// <param name="board">The Board instance of the current game</param>
+    /// <param name="gameLoopManager">The GameLoopManager, which is used to get the current state.</param>
     /// <param name="saveFileName">The name of the save file.
     /// If null Generates: GameState + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")</param>
     /// <returns>True on success, else false.</returns>
-    public static void SaveState(Board board, string? saveFileName = null)
+    public static void SaveState(Board board, GameLoopManager gameLoopManager, string? saveFileName = null)
     {
         saveFileName ??= "GameState" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
         var state = new GameStateData
         {
+            GameRound = gameLoopManager.CurrentRound,
+            PlayerTurnOrder = gameLoopManager.PlayerTurnOrder(),
+            ActivePlayerIdInt = gameLoopManager.ActivePlayerId.Value,
             PlayerData = new Array<PlayerData>(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers()),
             LocalPlayerIdInt = GameManager.Instance.LocalPlayerId.Value,
             TeamData = new Array<TeamData>(GameManager.Instance.PlayerTeamRegistry.GetAllTeams()),

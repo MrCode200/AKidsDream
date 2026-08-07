@@ -1,4 +1,5 @@
-using System;
+
+/*using System;
 using System.IO;
 using System.Linq;
 using AKidsDream.Core.Controllers;
@@ -226,6 +227,7 @@ public partial class SaveLoadGameETool : EditorScript
         SaveLoadManager.LoadGameState(
             _loadFileName,
             board,
+            GameManager.Instance,
             entityLayer);
 
         if (_reassignUnitOwnersAfterLoad)
@@ -371,4 +373,4 @@ public partial class SaveLoadGameETool : EditorScript
 
         return trimmed;
     }
-}
+}*/

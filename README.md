@@ -12,7 +12,7 @@
 
 Format: `type(scope): short imperative description`
 
-Add `!` after `(scope)` to mark breaking changes, e.g. `feat(units)!: remove legacy movement API`
+Add `!` after `(scope)` to mark breaking changes, e.g. `feat(unit-abilities)!: remove legacy movement API`
 
 | Change type                         | Prefix                 | Example                                           |
 |-------------------------------------|------------------------|---------------------------------------------------|
