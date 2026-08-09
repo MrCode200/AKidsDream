@@ -1,149 +1,133 @@
-﻿# 🎮 A Kid's Dream
+# 🎮 A Kid's Dream
 
-<div align="center">
+> A Kid's Dream is a small, charming turn-based tactics game built with Godot 4 and C#. Shipping-ready for Stardance / Hack Club.
 
-A turn-based tactical strategy game built with Godot 4 and C#
-
-[![Godot](https://img.shields.io/badge/Godot-4.7-blue)](https://godotengine.org)
-[![C#](https://img.shields.io/badge/C%23-12.0-purple)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![License](https://img.shields.io/badge/License-Non--Commercial-red)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-orange)](https://github.com/MrCode200/AKidsDream)
-
-</div>
+<p align="center">
+  <img alt="A Kid's Dream demo" src=".github/ASSETS/demo.gif" style="max-width:640px; width:100%;">
+</p>
 
 ---
 
-## ✨ Features
+## One-line pitch
 
-- **🎯 Turn-Based Tactical Combat** - Strategic gameplay on a tile-based board
-- **🤖 Unit System** - Diverse units with unique abilities and stats
-- **🎨 Beautiful Visuals** - Checkerboard board with animated units
-- **👥 Team Management** - Support for multiple teams with ally/enemy relations
-- **🧠 AI Controllers** - Computer-controlled opponents with intelligent decision-making
-- **💾 Save/Load System** - Persist your game progress and resume later
-- **🎮 Event-Driven Architecture** - Clean, decoupled systems using an EventBus
-- **📊 Structured Logging** - Comprehensive logging with Serilog for debugging
-- **🔧 Developer Console** - In-game console for debugging and testing
+A Kid's Dream is a tiny turn-based tactical game where kids use toys and imagination to battle across a checkerboard battlefield.
 
 ---
 
-## 📸 Screenshots
+## Play the build
 
-*Coming soon - Add screenshots of your game here!*
----
+We attach exported builds and web exports to the GitHub Release. To run locally:
 
-## 🎮 How to Play
+1. Install Godot 4.7.x.
+2. Clone this repository:
 
-### Basic Controls
+   git clone https://github.com/MrCode200/AKidsDream.git
+   cd AKidsDream
 
-- **Left Click** - Select units, interact with tiles
-- **End Turn Button** - Finish your turn and pass to the next player
-- **Console** - Press `~` (tilde) to open the developer console
+3. Open the project in Godot. If you have the matching .NET SDK installed, the C# assemblies will be restored/compiled automatically.
+4. Press Play to run the game, or use the Editor export templates to create platform-specific builds.
 
-### Gameplay Loop
-
-1. **Select a Unit** - Click on your unit to see available actions
-2. **Move** - Click on highlighted tiles to move your unit
-3. **Attack** - Select an ability and target enemy units
-4. **End Turn** - Click the End Turn button when finished
-
-### Winning
-
-Eliminate all enemy units to win the match!
+Minimum tested toolchain:
+- Godot 4.7
+- .NET SDK compatible with the project's C# version
 
 ---
 
-## 🏗️ Architecture
+## Demo / Screenshots
 
-### Core Systems
+Add a short GIF (320–640px wide) to `.github/ASSETS/demo.gif` and screenshots to `.github/ASSETS/screenshots/`. These are used on the project page and release notes for Stardance submissions.
+
+---
+
+## Features
+
+- Turn-based tactical combat on a tile grid
+- Modular unit system (stats, abilities, components)
+- Intuitive controls and developer console for debugging
+- AI controllers and team relations
+- Save/load system and Serilog structured logging
+
+---
+
+## How to play
+
+- Left click — select units and interact with tiles
+- End Turn — finish your turn
+- `~` (tilde) — open developer console for debugging and test commands
+
+Short loop: select a unit → move → use ability → end turn. Win by eliminating all enemy units.
+
+---
+
+## Console commands (developer)
+
+- `unit.create <name> <x> <y>` — spawn a unit at (x,y)
+- `unit.remove <id>` — remove a unit by ID
+- `unit.list` — list all units on the board
+
+---
+
+## Project structure
 
 ```
 AKidsDream/
-├── Core/
-│   ├── Controllers/      # Player and AI input handling
-│   ├── Globals/          # EventBus and global state
-│   └── Managers/         # Game loop, ability visualization
-├── Entities/
-│   ├── Board/            # Tile-based board system
-│   └── Units/            # Unit classes, abilities, components
-├── UI/                   # User interface elements
-├── Common/               # Shared utilities (logging, state machines)
-└── Utilities/            # Save/load system, console commands
+├── Core/           # Controllers, Globals (EventBus), Managers
+├── Entities/       # Board and Unit implementations
+├── UI/             # User interface scenes and scripts
+├── Common/         # Shared utilities (logging, state machines)
+└── Utilities/      # Save/load system, console commands, tooling
 ```
 
-### Key Components
+---
 
-- **Board** - Manages the tile grid and unit positions
-- **Unit** - Base class for all game units with stats and abilities
-- **GameManager** - Orchestrates game initialization and state
-- **EventBus** - Global event system for decoupled communication
-- **GameLogger** - Structured logging with Serilog
+## Development
 
-### Design Patterns
+Quick start:
 
-- **Event-Driven Architecture** - EventBus for loose coupling
-- **State Machine** - For unit and game state management
-- **Component-Based** - Modular unit abilities and behaviors
-- **Factory Pattern** - Controller creation and unit instantiation
+1. Fork the repo and create a branch: `git checkout -b feature/your-feature`
+2. Work in Godot and run locally
+3. Commit with conventional commits: `feat(scope): short description`
+4. Push and open a Pull Request describing your change and how to test it
+
+See `GUIDELINES.md` for coding and logging conventions.
 
 ---
 
-## 🛠️ Development
+## Shipping checklist (for Stardance / Hack Club)
 
-### Console Commands
+Before submitting, complete this checklist:
 
-The in-game console supports various commands for debugging:
+- [ ] One-sentence pitch and short description
+- [ ] 10–20s demo GIF at `.github/ASSETS/demo.gif`
+- [ ] 3–5 screenshots in `.github/ASSETS/screenshots/`
+- [ ] Exported builds (Windows/macOS/Linux/Web) attached to a GitHub Release
+- [ ] Short "How to play" instructions and controls
+- [ ] LICENSE and asset attributions verified
+- [ ] Release notes and version number updated
 
-- `unit.create <name> <x> <y>` - Spawn a unit at position
-- `unit.remove <id>` - Remove a unit by ID
-- `unit.list` - List all units on the board
+Suggested Stardance submission blurb:
 
-### Code Style
-
-Follow the established conventions in `GUIDELINES.md`:
-
-- Use conventional commit messages: `feat(scope): description`
-- Log at appropriate levels (Debug, Info, Warning, Error)
-- Enrich logs with entity context for better debugging
+> A Kid's Dream — a tiny, charming turn-based tactics game where kids use toys and imagination to battle on a checkerboard battlefield. Play in your browser or download builds from the release. Made with Godot 4.
 
 ---
 
-## 📝 Contributing
+## Contributing
 
-Contributions are welcome! Please follow these guidelines:
-
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** using conventional commits
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
-
-### Development Guidelines
-
-- Read `GUIDELINES.md` for commit message format and logging standards
-- Add structured logging for new features
-- Keep code clean and well-documented
+Contributions welcome! Please open issues or PRs. Use conventional commits and include testing notes in PR descriptions.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **AKidsDream Non-Commercial License**.
-
-**Summary:**
-- ✅ Free for personal, educational, and research use
-- ✅ Free to modify and redistribute (with attribution)
-- ❌ Commercial use requires explicit permission
-
-See [LICENSE](LICENSE) for full details.
+This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing.
 
 ---
 
+## Credits
 
-<div align="center">
+- Author: MrCode200
+- Built with Godot 4 and C#
 
-**Made with ❤️ using Godot 4 & C#**
+---
 
-[⬆ Back to Top](#-a-kids-dream)
-
-</div>
+<p align="center">Made with ❤️ using Godot 4 &amp; C# — ready for Stardance!</p>
