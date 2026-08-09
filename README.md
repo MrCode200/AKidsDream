@@ -1,100 +1,149 @@
-# Project Resources & Guidelines
+﻿# 🎮 A Kid's Dream
 
-## 📚 References
+<div align="center">
 
-| Resource             | Description                                 | Link                                                                             |
-|----------------------|---------------------------------------------|----------------------------------------------------------------------------------|
-| GD Console           | Godot developer console addon tutorial      | [Watch video](https://www.youtube.com/watch?v=M_ymfQtZad4)                       |
-| CallableStateMachine | Lightweight state machine gist for Godot C# | [View gist](https://gist.github.com/firebelley/96f2f82e3feaa2756fe647d8b9843174) |
+A turn-based tactical strategy game built with Godot 4 and C#
 
+[![Godot](https://img.shields.io/badge/Godot-4.7-blue)](https://godotengine.org)
+[![C#](https://img.shields.io/badge/C%23-12.0-purple)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![License](https://img.shields.io/badge/License-Non--Commercial-red)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-orange)](https://github.com/MrCode200/AKidsDream)
 
-## 📝 Changelog Guidelines
-
-Format: `type(scope): short imperative description`
-
-Add `!` after `(scope)` to mark breaking changes, e.g. `feat(unit-abilities)!: remove legacy movement API`
-
-| Change type                         | Prefix                 | Example                                           |
-|-------------------------------------|------------------------|---------------------------------------------------|
-| New feature                         | `feat:`                | `feat(units): add overwatch ability`              |
-| Bug fix                             | `fix:`                 | `fix(board): prevent units moving through walls`  |
-| Internal change, no behavior change | `refactor:`            | `refactor(events): extract turn-state handler`    |
-| Intentional removal                 | `refactor:` / `chore:` | `refactor(ai): remove deprecated target selector` |
-| Documentation                       | `docs:`                | `docs(readme): add local setup steps`             |
-| Tests                               | `test:`                | `test(combat): cover critical-hit calculation`    |
-| Formatting only                     | `style:`               | `style: format unit-stat classes`                 |
-| Performance                         | `perf:`                | `perf(pathfinding): cache reachable tiles`        |
-| Tooling / dependencies              | `chore:`               | `chore: update Godot C# tooling`                  |
-| CI pipeline                         | `ci:`                  | `ci: run tests on pull requests`                  |
-| Build / export config               | `build:`               | `build: configure Windows export preset`          |
+</div>
 
 ---
 
-## 📊 Logging Guidelines
+## ✨ Features
 
-### 🎚️ Log Levels
+- **🎯 Turn-Based Tactical Combat** - Strategic gameplay on a tile-based board
+- **🤖 Unit System** - Diverse units with unique abilities and stats
+- **🎨 Beautiful Visuals** - Checkerboard board with animated units
+- **👥 Team Management** - Support for multiple teams with ally/enemy relations
+- **🧠 AI Controllers** - Computer-controlled opponents with intelligent decision-making
+- **💾 Save/Load System** - Persist your game progress and resume later
+- **🎮 Event-Driven Architecture** - Clean, decoupled systems using an EventBus
+- **📊 Structured Logging** - Comprehensive logging with Serilog for debugging
+- **🔧 Developer Console** - In-game console for debugging and testing
 
-| Level           | Usage                                                                                             |
-|-----------------|---------------------------------------------------------------------------------------------------|
-| **Verbose**     | Noisiest level; rarely enabled in production.                                                     |
-| **Debug**       | Internal system events, not observable externally, but useful for tracing how something happened. |
-| **Information** | Observable actions the system performs, tied to its core responsibilities.                        |
-| **Warning**     | Service is degraded, endangered, or behaving outside expected parameters.                         |
-| **Error**       | Functionality is unavailable or an expectation is broken.                                         |
-| **Fatal**       | Most critical level; demands immediate attention.                                                 |
+---
+
+## 📸 Screenshots
+
+*Coming soon - Add screenshots of your game here!*
+---
+
+## 🎮 How to Play
+
+### Basic Controls
+
+- **Left Click** - Select units, interact with tiles
+- **End Turn Button** - Finish your turn and pass to the next player
+- **Console** - Press `~` (tilde) to open the developer console
+
+### Gameplay Loop
+
+1. **Select a Unit** - Click on your unit to see available actions
+2. **Move** - Click on highlighted tiles to move your unit
+3. **Attack** - Select an ability and target enemy units
+4. **End Turn** - Click the End Turn button when finished
+
+### Winning
+
+Eliminate all enemy units to win the match!
+
+---
+
+## 🏗️ Architecture
+
+### Core Systems
+
+```
+AKidsDream/
+├── Core/
+│   ├── Controllers/      # Player and AI input handling
+│   ├── Globals/          # EventBus and global state
+│   └── Managers/         # Game loop, ability visualization
+├── Entities/
+│   ├── Board/            # Tile-based board system
+│   └── Units/            # Unit classes, abilities, components
+├── UI/                   # User interface elements
+├── Common/               # Shared utilities (logging, state machines)
+└── Utilities/            # Save/load system, console commands
+```
+
+### Key Components
+
+- **Board** - Manages the tile grid and unit positions
+- **Unit** - Base class for all game units with stats and abilities
+- **GameManager** - Orchestrates game initialization and state
+- **EventBus** - Global event system for decoupled communication
+- **GameLogger** - Structured logging with Serilog
+
+### Design Patterns
+
+- **Event-Driven Architecture** - EventBus for loose coupling
+- **State Machine** - For unit and game state management
+- **Component-Based** - Modular unit abilities and behaviors
+- **Factory Pattern** - Controller creation and unit instantiation
+
+---
+
+## 🛠️ Development
+
+### Console Commands
+
+The in-game console supports various commands for debugging:
+
+- `unit.create <name> <x> <y>` - Spawn a unit at position
+- `unit.remove <id>` - Remove a unit by ID
+- `unit.list` - List all units on the board
+
+### Code Style
+
+Follow the established conventions in `GUIDELINES.md`:
+
+- Use conventional commit messages: `feat(scope): description`
+- Log at appropriate levels (Debug, Info, Warning, Error)
+- Enrich logs with entity context for better debugging
+
+---
+
+## 📝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** using conventional commits
+4. **Push to the branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
+
+### Development Guidelines
+
+- Read `GUIDELINES.md` for commit message format and logging standards
+- Add structured logging for new features
+- Keep code clean and well-documented
+
+---
+
+## 📄 License
+
+This project is licensed under the **AKidsDream Non-Commercial License**.
+
+**Summary:**
+- ✅ Free for personal, educational, and research use
+- ✅ Free to modify and redistribute (with attribution)
+- ❌ Commercial use requires explicit permission
+
+See [LICENSE](LICENSE) for full details.
+
+---
 
 
-### 🧩 Project implemented Logging
+<div align="center">
 
-For distinguishable logs across base and derived `Node` types:
+**Made with ❤️ using Godot 4 & C#**
 
-1. **Initialize logger** using the [GameLogger](cci:2://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Common/Logging/GameLogger.cs:53:0-168:1) factory:
-   ```csharp
-   private ILogger _log = GameLogger.For<Type>();
-   ```
+[⬆ Back to Top](#-a-kids-dream)
 
-2. **Enrich with entity context** during initialization (e.g., in [Init()](cci:1://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Entities/Units/BaseUnit/Unit.cs:55:4-108:5)):
-   ```csharp
-   _log = _log.ForContext("UnitId", UnitId)
-       .ForContext("UnitName", UnitName)
-       .ForContext("PlayerId", OwnerIdInt);
-   ```
-
-3. **Use the [.Here()](cci:1://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Common/Logging/GameLogger.cs:22:4-25:47) extension** for automatic caller context (Method:Line):
-   ```csharp
-   _log.Here().Debug("Unit ready at {TileLocation}", TileLocation);
-   ```
-
-4. **Output format** includes:
-    - Timestamp: `[HH:mm:ss]`
-    - Short class name: [Unit](cci:2://file:///C:/Users/Navid/Documents/a-kids-dream/AKidsDream/Entities/Units/BaseUnit/Unit.cs:16:0-180:1)
-    - Method and line: `Move:174`
-    - Log level: `DBG` / `INF` / `WRN` / `ERR` / `FTL`
-    - Entity context: `[UnitName:UnitId]`
-    - Structured message with named properties
- 
-### ❓ How to Log
-
-1. **Prefer structured logging** with named properties instead of plain text:
-   ```csharp
-   Log.Here().Info("LevelStarted {LevelName} {PlayerId}", levelName, playerId);
-   ```
-   Always include relevant parameters so logs can be filtered later.
-
-2. **Exceptions & fallbacks:**
-    - Catching an exception → log at `Error` or `Fatal` with exception details.
-    - Branching into unusual/fallback behavior → log at `Warning`.
-    - Add logs at key points in the game flow — not everywhere.
-
-3. **Each log entry should answer:**
-    - **Who** — player ID, entity ID, or network peer.
-    - **What** — action/operation (`SaveGame`, `LoadScene`, `ApplyDamage`).
-    - **Where** — scene name, node path, or system/component.
-    - **Why/Result** — success/failure, error message, key parameters.
-
-4. **Performance:**
-    - Avoid expensive string operations inside tight loops (if not critical).
-    - Don't log every frame/physics tick unless explicitly debugging verbosely.
-
-5. **Avoid log spam and duplication:**
-    - Don't log the same error at every layer of the call stack — log it where it's handled.
+</div>

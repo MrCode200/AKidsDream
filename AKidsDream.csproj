@@ -14,5 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AutoTween.txt" />
+    <Content Include="README.md" />
   </ItemGroup>
 </Project>
