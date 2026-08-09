@@ -6,25 +6,43 @@
 
 <div align="center">
 
-[![Godot](https://img.shields.io/badge/Godot-4.7-blue?style=for-the-badge)](https://godotengine.org) 
-[![C#](https://img.shields.io/badge/C%23-12.0-purple?style=for-the-badge)](https://learn.microsoft.com/en-us/dotnet/csharp/) 
-[![License](https://img.shields.io/badge/License-Non--Commercial-red?style=for-the-badge)](LICENSE) 
-[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-orange?style=for-the-badge)](https://github.com/MrCode200/AKidsDream) 
+[![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)](https://godotengine.org)
+[![C%23](https://img.shields.io/badge/C%23-12.0-512BD4?logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![License](https://img.shields.io/badge/License-Non--Commercial-EA4335?&logo=creativecommons&logoColor=white)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-F59E0B?&logo=git&logoColor=white)](https://github.com/MrCode200/AKidsDream)
 [![Hackatime](https://hackatime-badge.hackclub.com/U0BMQSUV1DG/AKidsDream)](https://hackatime.hackclub.com/)
 
 </div>
 
 ---
 
-## ✨ One-line pitch
+## 📖 Table of Contents
 
-A Kid's Dream is a tiny, charming turn-based tactics game where kids use toys and imagination to battle across a colorful checkerboard battlefield — playful, tactical, and delightful. 🎲🧸🌈
+- [Why “A Kid’s Dream”?](#-why-a-kids-dream)
+- [Play the Build](#-play-the-build)
+- [Features](#-features)
+- [How to Play](#-how-to-play-quick)
+- [Developer Console Commands](#️-developer-console-commands)
+- [Project Structure](#-project-structure)
+- [Development Quick Start](#️-development-quick-start)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [AI Usage](#-ai-usage)
+- [Credits](#-credits)
 
 ---
+## 🤔 Why “A Kid’s Dream”?
+
+When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
+
+**A Kid’s Dream** is my attempt to recreate that experience — not exactly as it was, but from the pieces that remain in my memory. It is a game inspired by childhood imagination, handmade rules, and the joy of turning simple ideas into an adventure.
+
 
 ## 🚀 Play the build
 
-We attach exported builds and web exports to the GitHub Release. To run locally:
+We attach exported builds to the GitHub Release, these can be run without needing to install godot. 
+
+To run locally with the project files:
 
 1. Install Godot 4.7.x.
 2. Clone this repository:
@@ -38,12 +56,6 @@ We attach exported builds and web exports to the GitHub Release. To run locally:
 Minimum tested toolchain:
 - Godot 4.7
 - .NET SDK compatible with the project's C# version
-
----
-
-## 🎞️ Demo & Screenshots
-
-Drop a short GIF (320–640px) at `.github/ASSETS/demo.gif` and screenshots to `.github/ASSETS/screenshots/`. They appear on the repo and release.
 
 ---
 
@@ -64,15 +76,13 @@ Drop a short GIF (320–640px) at `.github/ASSETS/demo.gif` and screenshots to `
 - End Turn — finish your turn
 - `~` (tilde) — open developer console for debug/test commands
 
-Short loop: select a unit → move → use ability → end turn. Win by eliminating all enemy units. 🏆
+Short loop: select a unit → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
 
 ---
 
 ## 🛠️ Developer console commands
 
-- `unit.create <name> <x> <y>` — spawn a unit at (x,y)
-- `unit.remove <id>` — remove a unit by ID
-- `unit.list` — list all units on the board
+- `unit.create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
 
 ---
 
@@ -100,27 +110,9 @@ See `GUIDELINES.md` for coding and logging conventions.
 
 ---
 
-## 📦 Shipping checklist (Stardance / Hack Club friendly)
-
-Before submitting, complete this checklist:
-
-- [ ] One-sentence pitch + short description
-- [ ] 10–20s demo GIF at `.github/ASSETS/demo.gif` (recommended: 480×270 or 640×360)
-- [ ] 3–5 screenshots in `.github/ASSETS/screenshots/`
-- [ ] Exported builds (Windows/macOS/Linux/Web) attached to a GitHub Release
-- [ ] Short "How to play" instructions and controls
-- [ ] LICENSE and asset attributions verified
-- [ ] Release notes and version number updated
-
-Suggested Stardance submission blurb:
-
-> 🎲 A Kid's Dream — a tiny, charming turn-based tactics game where kids use toys and imagination to battle on a checkerboard battlefield. Play in your browser or download builds from the release. Made with Godot 4. 💫
-
----
-
 ## 🙌 Contributing
 
-Contributions welcome! Open issues or PRs. Use conventional commits and include testing notes in PR descriptions. Please add a short demo or screenshots for any visual/UI changes.
+Contributions welcome! Open issues or PRs. Use conventional commits and include testing notes in PR descriptions.
 
 ---
 
@@ -129,10 +121,18 @@ Contributions welcome! Open issues or PRs. Use conventional commits and include 
 This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing inquiries.
 
 ---
+## 🤖 AI Usage
+
+AI tools were used only as development assistance. They helped with debugging, troubleshooting, and providing suggestions for the design and implementation of individual systems.
+
+AI was also used to help write and improve documentation. All final implementation decisions, code integration, and project direction were reviewed and made by the developer.
+
+---
 
 ## ✨ Credits
 
 - Author: MrCode200
+- Thanks to the helpful members of the Godot Discord community who helped me solve problems during development
 - Built with Godot 4 and C#
 
 ---
