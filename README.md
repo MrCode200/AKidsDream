@@ -40,6 +40,9 @@ When I was a child, I created a small board game using paper and scissors. It wa
 
 ## 🚀 Play the build
 
+> [!NOTE]
+> To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
+
 We attach exported builds to the GitHub Release, these can be run without needing to install godot. 
 
 To run locally with the project files:
@@ -82,8 +85,9 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 
 ## 🛠️ Developer console commands
 
-- `unit.create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
-
+- `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
+> [!NOTE]
+> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create 1 1 2 4)
 ---
 
 ## 📁 Project structure
