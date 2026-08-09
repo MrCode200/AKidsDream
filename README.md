@@ -40,7 +40,7 @@ When I was a child, I created a small board game using paper and scissors. It wa
 
 ## 🚀 Play the build
 
-> [!NOTE]
+> [!TIP]
 > To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
 
 We attach exported builds to the GitHub Release, these can be run without needing to install godot. 
