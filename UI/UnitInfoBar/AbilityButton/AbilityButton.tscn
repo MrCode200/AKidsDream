@@ -4,14 +4,15 @@
 [ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/UnitInfoBar/AbilityButton/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_g0mcq"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ww843"]
 atlas = ExtResource("3_6y4ib")
+margin = Rect2(1, -4, 0, 3)
 
-[sub_resource type="LabelSettings" id="LabelSettings_bywtd"]
+[sub_resource type="LabelSettings" id="LabelSettings_m53bf"]
 shadow_size = 9
 shadow_color = Color(0, 0, 0, 1)
 
-[node name="AblityBtn" type="Control" unique_id=1982473900 node_paths=PackedStringArray("AbilityName", "Button")]
+[node name="AblityButton" type="Control" unique_id=1982473900 node_paths=PackedStringArray("ContentContainer", "AbilityName", "Button")]
 custom_minimum_size = Vector2(112, 80)
 layout_mode = 3
 anchors_preset = 8
@@ -19,30 +20,42 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -48.0
+offset_left = -56.0
 offset_top = -48.0
-offset_right = 48.0
+offset_right = 56.0
 offset_bottom = 48.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 script = ExtResource("1_6y4ib")
-AbilityName = NodePath("AbilityName")
-Button = NodePath("Button")
+ContentContainer = NodePath("VSplitContainer")
+AbilityName = NodePath("VSplitContainer/AbilityName")
+Button = NodePath("VSplitContainer/MarginContainer/Button")
 
-[node name="ButtonRegular" type="NinePatchRect" parent="." unique_id=43269389]
+[node name="VSplitContainer" type="VBoxContainer" parent="." unique_id=217479255]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -40.50351
-offset_top = -40.0
-offset_right = 39.49649
-offset_bottom = 40.0
+offset_left = -57.5
+offset_top = -62.5
+offset_right = 57.5
+offset_bottom = 51.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+alignment = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer" unique_id=951919968]
+layout_mode = 2
+theme_override_constants/margin_left = 17
+theme_override_constants/margin_right = 17
+
+[node name="ButtonRegular" type="NinePatchRect" parent="VSplitContainer/MarginContainer" unique_id=1539755560]
+custom_minimum_size = Vector2(80.5, 80.5)
+layout_mode = 2
 texture = ExtResource("1_g0mcq")
 region_rect = Rect2(3, 1, 154, 158)
 patch_margin_left = 30
@@ -52,36 +65,15 @@ patch_margin_bottom = 30
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[node name="Button" type="Button" parent="." unique_id=1466620163]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -36.0
-offset_top = -40.0
-offset_right = 36.0
-offset_bottom = 32.0
-grow_horizontal = 2
-grow_vertical = 2
-icon = SubResource("AtlasTexture_g0mcq")
+[node name="Button" type="Button" parent="VSplitContainer/MarginContainer" unique_id=1410637876]
+layout_mode = 2
+icon = SubResource("AtlasTexture_ww843")
 icon_alignment = 1
 
-[node name="AbilityName" type="Label" parent="." unique_id=923897968]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -53.514008
-offset_top = 26.5
-offset_right = 53.514008
-offset_bottom = 49.5
-grow_horizontal = 2
-grow_vertical = 2
+[node name="AbilityName" type="Label" parent="VSplitContainer" unique_id=504616585]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
 text = "Ability Name"
-label_settings = SubResource("LabelSettings_bywtd")
+label_settings = SubResource("LabelSettings_m53bf")
 horizontal_alignment = 1
 autowrap_mode = 3

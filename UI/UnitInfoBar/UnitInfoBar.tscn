@@ -181,3 +181,9 @@ offset_top = -133.0
 offset_right = 230.0
 offset_bottom = -20.0
 alignment = 2
+
+[node name="AblityButton" parent="AbilityContainer" unique_id=1982473900 instance=ExtResource("2_00si8")]
+layout_mode = 2
+
+[node name="AblityButton2" parent="AbilityContainer" unique_id=1450503306 instance=ExtResource("2_00si8")]
+layout_mode = 2

@@ -1,0 +1,10 @@
+﻿tween once vs autotween?
+
+Target:
+AnimWhen: Manual, Ready, Visible, Trigger
+Autotween Trigger, (only used for AnimeWhen Trigger)
+Start Delay
+Anim Type: Fade, Scale, etc.
+Scale From: Center, Top Left, Bottom Right etc.
+Auto Hide After (?)
+AutoHideAfter: hide after...

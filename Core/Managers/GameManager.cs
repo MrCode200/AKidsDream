@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
@@ -51,19 +49,18 @@ public class GameCreationPayload
     };
 }
 
-// TODO: Make its processing happen first, over all other nodes... as it may be called through Instance etc...
-
+// TODO:
+// Make its processing happen first, over all other nodes... as it may be called through Instance etc...
+// SOLUTION: use await ToSignal() in _Ready()
 public partial class GameManager : Node2D
 {
     [Export] public ControllerFactory ControllerFactory;
-    private static GameManager _instance;
     private readonly ILogger _log = GameLogger.For<GameManager>();
     public readonly PlayerTeamRegistry PlayerTeamRegistry = new();
     public readonly TeamRelationResolver TeamRelationResolver = new();
-    private PlayerId _localPlayerId;
-    public PlayerId LocalPlayerId => _localPlayerId;
+    public PlayerId LocalPlayerId { get; private set; }
 
-    public static GameManager Instance => _instance;
+    public static GameManager Instance { get; private set; }
 
     [Export] public string LoadFileName = "OldSave.tres";
     [Export] public string SaveFileName = "NewSave.tres";
@@ -81,7 +78,7 @@ public partial class GameManager : Node2D
 
     public override void _Ready()
     {
-        _instance = this;
+        Instance = this;
 
         var gameCreationPayload = new GameCreationPayload();
         // Prefer an explicit LoadFileName set in the inspector; fall back to the
@@ -118,7 +115,7 @@ public partial class GameManager : Node2D
         }
 
         // -- Create new game --
-        _localPlayerId = new PlayerId(gameCreationPayload.LocalPlayerId);
+        LocalPlayerId = new PlayerId(gameCreationPayload.LocalPlayerId);
         InitializeRegistries(gameCreationPayload.Players, gameCreationPayload.Teams, gameCreationPayload.TeamRelations);
         InitializeControllers(gameCreationPayload.Players);
         InitializeNewBoard(gameCreationPayload);
@@ -148,7 +145,7 @@ public partial class GameManager : Node2D
             _log.Here().Info("GameManager exiting without saving (SaveOnExit: false)");
         }
 
-        _instance = null;
+        Instance = null;
         Log.CloseAndFlush();
         QueueFree();
     }

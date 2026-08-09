@@ -28,7 +28,8 @@ public partial class GameLoopManager : Node
 		_playerTurnOrder = state.PlayerTurnOrder;
 		ActivePlayerId = new PlayerId(state.ActivePlayerIdInt);
 		_stateLoaded = true; // Flag to skip default initialization in _Ready
-	}
+		Log.Here().Info("Loaded game state: Round={CurrentRound}, ActivePlayer={ActivePlayerId}, PlayerCount={PlayerCount}", 
+			state.GameRound, state.ActivePlayerIdInt, state.PlayerTurnOrder.Count);	}
 	
 	public override async void _Ready()
 	{
@@ -44,7 +45,10 @@ public partial class GameLoopManager : Node
 				CurrentRound = 1;
 			}
 		
+			EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted, ActivePlayerId.Value, CurrentRound);
+
 			Log.Here().Info("GameLoopManager initialized, starting Player is {ActivePlayerId}", ActivePlayerId);
+			
 			_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
 			EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
 				ActivePlayerId.Value, CurrentRound);

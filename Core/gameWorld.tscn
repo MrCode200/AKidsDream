@@ -8,9 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://UI/UnitInfoBar/UnitInfoBar.tscn" id="5_d2vp3"]
 [ext_resource type="Script" uid="uid://irt720bqh762" path="res://Core/Managers/AbilityVisualizer.cs" id="5_ypqj4"]
 [ext_resource type="Script" uid="uid://dqhgr3soqc73f" path="res://Core/Controllers/ControllerFactory.cs" id="7_30lfw"]
-[ext_resource type="Script" path="res://Utilities/Commands/ConsoleManager.cs" id="8_30lfw"]
+[ext_resource type="Script" uid="uid://cvx2p6rlu6y3s" path="res://Utilities/ConsoleCommands/ConsoleManager.cs" id="8_30lfw"]
 [ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
 [ext_resource type="PackedScene" uid="uid://ddst6dppshn3c" path="res://UI/EndTurnButton/EndTurnButton.tscn" id="12_7hfl2"]
+[ext_resource type="PackedScene" uid="uid://f0e2ejne7mxf" path="res://UI/RoundCounter/RoundCounter.tscn" id="12_j3kke"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
 texture = ExtResource("4_cpkaj")
@@ -30,11 +31,12 @@ texture = ExtResource("4_cpkaj")
 [sub_resource type="TileSet" id="TileSet_1totg"]
 sources/0 = SubResource("TileSetAtlasSource_cpkaj")
 
-[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "EntityLayer", "GameBoard")]
+[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "EntityLayer", "GameLoopManager", "GameBoard")]
 script = ExtResource("1_ypqj4")
 ControllerFactory = NodePath("SystemsLayer/ControllerFactory")
 LoadFileName = "NewSave.tres"
 EntityLayer = NodePath("EntityLayer")
+GameLoopManager = NodePath("SystemsLayer/GameLoopManager")
 SaveOnExit = false
 GameBoard = NodePath("SystemsLayer/Board")
 
@@ -102,3 +104,5 @@ layer = 50
 [node name="EndTurnButton" parent="UILayer" unique_id=136482551 instance=ExtResource("12_7hfl2")]
 offset_left = -373.0
 offset_right = -245.0
+
+[node name="RoundCounter" parent="UILayer" unique_id=319109358 instance=ExtResource("12_j3kke")]

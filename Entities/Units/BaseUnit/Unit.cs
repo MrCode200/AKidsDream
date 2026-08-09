@@ -132,7 +132,8 @@ public partial class Unit : CharacterBody2D
 
     public override void _ExitTree()
     {
-        EventBus.Instance.NewRoundStarted -= OnNewRoundStarted;
+        if (EventBus.Instance != null)
+            EventBus.Instance.NewRoundStarted -= OnNewRoundStarted;
     }
 
     private void _injectReferenceAndAssignComponents()

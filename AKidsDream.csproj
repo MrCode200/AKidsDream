@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.6.2">
+<Project Sdk="Godot.NET.Sdk/4.7.1">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
@@ -11,5 +11,8 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.GodotConsole" Version="1.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AutoTween.txt" />
   </ItemGroup>
 </Project>

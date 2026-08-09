@@ -11,6 +11,7 @@ namespace AKidsDream.Core.Controllers.Commands;
 [AttributeUsage(AttributeTargets.Class)]
 public class ConsoleCommandAttribute : Attribute { }
 
+[GlobalClass]
 public partial class ConsoleManager : Node
 {
     private static readonly ILogger Log = GameLogger.For(typeof(ConsoleManager));
@@ -26,10 +27,13 @@ public partial class ConsoleManager : Node
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        return assembly.GetTypes()
+        var foundCommands = assembly.GetTypes()
             .Where(t => t.IsDefined(typeof(ConsoleCommandAttribute), false))
             .Where(t => !t.IsAbstract)
             .ToList();
+        
+        Log.Here().Debug("Found {CommandCount} commands", foundCommands.Count);
+        return foundCommands;
     }
     // -- Private Methods --
 

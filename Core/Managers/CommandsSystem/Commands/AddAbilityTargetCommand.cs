@@ -7,6 +7,8 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
+// CHECK: maybe not needed as command, as this data won't help for cast ability as both need inputs to be serialized
+// CHECK: maybe needed to check visualization, like SelectAbilityCommand...
 public sealed class AddAbilityTargetCommand(
     Unit caster,
     StringName abilityName,

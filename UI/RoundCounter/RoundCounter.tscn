@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://f0e2ejne7mxf"]
+
+[ext_resource type="FontFile" uid="uid://ct7fyq24bf21v" path="res://Assets/Fonts/Peaberry-Font-v2.0/Peaberry Font Family/Peaberry Monospace/PeaberryMono.woff" id="1_ih8ts"]
+[ext_resource type="Script" uid="uid://bn8d3qdcwnyr7" path="res://UI/RoundCounter/RoundCounter.cs" id="1_ly640"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ly640"]
+font = ExtResource("1_ih8ts")
+font_size = 36
+
+[node name="RoundCounter" type="Control" unique_id=319109358 node_paths=PackedStringArray("RoundLabel")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ly640")
+RoundLabel = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=1711219465]
+layout_mode = 1
+offset_left = 14.0
+offset_top = 14.0
+offset_right = 172.0
+offset_bottom = 50.0
+text = "Round 3"
+label_settings = SubResource("LabelSettings_ly640")
