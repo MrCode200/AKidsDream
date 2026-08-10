@@ -149,4 +149,4 @@ AI was also used to help write and improve documentation. All final implementati
 
 ---
 
-<p align="center">Made with ❤️ using Godot 4 &amp; C# — ready for Stardance! ✨🎉</p>
+<p align="center">Made with ❤️ using Godot 4 &amp; C#</p>
