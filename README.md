@@ -94,7 +94,7 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 ## 📃 Documentation
 View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
 
-Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/9.2?branch=main)
+Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main)
 
 ---
 
