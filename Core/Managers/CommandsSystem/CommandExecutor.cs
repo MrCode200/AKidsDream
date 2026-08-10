@@ -33,24 +33,33 @@ public partial class CommandExecutor : Node
         _log.Here().Debug(
             "Executing command {CommandType}",
             command.GetType().Name
-            );
-        
-        var result = command.Execute(_context);
-        
-        if (!result.Success)
+        );
+
+        CommandResult result;
+        try
         {
-            _log.Here().Warn(
-                "Command {CommandType} failed with reason: {FailureReason}",
-                command.GetType().Name,
-                result.FailureReason);
+            result = command.Execute(_context);
+
+            if (!result.Success)
+            {
+                _log.Here().Warn(
+                    "Command {CommandType} failed with reason: {FailureReason}",
+                    command.GetType().Name,
+                    result.FailureReason);
+            }
+            else
+            {
+                _log.Here().Debug(
+                    "Command {CommandType} succeeded",
+                    command.GetType().Name);
+            }
         }
-        else
+        catch (Exception e)
         {
-            _log.Here().Debug(
-                "Command {CommandType} succeeded",
-                command.GetType().Name);
+            _log.Here().Error(e, "Command {CommandType} failed with exception", command.GetType().Name);
+            result = CommandResult.Fail(command, CommandFailureType.Unknown, e.Message);
         }
-        
+
         return result;
     }
 }

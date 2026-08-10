@@ -112,7 +112,13 @@ public partial class Board : Node2D
         for (var y = 0; y < StateData.Height; y++)
         {
             Array<TileData> row = [];
-
+            
+            // If width is even, alternate starting tile for checkerboard pattern.
+            if (StateData.Width % 2 == 0)
+                atlasTile = atlasTile == Global.AtlasCoordsSprite.DarkVioletTile
+                    ? Global.AtlasCoordsSprite.BeigeTile
+                    : Global.AtlasCoordsSprite.DarkVioletTile;
+                
             for (var x = 0; x < StateData.Width; x++)
             {
                 var tileLocation = new Vector2I(x, y);
@@ -126,7 +132,6 @@ public partial class Board : Node2D
                 atlasTile = atlasTile == Global.AtlasCoordsSprite.DarkVioletTile
                     ? Global.AtlasCoordsSprite.BeigeTile
                     : Global.AtlasCoordsSprite.DarkVioletTile;
-
 
                 // Create visual representation in the TileMap.
                 Tilemap!.SetCell(

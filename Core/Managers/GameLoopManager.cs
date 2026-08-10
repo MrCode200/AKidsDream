@@ -64,6 +64,11 @@ public partial class GameLoopManager : Node
 		_playerTurnOrder = players.ToDictionary(p => p.PlayerId, p => p);
 	}
 
+	/// <summary>
+	/// Ends the turn for the specified player, if it's their turn.
+	/// </summary>
+	/// <param name="playerId">The ID of the player ending their turn.</param>
+	/// <returns>True if the turn was successfully ended, false if the player is not the active player.</returns>
 	public bool EndPlayerTurn(PlayerId playerId)
 	{
 		if (playerId != ActivePlayerId)

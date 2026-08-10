@@ -16,18 +16,23 @@ public sealed class AddAbilityTargetCommand(
     List<Vector2I> selectedTargets
 ) : IGameCommand
 {
+    public const string InvalidTargetReason = "Target exceeds max duplicate targets allowed.";
+    
     public CommandResult Execute(GameContext context)
     {
         if (caster is null)
-            return CommandResult.Fail(this, "No caster was provided.");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
         
         if (abilityName is null)
-            return CommandResult.Fail(this, "No ability name was provided.");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No ability name was provided.");
         
-        AbilityData ability = caster.AbilityC.GetAbility(abilityName);
-        if (!ability!.Effect.AllowDuplicateTiles &&
-            selectedTargets.Contains(targetTile))
-            return CommandResult.Fail(this, "Target already targeted. Ability doesn't support duplicate targets.");
+        var ability = caster.AbilityC.GetAbility(abilityName);
+        if (!ability!.Effect.HasValidTargetCount([.. selectedTargets, targetTile]))
+            return CommandResult.Fail(
+                this,
+                CommandFailureType.MaxDuplicateTargetsExceeded,
+                $"Target exceeds max duplicate targets of {ability.Effect.MaxDuplicateTargets} allowed."
+            );
 
         Log.ForContext<AddAbilityTargetCommand>().Here().Info(
             "Added target {TargetTile} for ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",

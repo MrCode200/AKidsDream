@@ -13,12 +13,12 @@ public class SelectAbilityCommand(
     public CommandResult Execute(GameContext context)
     {
         if (caster is null)
-            return CommandResult.Fail(this, "No caster was provided.");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
 
         var ability = caster.AbilityC.GetAbility(abilityName);
 
         if (ability is null)
-            return CommandResult.Fail(this, $"Ability '{abilityName}' for '{caster.UnitName}' was not found.");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, $"Ability '{abilityName}' for '{caster.UnitName}' was not found.");
         
         context.AbilityVisualizer.ShowReachVisualization(
             caster,

@@ -100,24 +100,24 @@ public class OnAbilitySelected(PlayerInteractionController pic) : IState
 
     private void HandleReachTileClick(Vector2I tileLocation)
     {
-        if (ViolatesDuplicateTargetRule(tileLocation))
-        {
-            Log.Here().Debug(
-                "Tile {TileLocation} already targeted for ability '{AbilityName}'",
-                tileLocation,
-                _ability!.Name);
-            return;
-        }
-
-        // Adds if !ViolatesDuplicateTargetRule target to _targetedTiles list
         // Visualizes the Effect tiles
-        pic.CommandExecutor.Execute(new AddAbilityTargetCommand(
+        var result = pic.CommandExecutor.Execute(new AddAbilityTargetCommand(
             pic.CurrentSelectedUnit,
             _ability!.Name,
             tileLocation,
             _targetedTiles
         ));
 
+        if (result.FailureType == CommandFailureType.MaxDuplicateTargetsExceeded)
+        {
+            Log.Here().Debug(
+                "Target at {TileLocation} exceeds max duplicate targets for ability '{AbilityName}'",
+                tileLocation,
+                _ability!.Name);
+            return;
+        }
+
+        
         // If reached Max Targets, cast the ability.
         if (_targetedTiles.Count >= _ability!.Effect.MaxTargets)
         {
@@ -151,13 +151,7 @@ public class OnAbilitySelected(PlayerInteractionController pic) : IState
     {
         return tileLocation is not null && _reachTiles.Contains(tileLocation.Value);
     }
-
-    private bool ViolatesDuplicateTargetRule(Vector2I tileLocation)
-    {
-        return !_ability!.Effect.AllowDuplicateTiles &&
-               _targetedTiles.Contains(tileLocation);
-    }
-
+    
     private void CastAbility()
     {
         pic.CommandExecutor.Execute(new CastAbilityCommand(

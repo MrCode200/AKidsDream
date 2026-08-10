@@ -34,7 +34,7 @@ public partial class AbilityData : Resource
 
 	public (Vector2I atlasCoord, Vector2I[] tiles) GetReachVisualizationData(Unit source, Board board, Vector2I sourceTile)
 	{
-		var tiles = ReachPattern?.GetTiles(sourceTile, board, source.OwnerId) ?? Array.Empty<Vector2I>();
+		var tiles = ReachPattern?.GetTiles(sourceTile, board, source.OwnerId) ?? [];
 		return (Global.AtlasCoordsSpriteVectors[ReachAtlasCoords], tiles);
 	}
 }

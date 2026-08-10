@@ -69,7 +69,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_v41yv")
 }],
-"loop": true,
+"loop": 1,
 "name": &"HeartBeat",
 "speed": 8.0
 }]
@@ -177,7 +177,7 @@ label_settings = SubResource("LabelSettings_1j5su")
 [node name="AbilityContainer" type="HBoxContainer" parent="." unique_id=708369522]
 layout_mode = 0
 offset_left = -239.0
-offset_top = -133.0
+offset_top = -100.0
 offset_right = 230.0
 offset_bottom = -20.0
 alignment = 2

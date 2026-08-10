@@ -1,3 +1,4 @@
+#nullable enable
 using System.Linq;
 using AKidsDream.Abilities;
 using Godot;
@@ -11,11 +12,26 @@ using Array = System.Array;
 
 namespace AKidsDream.Units.Resources.Components;
 
+public enum CastFailureReason
+{
+	None,
+	AbilityNotFound,
+	CannotAfford,
+	TilesOutOfRange,
+	EffectExecutionFailed
+}
+
+public readonly record struct CastResult(bool Success, CastFailureReason FailureReason, EffectResult? EffectResult)
+{
+	public static CastResult Ok(EffectResult effectResult) => new(true, CastFailureReason.None, effectResult);
+	public static CastResult Fail(CastFailureReason reason, EffectResult? effectResult = null) => new(false, reason, effectResult);
+}
+
 [GlobalClass]
 [Icon("res://Assets/Node Icons/icon-attack-50.png")]
 public partial class AbilityComponent : Node
 {
-	[Export] public Unit Unit;
+	[Export] public Unit Unit = null!;
 
 	private ILogger _log = GameLogger.For<AbilityComponent>();
 
@@ -26,13 +42,13 @@ public partial class AbilityComponent : Node
 	[Export] public Dictionary<StringName, int> MaxAbilityPoints = new()
 	{
 		{ "Move", 1 },
-		{ "Combat", 1 },
+		{ "Combat", 1 }
 	};
 	
-	[Export] public Array<AbilityData> Abilities = new();
+	[Export] public Array<AbilityData> Abilities = [];
 
 
-	public Dictionary<StringName, int> RemainingAbilityPoints;
+	public Dictionary<StringName, int> RemainingAbilityPoints = new();
 
 	[Signal]
 	public delegate void AbilityCastEventHandler(Unit unit, AbilityData action, EffectResult result);
@@ -50,7 +66,7 @@ public partial class AbilityComponent : Node
 		RemainingAbilityPoints = MaxAbilityPoints.Duplicate(true);
 	}
 
-	public AbilityData GetAbility(StringName name) => Abilities.FirstOrDefault(a => a.Name == name);
+	public AbilityData? GetAbility(StringName name) => Abilities.FirstOrDefault(a => a.Name == name);
 
 	/// <summary>
 	/// Checks if the unit has enough ability points to use the specified ability.
@@ -60,12 +76,12 @@ public partial class AbilityComponent : Node
 	/// False if the unit does not have enough ability points or the ability does not exist.</returns>
 	public bool CanAfford(StringName name)
 	{
-		AbilityData ability = GetAbility(name);
+		AbilityData? ability = GetAbility(name);
 		
 		if (ability == null) return false;
-		if (!RemainingAbilityPoints.ContainsKey(ability.PoolName)) return false;
+		if (!RemainingAbilityPoints.TryGetValue(ability.PoolName, out var point)) return false;
 
-		return ability.Cost <= RemainingAbilityPoints[ability.PoolName];
+		return ability.Cost <= point;
 	}
 
 	/// <summary>
@@ -84,60 +100,51 @@ public partial class AbilityComponent : Node
 
 	/// <summary>
 	/// Casts the specified <see cref="AbilityData"/>.Effect(<see cref="EffectData"/>) on the targeted tiles.
-	/// To get the <see cref="EffectResult"/>. Subscribe to the <see cref="AbilityAppliedEventHandler"/> signal.
+	/// To get the <see cref="EffectResult"/>. Subscribe to the <see cref="AbilityCast"/> signal.
 	/// </summary>
 	/// <param name="name">The name of the <see cref="AbilityData"/></param>
 	/// <param name="targetTiles">Onto which tiles the <see cref="AbilityData"/>.Effect(<see cref="EffectData"/>) should be applied</param>
 	/// <param name="board">The board instance, passed as dependency for other functions.</param>
-	/// <returns>True if the ability was cast, False if the ability could not be cast on the selected tiles.
-	/// <list type="number">
-	/// <item>True if the ability was cast</item>
-	/// <item>False if the ability could not be afforded</item>
-	/// <item>False if the ability wasn't registered</item>
-	/// <item>False if the tiles aren't in the reach pattern</item>
-	/// <item>False if not enough Points are in the Pool</item>
-	/// </list></returns>
-	public bool Cast(StringName name, Vector2I[] targetTiles, Board board)
+	/// <returns>CastResult indicating success or failure with specific reason.</returns>
+	public CastResult Cast(StringName name, Vector2I[] targetTiles, Board board)
 	{
 		var ability = GetAbility(name);
 		if (ability is null)
 		{
 			_log.Here().Warn("Ability '{AbilityName}' not found", name);
-			return false;
+			return CastResult.Fail(CastFailureReason.AbilityNotFound);
 		}
 		if (!CanAfford(name))
 		{
 			_log.Here().Debug("Cannot cast ability '{AbilityName}': cannot afford", ability.Name);
-			return false;
+			return CastResult.Fail(CastFailureReason.CannotAfford);
 		}
 		
 		if (targetTiles.Any(tile => !ValidTiles(name, board).Contains(tile)))
 		{
 			_log.Here().Debug("Cannot cast ability '{AbilityName}': tile not in reach", ability.Name);
-			return false;
+			return CastResult.Fail(CastFailureReason.TilesOutOfRange);
 		}
 
-		var result = ability.Effect.Apply(Unit, board, targetTiles);
+		var effectResult = ability.Effect.Apply(Unit, board, targetTiles);
 
-		if (result is ErrorResult errorResult)
+		if (effectResult is ErrorResult errorResult)
 		{
 			_log.Here().Error("Ability '{AbilityName}' execution with effect: {EffectType} failed with {Error}", 
 				ability.Name, errorResult.Error, errorResult.Effect.GetType().Name);
+			return CastResult.Fail(CastFailureReason.EffectExecutionFailed, effectResult);
 		}
-		else
-		{
-			_log.Here().Info(
-				"Casted ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
-				ability.Name,
-				targetTiles.Length,
-				ability.Cost,
-				ability.PoolName);
-			RemainingAbilityPoints[ability.PoolName] -= ability.Cost;
-		}
+		
+		_log.Here().Info(
+			"Casted ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
+			ability.Name,
+			targetTiles.Length,
+			ability.Cost,
+			ability.PoolName);
+		RemainingAbilityPoints[ability.PoolName] -= ability.Cost;
 
-
-		EmitSignal(SignalName.AbilityCast, Unit, ability, result);
-		EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCast, Unit, ability, result);
-		return true;
+		EmitSignal(SignalName.AbilityCast, Unit, ability, effectResult);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCast, Unit, ability, effectResult);
+		return CastResult.Ok(effectResult);
 	}
 }

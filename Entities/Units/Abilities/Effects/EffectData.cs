@@ -49,7 +49,16 @@ public abstract partial class EffectData : Resource
     /// <summary>
     /// Whether the User can select the same Tile multiple times.
     /// </summary>
-    [Export] public bool AllowDuplicateTiles;
+    private int _maxDuplicateTargets = 1;
+    [Export] public int MaxDuplicateTargets
+    {
+        get => _maxDuplicateTargets;
+        set
+        {
+            if (value < 1) value = 1;
+            _maxDuplicateTargets = value;
+        }
+    }
     
     /// <summary>
     /// Returns the Tiles that will be affected by the effect.
@@ -111,14 +120,21 @@ public abstract partial class EffectData : Resource
 
     /// <summary>
     /// Checks if the number of Tiles the User selected is valid.
-    /// If AllowDuplicateTiles is false, all Tiles must be unique.
+    /// Cheks that no duplicate tile counted exceeds <see cref="MaxDuplicateTargets"/>. 
     /// </summary>
     /// <param name="targetTiles">The Tiles the User selected.</param>
     public bool HasValidTargetCount(Vector2I[] targetTiles)
     {
         var count = targetTiles.Length;
         if (count < MinTargets || count > MaxTargets) return false;
-        if (!AllowDuplicateTiles && targetTiles.Distinct().Count() != count) return false;
+
+        var duplicates = targetTiles.GroupBy(t => t)
+            .Select(g => new { Value = g.Key, Count = g.Count() })
+            .ToArray();
+        foreach (var duplicate in duplicates)
+        {
+            if (duplicate.Count > _maxDuplicateTargets) return false;
+        }
 
         return true;
     }

@@ -12,7 +12,7 @@ namespace AKidsDream.Managers.SaveSystem.Resources;
 public partial class GameStateData : Resource
 {
     [Export] public int GameRound;  
-    [Export] private Dictionary<int, PlayerData> _playerTurnOrder;
+    [Export] private Dictionary<int, PlayerData> _playerTurnOrder = new();
     [Export] public int ActivePlayerIdInt;
     [Export] public BoardStateData BoardStateData = new();
     [Export] public Array<PlayerData> PlayerData = [];

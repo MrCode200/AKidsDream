@@ -9,7 +9,7 @@ public class DeselectAbilityCommand(Unit caster) : IGameCommand
     public CommandResult Execute(GameContext context)
     {
         if (caster is null)
-            return CommandResult.Fail(this, "No caster was provided.");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
 
         Log.ForContext<DeselectAbilityCommand>().Here().Info(
             "Deselected ability for unit '{UnitName}' (id: {UnitId})",

@@ -73,6 +73,8 @@ icon_alignment = 1
 [node name="AbilityName" type="Label" parent="VSplitContainer" unique_id=504616585]
 custom_minimum_size = Vector2(115, 0)
 layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, -20)
 text = "Ability Name"
 label_settings = SubResource("LabelSettings_m53bf")
 horizontal_alignment = 1

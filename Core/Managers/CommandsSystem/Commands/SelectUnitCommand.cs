@@ -9,7 +9,7 @@ public sealed class SelectUnitCommand(Unit unit) : IGameCommand
     public CommandResult Execute(GameContext context)
     {
         if (unit is null)
-            return CommandResult.Fail(this, "Unit is null");
+            return CommandResult.Fail(this, CommandFailureType.NullArgument, "Unit is null");
 
         Log.ForContext<SelectUnitCommand>().Here().Info(
             "Selected unit '{UnitName}' (id: {UnitId}) at {TileLocation}",

@@ -98,3 +98,4 @@ For distinguishable logs across base and derived `Node` types:
 
 5. **Avoid log spam and duplication:**
     - Don't log the same error at every layer of the call stack — log it where it's handled.
+
