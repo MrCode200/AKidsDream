@@ -23,6 +23,7 @@
 - [Features](#-features)
 - [How to Play](#-how-to-play-quick)
 - [Developer Console Commands](#️-developer-console-commands)
+- [Documentation](#-documentation)
 - [Project Structure](#-project-structure)
 - [Development Quick Start](#️-development-quick-start)
 - [Contributing](#-contributing)
@@ -88,6 +89,13 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 - `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
 > [!NOTE]
 > (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create 1 1 2 4)
+---
+
+## 📃 Documentation
+View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
+
+Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/9.2?branch=main)
+
 ---
 
 ## 📁 Project structure
