@@ -1,149 +1,152 @@
-﻿# 🎮 A Kid's Dream
+# 🎮✨ A Kid's Dream — Turn-based Tactics (Stardance / Hack Club Ready)
+
+<p align="center">
+  <img alt="A Kid's Dream demo" src=".github/ASSETS/demo.gif" style="max-width:640px; width:100%; border-radius:12px;">
+</p>
 
 <div align="center">
 
-A turn-based tactical strategy game built with Godot 4 and C#
-
-[![Godot](https://img.shields.io/badge/Godot-4.7-blue)](https://godotengine.org)
-[![C#](https://img.shields.io/badge/C%23-12.0-purple)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![License](https://img.shields.io/badge/License-Non--Commercial-red)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-orange)](https://github.com/MrCode200/AKidsDream)
+[![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)](https://godotengine.org)
+[![C%23](https://img.shields.io/badge/C%23-12.0-512BD4?logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![License](https://img.shields.io/badge/License-Non--Commercial-EA4335?&logo=creativecommons&logoColor=white)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-F59E0B?&logo=git&logoColor=white)](https://github.com/MrCode200/AKidsDream)
+[![Hackatime](https://hackatime-badge.hackclub.com/U0BMQSUV1DG/AKidsDream)](https://hackatime.hackclub.com/)
 
 </div>
 
 ---
 
-## ✨ Features
+## 📖 Table of Contents
 
-- **🎯 Turn-Based Tactical Combat** - Strategic gameplay on a tile-based board
-- **🤖 Unit System** - Diverse units with unique abilities and stats
-- **🎨 Beautiful Visuals** - Checkerboard board with animated units
-- **👥 Team Management** - Support for multiple teams with ally/enemy relations
-- **🧠 AI Controllers** - Computer-controlled opponents with intelligent decision-making
-- **💾 Save/Load System** - Persist your game progress and resume later
-- **🎮 Event-Driven Architecture** - Clean, decoupled systems using an EventBus
-- **📊 Structured Logging** - Comprehensive logging with Serilog for debugging
-- **🔧 Developer Console** - In-game console for debugging and testing
+- [Why “A Kid’s Dream”?](#-why-a-kids-dream)
+- [Play the Build](#-play-the-build)
+- [Features](#-features)
+- [How to Play](#-how-to-play-quick)
+- [Developer Console Commands](#️-developer-console-commands)
+- [Documentation](#-documentation)
+- [Project Structure](#-project-structure)
+- [Development Quick Start](#️-development-quick-start)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [AI Usage](#-ai-usage)
+- [Credits](#-credits)
+
+---
+## 🤔 Why “A Kid’s Dream”?
+
+When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
+
+**A Kid’s Dream** is my attempt to recreate that experience — not exactly as it was, but from the pieces that remain in my memory. It is a game inspired by childhood imagination, handmade rules, and the joy of turning simple ideas into an adventure.
+
+
+## 🚀 Play the build
+
+> [!TIP]
+> To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
+
+We attach exported builds to the GitHub Release, these can be run without needing to install godot. 
+
+To run locally with the project files:
+
+1. Install Godot 4.7.x.
+2. Clone this repository:
+
+   git clone https://github.com/MrCode200/AKidsDream.git
+   cd AKidsDream
+
+3. Open the project in Godot. If you have the matching .NET SDK installed, the C# assemblies will be restored/compiled automatically.
+4. Press Play to run the game, or use the Editor export templates to create platform-specific builds.
+
+Minimum tested toolchain:
+- Godot 4.7
+- .NET SDK compatible with the project's C# version
 
 ---
 
-## 📸 Screenshots
+## 🌟 Features
 
-*Coming soon - Add screenshots of your game here!*
----
-
-## 🎮 How to Play
-
-### Basic Controls
-
-- **Left Click** - Select units, interact with tiles
-- **End Turn Button** - Finish your turn and pass to the next player
-- **Console** - Press `~` (tilde) to open the developer console
-
-### Gameplay Loop
-
-1. **Select a Unit** - Click on your unit to see available actions
-2. **Move** - Click on highlighted tiles to move your unit
-3. **Attack** - Select an ability and target enemy units
-4. **End Turn** - Click the End Turn button when finished
-
-### Winning
-
-Eliminate all enemy units to win the match!
+- 🎯 Turn-based tactical combat on a tile grid
+- 🧩 Modular unit system (stats, abilities, components)
+- 🎨 Cute visuals & playful animations
+- 🕹️ Intuitive controls + developer console for debugging
+- 🤖 AI controllers and team relations
+- 💾 Save/load and Serilog structured logging
 
 ---
 
-## 🏗️ Architecture
+## 🎮 How to play (quick)
 
-### Core Systems
+- Left click — select units and interact with tiles
+- End Turn — finish your turn
+- `~` (tilde) — open developer console for debug/test commands
+
+Short loop: select a unit → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
+
+---
+
+## 🛠️ Developer console commands
+
+- `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
+> [!NOTE]
+> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create 1 1 2 4)
+---
+
+## 📃 Documentation
+View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
+
+Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main)
+
+---
+
+## 📁 Project structure
 
 ```
 AKidsDream/
-├── Core/
-│   ├── Controllers/      # Player and AI input handling
-│   ├── Globals/          # EventBus and global state
-│   └── Managers/         # Game loop, ability visualization
-├── Entities/
-│   ├── Board/            # Tile-based board system
-│   └── Units/            # Unit classes, abilities, components
-├── UI/                   # User interface elements
-├── Common/               # Shared utilities (logging, state machines)
-└── Utilities/            # Save/load system, console commands
+├── Core/           # Controllers, Globals (EventBus), Managers
+├── Entities/       # Board and Unit implementations
+├── UI/             # User interface scenes and scripts
+├── Common/         # Shared utilities (logging, state machines)
+└── Utilities/      # Save/load system, console commands, tooling
 ```
 
-### Key Components
+---
 
-- **Board** - Manages the tile grid and unit positions
-- **Unit** - Base class for all game units with stats and abilities
-- **GameManager** - Orchestrates game initialization and state
-- **EventBus** - Global event system for decoupled communication
-- **GameLogger** - Structured logging with Serilog
+## ⚙️ Development quick start
 
-### Design Patterns
+1. Fork the repo and create a branch: `git checkout -b feature/your-feature`
+2. Work in Godot and run locally
+3. Commit with conventional commits: `feat(scope): short description` ✍️
+4. Push and open a Pull Request with testing notes ✅
 
-- **Event-Driven Architecture** - EventBus for loose coupling
-- **State Machine** - For unit and game state management
-- **Component-Based** - Modular unit abilities and behaviors
-- **Factory Pattern** - Controller creation and unit instantiation
+See `GUIDELINES.md` for coding and logging conventions.
 
 ---
 
-## 🛠️ Development
+## 🙌 Contributing
 
-### Console Commands
-
-The in-game console supports various commands for debugging:
-
-- `unit.create <name> <x> <y>` - Spawn a unit at position
-- `unit.remove <id>` - Remove a unit by ID
-- `unit.list` - List all units on the board
-
-### Code Style
-
-Follow the established conventions in `GUIDELINES.md`:
-
-- Use conventional commit messages: `feat(scope): description`
-- Log at appropriate levels (Debug, Info, Warning, Error)
-- Enrich logs with entity context for better debugging
+Contributions welcome! Open issues or PRs. Use conventional commits and include testing notes in PR descriptions.
 
 ---
 
-## 📝 Contributing
+## 📜 License
 
-Contributions are welcome! Please follow these guidelines:
+This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing inquiries.
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** using conventional commits
-4. **Push to the branch** (`git push origin feature/amazing-feature`)
-5. **Open a Pull Request**
+---
+## 🤖 AI Usage
 
-### Development Guidelines
+AI tools were used only as development assistance. They helped with debugging, troubleshooting, and providing suggestions for the design and implementation of individual systems.
 
-- Read `GUIDELINES.md` for commit message format and logging standards
-- Add structured logging for new features
-- Keep code clean and well-documented
+AI was also used to help write and improve documentation. All final implementation decisions, code integration, and project direction were reviewed and made by the developer.
 
 ---
 
-## 📄 License
+## ✨ Credits
 
-This project is licensed under the **AKidsDream Non-Commercial License**.
-
-**Summary:**
-- ✅ Free for personal, educational, and research use
-- ✅ Free to modify and redistribute (with attribution)
-- ❌ Commercial use requires explicit permission
-
-See [LICENSE](LICENSE) for full details.
+- Author: MrCode200
+- Thanks to the helpful members of the Godot Discord community who helped me solve problems during development
+- Built with Godot 4 and C#
 
 ---
 
-
-<div align="center">
-
-**Made with ❤️ using Godot 4 & C#**
-
-[⬆ Back to Top](#-a-kids-dream)
-
-</div>
+<p align="center">Made with ❤️ using Godot 4 &amp; C#</p>
