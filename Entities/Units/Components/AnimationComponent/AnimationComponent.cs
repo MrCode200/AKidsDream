@@ -16,8 +16,8 @@ public partial class AnimationComponent : Node
 	private ILogger _log = GameLogger.For<AnimationComponent>();
 	
 	private int _currentFrame = -1;
-	private int _loopCount = 0;
-	private HashSet<int> _reachedFrames = new();
+	private int _loopCount;
+	private readonly HashSet<int> _reachedFrames = [];
 	private StringName _currentAnimation;
 
 	public override void _Ready()
@@ -54,6 +54,7 @@ public partial class AnimationComponent : Node
 			return;
 		}
 		
+		Animator.Stop();
 		ResetTracking();
 		_currentAnimation = animationString;
 		Animator.Play(animationString);
@@ -71,45 +72,16 @@ public partial class AnimationComponent : Node
 	
 	public int GetLoopCount() => _loopCount;
 	
-	public bool HasReachedFrame(int frame) => _reachedFrames.Contains(frame);
+	public StringName CurrentAnimation() => _currentAnimation;
 	
-	public bool HasLooped() => _loopCount > 0;
+	public bool HasReachedFrame(int frame) => _reachedFrames.Contains(frame);
 	
 	public int GetAnimationFrameCount()
 	{
 		if (Animator?.SpriteFrames == null || _currentAnimation == null)
 			return 0;
 		return Animator.SpriteFrames.GetFrameCount(_currentAnimation);
-	}
-	
-	public float GetAnimationDuration()
-	{
-		if (Animator?.SpriteFrames == null || _currentAnimation == null)
-			return 0f;
-
-		var frameCount = Animator.SpriteFrames.GetFrameCount(_currentAnimation);
-		var animFps = Animator.SpriteFrames.GetAnimationSpeed(_currentAnimation);
-		var speedScale = Animator.SpeedScale;
-
-		// Prevent division by zero
-		if (animFps <= 0 || speedScale <= 0)
-			return float.PositiveInfinity;
-
-		float totalDuration = 0f;
-
-		// Sum the absolute duration of each frame to support custom frame timings
-		for (int i = 0; i < frameCount; i++)
-		{
-			// GetFrameDuration returns relative duration (1.0 is default)
-			float relativeDuration = Animator.SpriteFrames.GetFrameDuration(_currentAnimation, i);
-        
-			// Calculate absolute time for this specific frame
-			var frameTime = (float)(relativeDuration / (animFps * speedScale));
-			totalDuration += frameTime;
-		}
-
-		return totalDuration;
-	}   
+	} 
 
 	private void ResetTracking()
 	{
@@ -125,19 +97,25 @@ public partial class AnimationComponent : Node
 	/// Waits until the animation reaches a specific frame.
 	/// </summary>
 	/// <param name="targetFrame">The frame number to wait for.</param>
-	public async Task WaitForFrame(int targetFrame)
+	public async Task WaitForTargetFrame(int targetFrame)
 	{
 		while (Animator.IsPlaying() && _currentFrame != targetFrame)
+			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+	}
+
+	public async Task WaitForTargetLoop(int targetLoop)
+	{
+		while (Animator.IsPlaying() && _loopCount < targetLoop)
 			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}
 
 	/// <summary>
 	/// Waits until the animation has looped a specific number of times.
 	/// </summary>
-	/// <param name="targetLoop">The target loop count to wait for.</param>
-	public async Task WaitForLoopCount(int targetLoop)
+	/// <param name="loopCount">The target loop count to wait for.</param>
+	public async Task WaitForLoopCount(int loopCount)
 	{
-		while (Animator.IsPlaying() && _loopCount < targetLoop)
+		while (Animator.IsPlaying() && _loopCount < loopCount)
 			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}
 	
@@ -152,22 +130,11 @@ public partial class AnimationComponent : Node
 		
 		while (Animator.IsPlaying())
 		{
-			if (_loopCount >= targetLoops && _currentFrame >= targetFrame)
-				break;
-			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+			if (_loopCount < targetLoops && _currentFrame < targetFrame)
+				await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 		}
 	}
 
-	/// <summary>
-	/// Waits for a specific number of animation loops to complete.
-	/// </summary>
-	/// <param name="loopCount">The number of loops to wait for.</param>
-	public async Task WaitForLoops(int loopCount)
-	{
-		var totalFrames = loopCount * GetAnimationFrameCount();
-		await WaitForFrames(totalFrames);
-	}
-	
 	// -- ON SIGNALS --
 	
 	private void OnAnimationLooped()

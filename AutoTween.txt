@@ -8,26 +8,3 @@ Anim Type: Fade, Scale, etc.
 Scale From: Center, Top Left, Bottom Right etc.
 Auto Hide After (?)
 AutoHideAfter: hide after...
-
----
-
-Ability Logic for Multiple Effects
-
-If i want to add Multiple Effects to an Abilty (so first do Effect A then Effect B )
-Calculate each effect independently by its insertion order
-it would be nice to have the mix (if for example one abilty summons storm effects which hit each target one by one, then summon one volcano effect which hits all targets att the same time) (this would then be the option of in order, no alternation 
-
-based on the above what should stay in EffectData and what should go into AbilityData?
-
-===========\
-============>
-===========/
-
-- Move Cast & Min/Max Targets & MaxDuplicateTargets to AbilityData
-- Effect holds Animation & Trigger & Sequential & (its own pattern logic)
-:ExecuteEffect:
- 
- Handle its own RunSequential logic (sequential vs batch)
- Handle its own Trigger logic (await animation, timer, etc.)
- Call ApplyEffect() with the appropriate timing
- Return its individual EffectResult
