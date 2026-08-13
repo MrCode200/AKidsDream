@@ -85,6 +85,11 @@ public partial class StateMachine : Node
 		_log.Here().Debug("Added state '{StateName}'", stateName);
 	}
 
+	public bool TryGetState(string stateName, out IState? state)
+	{
+		return _states.TryGetValue(stateName, out state);
+	}
+	
 	/// <summary>
 	/// Removes a non-Node state from the state machine.
 	/// Node states are managed by the scene tree and cannot be removed through this method.

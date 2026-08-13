@@ -4,10 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/UnitInfoBar/AbilityButton/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ww843"]
-atlas = ExtResource("3_6y4ib")
-margin = Rect2(1, -4, 0, 3)
-
 [sub_resource type="LabelSettings" id="LabelSettings_m53bf"]
 shadow_size = 9
 shadow_color = Color(0, 0, 0, 1)
@@ -49,6 +45,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VSplitContainer" unique_id=951919968]
+custom_maximum_size = Vector2(115, 81)
 layout_mode = 2
 theme_override_constants/margin_left = 17
 theme_override_constants/margin_right = 17
@@ -66,9 +63,13 @@ axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
 [node name="Button" type="Button" parent="VSplitContainer/MarginContainer" unique_id=1410637876]
+custom_maximum_size = Vector2(70, 70)
 layout_mode = 2
-icon = SubResource("AtlasTexture_ww843")
+offset_transform_enabled = true
+offset_transform_position = Vector2(5, 2)
+icon = ExtResource("3_6y4ib")
 icon_alignment = 1
+expand_icon = true
 
 [node name="AbilityName" type="Label" parent="VSplitContainer" unique_id=504616585]
 custom_minimum_size = Vector2(115, 0)

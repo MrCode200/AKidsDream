@@ -6,17 +6,19 @@
 [ext_resource type="Texture2D" uid="uid://cymg3gkkaputp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_08.png" id="3_ifx5g"]
 [ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://Entities/Units/Abilities/Patterns/AdjacentPattern.cs" id="4_okmh8"]
 
-[sub_resource type="Resource" id="Resource_pox10"]
+[sub_resource type="Resource" id="Resource_68ei7"]
 script = ExtResource("1_rydec")
 metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 
-[sub_resource type="Resource" id="Resource_bfbw5"]
+[sub_resource type="Resource" id="Resource_k456y"]
 script = ExtResource("2_xm3he")
-EffectPattern = SubResource("Resource_pox10")
+EffectPattern = SubResource("Resource_68ei7")
 EffectAtlasCoords = 3
+AnimationName = &""
+Trigger = 8
 metadata/_custom_type_script = "uid://cnajkqpahjyk1"
 
-[sub_resource type="Resource" id="Resource_1q66u"]
+[sub_resource type="Resource" id="Resource_f4ppk"]
 script = ExtResource("4_okmh8")
 AllowedTargets = 1
 metadata/_custom_type_script = "uid://thbe6n87osxo"
@@ -26,8 +28,8 @@ script = ExtResource("3_647bp")
 Icon = ExtResource("3_ifx5g")
 Name = &"Move"
 Description = &"Moves the Unit 1 Tile."
-ReachPattern = SubResource("Resource_1q66u")
+ReachPattern = SubResource("Resource_f4ppk")
 ReachAtlasCoords = 3
-Effect = SubResource("Resource_bfbw5")
+Effects = [SubResource("Resource_k456y")]
 PoolName = &"Move"
 metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

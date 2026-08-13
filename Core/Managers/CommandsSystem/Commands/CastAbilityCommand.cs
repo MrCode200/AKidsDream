@@ -1,4 +1,5 @@
-﻿using AKidsDream.Common.Logging;
+﻿using System.Threading.Tasks;
+using AKidsDream.Common.Logging;
 using AKidsDream.Units.Resources;
 using AKidsDream.Units.Resources.Components;
 using Godot;
@@ -6,21 +7,22 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
-public class CastAbilityCommand(
+public class CastAbilityBaseCommand(
     Unit caster,
     StringName abilityName,
-    Vector2I[] targetTiles
-) : IGameCommand
+    AbilityContext abilityContext,
+    AbilityPayload payload
+) : IAsyncGameBaseCommand
 {
-    public CommandResult Execute(GameContext context)
+    public async Task<CommandResult> Execute(GameContext context)
     {
         if (caster is null)
             return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
 
-        if (targetTiles is null || targetTiles.Length == 0)
+        if (payload.ProcessingTiles.Count == 0)
             return CommandResult.Fail(this, CommandFailureType.NullArgument, "No target tiles were provided.");
 
-        var castResult = caster.AbilityC.Cast(abilityName, targetTiles, context.Board);
+        var castResult = await caster.AbilityC.Cast(abilityName, abilityContext, payload.AccumulatedTargets);
 
         if (!castResult.Success)
         {
@@ -30,6 +32,7 @@ public class CastAbilityCommand(
                 CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints,
                 CastFailureReason.TilesOutOfRange => CommandFailureType.InvalidTargetLocation,
                 CastFailureReason.EffectExecutionFailed => CommandFailureType.EffectExecutionFailed,
+                CastFailureReason.InvalidTargetCount => CommandFailureType.InvalidTargetCount,
                 _ => CommandFailureType.Unknown
             };
             
@@ -42,12 +45,12 @@ public class CastAbilityCommand(
             return CommandResult.Fail(this, failureType, $"Ability cast failed: {castResult.FailureReason}");
         }
 
-        Log.ForContext<CastAbilityCommand>().Here().Info(
+        Log.ForContext<CastAbilityBaseCommand>().Here().Info(
             "Casted ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId}) at {TargetCount} target(s)",
             abilityName,
             caster.UnitName,
             caster.UnitId,
-            targetTiles.Length);
+            payload.ProcessingTiles.Count);
 
         return CommandResult.Ok(this);
     }

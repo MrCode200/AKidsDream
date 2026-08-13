@@ -2,30 +2,51 @@
 using AKidsDream.Common.Logging;
 using AKidsDream.GameBoard;
 using AKidsDream.Units.Resources;
+using AKidsDream.Units.Resources.Components;
 using Godot;
 using Serilog;
 
 namespace AKidsDream.Abilities.Effects;
 
 [GlobalClass]
+[Tool]
 public partial class MoveSelfEffect : EffectData
 {
-    public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTiles)
+    private static readonly ILogger Log = GameLogger.For<MoveSelfEffect>();
+    
+    public override void UpdatePayload(AbilityContext context, AbilityPayload payload)
     {
-        var tiles = GetAffectedTiles(targetTiles, board, source.OwnerId);
-        if (tiles.Length != 1)
+        switch (payload.ProcessingTiles.Count)
         {
-            return new ErrorResult 
-            { 
-                Source = source, 
-                Effect = this, 
-                Error = $"MoveSelfEffect pattern returned multiple tiles: {tiles.Length}" 
-            };        
+            // For chaining: update CurrentOrigin to the last target tile
+            // This allows the next target selection to be relative to the new position
+            case 0:
+                return;
+            case > 1:
+                Log.Here().Debug("Passed more than one tile, only using last tile");
+                break;
+        }
+
+        payload.CurrentOrigin = payload.ProcessingTiles[^1];
+        
+    }
+
+    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
+    {
+        var tiles = GetAffectedTiles(context, payload);
+        if (tiles.Length == 0)
+        {
+            return new ErrorResult
+            {
+                Source = context.Source,
+                Effect = this,
+                Error = "MoveSelfEffect pattern returned no tiles"
+            };
         }
         
-        Vector2I from = source.TileLocation;
+        Vector2I from = context.Source.TileLocation;
         Vector2I to = tiles[0];
-        source.Move(to);
-        return new MoveResult { Source = source, From = from, To = to };
+        context.Source.Move(to);
+        return new MoveResult { Source = context.Source, From = from, To = to };
     }
 }

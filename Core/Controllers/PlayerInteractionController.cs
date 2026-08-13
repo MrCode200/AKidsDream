@@ -58,57 +58,60 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     public Unit? CurrentSelectedUnit;
     public AbilityData? CurrentSelectedAbility;
     public PlayerId PlayerId;
-    
-    private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>(); 
+
+    private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>();
     private bool _isMyTurn;
-    public PlayerInteractionController() {}
+
+    public PlayerInteractionController()
+    {
+    }
 
     public PlayerInteractionController(PlayerControllerContext context, PlayerData playerData)
     {
         PlayerId = playerData.PlayerId;
-        
+
         Board = context.Board;
         AbilityVisualizer = context.AbilityVisualizer;
         CommandExecutor = context.CommandExecutor;
     }
-    
+
     public override void _Ready()
     {
         StateMachine = new StateMachine();
         AddChild(StateMachine);
-        
+
         EventBus.Instance.AbilityBtnPressed += OnAbilityBtnPressed;
         EventBus.Instance.EndTurnButtonPressed += OnEndTurnButtonPressed;
+        EventBus.Instance.UnitKilled += OnUnitKilled;
 
-        StateMachine.AddState(new NoAbilitySelected(this));
-        StateMachine.AddState(new OnAbilitySelected(this));
-        StateMachine.AddState(new EnemyTurnObservation(this));
-        StateMachine.ChangeState(null, nameof(EnemyTurnObservation), true);
-        
+        StateMachine.AddState(new NoAbilitySelectedState(this));
+        StateMachine.AddState(new OnAbilitySelectedState(this));
+        StateMachine.AddState(new EnemyTurnObservationState(this));
+        StateMachine.ChangeState(null, nameof(EnemyTurnObservationState), true);
+
         Log.Here().Info("PlayerController for {PlayerId} initialized", PlayerId);
     }
 
     public override void _ExitTree()
     {
         EventBus.Instance.AbilityBtnPressed -= OnAbilityBtnPressed;
+        EventBus.Instance.EndTurnButtonPressed -= OnEndTurnButtonPressed;
+        EventBus.Instance.UnitKilled -= OnUnitKilled;
     }
 
     public void StartTurn()
     {
-        StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
+        StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
         _isMyTurn = true;
     }
 
     public void EndTurn()
     {
-        if (CurrentSelectedAbility is not null)
-            ClearCurrentAbility();
-        if (CurrentSelectedUnit is not null)
-            DeselectCurrentUnit();
-        StateMachine.ChangeState(null, nameof(EnemyTurnObservation), true);
+        DeselectCurrentUnit();
+        StateMachine.ChangeState(null, nameof(EnemyTurnObservationState), true);
         _isMyTurn = false;
     }
-    
+
     // -- INPUT --
 
     public override void _UnhandledInput(InputEvent @event)
@@ -130,25 +133,28 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         );
     }
 
+    // -- EVENT CALLBACKS --
+
+    private void OnUnitKilled(Unit unit)
+    {
+        if (CurrentSelectedUnit == unit)
+            DeselectCurrentUnit();
+    }
+
     private void OnAbilityBtnPressed(Unit unit, AbilityData ability)
     {
         if (!_isMyTurn) return;
         CurrentSelectedAbility = ability;
 
-        CommandExecutor.Execute(new SelectAbilityCommand(
-            unit,
-            ability.Name
-        ));
-
-        StateMachine.ChangeState(null, nameof(OnAbilitySelected), true);
+        StateMachine.ChangeState(null, nameof(OnAbilitySelectedState), true);
     }
-    
-    public void OnEndTurnButtonPressed(int callerPlayerIdInt)
+
+    private void OnEndTurnButtonPressed(int callerPlayerIdInt)
     {
         if (callerPlayerIdInt != PlayerId.Value) return;
-        CommandExecutor.Execute(new EndTurnCommand(PlayerId));
+        CommandExecutor.Execute(new EndTurnBaseCommand(PlayerId));
     }
-    
+
     // -- --
 
     public void SelectUnit(Unit unit)
@@ -159,21 +165,29 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         DeselectCurrentUnit();
 
         CurrentSelectedUnit = unit;
-        CommandExecutor.Execute(new SelectUnitCommand(unit));
+        CommandExecutor.Execute(new SelectUnitBaseCommand(unit));
     }
 
+    /// <summary>
+    /// Deselects the current unit and clear the current ability
+    /// </summary>
     public void DeselectCurrentUnit()
     {
-        if (CurrentSelectedUnit is not null)
-            CommandExecutor.Execute(new DeselectUnitCommand(CurrentSelectedUnit));
-
+        if (CurrentSelectedUnit is null)
+            return;
+        
+        CommandExecutor.Execute(new DeselectUnitBaseCommand(CurrentSelectedUnit));
+        ClearCurrentAbility();
         CurrentSelectedUnit = null;
     }
 
     public void ClearCurrentAbility()
     {
+        if (CurrentSelectedAbility is null)
+            return;
+
+        CommandExecutor.Execute(new DeselectAbilityBaseCommand(CurrentSelectedUnit));
         CurrentSelectedAbility = null;
-        CommandExecutor.Execute(new DeselectAbilityCommand(CurrentSelectedUnit));
-        StateMachine.ChangeState(null, nameof(NoAbilitySelected), true);
+        StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
     }
 }

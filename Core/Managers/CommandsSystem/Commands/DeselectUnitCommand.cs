@@ -4,14 +4,14 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
-public sealed class DeselectUnitCommand(Unit unit) : IGameCommand
+public sealed class DeselectUnitBaseCommand(Unit unit) : IGameBaseCommand
 {
     public CommandResult Execute(GameContext context)
     {
         if (unit is null)
             return CommandResult.Fail(this, CommandFailureType.NullArgument,"Unit is null");
 
-        Log.ForContext<DeselectAbilityCommand>().Here().Info(
+        Log.ForContext<DeselectAbilityBaseCommand>().Here().Info(
             "Deselected unit '{UnitName}' (id: {UnitId})",
             unit.UnitName,
             unit.UnitId);

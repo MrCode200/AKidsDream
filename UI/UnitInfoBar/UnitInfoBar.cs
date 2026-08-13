@@ -42,12 +42,13 @@ public partial class UnitInfoBar : Control
 		abilityC.AbilityCast -= OnAbiltyCast; // Prevent duplicate subscriptions
 		abilityC.AbilityCast += OnAbiltyCast;
 		
-		foreach (AbilityData ability in abilityC.Abilities)
+		GD.Print("Abilities", abilityC.Abilities.Count);
+		foreach (AbilityData ability in abilityC.Abilities.Values)
 		{
 			var newAbilityBtn = AbilityBtnScene.Instantiate<AbilityButton>();
 			newAbilityBtn.DisplayAbility(unit, ability);
 
-			if (!abilityC.CanAfford(ability.Name))
+			if (!abilityC.CanAffordBaseCost(ability.Name))
 			{
 				newAbilityBtn.Disabled = true;
 			}
@@ -59,7 +60,7 @@ public partial class UnitInfoBar : Control
 
 	private void OnAbiltyCast(Unit caster, AbilityData ability, EffectResult effectResult)
 	{
-		if (caster.AbilityC.CanAfford(ability.Name)) return;
+		if (caster.AbilityC.CanAffordBaseCost(ability.Name)) return;
 		_log.ForContext("UnitName", caster.UnitName)
 			.ForContext("UnitId", caster.UnitId)
 			.Here().Info("Ability '{Ability}' is not affordable anymore", 

@@ -3,7 +3,7 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
-using AKidsDream.Units.Resources;
+using AKidsDream.Units.Resources.Components;
 
 namespace AKidsDream.Managers;
 
@@ -20,18 +20,22 @@ public partial class AbilityVisualizer : Node
 		ReachTilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
 	}
 
-	public void ShowReachVisualization(Unit source, Vector2I sourceTile, AbilityData ability, bool clearPrevious = true)
+	public void ShowReachVisualization(AbilityContext context, AbilityPayload payload, AbilityData ability, bool clearPrevious = true)
 	{
 		if (clearPrevious) ClearReachTilemap();
-		var visualizationData = ability.GetReachVisualizationData(source, Board, sourceTile);
+		var visualizationData = ability.GetReachVisualizationData(context, payload);
 		ShowVisualization(ReachTilemap, [visualizationData]);
 	}
 	
-	public void ShowEffectVisualization(Unit source, Vector2I[] targetTiles, EffectData effect, bool clearPrevious = true)
+	public void ShowEffectVisualization(AbilityContext context, AbilityPayload payload, EffectData[] effects, bool clearPrevious = true)
 	{
 		if (clearPrevious) ClearEffectTilemap();
-		var visualizationData = effect.GetEffectVisualizationData(source, Board, targetTiles);
-		ShowVisualization(EffectTilemap, [visualizationData]);
+		var visualizationData = new (Vector2I atlasCoord, Vector2I[] tiles)[effects.Length];
+		for (var i = 0; i < effects.Length; i++)
+		{
+			visualizationData[i] = effects[i].GetEffectVisualizationData(context, payload, true);
+		}
+		ShowVisualization(EffectTilemap, visualizationData);
 	}
 	
 	public static void ShowVisualization(TileMapLayer tilemap, (Vector2I atlasCoord, Vector2I[] tiles)[] layers)

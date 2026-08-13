@@ -1,143 +1,173 @@
 ﻿#nullable enable
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AKidsDream.Common.Logging;
-using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
-using AKidsDream.Units.Resources;
+using AKidsDream.Units.Resources.Components;
+using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.Abilities.Effects;
 
+public enum EffectTrigger
+{
+    Instant = 1 << 0,
+    AnimationEnd = 1 << 1,
+    TimerEnd = 1 << 2,
+    CastOnFrame = 1 << 3
+}
+
 [GlobalClass]
+[Tool]
 public abstract partial class EffectData : Resource
 {
     [Export] public AccessFieldPattern? EffectPattern;
     [Export] public Global.AtlasCoordsSprite EffectAtlasCoords;
 
     /// <summary>
-    /// The minimum number of Tiles the User needs to select.
+    /// If false, <see cref="Cast"/> will get be called for each target tile separately.
     /// </summary>
-    private int _minTargets = 1;
-    [Export] public int MinTargets
-    {
-        get => _minTargets;
-        set
-        {
-            // Clamp value to be at most MaxTargets
-            _minTargets = value;
-            if (_minTargets > MaxTargets)
-                MaxTargets = _minTargets;
-        }
-    }
-    /// <summary>
-    /// The maximum number of Tiles the User needs to select.
-    /// </summary>
-    private int _maxTargets = 1;
-    [Export] public int MaxTargets
-    {
-        get => _maxTargets;
-        set
-        {
-            // Clamp value to be at least MinTargets
-            _maxTargets = value;
-            if (_maxTargets < MinTargets)
-                MinTargets = _maxTargets;
-        }
-    }
+    [Export] public bool RunSequential;
+
+    // Animation
+    [Export] public StringName? AnimationName;
     
-    /// <summary>
-    /// Whether the User can select the same Tile multiple times.
-    /// </summary>
-    private int _maxDuplicateTargets = 1;
-    [Export] public int MaxDuplicateTargets
+    private EffectTrigger _trigger = EffectTrigger.Instant;
+    [ExportGroup("Trigger")]
+    [Export]
+    public EffectTrigger Trigger
     {
-        get => _maxDuplicateTargets;
+        get => _trigger;
         set
         {
-            if (value < 1) value = 1;
-            _maxDuplicateTargets = value;
+            _trigger = value;
+            NotifyPropertyListChanged();
         }
     }
-    
-    /// <summary>
-    /// Returns the Tiles that will be affected by the effect.
-    /// </summary>
-    /// <param name="targetTiles">The tiles the player has selected</param>
-    /// <param name="board">The board containing TileData's</param>
-    /// <returns>An array of <see cref="Vector2I"/> which is the TileData.TileLocation</returns>
-    protected virtual Vector2I[] GetAffectedTiles(Vector2I[] targetTiles, Board board, PlayerId casterId)
+    [Export] public float EffectDelayTimer;
+    [Export] public int CastEffectOnFrame;
+
+    public override void _ValidateProperty(Dictionary property)
     {
-        if (EffectPattern == null)
+        var propertyName = property["name"].AsStringName();
+
+        var show = true;
+        switch (propertyName)
         {
-            Log.ForContext<EffectData>().Here().Error("EffectPattern is null {EffectType}", GetType().Name);
-            return [];
+            case nameof(EffectDelayTimer):
+                if (_trigger != EffectTrigger.TimerEnd) show = false;
+                break;
+            case nameof(CastEffectOnFrame):
+                if (_trigger != EffectTrigger.CastOnFrame) show = false;
+                break;
+            default:
+                show = true;
+                break;
         }
 
-        return targetTiles
-            .SelectMany(tile => EffectPattern.GetTiles(tile, board, casterId))
-            .ToArray();
+        if (!show)
+            property["usage"] = (int)PropertyUsageFlags.NoEditor;
     }
 
-    /// <summary>
-    /// Returns the atlas coordinates and tiles that will be used to visualize the effect.
-    /// </summary>
-    /// <param name="source">The <see cref="Unit"/> who the Ability belongs to</param>
-    /// <param name="board">The <see cref="Board"/></param>
-    /// <param name="targetTiles">An array of <see cref="Vector2I"/> representing the selected Tiles</param>
-    public virtual (Vector2I atlasCoord, Vector2I[] tiles) GetEffectVisualizationData(
-        Unit source,
-        Board board,
-        Vector2I[] targetTiles
-    )
-    {
-        // TODO: Handle visualization of duplicate tiles
-        var tiles = GetAffectedTiles(targetTiles, board, source.OwnerId);
-        return (Global.AtlasCoordsSpriteVectors[EffectAtlasCoords], tiles);
-    }
 
+    // -- LOGIC --
     /// <summary>
     /// Checks if the number of Tiles the User selected is valid.
     /// If AllowDuplicateTiles is false, all Tiles must be unique.
     /// Calls <see cref="ApplyEffect"/> if the number of Tiles is valid.
     /// </summary>
-    /// <param name="source">The <see cref="Unit"/> who the Ability belongs to</param>
-    /// <param name="board">The <see cref="Board"/></param>
-    /// <param name="targetTiles">An array of <see cref="Vector2I"/> representing the selected Tiles</param>
+    /// <param name="context">The context, containing unmodifiable classes</param>
+    /// <param name="targetedTiles">The tiles the User selected in insertion order</param>
+    /// <param name="state">The state of the ability (Counters etc.)</param>
+    /// <param name="payload">The payload, containing modifiable data</param>
+    /// <remarks>Note: The execution passed may be modified during execution.</remarks>
     /// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
-    public EffectResult Apply(Unit source, Board board, Vector2I[] targetTiles)
+    public async Task<EffectResult> Execute(
+        AbilityContext context,
+        List<Vector2I> targetedTiles,
+        AbilityPayload payload
+    )
     {
-        if (HasValidTargetCount(targetTiles)) return ApplyEffect(source, board, targetTiles);
-
-        Log.ForContext<EffectData>().Here().Error("Invalid target count {ActualCount} {MinTargets} {MaxTargets} {EffectType}", 
-            targetTiles.Length, MinTargets, MaxTargets, GetType().Name);
-        return new InvalidTargetCountErrorResult
+        if (!RunSequential)
         {
-            Source = source, Effect = this, Error = $"Invalid amount of targets: {targetTiles.Length}",
-            Actual = targetTiles.Length
-        };
+            payload.ProcessingTiles = targetedTiles;
+            payload.AccumulatedTargets = targetedTiles;
+            UpdatePayload(context, payload);
+            return ApplyEffect(context, payload);
+        }
+
+        var results = new EffectResult[targetedTiles.Count];
+        var index = 0;
+
+        payload.AccumulatedTargets = [];
+        foreach (var tile in targetedTiles)
+        {
+            payload.AccumulatedTargets.Add(tile);
+            payload.ProcessingTiles = [tile];
+
+            switch (_trigger)
+            {
+                case EffectTrigger.Instant:
+                    break;
+                case EffectTrigger.TimerEnd:
+                    var timer = context.Source.GetTree().CreateTimer(EffectDelayTimer);
+                    await context.Source.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
+                    break;
+            }
+            
+            UpdatePayload(context, payload);
+            results[index++] = ApplyEffect(context, payload);
+        }
+
+        return new CompositeResult { Results = results };
+    }
+
+    // -- UTILS --
+
+    /// <summary>
+    /// Returns the Tiles that will be affected by the effect.
+    /// <param name="context">The context, containing unmodifiable classes</param>
+    /// <param name="payload">The payload, containing modifiable data</param>
+    /// <returns>An array of <see cref="Vector2I"/> which is the TileData.TileLocation</returns>
+    /// </summary>
+    protected virtual Vector2I[] GetAffectedTiles(
+        AbilityContext context,
+        AbilityPayload payload,
+        bool useAccumulatedTiles = false
+    )
+    {
+        var tiles = useAccumulatedTiles ? payload.AccumulatedTargets : payload.ProcessingTiles;
+        if (EffectPattern != null)
+            return tiles
+                .SelectMany(tile => EffectPattern.GetTiles(tile, context.Board, context.CasterId))
+                .ToArray();
+
+        Log.ForContext<EffectData>().Here().Error("EffectPattern is null {EffectType}", GetType().Name);
+        return [];
     }
 
     /// <summary>
-    /// Checks if the number of Tiles the User selected is valid.
-    /// Cheks that no duplicate tile counted exceeds <see cref="MaxDuplicateTargets"/>. 
+    /// Returns the atlas coordinates and tiles that will be used to visualize the effect.
+    /// <param name="context">The context, containing unmodifiable classes</param>
+    /// <param name="payload">The payload, containing modifiable data</param>
     /// </summary>
-    /// <param name="targetTiles">The Tiles the User selected.</param>
-    public bool HasValidTargetCount(Vector2I[] targetTiles)
+    public virtual (Vector2I atlasCoord, Vector2I[] tiles) GetEffectVisualizationData(
+        AbilityContext context,
+        AbilityPayload payload,
+        bool useAccumulatedTiles = false
+    )
     {
-        var count = targetTiles.Length;
-        if (count < MinTargets || count > MaxTargets) return false;
-
-        var duplicates = targetTiles.GroupBy(t => t)
-            .Select(g => new { Value = g.Key, Count = g.Count() })
-            .ToArray();
-        foreach (var duplicate in duplicates)
-        {
-            if (duplicate.Count > _maxDuplicateTargets) return false;
-        }
-
-        return true;
+        // TODO: Handle visualization of duplicate tiles
+        var tiles = GetAffectedTiles(context, payload, useAccumulatedTiles);
+        return (Global.AtlasCoordsSpriteVectors[EffectAtlasCoords], tiles);
     }
 
-    public abstract EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTiles);
+
+    public abstract EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload);
+
+    public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload)
+    {
+    }
 }

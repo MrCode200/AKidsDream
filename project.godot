@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="AKidsDream"
-config/version="0.1.0-pre-alpha.1"
+config/version="0.2.0-pre-alpha.1"
 run/main_scene="uid://cyhkas8bsi7kd"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
@@ -20,7 +20,8 @@ config/icon="res://icon.svg"
 
 EventBus="*uid://bjmcgayj4xwls"
 SignalLens="*uid://85rkx60vm7a7"
-Console="*uid://bdi2oxut3dsra"
+Console="*uid://ouiu5xh1cs8n"
+ConsoleCS="*uid://bdi2oxut3dsra"
 
 [display]
 

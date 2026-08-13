@@ -1,29 +1,30 @@
-﻿using AKidsDream.GameBoard;
-using AKidsDream.Units.Resources;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AKidsDream.Units.Resources.Components;
 using Godot;
-using Godot.Collections;
 
 namespace AKidsDream.Abilities.Effects;
 
 [GlobalClass]
+[Tool]
 public partial class DamageEffect : EffectData
 {
     [Export] public int Amount;
     
-    public override EffectResult ApplyEffect(Unit source, Board board, Vector2I[] targetTile)
+    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
     {
-        var tiles = GetAffectedTiles(targetTile, board, source.OwnerId);
-        var results = new Array<EffectResult>();
+        var tiles = GetAffectedTiles(context, payload);
+        List<EffectResult> results = [];
 
         foreach (var tile in tiles)
         {
-            if (!board.TryGetUnitAt(tile, out var target)) continue;
+            if (!context.Board.TryGetUnitAt(tile, out var target)) continue;
             
             target.HealthC.Damage(Amount);
             results.Add(new DamageResult { Target = target, Tile = tile, Amount = Amount });
         }
         if (results.Count == 0) 
             return new CompositeResult { Results = [] };
-        return results.Count > 1 ? new CompositeResult { Results = results } : results[0];
+        return results.Count > 1 ? new CompositeResult { Results = [.. results] } : results[0];
     }
 }

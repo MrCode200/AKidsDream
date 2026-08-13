@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://Entities/Board/board.tscn" id="1_jnam8"]
 [ext_resource type="Script" uid="uid://c85ubqn5h1vee" path="res://Core/Managers/GameManager.cs" id="1_ypqj4"]
-[ext_resource type="Script" uid="uid://cb8mk3di524si" path="res://Entities/Board/Resources/BoardStateData.cs" id="3_j3kke"]
 [ext_resource type="Texture2D" uid="uid://ttl3cvsve1lc" path="res://Entities/Board/Assets/tiles.png" id="4_cpkaj"]
 [ext_resource type="Script" uid="uid://vyrgj8w0vnjo" path="res://Common/Components/InputMoveComponent.cs" id="4_xn4h7"]
 [ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://Core/Managers/CommandsSystem/CommandExecutor.cs" id="4_ypqj4"]
@@ -14,9 +13,6 @@
 [ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
 [ext_resource type="PackedScene" uid="uid://ddst6dppshn3c" path="res://UI/EndTurnButton/EndTurnButton.tscn" id="12_7hfl2"]
 [ext_resource type="PackedScene" uid="uid://f0e2ejne7mxf" path="res://UI/RoundCounter/RoundCounter.tscn" id="12_j3kke"]
-
-[sub_resource type="Resource" id="Resource_xn4h7"]
-script = ExtResource("3_j3kke")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
 texture = ExtResource("4_cpkaj")
@@ -49,7 +45,6 @@ GameBoard = NodePath("SystemsLayer/Board")
 
 [node name="Board" parent="SystemsLayer" unique_id=2027072769 instance=ExtResource("1_jnam8")]
 unique_name_in_owner = true
-StateData = SubResource("Resource_xn4h7")
 
 [node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226 node_paths=PackedStringArray("Board")]
 position = Vector2(234, 294)

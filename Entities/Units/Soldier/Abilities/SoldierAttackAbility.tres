@@ -6,19 +6,19 @@
 [ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://Entities/Units/Abilities/Patterns/AdjacentPattern.cs" id="4_f1dca"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="5_qeuyp"]
 
-[sub_resource type="Resource" id="Resource_y1g7a"]
+[sub_resource type="Resource" id="Resource_h4qxv"]
 script = ExtResource("1_376yn")
-AllowedTargets = 15
 metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 
-[sub_resource type="Resource" id="Resource_ug0g2"]
+[sub_resource type="Resource" id="Resource_7sj13"]
 script = ExtResource("2_63ouf")
-Amount = 1
-EffectPattern = SubResource("Resource_y1g7a")
+EffectPattern = SubResource("Resource_h4qxv")
 EffectAtlasCoords = 4
+AnimationName = &""
+Trigger = 8
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 
-[sub_resource type="Resource" id="Resource_i323e"]
+[sub_resource type="Resource" id="Resource_qf1xv"]
 script = ExtResource("4_f1dca")
 AllowedTargets = 8
 metadata/_custom_type_script = "uid://thbe6n87osxo"
@@ -28,8 +28,8 @@ script = ExtResource("5_qeuyp")
 Icon = ExtResource("3_tblf1")
 Name = &"Attack"
 Description = &"Attacks 1 Unit dealing 1 Damage"
-ReachPattern = SubResource("Resource_i323e")
+ReachPattern = SubResource("Resource_qf1xv")
 ReachAtlasCoords = 4
-Effect = SubResource("Resource_ug0g2")
+Effects = [SubResource("Resource_7sj13")]
 PoolName = &"Combat"
 metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

@@ -108,7 +108,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_yktuj")
 }],
-"loop": true,
+"loop": 1,
 "name": &"BlueSoldierIdle",
 "speed": 5.0
 }, {
@@ -137,7 +137,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1gaix")
 }],
-"loop": true,
+"loop": 1,
 "name": &"RedSoldierIdle",
 "speed": 5.0
 }]
@@ -151,7 +151,6 @@ scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_jo37d")
 animation = &"BlueSoldierIdle"
 autoplay = "BlueSoldierIdle"
-frame_progress = 0.9739211
 SelectionMaterial = SubResource("ShaderMaterial_3pasa")
 
 [node name="SelectableComponent" parent="." index="2" unique_id=1872887520 node_paths=PackedStringArray("HoverIndicator")]
@@ -161,4 +160,4 @@ HoverIndicator = NodePath("SelectionIndicatorSprite")
 position = Vector2(-0.421875, 0.25)
 
 [node name="AbilityComponent" parent="." index="5" unique_id=509071314]
-Abilities = Array[ExtResource("2_x3wfe")]([ExtResource("3_40uuh"), ExtResource("4_f1fyr")])
+AbilityDatas = Array[ExtResource("2_x3wfe")]([ExtResource("3_40uuh"), ExtResource("4_f1fyr")])

@@ -18,7 +18,7 @@ No Ability Selected:
 3. Clicking an enemy Unit shows stats.
 4. Clicking an empty board does nothing.
 */
-public class NoAbilitySelected(PlayerInteractionController pic) : IState
+public class NoAbilitySelectedState(PlayerInteractionController pic) : IState
 {
     public Action<IState, string, bool>? ChangeState { get; set; } = null!;
 

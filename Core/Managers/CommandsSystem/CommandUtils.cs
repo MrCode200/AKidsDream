@@ -1,16 +1,31 @@
-﻿using AKidsDream.GameBoard;
+﻿using System.Threading.Tasks;
+using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers;
 
 namespace AKidsDream.Commands;
 
 /// <summary>
+/// Base interface for all commands.
+/// </summary>
+public interface IBaseCommand { }
+
+/// <summary>
 /// A command that can be executed in the game.
 /// Should only log on success change...
 /// </summary>
-public interface IGameCommand
+public interface IGameBaseCommand : IBaseCommand
 {
     CommandResult Execute(GameContext context);
+}
+
+/// <summary>
+/// An async command that can be executed in the game.
+/// Should only log on success change...
+/// </summary>
+public interface IAsyncGameBaseCommand : IBaseCommand
+{
+    Task<CommandResult> Execute(GameContext context);
 }
 
 public enum CommandFailureType
@@ -27,6 +42,7 @@ public enum CommandFailureType
     AbilityNotFound,
     MissingAbilityPoints,
     EffectExecutionFailed,
+    InvalidTargetCount,
     
     // Turn management failures (specific - different handling)
     NotPlayerTurn,
@@ -38,15 +54,15 @@ public enum CommandFailureType
 
 public sealed class CommandResult
 {
-    public IGameCommand Command;
+    public IBaseCommand BaseCommand;
     public bool Success { get; init; }
     public CommandFailureType FailureType { get; init; } = CommandFailureType.None;
     public string FailureReason { get; init; }
 
-    public static CommandResult Ok(IGameCommand command) => new() { Command = command, Success = true };
+    public static CommandResult Ok(IBaseCommand baseCommand) => new() { BaseCommand = baseCommand, Success = true };
 
-    public static CommandResult Fail(IGameCommand command, CommandFailureType type, string reason) =>
-        new() { Command = command, Success = false, FailureType = type, FailureReason = reason };
+    public static CommandResult Fail(IBaseCommand baseCommand, CommandFailureType type, string reason) =>
+        new() { BaseCommand = baseCommand, Success = false, FailureType = type, FailureReason = reason };
 }
 
 public sealed class GameContext(

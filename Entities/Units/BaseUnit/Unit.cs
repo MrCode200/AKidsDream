@@ -43,11 +43,11 @@ public partial class Unit : CharacterBody2D
     [Signal]
     public delegate void UnitInitializedEventHandler();
 
-    [Export] public AnimatedSprite2D AnimationsPlayer;
     public HealthComponent HealthC { get; private set; }
     public SelectableComponent SelectableC { get; private set; }
     public DeathComponent DeathC { get; private set; }
     public AbilityComponent AbilityC { get; private set; }
+    public AnimationComponent AnimationC { get; private set; }
 
 
     private ILogger _log = GameLogger.For<Unit>();
@@ -125,7 +125,6 @@ public partial class Unit : CharacterBody2D
 
         EventBus.Instance.NewRoundStarted += OnNewRoundStarted;
         _injectReferenceAndAssignComponents();
-        _setAppearance();
         _log.Here()
             .Debug("Unit ready at {TileLocation}", TileLocation);
     }
@@ -141,18 +140,15 @@ public partial class Unit : CharacterBody2D
         DeathC = GetNode<DeathComponent>("DeathComponent");
         SelectableC = GetNode<SelectableComponent>("SelectableComponent");
         AbilityC = GetNode<AbilityComponent>("AbilityComponent");
+        
+        AnimationC = GetNode<AnimationComponent>("AnimationComponent");
+        AnimationC.Unit = this;
+        GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(OwnerId, out var ownerData);
+        AnimationC.UnitColor = ownerData!.UnitColor;
+        AnimationC.PlayAnimation("Idle");
 
         HealthC = GetNode<HealthComponent>("HealthComponent");
         HealthC.UnitStats = UnitStats;
-    }
-
-    private void _setAppearance()
-    {
-        GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(OwnerId, out var ownerData);
-        var animationName = AnimationsPlayer.GetAnimation().ToString().Replace(
-            nameof(Global.UnitColor.Blue),
-            ownerData.UnitColor.ToString());
-        AnimationsPlayer.Play(animationName);
     }
     
     // -- Signal Handlers --
