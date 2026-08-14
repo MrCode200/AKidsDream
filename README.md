@@ -13,10 +13,13 @@
 A Kid’s Dream is a **turn‑based tactical** war game where players take turns **commanding diverse units** (to be added 🤫) with unique abilities to fight epic battles.
 
 <p align="center">
-  <a href="https://github.com/MrCode200/AKidsDream/blob/main/Git/Assets/Preview.mp4">
+  <a
+    href="https://github.com/MrCode200/AKidsDream/raw/refs/heads/main/Git/Assets/Preview.mp4"
+    download="AKidsDream-Preview.mp4"
+  >
     <img
       src="Git/Assets/Preview.png"
-      alt="Watch gameplay preview"
+      alt="Download gameplay preview"
       width="720"
     />
   </a>
