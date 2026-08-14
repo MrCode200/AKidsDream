@@ -1,9 +1,5 @@
 # 🎮✨ A Kid's Dream — Turn-based Tactics War Game
 
-<p align="center">
-  <img alt="A Kid's Dream demo" src=".github/ASSETS/demo.gif" style="max-width:640px; width:100%; border-radius:12px;">
-</p>
-
 <div align="center">
 
 [![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)](https://godotengine.org)
@@ -16,9 +12,15 @@
 
 A Kid’s Dream is a **turn‑based tactical** war game where players take turns **commanding diverse units** (to be added 🤫) with unique abilities to fight epic battles.
 
-<video src="https://github.com/MrCode200/AKidsDream/raw/main/.github/ASSETS/demo.mp4"></video>
-
----
+<p align="center">
+  <a href="https://github.com/MrCode200/AKidsDream/blob/main/Git/Assets/Preview.mp4">
+    <img
+      src="Git/Assets/Preview.png"
+      alt="Watch gameplay preview"
+      width="720"
+    />
+  </a>
+</p>---
 
 ## 📖 Table of Contents
 
