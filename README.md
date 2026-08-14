@@ -23,7 +23,9 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
       width="720"
     />
   </a>
-</p>---
+</p>
+
+---
 
 ## 📖 Table of Contents
 
