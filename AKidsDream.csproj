@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AutoTween.txt" />
+    <Content Include="Git\Assets\Preview.mp4" />
     <Content Include="README.md" />
   </ItemGroup>
 </Project>

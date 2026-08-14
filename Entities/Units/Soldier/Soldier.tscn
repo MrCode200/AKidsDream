@@ -7,7 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://bc70yjj4yiuef" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Idle.png" id="4_3pasa"]
 [ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="4_e8lk0"]
 [ext_resource type="Resource" uid="uid://disl4r0w0w27p" path="res://Entities/Units/Soldier/Abilities/SoldierAttackAbility.tres" id="4_f1fyr"]
+[ext_resource type="Texture2D" uid="uid://c0tndvnn4btk1" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack1.png" id="4_ravdk"]
 [ext_resource type="Texture2D" uid="uid://bl0kjlyecdhol" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png" id="5_6jrt0"]
+[ext_resource type="Texture2D" uid="uid://bibt1i3xre4mn" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack2.png" id="5_35v56"]
+[ext_resource type="Texture2D" uid="uid://caiwykggikuff" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png" id="7_07yln"]
+[ext_resource type="Texture2D" uid="uid://bup0eov0mekbn" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack2.png" id="8_yktuj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pasa"]
 shader = ExtResource("4_e8lk0")
@@ -16,6 +20,38 @@ shader_parameter/type = 2
 shader_parameter/thickness = 2.6000001235
 shader_parameter/flickering_speed = 3.499999921768
 shader_parameter/minimal_flickering_alpha = 0.670000031825
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cu35q"]
+atlas = ExtResource("4_ravdk")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dadi8"]
+atlas = ExtResource("4_ravdk")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eh056"]
+atlas = ExtResource("4_ravdk")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bnfj8"]
+atlas = ExtResource("4_ravdk")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2qu0h"]
+atlas = ExtResource("5_35v56")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fupbv"]
+atlas = ExtResource("5_35v56")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mf6oe"]
+atlas = ExtResource("5_35v56")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x33pg"]
+atlas = ExtResource("5_35v56")
+region = Rect2(576, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e8lk0"]
 atlas = ExtResource("5_6jrt0")
@@ -48,6 +84,38 @@ region = Rect2(1152, 0, 192, 192)
 [sub_resource type="AtlasTexture" id="AtlasTexture_yktuj"]
 atlas = ExtResource("5_6jrt0")
 region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phstp"]
+atlas = ExtResource("7_07yln")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35adw"]
+atlas = ExtResource("7_07yln")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rrfob"]
+atlas = ExtResource("7_07yln")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2b7g"]
+atlas = ExtResource("7_07yln")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8sqfx"]
+atlas = ExtResource("8_yktuj")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gralu"]
+atlas = ExtResource("8_yktuj")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b610r"]
+atlas = ExtResource("8_yktuj")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2p66v"]
+atlas = ExtResource("8_yktuj")
+region = Rect2(576, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dd3ui"]
 atlas = ExtResource("4_3pasa")
@@ -85,6 +153,35 @@ region = Rect2(1344, 0, 192, 192)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_cu35q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dadi8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eh056")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bnfj8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2qu0h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fupbv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mf6oe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x33pg")
+}],
+"loop": 0,
+"name": &"BlueSoldierAttack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_e8lk0")
 }, {
 "duration": 1.0,
@@ -110,6 +207,35 @@ animations = [{
 }],
 "loop": 1,
 "name": &"BlueSoldierIdle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phstp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35adw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rrfob")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s2b7g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8sqfx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gralu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b610r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2p66v")
+}],
+"loop": 0,
+"name": &"RedSoldierAttack",
 "speed": 5.0
 }, {
 "frames": [{
@@ -149,7 +275,7 @@ UnitStats = ExtResource("2_cord0")
 material = SubResource("ShaderMaterial_3pasa")
 scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_jo37d")
-animation = &"BlueSoldierIdle"
+animation = &"BlueSoldierAttack"
 autoplay = "BlueSoldierIdle"
 SelectionMaterial = SubResource("ShaderMaterial_3pasa")
 

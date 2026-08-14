@@ -1,4 +1,4 @@
-# 🎮✨ A Kid's Dream — Turn-based Tactics (Stardance / Hack Club Ready)
+# 🎮✨ A Kid's Dream — Turn-based Tactics War Game
 
 <p align="center">
   <img alt="A Kid's Dream demo" src=".github/ASSETS/demo.gif" style="max-width:640px; width:100%; border-radius:12px;">
@@ -14,6 +14,10 @@
 
 </div>
 
+A Kid’s Dream is a **turn‑based tactical** war game where players take turns **commanding diverse units** (to be added 🤫) with unique abilities to fight epic battles.
+
+<video src="https://github.com/MrCode200/AKidsDream/raw/main/.github/ASSETS/demo.mp4"></video>
+
 ---
 
 ## 📖 Table of Contents
@@ -21,11 +25,11 @@
 - [Why “A Kid’s Dream”?](#-why-a-kids-dream)
 - [Play the Build](#-play-the-build)
 - [Features](#-features)
+- [Roadmap](#-roadmap)
 - [How to Play](#-how-to-play-quick)
 - [Developer Console Commands](#️-developer-console-commands)
 - [Documentation](#-documentation)
-- [Project Structure](#-project-structure)
-- [Development Quick Start](#️-development-quick-start)
+- [How It Works](#-how-it-works)
 - [Contributing](#-contributing)
 - [License](#-license)
 - [AI Usage](#-ai-usage)
@@ -44,7 +48,7 @@ When I was a child, I created a small board game using paper and scissors. It wa
 > [!TIP]
 > To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
 
-We attach exported builds to the GitHub Release, these can be run without needing to install godot. 
+We attach exported builds to the [GitHub Release](https://github.com/MrCode200/AKidsDream/releases), these can be run without needing to install godot.
 
 To run locally with the project files:
 
@@ -54,25 +58,21 @@ To run locally with the project files:
    git clone https://github.com/MrCode200/AKidsDream.git
    cd AKidsDream
 
-3. Open the project in Godot. If you have the matching .NET SDK installed, the C# assemblies will be restored/compiled automatically.
+3. Install [Dotnet 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 4. Press Play to run the game, or use the Editor export templates to create platform-specific builds.
-
-Minimum tested toolchain:
-- Godot 4.7
-- .NET SDK compatible with the project's C# version
-
----
 
 ## 🌟 Features
 
 - 🎯 Turn-based tactical combat on a tile grid
 - 🧩 Modular unit system (stats, abilities, components)
-- 🎨 Cute visuals & playful animations
-- 🕹️ Intuitive controls + developer console for debugging
-- 🤖 AI controllers and team relations
 - 💾 Save/load and Serilog structured logging
 
----
+## 🛣️ Roadmap
+
+- [ ] 🤖 Add Enemy AI Logic
+- [ ] 👀 More unique Units
+- [ ] 💎 Mana System and Upgrades
+- [ ] 🌐 Online matchmaking
 
 ## 🎮 How to play (quick)
 
@@ -82,64 +82,56 @@ Minimum tested toolchain:
 
 Short loop: select a unit → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
 
----
-
 ## 🛠️ Developer console commands
 
 - `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
 > [!NOTE]
+> Available Units: Soldier, TestUnit
+>
 > (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create 1 1 2 4)
----
 
 ## 📃 Documentation
 View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
 
 Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main)
 
----
+## 🤔 How it works
 
-## 📁 Project structure
+A Kid's Dream is built around a *modular & data-driven* architecture.
+- `Units` which are built from `components`
+- `Abilities` which are built from `Effects`
+- `Paylaods&States` which allow Abilities to talk to each other 
 
-```
-AKidsDream/
-├── Core/           # Controllers, Globals (EventBus), Managers
-├── Entities/       # Board and Unit implementations
-├── UI/             # User interface scenes and scripts
-├── Common/         # Shared utilities (logging, state machines)
-└── Utilities/      # Save/load system, console commands, tooling
-```
+### Abilities
+The new system introduces two ways of running abilities:
 
----
+> ⛓️Sequential
+> Runs all selected *tiles* one by one, and casts the effect
 
-## ⚙️ Development quick start
+> 📦Batch
+> Runs the effect on all selected tiles.
 
-1. Fork the repo and create a branch: `git checkout -b feature/your-feature`
-2. Work in Godot and run locally
-3. Commit with conventional commits: `feat(scope): short description` ✍️
-4. Push and open a Pull Request with testing notes ✅
+Each Abilitie can contain *multiple* Effects, and each Effect (damage/moveself/...),
+contains triggers, on which frame of an animation or time to be cast.
 
-See `GUIDELINES.md` for coding and logging conventions.
-
----
+This system is built to be as modular as possible increasing devspeed when implementing new units.
+(I have learned the hard way that to `rebuild systems is hard ～(　TロT)σ`, so I tried to built a `future proof system`)
 
 ## 🙌 Contributing
 
-Contributions welcome! Open issues or PRs. Use conventional commits and include testing notes in PR descriptions.
+Contributions are very welcome:)! Open issues or PRs. Use conventional commits.
+If anyone is interested in ***Joining the project***, also always welcome`( •̀ ω •́ )✧`
 
----
 
 ## 📜 License
 
 This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing inquiries.
 
----
 ## 🤖 AI Usage
 
 AI tools were used only as development assistance. They helped with debugging, troubleshooting, and providing suggestions for the design and implementation of individual systems.
 
 AI was also used to help write and improve documentation. All final implementation decisions, code integration, and project direction were reviewed and made by the developer.
-
----
 
 ## ✨ Credits
 

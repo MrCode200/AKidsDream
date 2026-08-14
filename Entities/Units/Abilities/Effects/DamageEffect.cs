@@ -9,7 +9,7 @@ namespace AKidsDream.Abilities.Effects;
 [Tool]
 public partial class DamageEffect : EffectData
 {
-    [Export] public int Amount;
+    [Export] public int Amount = 1;
     
     public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
     {
