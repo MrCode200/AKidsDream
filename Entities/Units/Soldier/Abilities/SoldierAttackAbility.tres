@@ -14,8 +14,9 @@ metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 script = ExtResource("2_63ouf")
 EffectPattern = SubResource("Resource_h4qxv")
 EffectAtlasCoords = 4
-AnimationName = &""
-Trigger = 8
+AnimationName = &"Attack"
+Trigger = 4
+TriggerValue = 2
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 
 [sub_resource type="Resource" id="Resource_qf1xv"]

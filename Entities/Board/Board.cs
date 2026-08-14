@@ -279,7 +279,7 @@ public partial class Board : Node2D
         if (!TileInBoard(location)) return false;
 
         unit = StateData.Tiles[location.Y][location.X].Unit;
-        return true;
+        return unit is not null;
     }
 
     /// <summary>

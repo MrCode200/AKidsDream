@@ -11,10 +11,11 @@ public partial class AnimationComponent : Node
 {
 	[Export] public Unit Unit;
 	[Export] public AnimatedSprite2D Animator;
+	[Export] public StringName DefaultAnimation = "Idle";
 	public Global.UnitColor UnitColor;
-	
+
 	private ILogger _log = GameLogger.For<AnimationComponent>();
-	
+
 	private int _currentFrame = -1;
 	private int _loopCount;
 	private readonly HashSet<int> _reachedFrames = [];
@@ -24,19 +25,29 @@ public partial class AnimationComponent : Node
 	{
 		_log = _log.ForContext("UnitName", Unit?.UnitName)
 			.ForContext("UnitId", Unit?.UnitId);
+
+
+		if (Animator == null) return;
+
+		Animator.AnimationLooped += OnAnimationLooped;
+		Animator.AnimationFinished += OnAnimationFinished;
 		
-		if (Animator != null)
+		var defaultAnimationName = CreateAnimationString(DefaultAnimation);
+		
+		if (!string.IsNullOrEmpty(defaultAnimationName) && !Animator.SpriteFrames.HasAnimation(defaultAnimationName))
 		{
-			Animator.AnimationLooped += OnAnimationLooped;
-			Animator.AnimationFinished += OnAnimationFinished;
+			_log.Here().Warn("Default animation '{DefaultAnimation}' not found in sprite frames", defaultAnimationName);
+			return;
 		}
+
+		PlayAnimation(DefaultAnimation);
 	}
 
 	public override void _Process(double delta)
 	{
 		if (Animator == null || !Animator.IsPlaying())
 			return;
-		
+
 		var newFrame = Animator.Frame;
 		if (newFrame != _currentFrame)
 		{
@@ -45,18 +56,24 @@ public partial class AnimationComponent : Node
 		}
 	}
 
+	private StringName CreateAnimationString(StringName animationName)
+	{
+		return $"{UnitColor}{Unit.UnitName}{animationName}";
+	}
+
 	public void PlayAnimation(StringName animationName)
 	{
-		var animationString = $"{UnitColor}{Unit.UnitName}{animationName}";
+		var animationString = CreateAnimationString(animationName);
 		if (!Animator.SpriteFrames.HasAnimation(animationString))
 		{
 			Log.ForContext<AnimationComponent>().Here().Warn("Animation not found {AnimationString}", animationString);
 			return;
 		}
-		
+
 		Animator.Stop();
 		ResetTracking();
 		_currentAnimation = animationString;
+		_log.Here().Debug("Playing animation {AnimationString}", animationString);
 		Animator.Play(animationString);
 	}
 
@@ -64,24 +81,25 @@ public partial class AnimationComponent : Node
 	{
 		Animator.Stop();
 		ResetTracking();
+		TryPlayDefaultAnimation();
 	}
-	
+
 	// -- UTIL MEHTODS --
-	
+
 	public int GetCurrentFrame() => _currentFrame;
-	
+
 	public int GetLoopCount() => _loopCount;
-	
+
 	public StringName CurrentAnimation() => _currentAnimation;
-	
+
 	public bool HasReachedFrame(int frame) => _reachedFrames.Contains(frame);
-	
+
 	public int GetAnimationFrameCount()
 	{
 		if (Animator?.SpriteFrames == null || _currentAnimation == null)
 			return 0;
 		return Animator.SpriteFrames.GetFrameCount(_currentAnimation);
-	} 
+	}
 
 	private void ResetTracking()
 	{
@@ -90,9 +108,17 @@ public partial class AnimationComponent : Node
 		_reachedFrames.Clear();
 		_currentAnimation = new StringName("");
 	}
-	
+
+	private void TryPlayDefaultAnimation()
+	{
+		if (!string.IsNullOrEmpty(DefaultAnimation))
+		{
+			PlayAnimation(DefaultAnimation);
+		}
+	}
+
 	// -- WAIT METHODS --
-	
+
 	/// <summary>
 	/// Waits until the animation reaches a specific frame.
 	/// </summary>
@@ -118,7 +144,7 @@ public partial class AnimationComponent : Node
 		while (Animator.IsPlaying() && _loopCount < loopCount)
 			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}
-	
+
 	/// <summary>
 	/// Waits for a specific number of frames to pass from the current frame.
 	/// </summary>
@@ -127,7 +153,7 @@ public partial class AnimationComponent : Node
 	{
 		var targetFrame = (_currentFrame + frameCount) % GetAnimationFrameCount();
 		var targetLoops = (_currentFrame + frameCount) / GetAnimationFrameCount();
-		
+
 		while (Animator.IsPlaying())
 		{
 			if (_loopCount < targetLoops && _currentFrame < targetFrame)
@@ -136,7 +162,7 @@ public partial class AnimationComponent : Node
 	}
 
 	// -- ON SIGNALS --
-	
+
 	private void OnAnimationLooped()
 	{
 		_loopCount++;
@@ -147,6 +173,6 @@ public partial class AnimationComponent : Node
 	{
 		_loopCount++;
 		_log.Here().Debug("Animation finished. Loop count: {LoopCount}", _loopCount);
+		TryPlayDefaultAnimation();
 	}
-	
 }

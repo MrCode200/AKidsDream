@@ -9,9 +9,7 @@
 [ext_resource type="Resource" uid="uid://disl4r0w0w27p" path="res://Entities/Units/Soldier/Abilities/SoldierAttackAbility.tres" id="4_f1fyr"]
 [ext_resource type="Texture2D" uid="uid://c0tndvnn4btk1" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack1.png" id="4_ravdk"]
 [ext_resource type="Texture2D" uid="uid://bl0kjlyecdhol" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png" id="5_6jrt0"]
-[ext_resource type="Texture2D" uid="uid://bibt1i3xre4mn" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack2.png" id="5_35v56"]
 [ext_resource type="Texture2D" uid="uid://caiwykggikuff" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png" id="7_07yln"]
-[ext_resource type="Texture2D" uid="uid://bup0eov0mekbn" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack2.png" id="8_yktuj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pasa"]
 shader = ExtResource("4_e8lk0")
@@ -35,22 +33,6 @@ region = Rect2(384, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bnfj8"]
 atlas = ExtResource("4_ravdk")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2qu0h"]
-atlas = ExtResource("5_35v56")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fupbv"]
-atlas = ExtResource("5_35v56")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mf6oe"]
-atlas = ExtResource("5_35v56")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x33pg"]
-atlas = ExtResource("5_35v56")
 region = Rect2(576, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e8lk0"]
@@ -101,22 +83,6 @@ region = Rect2(384, 0, 192, 192)
 atlas = ExtResource("7_07yln")
 region = Rect2(576, 0, 192, 192)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8sqfx"]
-atlas = ExtResource("8_yktuj")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gralu"]
-atlas = ExtResource("8_yktuj")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b610r"]
-atlas = ExtResource("8_yktuj")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2p66v"]
-atlas = ExtResource("8_yktuj")
-region = Rect2(576, 0, 192, 192)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_dd3ui"]
 atlas = ExtResource("4_3pasa")
 region = Rect2(0, 0, 192, 192)
@@ -163,18 +129,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bnfj8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2qu0h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fupbv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mf6oe")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x33pg")
 }],
 "loop": 0,
 "name": &"BlueSoldierAttack",
@@ -221,18 +175,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s2b7g")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8sqfx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gralu")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b610r")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2p66v")
 }],
 "loop": 0,
 "name": &"RedSoldierAttack",
@@ -275,7 +217,7 @@ UnitStats = ExtResource("2_cord0")
 material = SubResource("ShaderMaterial_3pasa")
 scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_jo37d")
-animation = &"BlueSoldierAttack"
+animation = &"RedSoldierAttack"
 autoplay = "BlueSoldierIdle"
 SelectionMaterial = SubResource("ShaderMaterial_3pasa")
 

@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
@@ -82,14 +83,14 @@ public abstract partial class EffectData : Resource
 	/// If AllowDuplicateTiles is false, all Tiles must be unique.
 	/// Calls <see cref="ApplyEffect"/> if the number of Tiles is valid.
 	/// </summary>
-	/// <param name="context">The context, containing unmodifiable classes</param>
+	/// <param name="ctx">The context, containing unmodifiable classes</param>
 	/// <param name="targetedTiles">The tiles the User selected in insertion order</param>
 	/// <param name="state">The state of the ability (Counters etc.)</param>
 	/// <param name="payload">The payload, containing modifiable data</param>
 	/// <remarks>Note: The execution passed may be modified during execution.</remarks>
 	/// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
 	public async Task<EffectResult> Execute(
-		AbilityContext context,
+		AbilityContext ctx,
 		List<Vector2I> targetedTiles,
 		AbilityPayload payload
 	)
@@ -98,8 +99,9 @@ public abstract partial class EffectData : Resource
 		{
 			payload.ProcessingTiles = targetedTiles;
 			payload.AccumulatedTargets = targetedTiles;
-			UpdatePayload(context, payload);
-			return ApplyEffect(context, payload);
+			TryPlayAnimation(ctx);
+			HandlePayload(ctx, payload);
+			return ApplyEffect(ctx, payload);
 		}
 
 		var results = new EffectResult[targetedTiles.Count];
@@ -111,21 +113,36 @@ public abstract partial class EffectData : Resource
 			payload.AccumulatedTargets.Add(tile);
 			payload.ProcessingTiles = [tile];
 
-			if (!string.IsNullOrEmpty(AnimationName))
-			{
-				if (!ReplayIfAlreadyPlaying && context.Source.AnimationC.CurrentAnimation() == AnimationName)
-					break;
-				context.Source.AnimationC.PlayAnimation(AnimationName);
-			}
+			TryPlayAnimation(ctx);
+			HandlePayload(ctx, payload);
 			
-			var waitTask = WaitForTrigger(context);
-			UpdatePayload(context, payload);
-			await waitTask;
-			
-			results[index++] = ApplyEffect(context, payload);
+			results[index++] = ApplyEffect(ctx, payload);
 		}
 
 		return new CompositeResult { Results = results };
+	}
+
+	private void TryPlayAnimation(AbilityContext ctx)
+	{
+		if (string.IsNullOrEmpty(AnimationName)) return;
+		if (!ReplayIfAlreadyPlaying && ctx.Source.AnimationC.CurrentAnimation() == AnimationName)
+			return;
+		
+		ctx.Source.AnimationC.PlayAnimation(AnimationName);
+	}
+
+	private async void HandlePayload(AbilityContext ctx, AbilityPayload payload)
+	{
+		try
+		{
+			var waitTask = WaitForTrigger(ctx);
+			UpdatePayload(ctx, payload);
+			await waitTask;
+		}
+		catch (Exception e)
+		{
+			GameLogger.For(typeof(EffectData)).Here().Error(e, "Error waiting for trigger");
+		}
 	}
 
 
