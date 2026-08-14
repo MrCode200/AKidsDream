@@ -260,7 +260,7 @@ public partial class AbilityComponent : Node
 		return true;
 	}
 
-	public async Task<CastResult> Cast(StringName abilityName, AbilityContext context, List<Vector2I> targetedTiles)
+	public CastResult Cast(StringName abilityName, AbilityContext context, List<Vector2I> targetedTiles)
 	{
 		if (!Abilities.TryGetValue(abilityName, out var ability))
 			return CastResult.Fail(CastFailureReason.AbilityNotFound);
@@ -281,7 +281,7 @@ public partial class AbilityComponent : Node
 		// should be separate than context for cast or other context)
 
 		TryGetAbilityState(abilityName, out var abilityState);
-		var (effectResult, payload) = await ability.Cast(context, targetedTiles, abilityState!);
+		var (effectResult, payload) = ability.Cast(context, targetedTiles, abilityState!);
 
 		if (effectResult is ErrorResult errorResult)
 		{

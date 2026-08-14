@@ -112,7 +112,7 @@ public partial class AbilityData : Resource
 	/// <param name="state">The state of the ability (Counters etc.)</param>
 	/// <param name="payload">The payload, containing modifiable data</param>
 	/// <returns>Returns a CompositeResult containing all individual effect results</returns>
-	public async Task<(EffectResult Result, AbilityPayload Payload)> Cast(
+	public (EffectResult Result, AbilityPayload Payload) Cast(
 		AbilityContext context,
 		List<Vector2I> targetedTiles,
 		AbilityState state
@@ -130,7 +130,7 @@ public partial class AbilityData : Resource
 
 		for (var i = 0; i < Effects.Length; i++)
 		{
-			var effectResult = await Effects[i].Execute(context, targetedTiles, payload);
+			var effectResult = Effects[i].Execute(context, targetedTiles, payload);
 			effectResults[i] = effectResult;
 
 			if (effectResult is ErrorResult) return (effectResult, payload);

@@ -55,6 +55,8 @@ public abstract partial class EffectData : Resource
 
 	[Export] public float DelaySeconds { get; set; }
 	[Export] public int TriggerValue;
+	
+	private static readonly ILogger Log = GameLogger.For(typeof(EffectData));
 
 	public override void _ValidateProperty(Dictionary property)
 	{
@@ -89,37 +91,47 @@ public abstract partial class EffectData : Resource
 	/// <param name="payload">The payload, containing modifiable data</param>
 	/// <remarks>Note: The execution passed may be modified during execution.</remarks>
 	/// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
-	public async Task<EffectResult> Execute(
+	public EffectResult Execute(
 		AbilityContext ctx,
 		List<Vector2I> targetedTiles,
 		AbilityPayload payload
 	)
 	{
-		if (!RunSequential)
+		try
 		{
-			payload.ProcessingTiles = targetedTiles;
-			payload.AccumulatedTargets = targetedTiles;
-			TryPlayAnimation(ctx);
-			HandlePayload(ctx, payload);
-			return ApplyEffect(ctx, payload);
-		}
+			if (!RunSequential)
+			{
+				payload.ProcessingTiles = targetedTiles;
+				payload.AccumulatedTargets = targetedTiles;
+				TryPlayAnimation(ctx);
+				HandlePayload(ctx, payload);
+				return ApplyEffect(ctx, payload);
+			}
 
-		var results = new EffectResult[targetedTiles.Count];
-		var index = 0;
+			var results = new EffectResult[targetedTiles.Count];
+			var index = 0;
 
-		payload.AccumulatedTargets = [];
-		foreach (var tile in targetedTiles)
-		{
-			payload.AccumulatedTargets.Add(tile);
-			payload.ProcessingTiles = [tile];
+			payload.AccumulatedTargets = [];
+			foreach (var tile in targetedTiles)
+			{
+				payload.AccumulatedTargets.Add(tile);
+				payload.ProcessingTiles = [tile];
 
-			TryPlayAnimation(ctx);
-			HandlePayload(ctx, payload);
+				TryPlayAnimation(ctx);
+				HandlePayload(ctx, payload);
 			
-			results[index++] = ApplyEffect(ctx, payload);
-		}
+				results[index++] = ApplyEffect(ctx, payload);
+			}
 
-		return new CompositeResult { Results = results };
+			return new CompositeResult { Results = results };
+		}
+		catch (Exception exception)
+		{
+			Log.ForContext("UnitId", ctx.Source.UnitId)
+				.ForContext("UnitName", ctx.Source.Name)
+				.Here().Error(exception, "Error executing effect");
+			return new CompositeResult { Results = [] };
+		}
 	}
 
 	private void TryPlayAnimation(AbilityContext ctx)
@@ -141,7 +153,9 @@ public abstract partial class EffectData : Resource
 		}
 		catch (Exception e)
 		{
-			GameLogger.For(typeof(EffectData)).Here().Error(e, "Error waiting for trigger");
+			Log.ForContext("UnitId", ctx.Source.UnitId)
+				.ForContext("UnitName", ctx.Source.Name)
+				.Here().Error(e, "Error waiting for trigger");
 		}
 	}
 

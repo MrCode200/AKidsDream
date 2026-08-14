@@ -155,9 +155,9 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
         return reachData.tiles.Contains(tileLocation.Value);
     }
     
-    private async void CastAbility()
+    private void CastAbility()
     {
-        await pic.CommandExecutor.ExecuteAsync(new CastAbilityBaseCommand(
+        pic.CommandExecutor.Execute(new CastAbilityBaseCommand(
             _caster,
             _ability.Name,
             _abilityContext,
