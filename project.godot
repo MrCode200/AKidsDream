@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 EventBus="*uid://bjmcgayj4xwls"
-SignalLens="*uid://85rkx60vm7a7"
 Console="*uid://ouiu5xh1cs8n"
 ConsoleCS="*uid://bdi2oxut3dsra"
 
@@ -34,7 +33,7 @@ project/assembly_name="AKidsDream"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/console/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg", "res://addons/signal_lens/plugin.cfg")
+enabled=PackedStringArray("res://addons/console/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg")
 
 [input]
 

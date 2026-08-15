@@ -23,6 +23,8 @@ Upon reaching Max Targets Selected, cast automatically. (Config Option) // CONFI
 */
 public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 {
+    
+    
     public Action<IState, string, bool> ChangeState { get; set; } = null!;
 
     private AbilityData _ability = null!;
@@ -155,9 +157,9 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
         return reachData.tiles.Contains(tileLocation.Value);
     }
     
-    private void CastAbility()
+    private async void CastAbility()
     {
-        pic.CommandExecutor.Execute(new CastAbilityBaseCommand(
+        await pic.CommandExecutor.ExecuteAsync(new CastAbilityBaseCommand(
             _caster,
             _ability.Name,
             _abilityContext,

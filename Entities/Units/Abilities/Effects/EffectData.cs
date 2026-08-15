@@ -87,11 +87,10 @@ public abstract partial class EffectData : Resource
 	/// </summary>
 	/// <param name="ctx">The context, containing unmodifiable classes</param>
 	/// <param name="targetedTiles">The tiles the User selected in insertion order</param>
-	/// <param name="state">The state of the ability (Counters etc.)</param>
 	/// <param name="payload">The payload, containing modifiable data</param>
 	/// <remarks>Note: The execution passed may be modified during execution.</remarks>
 	/// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
-	public EffectResult Execute(
+	public async Task<EffectResult> Execute(
 		AbilityContext ctx,
 		List<Vector2I> targetedTiles,
 		AbilityPayload payload
@@ -104,7 +103,7 @@ public abstract partial class EffectData : Resource
 				payload.ProcessingTiles = targetedTiles;
 				payload.AccumulatedTargets = targetedTiles;
 				TryPlayAnimation(ctx);
-				HandlePayload(ctx, payload);
+				await HandlePayload(ctx, payload);
 				return ApplyEffect(ctx, payload);
 			}
 
@@ -118,7 +117,7 @@ public abstract partial class EffectData : Resource
 				payload.ProcessingTiles = [tile];
 
 				TryPlayAnimation(ctx);
-				HandlePayload(ctx, payload);
+				await HandlePayload(ctx, payload);
 			
 				results[index++] = ApplyEffect(ctx, payload);
 			}
@@ -143,7 +142,7 @@ public abstract partial class EffectData : Resource
 		ctx.Source.AnimationC.PlayAnimation(AnimationName);
 	}
 
-	private async void HandlePayload(AbilityContext ctx, AbilityPayload payload)
+	private async Task HandlePayload(AbilityContext ctx, AbilityPayload payload)
 	{
 		try
 		{
@@ -231,7 +230,5 @@ public abstract partial class EffectData : Resource
 
 	public abstract EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload);
 
-	public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload)
-	{
-	}
+	public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload) { }
 }

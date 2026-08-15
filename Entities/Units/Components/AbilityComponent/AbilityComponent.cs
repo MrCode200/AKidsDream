@@ -260,7 +260,7 @@ public partial class AbilityComponent : Node
 		return true;
 	}
 
-	public CastResult Cast(StringName abilityName, AbilityContext context, List<Vector2I> targetedTiles)
+	public async Task<CastResult> Cast(StringName abilityName, AbilityContext context, List<Vector2I> targetedTiles)
 	{
 		if (!Abilities.TryGetValue(abilityName, out var ability))
 			return CastResult.Fail(CastFailureReason.AbilityNotFound);
@@ -268,11 +268,14 @@ public partial class AbilityComponent : Node
 		if (!ValidateCast(abilityName, context, targetedTiles, out _, out var reason))
 			return CastResult.Fail(reason);
 
-		// Cast on EffectTrigger
 		// TODO:
 		// change cost check in OnAbilitySelect, as that should only happen in the last sequential order (if cost gets cheaper let user still select tiles)
 		// How to handle the logic for buttons disabling? (how to know when it should disable the button?, extra method?)
-		// TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...)
+		// TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...) (stay selected, later add back key/btn to ability tiles)
+		// CHECK:
+		// if CastAbility in OnAbilitySelected is the only thing that needs async, should there be a check if task complete then allow other interaction?(play another ability)
+		// Yes so no ability race condition!
+		
 
 		// CHeck if commands DeselectAbilityCOmmand and SelectAbilityCommand are needed? (as can be bug as DeselectUnitCommand takes Unit)
 
@@ -281,7 +284,7 @@ public partial class AbilityComponent : Node
 		// should be separate than context for cast or other context)
 
 		TryGetAbilityState(abilityName, out var abilityState);
-		var (effectResult, payload) = ability.Cast(context, targetedTiles, abilityState!);
+		var (effectResult, payload) = await ability.Cast(context, targetedTiles, abilityState!);
 
 		if (effectResult is ErrorResult errorResult)
 		{

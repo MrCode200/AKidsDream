@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="AbilityData" format=3 uid="uid://rekyj0uehi61"]
+
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://Entities/Units/Abilities/Patterns/AdjacentPattern.cs" id="1_skhqa"]
+[ext_resource type="Script" uid="uid://ccpad80gncajp" path="res://Entities/Units/Abilities/Effects/DamageEffect.cs" id="2_cnr0s"]
+[ext_resource type="Texture2D" uid="uid://c4jwyico0vii7" path="res://UI/Assets/UI Elements/Human Avatars/Avatars_20.png" id="2_rqtrb"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="4_e30oq"]
+
+[sub_resource type="Resource" id="Resource_kto3l"]
+script = ExtResource("1_skhqa")
+Radius = 3
+Width = 3
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[sub_resource type="Resource" id="Resource_exywj"]
+script = ExtResource("2_cnr0s")
+EffectPattern = SubResource("Resource_kto3l")
+EffectAtlasCoords = 2
+AnimationName = &""
+metadata/_custom_type_script = "uid://ccpad80gncajp"
+
+[sub_resource type="Resource" id="Resource_1b4jp"]
+script = ExtResource("1_skhqa")
+Radius = 0
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[resource]
+script = ExtResource("4_e30oq")
+Icon = ExtResource("2_rqtrb")
+Name = &"SpecialTest"
+Description = &"Special Ability"
+ReachPattern = SubResource("Resource_1b4jp")
+ReachAtlasCoords = 5
+Effects = [SubResource("Resource_exywj")]
+PoolName = &"Special"
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

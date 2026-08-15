@@ -15,7 +15,7 @@
 shader = ExtResource("4_e8lk0")
 shader_parameter/color = Color(0, 0, 0, 1)
 shader_parameter/type = 2
-shader_parameter/thickness = 2.6000001235
+shader_parameter/thickness = 3.6150001717125
 shader_parameter/flickering_speed = 3.499999921768
 shader_parameter/minimal_flickering_alpha = 0.670000031825
 
@@ -210,6 +210,65 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Shader" id="Shader_6jrt0"]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+// Variable for hit effect
+uniform bool get_hit = false;
+
+// Strength of the hit flash and shake.
+uniform float hit_effect : hint_range(0.0, 1.0) = 1.0;
+uniform float shake_intensity : hint_range(0.0, 50.0, 0.1) = 10.0;
+
+uniform float flash_dur_seconds = 30;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.0, 0.0, 1.0);
+
+float rand(vec2 co) {
+    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void vertex() {
+	if (get_hit) {
+		float time = TIME * 30.0;
+
+		vec2 random_offset = vec2(
+			rand(vec2(time, 0.0)) * 2.0 - 1.0,
+			rand(vec2(time, 10.0)) * 2.0 - 1.0
+		);
+
+		VERTEX += random_offset * shake_intensity * hit_effect;
+	}
+}
+
+void fragment() {
+	vec4 original_color = texture(TEXTURE, UV);
+
+	if (get_hit) {
+		// sin(TIME * (2.0 * PI / flashSpeedSeconds)) // starts at 0.5 color
+        float flash = sin(TIME * (2.0 * PI / flash_dur_seconds) - PI * 0.5) * 0.5 + 0.5; // starts at 0 color
+        flash *= original_color.a;
+
+		vec4 final_color = mix(original_color, flash_color, flash);
+        final_color = mix(original_color, final_color, hit_effect);
+		final_color.a = original_color.a;
+
+		COLOR = final_color;
+	} else {
+		COLOR = original_color;
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iyid7"]
+resource_local_to_scene = true
+shader = SubResource("Shader_6jrt0")
+shader_parameter/get_hit = false
+shader_parameter/hit_effect = 0.53600002546
+shader_parameter/shake_intensity = 2.70000004023324
+shader_parameter/flash_dur_seconds = 0.3
+shader_parameter/flash_color = Color(1, 0, 0, 1)
+
 [node name="Soldier" unique_id=1080513067 instance=ExtResource("1_jxj1f")]
 UnitStats = ExtResource("2_cord0")
 
@@ -226,6 +285,9 @@ HoverIndicator = NodePath("SelectionIndicatorSprite")
 
 [node name="CollisionShape2D" parent="SelectableComponent" index="0" unique_id=1804653846]
 position = Vector2(-0.421875, 0.25)
+
+[node name="HealthComponent" parent="." index="3" unique_id=1411632328]
+OnDamageShader = SubResource("ShaderMaterial_iyid7")
 
 [node name="AbilityComponent" parent="." index="5" unique_id=509071314]
 AbilityDatas = Array[ExtResource("2_x3wfe")]([ExtResource("3_40uuh"), ExtResource("4_f1fyr")])
