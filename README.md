@@ -47,7 +47,7 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
 
 When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
 
-**A Kid’s Dream** is my attempt to recreate that experience — not exactly as it was, but from the pieces that remain in my memory. It is a game inspired by childhood imagination, handmade rules, and the joy of turning simple ideas into an adventure.
+**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but from the pieces that remain in my memory. It is a game which is inspired by childhood imagination, handmade rules, and the fun of turning simple ideas into an adventure.
 
 
 ## 🚀 Play the build
@@ -55,7 +55,7 @@ When I was a child, I created a small board game using paper and scissors. It wa
 > [!TIP]
 > To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
 
-We attach exported builds to the [GitHub Release](https://github.com/MrCode200/AKidsDream/releases), these can be run without needing to install godot.
+I attach exported builds to the [GitHub Release](https://github.com/MrCode200/AKidsDream/releases), these can be run without needing to install godot.
 
 To run locally with the project files:
 
@@ -65,8 +65,8 @@ To run locally with the project files:
    git clone https://github.com/MrCode200/AKidsDream.git
    cd AKidsDream
 
-3. Install [Dotnet 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-4. Press Play to run the game, or use the Editor export templates to create platform-specific builds.
+3. Install [Dotnet 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+4. Press Play to run the game and have fun:)
 
 ## 🌟 Features
 
@@ -95,7 +95,7 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 > [!NOTE]
 > Available Units: Soldier, TestUnit
 >
-> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create 1 1 2 4)
+> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create Soldier 1 1 2 4)
 
 ## 📃 Documentation
 View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
@@ -121,7 +121,7 @@ The new system introduces two ways of running abilities:
 Each Abilitie can contain *multiple* Effects, and each Effect (damage/moveself/...),
 contains triggers, on which frame of an animation or time to be cast.
 
-This system is built to be as modular as possible increasing devspeed when implementing new units.
+This system is built to be as modular as possible, to increase devspeed when implementing new units.
 (I have learned the hard way that to `rebuild systems is hard ～(　TロT)σ`, so I tried to built a `future proof system`)
 
 ## 🙌 Contributing
@@ -138,7 +138,7 @@ This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full 
 
 AI tools were used only as development assistance. They helped with debugging, troubleshooting, and providing suggestions for the design and implementation of individual systems.
 
-AI was also used to help write and improve documentation. All final implementation decisions, code integration, and project direction were reviewed and made by the developer.
+AI was also used to help write and improve documentation (docstrings). All final implementation decisions, code implementation, and project choices were reviewed and made by me.
 
 ## ✨ Credits
 
