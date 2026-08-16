@@ -47,7 +47,7 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
 
 When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
 
-**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but from the pieces that remain in my memory. It is a game which is inspired by childhood imagination, handmade rules, and the fun of turning simple ideas into an adventure.
+**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. It is a game which is inspired by my childhood imagination, handmade rules, and the fun of creating something new (and old at the same time).
 
 
 ## 🚀 Play the build
