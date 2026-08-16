@@ -47,6 +47,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
         _abilityContext = new AbilityContext
         {
             Source = _caster,
+            Ability = _ability,
             Board = pic.Board
         };
 
@@ -113,6 +114,8 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
         //Show Targets with Hover - create temporary payload for preview
         var previewPayload = _abilityPayload.Copy();
         previewPayload.ProcessingTiles.Add(interaction.TileLocationAtMousePos!.Value);
+        previewPayload.AccumulatedTargets.Add(interaction.TileLocationAtMousePos!.Value);
+        
         // Show effect visualization for all effects
         pic.AbilityVisualizer.ShowEffectVisualization(
             _abilityContext,
@@ -145,7 +148,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
                 .ForContext("UnitId", _caster.UnitId)
                 .Here()
                 .Debug("Max targets reached for ability '{AbilityName}', Auto-Casting...", _ability.Name);
-            CastAbility();
+            CastAbilityAsync();
         }
     }
 
@@ -157,7 +160,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
         return reachData.tiles.Contains(tileLocation.Value);
     }
     
-    private async void CastAbility()
+    private async void CastAbilityAsync()
     {
         await pic.CommandExecutor.ExecuteAsync(new CastAbilityBaseCommand(
             _caster,

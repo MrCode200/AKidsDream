@@ -242,7 +242,7 @@ autoplay = "BlueTestUnitIdle"
 [node name="AbilityComponent" parent="." index="5" unique_id=509071314]
 MaxAbilityPoints = Dictionary[StringName, int]({
 &"Combat": 2,
-&"Move": 8,
+&"Move": 99,
 &"Special": 1
 })
 AbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("6_aflad"), ExtResource("5_otb2k")])

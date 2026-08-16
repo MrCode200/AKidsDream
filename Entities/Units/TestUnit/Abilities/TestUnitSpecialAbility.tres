@@ -8,13 +8,13 @@
 [sub_resource type="Resource" id="Resource_kto3l"]
 script = ExtResource("1_skhqa")
 Radius = 3
-Width = 3
+Width = 4
 metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [sub_resource type="Resource" id="Resource_exywj"]
 script = ExtResource("2_cnr0s")
 EffectPattern = SubResource("Resource_kto3l")
-EffectAtlasCoords = 2
+EffectAtlasCoords = 4
 AnimationName = &""
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 

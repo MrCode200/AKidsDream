@@ -27,10 +27,19 @@ public partial class AbilityButton : Control
 	public override void _Ready()
 	{
 		Button.Pressed += OnAbilityButtonPressed;
-		
+		SpawnAnimation();
+	}
+	
+	public override void _ExitTree()
+	{
+		Button.Pressed -= OnAbilityButtonPressed;
+	}
+	
+	public void SpawnAnimation()
+	{
 		ContentContainer.Scale = Vector2.Zero;
 		ContentContainer.Rotation = Mathf.Pi * 1.5f;
-		Tween tween = CreateTween();
+		var tween = CreateTween();
 		tween.SetParallel();
 		
 		tween.TweenProperty(ContentContainer, "scale", new Vector2(1f, 1f), 0.5f)
@@ -39,11 +48,6 @@ public partial class AbilityButton : Control
 		tween.TweenProperty(ContentContainer, "rotation", Mathf.Tau, 0.4f)
 			.SetEase(Tween.EaseType.Out)
 			.SetTrans(Tween.TransitionType.Cubic);
-	}
-
-	public override void _ExitTree()
-	{
-		Button.Pressed -= OnAbilityButtonPressed;
 	}
 
 	public void DisplayAbility(Unit unit, AbilityData ability)

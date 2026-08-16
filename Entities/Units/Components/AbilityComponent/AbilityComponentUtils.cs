@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using Godot;
@@ -29,6 +30,7 @@ public readonly record struct CastResult(bool Success, CastFailureReason Failure
 public sealed class AbilityContext
 {
     public required Unit Source { get; init; }
+    public required AbilityData Ability { get; init; }
     public required Board Board { get; init; }
     public PlayerId CasterId => Source.OwnerId;
 }

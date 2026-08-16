@@ -75,7 +75,7 @@ public partial class CommandExecutor : Node
         CommandResult result;
         try
         {
-            result = await baseCommand.Execute(_context);
+            result = await baseCommand.ExecuteAsync(_context);
 
             if (!result.Success)
             {

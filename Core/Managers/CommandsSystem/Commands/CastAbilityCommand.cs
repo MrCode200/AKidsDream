@@ -14,7 +14,7 @@ public class CastAbilityBaseCommand(
     AbilityPayload payload
 ) : IAsyncGameBaseCommand
 {
-    public async Task<CommandResult> Execute(GameContext context)
+    public async Task<CommandResult> ExecuteAsync(GameContext context)
     {
         if (caster is null)
             return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
@@ -22,7 +22,7 @@ public class CastAbilityBaseCommand(
         if (payload.ProcessingTiles.Count == 0)
             return CommandResult.Fail(this, CommandFailureType.NullArgument, "No target tiles were provided.");
 
-        var castResult =  await caster.AbilityC.Cast(abilityName, abilityContext, payload.AccumulatedTargets);
+        var castResult =  await caster.AbilityC.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
 
         if (!castResult.Success)
         {

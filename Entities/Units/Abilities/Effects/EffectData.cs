@@ -15,7 +15,7 @@ namespace AKidsDream.Abilities.Effects;
 
 public enum EffectTrigger
 {
-	Instant = 1 << 0,
+	Instant = 1 << 0, // NOTE: This doesn't emit the Signals for TriggerStart and TriggerEnd
 	TimerEnd = 1 << 1,
 	CastOnFrame = 1 << 2,
 	CastOnLoop = 1 << 3,
@@ -31,7 +31,7 @@ public abstract partial class EffectData : Resource
 	[Export] public Global.AtlasCoordsSprite EffectAtlasCoords;
 
 	/// <summary>
-	/// If false, <see cref="Execute"/> will get be called for each target tile separately.
+	/// If false, <see cref="ExecuteAsync"/> will get be called for each target tile separately.
 	/// </summary>
 	[Export] public bool RunSequential;
 
@@ -53,7 +53,8 @@ public abstract partial class EffectData : Resource
 		}
 	}
 
-	[Export] public float DelaySeconds { get; set; }
+	[Export] public bool BlockOnTrigger = true;
+	[Export] public float DelaySeconds;
 	[Export] public int TriggerValue;
 	
 	private static readonly ILogger Log = GameLogger.For(typeof(EffectData));
@@ -90,25 +91,25 @@ public abstract partial class EffectData : Resource
 	/// <param name="payload">The payload, containing modifiable data</param>
 	/// <remarks>Note: The execution passed may be modified during execution.</remarks>
 	/// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
-	public async Task<EffectResult> Execute(
+	public async Task<EffectResult> ExecuteAsync(
 		AbilityContext ctx,
 		List<Vector2I> targetedTiles,
 		AbilityPayload payload
 	)
 	{
+		EffectResult finalResult = new CompositeResult { Results = [] };
+		
 		try
 		{
 			if (!RunSequential)
 			{
 				payload.ProcessingTiles = targetedTiles;
 				payload.AccumulatedTargets = targetedTiles;
-				TryPlayAnimation(ctx);
-				await HandlePayload(ctx, payload);
-				return ApplyEffect(ctx, payload);
+				return await ExecuteEffectAsync(ctx, payload);
 			}
 
-			var results = new EffectResult[targetedTiles.Count];
 			var index = 0;
+			var results = new EffectResult[targetedTiles.Count];
 
 			payload.AccumulatedTargets = [];
 			foreach (var tile in targetedTiles)
@@ -116,24 +117,50 @@ public abstract partial class EffectData : Resource
 				payload.AccumulatedTargets.Add(tile);
 				payload.ProcessingTiles = [tile];
 
-				TryPlayAnimation(ctx);
-				await HandlePayload(ctx, payload);
-			
-				results[index++] = ApplyEffect(ctx, payload);
+				results[index++] = await ExecuteEffectAsync(ctx, payload);
 			}
 
-			return new CompositeResult { Results = results };
+			finalResult = new CompositeResult { Results = results };
+			return finalResult;
 		}
 		catch (Exception exception)
 		{
 			Log.ForContext("UnitId", ctx.Source.UnitId)
 				.ForContext("UnitName", ctx.Source.Name)
 				.Here().Error(exception, "Error executing effect");
-			return new CompositeResult { Results = [] };
+
+			return finalResult;
 		}
 	}
 
-	private void TryPlayAnimation(AbilityContext ctx)
+	private async Task<EffectResult> ExecuteEffectAsync(AbilityContext ctx, AbilityPayload payload)
+	{
+		PlayAnimationIfNeeded(ctx);
+		
+		// Trigger Logic (& UpdatePayload)
+		if (_trigger != EffectTrigger.Instant)
+		{
+			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerStart, ctx.Source, ctx.Ability, this);
+        
+			var waitTask = WaitForTriggerAsync(ctx);
+			UpdatePayload(ctx, payload); 
+			await waitTask;
+
+			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerEnd, ctx.Source, ctx.Ability, this);
+		}
+		else
+		{
+			UpdatePayload(ctx, payload);
+		}
+
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.Source, ctx.Ability, this);
+		var result = ApplyEffect(ctx, payload);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.Source, ctx.Ability, this, result);
+		
+		return result;
+	}
+
+	private void PlayAnimationIfNeeded(AbilityContext ctx)
 	{
 		if (string.IsNullOrEmpty(AnimationName)) return;
 		if (!ReplayIfAlreadyPlaying && ctx.Source.AnimationC.CurrentAnimation() == AnimationName)
@@ -142,24 +169,7 @@ public abstract partial class EffectData : Resource
 		ctx.Source.AnimationC.PlayAnimation(AnimationName);
 	}
 
-	private async Task HandlePayload(AbilityContext ctx, AbilityPayload payload)
-	{
-		try
-		{
-			var waitTask = WaitForTrigger(ctx);
-			UpdatePayload(ctx, payload);
-			await waitTask;
-		}
-		catch (Exception e)
-		{
-			Log.ForContext("UnitId", ctx.Source.UnitId)
-				.ForContext("UnitName", ctx.Source.Name)
-				.Here().Error(e, "Error waiting for trigger");
-		}
-	}
-
-
-	private async Task WaitForTrigger(AbilityContext context)
+	private async Task WaitForTriggerAsync(AbilityContext context)
 	{
 		switch (_trigger)
 		{
@@ -184,7 +194,6 @@ public abstract partial class EffectData : Resource
 				await context.Source.AnimationC.WaitForTargetLoop(TriggerValue);
 				break;
 		}
-
 	}
 
 	// -- UTILS --

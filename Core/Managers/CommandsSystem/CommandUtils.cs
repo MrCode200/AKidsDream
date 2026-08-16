@@ -25,7 +25,7 @@ public interface IGameBaseCommand : IBaseCommand
 /// </summary>
 public interface IAsyncGameBaseCommand : IBaseCommand
 {
-    Task<CommandResult> Execute(GameContext context);
+    Task<CommandResult> ExecuteAsync(GameContext context);
 }
 
 public enum CommandFailureType

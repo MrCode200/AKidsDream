@@ -23,8 +23,8 @@ EffectPattern = SubResource("Resource_lf0ek")
 EffectAtlasCoords = 3
 RunSequential = true
 AnimationName = &"Run"
-ReplayIfAlreadyPlaying = true
-Trigger = 4
+Trigger = 2
+DelaySeconds = 5.0
 TriggerValue = 3
 metadata/_custom_type_script = "uid://cnajkqpahjyk1"
 

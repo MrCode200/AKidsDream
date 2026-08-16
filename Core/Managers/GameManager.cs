@@ -52,6 +52,13 @@ public class GameCreationPayload
 // TODO:
 // Make its processing happen first, over all other nodes... as it may be called through Instance etc...
 // SOLUTION: use await ToSignal() in _Ready()
+
+// TODO:
+// change cost check in OnAbilitySelect, as that should only happen in the last sequential order (if cost gets cheaper let user still select tiles)
+// TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...) (stay selected, later add back key/btn to ability tiles)
+
+// CHECK: if commands DeselectAbilityCOmmand and SelectAbilityCommand are needed? (as can be bug as DeselectUnitCommand takes Unit)
+
 public partial class GameManager : Node2D
 {
 	[Export] public ControllerFactory ControllerFactory;

@@ -1,10 +1,9 @@
+#nullable enable
 using Godot;
-using System;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common.Logging;
-using AKidsDream.Managers;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Units.Resources;
 using Godot.Collections;
@@ -12,59 +11,109 @@ using Serilog;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
-public partial class UnitInfoBar : Control
+public partial class UnitInfoBar : Control, IBlockable
 {
-	[Export] public Label UnitNameLabel;
-	[Export] public Label UnitHealthLabel;
-	[Export] public HBoxContainer AbilityContainer;
-	[Export] public PackedScene AbilityBtnScene;
-	private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
-	
-	private Dictionary<StringName, AbilityButton> _abilityButtonsMap = new();
+    [Export]
+    public required Array<BlockingStrategy> Strategies { get; set; } =
+    [
+        BlockingStrategy.BlockOnBlockingTrigger,
+        BlockingStrategy.BlockOnEffectApply
+    ];
 
-	public override void _Ready()
-	{
-		EventBus.Instance.UnitSelected += CreateUnitBar;
-		EventBus.Instance.UnitDeselected += (Unit _) => Visible = false;
-	}
-	
-	public void CreateUnitBar(Unit unit)
-	{
-		Visible = true;
-		_abilityButtonsMap.Clear();
-		
-		foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();
-		
-		UnitNameLabel.Text = unit.UnitName.ToString();
-		UnitHealthLabel.Text = unit.UnitStats.Health.ToString();
-		
-		AbilityComponent abilityC = unit.AbilityC;
-		abilityC.AbilityCast -= OnAbiltyCast; // Prevent duplicate subscriptions
-		abilityC.AbilityCast += OnAbiltyCast;
-		
-		GD.Print("Abilities", abilityC.Abilities.Count);
-		foreach (AbilityData ability in abilityC.Abilities.Values)
-		{
-			var newAbilityBtn = AbilityBtnScene.Instantiate<AbilityButton>();
-			newAbilityBtn.DisplayAbility(unit, ability);
+    [Export] public Label UnitNameLabel = null!;
+    [Export] public Label UnitHealthLabel = null!;
+    [Export] public HBoxContainer AbilityContainer = null!;
+    [Export] public PackedScene AbilityBtnScene = null!;
 
-			if (!abilityC.CanAffordBaseCost(ability.Name))
-			{
-				newAbilityBtn.Disabled = true;
-			}
-			
-			_abilityButtonsMap.Add(ability.Name, newAbilityBtn);
-			AbilityContainer.AddChild(newAbilityBtn);
-		}
-	}
+    private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
 
-	private void OnAbiltyCast(Unit caster, AbilityData ability, EffectResult effectResult)
-	{
-		if (caster.AbilityC.CanAffordBaseCost(ability.Name)) return;
-		_log.ForContext("UnitName", caster.UnitName)
-			.ForContext("UnitId", caster.UnitId)
-			.Here().Info("Ability '{Ability}' is not affordable anymore", 
-			ability.Name);
-		_abilityButtonsMap[ability.Name].Disabled = true;
-	}
+    private Dictionary<StringName, AbilityButton> _abilityButtonsMap = new();
+    private Unit? _selectedUnit;
+    public bool IsBlocked { get; set; }
+
+
+    private void OnUnitDeselected(Unit _) => Visible = false;
+
+    public override void _Ready()
+    {
+        BlockingManager.Instance.Register(this);
+
+        EventBus.Instance.UnitSelected += CreateUnitBar;
+        EventBus.Instance.UnitDeselected += OnUnitDeselected;
+    }
+
+    public override void _ExitTree()
+    {
+        EventBus.Instance.UnitSelected -= CreateUnitBar;
+        EventBus.Instance.UnitDeselected -= OnUnitDeselected;
+    }
+
+    private void CreateUnitBar(Unit unit)
+    {
+        Visible = true;
+        // Move if needed to Visible get set method 
+        foreach (var btn in _abilityButtonsMap.Values)
+        {
+            btn.SpawnAnimation();
+        }
+
+        if (_selectedUnit?.UnitId == unit.UnitId)
+        {
+            return;
+        }
+
+        _selectedUnit = unit;
+
+        _abilityButtonsMap.Clear();
+
+        foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();
+
+        UnitNameLabel.Text = _selectedUnit.UnitName.ToString();
+        UnitHealthLabel.Text = _selectedUnit.UnitStats.Health.ToString();
+
+        var abilityC = _selectedUnit.AbilityC;
+
+        GD.Print("Abilities", abilityC.Abilities.Count);
+        foreach (AbilityData ability in abilityC.Abilities.Values)
+        {
+            var newAbilityBtn = AbilityBtnScene.Instantiate<AbilityButton>();
+            newAbilityBtn.DisplayAbility(_selectedUnit, ability);
+            // if false, button when running spawn animation will show its enabled version, if should be disabled
+            newAbilityBtn.Disabled = true; 
+            
+            _abilityButtonsMap.Add(ability.Name, newAbilityBtn);
+            AbilityContainer.AddChild(newAbilityBtn);
+        }
+
+        _UpdateButtonStates();
+    }
+
+    private void _UpdateButtonStates(bool enableBtns = true)
+    {
+        foreach (var btn in _abilityButtonsMap.Values)
+        {
+            if (enableBtns && !IsBlocked && _selectedUnit != null)
+            {
+                btn.Disabled = _selectedUnit.AbilityC.TryCanAffordBaseCost(btn.Ability.Name, out var canAfford) &&
+                               !canAfford;
+                if (!canAfford)
+                    _log.ForContext("UnitName", _selectedUnit.UnitName)
+                        .ForContext("UnitId", _selectedUnit.UnitId)
+                        .Here().Info("Ability '{Ability}' is not affordable anymore",
+                            btn.Ability.Name);
+            }
+            else
+            {
+                btn.Disabled = true;
+            }
+        }
+    }
+
+    public void SetBlocked(bool block)
+    {
+        if (block == IsBlocked) return;
+        IsBlocked = block;
+
+        _UpdateButtonStates(!block);
+    }
 }
