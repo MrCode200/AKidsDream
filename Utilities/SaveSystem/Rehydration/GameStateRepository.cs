@@ -2,6 +2,7 @@
 using System.IO;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystem.Resources;
+using Godot;
 using Serilog;
 
 namespace AKidsDream.Managers.SaveSystems.Rehydration;
@@ -18,6 +19,7 @@ public class GameStateRepository
     public static GameStateData Load(string stateFileName)
     {
         var path = Path.Combine(Global.SavePath, stateFileName);
+        GD.Print(path);
  
         if (!File.Exists(path))
         {

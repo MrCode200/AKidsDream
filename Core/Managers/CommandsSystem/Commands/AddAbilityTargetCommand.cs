@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AKidsDream.Common.Logging;
 using AKidsDream.Units.Resources;
 using AKidsDream.Units.Resources.Components;
@@ -16,7 +15,7 @@ public sealed class AddAbilityTargetBaseCommand(
     AbilityPayload abilityPayload
 ) : IGameBaseCommand
 {
-    private static readonly ILogger Log = GameLogger.For(typeof(AddAbilityTargetBaseCommand));
+    private static readonly ILogger Log = GameLogger.For<AddAbilityTargetBaseCommand>();
     
     public CommandResult Execute(GameContext context)
     {
@@ -31,13 +30,14 @@ public sealed class AddAbilityTargetBaseCommand(
             return CommandResult.Fail(this, CommandFailureType.AbilityNotFound, $"Ability '{abilityName}' not found.");
         
         var targetsToValidate = new List<Vector2I>(abilityPayload.AccumulatedTargets) { targetedTile };
-// Use AbilityC.ValidateCast which handles batch vs sequential processing based on RunParallel flag
+        
         if (!caster.AbilityC.ValidateCast(
                 abilityName,
                 abilityContext,
                 targetsToValidate,
                 out var payload,
-                out var failureReason)
+                out var failureReason,
+                skipCostCheck: true)
            )
         {
             return CommandResult.Fail(
@@ -75,7 +75,8 @@ public sealed class AddAbilityTargetBaseCommand(
             CastFailureReason.AbilityNotFound => CommandFailureType.AbilityNotFound,
             CastFailureReason.InvalidTargetCount => CommandFailureType.InvalidTargetCount,
             CastFailureReason.TilesOutOfRange => CommandFailureType.InvalidTargetLocation,
-            CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints,
+            // Not needed theoretically as cost check is skipped
+            CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints, 
             _ => CommandFailureType.Unknown
         };
     }

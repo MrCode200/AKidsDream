@@ -11,11 +11,13 @@ using Serilog;
 
 namespace AKidsDream.Core.Managers;
 
+// Placeholder to create testingSave for new game at any position
+
 // Upon Creation GameManager get a Payload of information on how to set up the game...
 // The following is a placeholder
 public class GameCreationPayload
 {
-	public readonly string LoadGameFileName = "";
+	public readonly string LoadGameFileName = "NewSave.tres";
 	public readonly int LocalPlayerId = 1;
 	public readonly Vector2I BoardSize = new(14, 9);
 
@@ -47,17 +49,111 @@ public class GameCreationPayload
 	{
 		{ (new TeamId(1), new TeamId(2)), TeamRelation.Enemy },
 	};
+
+	public static string testingFile = """
+	                                   [gd_resource type="Resource" format=3]
+	                                   
+	                                   [ext_resource type="Script" path="res://Entities/Board/Resources/BoardStateData.cs" id="1_vp3i7"]
+	                                   [ext_resource type="Script" path="res://Core/Managers/TeamSystem/Resources/PlayerData.cs" id="2_ucnw2"]
+	                                   [ext_resource type="Script" path="res://Core/Managers/TeamSystem/Resources/TeamData.cs" id="3_4n8g7"]
+	                                   [ext_resource type="Script" path="res://Utilities/SaveSystem/Resources/UnitStateData.cs" id="4_dm7om"]
+	                                   [ext_resource type="Script" path="res://Entities/Units/Resources/UnitStatsData.cs" id="5_jsx6i"]
+	                                   [ext_resource type="Script" path="res://Utilities/SaveSystem/Resources/GameStateData.cs" id="6_nptp8"]
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_e3xci"]
+	                                   script = ExtResource("1_vp3i7")
+	                                   Width = 12
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_r6a1v"]
+	                                   script = ExtResource("2_ucnw2")
+	                                   PlayerIdInt = 1
+	                                   PlayerName = "MrMagic"
+	                                   TeamIdInt = 1
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_ojjb5"]
+	                                   script = ExtResource("2_ucnw2")
+	                                   PlayerIdInt = 2
+	                                   PlayerName = "MrSorceress"
+	                                   TeamIdInt = 2
+	                                   UnitColor = 1
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_xurp1"]
+	                                   script = ExtResource("3_4n8g7")
+	                                   TeamIdInt = 1
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_lnyo5"]
+	                                   script = ExtResource("3_4n8g7")
+	                                   TeamIdInt = 2
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_vp3i7"]
+	                                   script = ExtResource("5_jsx6i")
+	                                   MaxHealth = 2
+	                                   Health = 2
+	                                   metadata/_custom_type_script = "uid://8ujfv88riuka"
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_ucnw2"]
+	                                   script = ExtResource("4_dm7om")
+	                                   UnitId = 1
+	                                   OwnerId = 1
+	                                   UnitName = 1
+	                                   TileLocation = Vector2i(5, 6)
+	                                   UnitStats = SubResource("Resource_vp3i7")
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_4n8g7"]
+	                                   script = ExtResource("5_jsx6i")
+	                                   MaxHealth = 2
+	                                   Health = 2
+	                                   metadata/_custom_type_script = "uid://8ujfv88riuka"
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_dm7om"]
+	                                   script = ExtResource("4_dm7om")
+	                                   UnitId = 2
+	                                   OwnerId = 2
+	                                   UnitName = 1
+	                                   TileLocation = Vector2i(4, 5)
+	                                   UnitStats = SubResource("Resource_4n8g7")
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_jsx6i"]
+	                                   script = ExtResource("5_jsx6i")
+	                                   MaxHealth = 2
+	                                   Health = 2
+	                                   metadata/_custom_type_script = "uid://8ujfv88riuka"
+	                                   
+	                                   [sub_resource type="Resource" id="Resource_nptp8"]
+	                                   script = ExtResource("4_dm7om")
+	                                   UnitId = 3
+	                                   OwnerId = 1
+	                                   TileLocation = Vector2i(6, 6)
+	                                   UnitStats = SubResource("Resource_jsx6i")
+	                                   
+	                                   [resource]
+	                                   script = ExtResource("6_nptp8")
+	                                   GameRound = 3
+	                                   _playerTurnOrder = Dictionary[int, ExtResource("2_ucnw2")]({
+	                                   1: SubResource("Resource_r6a1v"),
+	                                   2: SubResource("Resource_ojjb5")
+	                                   })
+	                                   ActivePlayerIdInt = 1
+	                                   BoardStateData = SubResource("Resource_e3xci")
+	                                   PlayerData = Array[ExtResource("2_ucnw2")]([SubResource("Resource_r6a1v"), SubResource("Resource_ojjb5")])
+	                                   TeamData = Array[ExtResource("3_4n8g7")]([SubResource("Resource_xurp1"), SubResource("Resource_lnyo5")])
+	                                   _teamRelations = Dictionary[Vector2i, int]({
+	                                   Vector2i(1, 2): 1,
+	                                   Vector2i(2, 1): 1
+	                                   })
+	                                   UnitStateResources = Array[ExtResource("4_dm7om")]([SubResource("Resource_ucnw2"), SubResource("Resource_dm7om"), SubResource("Resource_nptp8")])
+	                                   
+	                                   """;
+
 }
 
 // TODO:
 // Make its processing happen first, over all other nodes... as it may be called through Instance etc...
 // SOLUTION: use await ToSignal() in _Ready()
 
-// TODO:
-// change cost check in OnAbilitySelect, as that should only happen in the last sequential order (if cost gets cheaper let user still select tiles)
-// TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...) (stay selected, later add back key/btn to ability tiles)
+// TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...) (stay selected, later add back key/btn to ability tiles?)
 
-// CHECK: if commands DeselectAbilityCOmmand and SelectAbilityCommand are needed? (as can be bug as DeselectUnitCommand takes Unit)
+// CHECK: if commands DeselectAbilityCommand and SelectAbilityCommand are needed? (as can be bug as DeselectUnitCommand takes Unit)
 
 public partial class GameManager : Node2D
 {
@@ -116,6 +212,11 @@ public partial class GameManager : Node2D
 				"GameManager initializing with LoadFileName: '{LoadFileName}', SaveFileName: '{SaveFileName}'",
 				loadFileName,
 				SaveFileName);
+			
+			// NOTE: delete later the 2 following lines (force creates save file for testing)
+			var savePath = System.IO.Path.Combine(Global.SavePath, gameCreationPayload.LoadGameFileName);
+			System.IO.File.WriteAllText(savePath, GameCreationPayload.testingFile);
+			
 			SaveLoadManager.LoadGameState(loadFileName, GameBoard, GameLoopManager, EntityLayer);
 			EventBus.Instance.EmitSignal(EventBus.SignalName.GameInitialized);
 			return;

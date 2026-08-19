@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dfp2q2rabfaii"]
+
+[ext_resource type="Script" uid="uid://cjnlb2kmyi71s" path="res://UI/PoolBar/PoolItem/PoolItem.cs" id="1_h1dto"]
+[ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="1_htbee"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tjdi3"]
+font_size = 13
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(0, 0)
+
+[node name="PoolItem" type="Control" unique_id=1902957870 node_paths=PackedStringArray("PoolContainer", "PoolLabel", "PoolIcon")]
+custom_minimum_size = Vector2(50, 22)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h1dto")
+PoolContainer = NodePath("HBoxContainer")
+PoolLabel = NodePath("HBoxContainer/Label")
+PoolIcon = NodePath("HBoxContainer/Sprite2D")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=929875118]
+custom_minimum_size = Vector2(50, 20)
+layout_mode = 0
+size_flags_horizontal = 0
+size_flags_vertical = 6
+tooltip_text = "Pool Name"
+
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=1695032496]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "XX / YY"
+label_settings = SubResource("LabelSettings_tjdi3")
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=1087154222]
+position = Vector2(-8.5, 10)
+scale = Vector2(1.21875, 1.1875)
+texture = ExtResource("1_htbee")

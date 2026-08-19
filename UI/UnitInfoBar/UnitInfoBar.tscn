@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bg45tgydfujx" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.tscn" id="2_00si8"]
 [ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://UI/UnitInfoBar/Assets/SmallRibbons_Joint.png" id="3_bvm5s"]
 [ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://UI/UnitInfoBar/Assets/Big Heart Idle (18x14).png" id="4_hvlrc"]
+[ext_resource type="PackedScene" uid="uid://dlrjsccvo38gr" path="res://UI/PoolBar/PoolBar.tscn" id="6_3yeci"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1j5su"]
 shadow_size = 9
@@ -74,7 +75,7 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="UnitInforBar" type="Control" unique_id=925057221 node_paths=PackedStringArray("UnitNameLabel", "UnitHealthLabel", "AbilityContainer")]
+[node name="UnitInforBar" type="Control" unique_id=925057221 node_paths=PackedStringArray("UnitNameLabel", "UnitHealthLabel", "AbilityContainer", "PoolBar")]
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -90,6 +91,7 @@ UnitNameLabel = NodePath("UnitInforBoard/UnitBanner/UnitName")
 UnitHealthLabel = NodePath("UnitInforBoard/HealthAmount")
 AbilityContainer = NodePath("AbilityContainer")
 AbilityBtnScene = ExtResource("2_00si8")
+PoolBar = NodePath("PoolBar")
 
 [node name="UnitInforBoard" type="NinePatchRect" parent="." unique_id=185800890]
 layout_mode = 1
@@ -187,3 +189,10 @@ layout_mode = 2
 
 [node name="AblityButton2" parent="AbilityContainer" unique_id=1450503306 instance=ExtResource("2_00si8")]
 layout_mode = 2
+
+[node name="PoolBar" parent="." unique_id=823338190 instance=ExtResource("6_3yeci")]
+layout_mode = 1
+offset_left = 299.0
+offset_top = -6.0
+offset_right = 299.0
+offset_bottom = -6.0

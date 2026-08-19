@@ -10,6 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://c0tndvnn4btk1" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Attack1.png" id="4_ravdk"]
 [ext_resource type="Texture2D" uid="uid://bl0kjlyecdhol" path="res://Entities/Units/Soldier/Assets/BlueSoldier/Warrior_Idle.png" id="5_6jrt0"]
 [ext_resource type="Texture2D" uid="uid://caiwykggikuff" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png" id="7_07yln"]
+[ext_resource type="Script" uid="uid://b14gay7t266tc" path="res://UI/PoolBar/Resources/PoolData.cs" id="8_35v56"]
+[ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="9_07yln"]
+[ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="10_yktuj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pasa"]
 shader = ExtResource("4_e8lk0")
@@ -210,7 +213,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Shader" id="Shader_6jrt0"]
+[sub_resource type="Shader" id="Shader_35v56"]
 resource_local_to_scene = true
 code = "shader_type canvas_item;
 
@@ -260,14 +263,30 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_iyid7"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_07yln"]
 resource_local_to_scene = true
-shader = SubResource("Shader_6jrt0")
+shader = SubResource("Shader_35v56")
 shader_parameter/get_hit = false
 shader_parameter/hit_effect = 0.53600002546
 shader_parameter/shake_intensity = 2.70000004023324
 shader_parameter/flash_dur_seconds = 0.3
 shader_parameter/flash_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_77vot"]
+script = ExtResource("8_35v56")
+CurrentCount = 1
+MaxCount = 1
+Name = "Move"
+Icon = ExtResource("10_yktuj")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
+[sub_resource type="Resource" id="Resource_dwawl"]
+script = ExtResource("8_35v56")
+CurrentCount = 1
+MaxCount = 1
+Name = "Combat"
+Icon = ExtResource("9_07yln")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
 
 [node name="Soldier" unique_id=1080513067 instance=ExtResource("1_jxj1f")]
 UnitStats = ExtResource("2_cord0")
@@ -287,7 +306,8 @@ HoverIndicator = NodePath("SelectionIndicatorSprite")
 position = Vector2(-0.421875, 0.25)
 
 [node name="HealthComponent" parent="." index="3" unique_id=1411632328]
-OnDamageShader = SubResource("ShaderMaterial_iyid7")
+OnDamageShader = SubResource("ShaderMaterial_07yln")
 
 [node name="AbilityComponent" parent="." index="5" unique_id=509071314]
-AbilityDatas = Array[ExtResource("2_x3wfe")]([ExtResource("3_40uuh"), ExtResource("4_f1fyr")])
+InitialPoolDatas = Array[ExtResource("8_35v56")]([SubResource("Resource_77vot"), SubResource("Resource_dwawl")])
+InitialAbilityDatas = Array[ExtResource("2_x3wfe")]([ExtResource("4_f1fyr"), ExtResource("3_40uuh")])

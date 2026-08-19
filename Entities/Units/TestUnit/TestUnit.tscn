@@ -9,6 +9,9 @@
 [ext_resource type="Resource" uid="uid://rekyj0uehi61" path="res://Entities/Units/TestUnit/Abilities/TestUnitSpecialAbility.tres" id="5_otb2k"]
 [ext_resource type="Resource" uid="uid://cxchs07a32ck2" path="res://Entities/Units/TestUnit/Abilities/TPChainAbility.tres" id="6_aflad"]
 [ext_resource type="Texture2D" uid="uid://cw7mrlusc4je1" path="res://Entities/Units/TestUnit/Assets/RedTestUnit/Pawn_Run Axe.png" id="6_g28d0"]
+[ext_resource type="Script" uid="uid://b14gay7t266tc" path="res://UI/PoolBar/Resources/PoolData.cs" id="7_evswn"]
+[ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="8_6fdhl"]
+[ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="9_6fdhl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v0wiw"]
 atlas = ExtResource("2_h2gyg")
@@ -229,6 +232,22 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Resource" id="Resource_5mrbn"]
+script = ExtResource("7_evswn")
+CurrentCount = 99
+MaxCount = 99
+Name = "Move"
+Icon = ExtResource("8_6fdhl")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
+[sub_resource type="Resource" id="Resource_kt3ti"]
+script = ExtResource("7_evswn")
+CurrentCount = 5
+MaxCount = 5
+Name = "Special"
+Icon = ExtResource("9_6fdhl")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
 [node name="TestUnit" unique_id=1080513067 instance=ExtResource("1_hutqi")]
 UnitStats = ExtResource("2_8nx1d")
 
@@ -240,9 +259,5 @@ animation = &"RedTestUnitRun"
 autoplay = "BlueTestUnitIdle"
 
 [node name="AbilityComponent" parent="." index="5" unique_id=509071314]
-MaxAbilityPoints = Dictionary[StringName, int]({
-&"Combat": 2,
-&"Move": 99,
-&"Special": 1
-})
-AbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("6_aflad"), ExtResource("5_otb2k")])
+InitialPoolDatas = Array[ExtResource("7_evswn")]([SubResource("Resource_5mrbn"), SubResource("Resource_kt3ti")])
+InitialAbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("5_otb2k"), ExtResource("6_aflad")])

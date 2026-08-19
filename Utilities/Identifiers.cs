@@ -1,6 +1,7 @@
 global using UnitId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.UnitIdTag>;
 global using PlayerId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.PlayerIdTag>;
 global using TeamId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.TeamIdTag>;
+global using PoolId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.PoolIdTag>;
 
 using System;
 using AKidsDream.Common.Logging;
@@ -18,9 +19,9 @@ public enum TeamRelation
 public interface IIdTag { }
 
 public readonly struct UnitIdTag : IIdTag { }
-
 public readonly struct PlayerIdTag : IIdTag { }
 public readonly struct TeamIdTag: IIdTag { }
+public readonly struct PoolIdTag: IIdTag { }
 
 public readonly struct Id<TTag> : IEquatable<Id<TTag>> where TTag : IIdTag
 {

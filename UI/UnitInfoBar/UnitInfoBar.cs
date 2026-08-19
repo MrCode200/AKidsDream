@@ -1,7 +1,6 @@
 #nullable enable
 using Godot;
 using AKidsDream.Abilities;
-using AKidsDream.Abilities.Effects;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
@@ -24,6 +23,7 @@ public partial class UnitInfoBar : Control, IBlockable
     [Export] public Label UnitHealthLabel = null!;
     [Export] public HBoxContainer AbilityContainer = null!;
     [Export] public PackedScene AbilityBtnScene = null!;
+    [Export] public PoolBar PoolBar = null!;
 
     private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
 
@@ -47,6 +47,8 @@ public partial class UnitInfoBar : Control, IBlockable
         EventBus.Instance.UnitSelected -= CreateUnitBar;
         EventBus.Instance.UnitDeselected -= OnUnitDeselected;
     }
+    
+    // -- SIGNAL HANDLING --
 
     private void CreateUnitBar(Unit unit)
     {
@@ -86,7 +88,12 @@ public partial class UnitInfoBar : Control, IBlockable
         }
 
         _UpdateButtonStates();
+        
+        PoolBar.SetPool(_selectedUnit);
+        GD.Print("psdfa");
     }
+    
+    // -- SIGNAL HANDLING --
 
     private void _UpdateButtonStates(bool enableBtns = true)
     {
@@ -94,13 +101,7 @@ public partial class UnitInfoBar : Control, IBlockable
         {
             if (enableBtns && !IsBlocked && _selectedUnit != null)
             {
-                btn.Disabled = _selectedUnit.AbilityC.TryCanAffordBaseCost(btn.Ability.Name, out var canAfford) &&
-                               !canAfford;
-                if (!canAfford)
-                    _log.ForContext("UnitName", _selectedUnit.UnitName)
-                        .ForContext("UnitId", _selectedUnit.UnitId)
-                        .Here().Info("Ability '{Ability}' is not affordable anymore",
-                            btn.Ability.Name);
+                btn.Disabled = false;
             }
             else
             {
@@ -116,4 +117,5 @@ public partial class UnitInfoBar : Control, IBlockable
 
         _UpdateButtonStates(!block);
     }
+    
 }

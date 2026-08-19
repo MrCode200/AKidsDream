@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,6 +10,7 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Logging;
+using AKidsDream.Units.Resources;
 using Godot.Collections;
 using Serilog;
 
@@ -23,20 +25,15 @@ public partial class AbilityComponent : Node
     private ILogger _log = GameLogger.For<AbilityComponent>();
 
     /// <summary>
-    /// Contains the current ability points for each pool.
-    /// Where the key is the pool name and the value is the max ability points per turn.
+    /// Contains the pool data for each ability pool.
+    /// Where the key is the pool name and the value is the PoolData resource.
     /// </summary>
-    [Export] public Godot.Collections.Dictionary<StringName, int> MaxAbilityPoints = new()
-    {
-        { "Move", 1 },
-        { "Combat", 1 }
-    };
+    [Export] public Array<PoolData> InitialPoolDatas = [];
+    public readonly System.Collections.Generic.Dictionary<StringName, PoolData> Pools = new();
 
-    [Export] public Array<AbilityData> AbilityDatas = [];
+    [Export] public Array<AbilityData> InitialAbilityDatas = [];
     public readonly System.Collections.Generic.Dictionary<StringName, AbilityData> Abilities = new();
     public readonly System.Collections.Generic.Dictionary<StringName, AbilityState> AbilityStates = new();
-
-    public Godot.Collections.Dictionary<StringName, int> RemainingAbilityPoints = new();
 
     public bool IsCasting { get; private set; }
 
@@ -51,10 +48,22 @@ public partial class AbilityComponent : Node
         _log = _log.ForContext("UnitName", Unit?.UnitName)
             .ForContext("UnitId", Unit?.UnitId);
         if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
-        foreach (var abilityData in AbilityDatas)
+        
+        foreach (var abilityData in InitialAbilityDatas)
         {
-            Abilities[abilityData.Name] = abilityData;
+            if (!Abilities.TryAdd(abilityData.Name, abilityData))
+                throw new ArgumentException(
+                    $"An Ability '{abilityData.Name}' with the same name is already registered");
         }
+        InitialAbilityDatas.Clear();
+        
+        foreach (var poolData in InitialPoolDatas)
+        {
+            if (!Pools.TryAdd(poolData.Name, poolData))
+                throw new ArgumentException($"Pool '{poolData.Name}' with the same name is already registered");
+            
+        }
+        InitialPoolDatas.Clear();
 
         ResetPool();
     }
@@ -63,7 +72,10 @@ public partial class AbilityComponent : Node
 
     public void ResetPool()
     {
-        RemainingAbilityPoints = MaxAbilityPoints.Duplicate(true);
+        foreach (var (_, poolData) in Pools)
+        {
+            poolData.CurrentCount = poolData.MaxCount;
+        }
     }
 
     /// <summary>
@@ -77,9 +89,9 @@ public partial class AbilityComponent : Node
     public bool CanAfford(StringName name, AbilityContext context, AbilityPayload payload)
     {
         if (!Abilities.TryGetValue(name, out var ability)) return false;
-        if (!RemainingAbilityPoints.TryGetValue(ability.PoolName, out var point)) return false;
+        if (!Pools.TryGetValue(ability.PoolName, out var poolData)) return false;
 
-        return ability.GetCost(context, payload) <= point;
+        return ability.GetCost(context, payload) <= poolData.CurrentCount;
     }
 
     public bool TryCanAffordBaseCost(StringName name, out bool canAfford)
@@ -87,9 +99,9 @@ public partial class AbilityComponent : Node
         canAfford = false;
 
         if (!Abilities.TryGetValue(name, out var ability)) return false;
-        if (!RemainingAbilityPoints.TryGetValue(ability.PoolName, out var point)) return false;
+        if (!Pools.TryGetValue(ability.PoolName, out var poolData)) return false;
 
-        if (ability.Cost > point) return false;
+        if (ability.Cost > poolData.CurrentCount) return false;
         
         canAfford = true;
         return true;
@@ -148,14 +160,15 @@ public partial class AbilityComponent : Node
     /// <summary>
     /// Main validation dispatcher. Validates target count and reach once for the ability,
     /// then runs each effect's payload update (sequential or batch) in insertion order,
-    /// and finally checks affordability against the fully updated payload.
+    /// and finally checks affordability against the fully updated payload (unless skipCostCheck is true).
     /// </summary>
     public bool ValidateCast(
         StringName abilityName,
         AbilityContext context,
         List<Vector2I> targetedTiles,
         [NotNullWhen(true)] out AbilityPayload? payload,
-        out CastFailureReason reason)
+        out CastFailureReason reason,
+        bool skipCostCheck = false)
     {
         reason = CastFailureReason.None;
         payload = null;
@@ -212,7 +225,7 @@ public partial class AbilityComponent : Node
             }
         }
 
-        if (!CanAfford(abilityName, context, payload))
+        if (!skipCostCheck && !CanAfford(abilityName, context, payload))
         {
             reason = CastFailureReason.CannotAfford;
             return false;
@@ -277,7 +290,7 @@ public partial class AbilityComponent : Node
         if (!Abilities.TryGetValue(abilityName, out var ability))
             return CastResult.Fail(CastFailureReason.AbilityNotFound);
 
-        if (!ValidateCast(abilityName, context, targetedTiles, out _, out var reason))
+        if (!ValidateCast(abilityName, context, targetedTiles, out var payload, out var reason))
             return CastResult.Fail(reason);
 
         IsCasting = true;
@@ -289,9 +302,17 @@ public partial class AbilityComponent : Node
 
         try
         {
-            TryGetAbilityState(abilityName, out var abilityState);
-            (effectResult, var payload) = await ability.CastAsync(context, targetedTiles, abilityState!);
+            // CHECK: why cost not reduced correclty before await 
+            // TODO: (CHECK ABOVE FIRST IF NOT WORKED READ BELOW WHY WE NEED IT)
+            // if trigger is nonblocking, user can cast infinite, as cost will only get subtracted after await
+            // (so if trigger is onDamage, then it won't get subtracted until the user damages, after which the cost will be subtracted (and could go into the negative)) 
 
+            Pools[ability.PoolName].CurrentCount -= ability.GetCost(context, payload);
+            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCostUpdated, Unit, ability, Pools[ability.PoolName].CurrentCount);
+            
+            TryGetAbilityState(abilityName, out var abilityState);
+            (effectResult, var _) = await ability.CastAsync(context, targetedTiles, abilityState!);
+            
             if (effectResult is ErrorResult errorResult)
             {
                 _log.Here().Error("Ability '{AbilityName}' execution with effect: {EffectType} failed with {Error}",
@@ -305,7 +326,6 @@ public partial class AbilityComponent : Node
                 targetedTiles.Count,
                 ability.Cost,
                 ability.PoolName);
-            RemainingAbilityPoints[ability.PoolName] -= ability.GetCost(context, payload);
 
             return CastResult.Ok(effectResult);
         }

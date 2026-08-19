@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://dlrjsccvo38gr"]
+
+[ext_resource type="Texture2D" uid="uid://3oytot28kllb" path="res://UI/Assets/UI Elements/Papers/SpecialPaperJoint.png" id="1_n64pb"]
+[ext_resource type="Script" uid="uid://cx4ve5r6w4uki" path="res://UI/PoolBar/PoolBar.cs" id="1_squ8i"]
+[ext_resource type="PackedScene" uid="uid://dfp2q2rabfaii" path="res://UI/PoolBar/PoolItem/PoolItem.tscn" id="2_awvb6"]
+
+[node name="PoolBar" type="Control" unique_id=823338190 node_paths=PackedStringArray("PoolItemsContainer")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_squ8i")
+PoolItem = ExtResource("2_awvb6")
+PoolItemsContainer = NodePath("Background/MarginContainer/PoolItemContainer")
+
+[node name="Background" type="NinePatchRect" parent="." unique_id=1008293703]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -54.0
+offset_top = -125.0
+offset_right = 54.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_n64pb")
+region_rect = Rect2(2, 4, 173, 151)
+patch_margin_left = 54
+patch_margin_top = 43
+patch_margin_right = 54
+patch_margin_bottom = 43
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Background" unique_id=1166990700]
+layout_mode = 0
+offset_right = 91.0
+offset_bottom = 110.0
+size_flags_horizontal = 0
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 11
+theme_override_constants/margin_bottom = 10
+
+[node name="PoolItemContainer" type="VBoxContainer" parent="Background/MarginContainer" unique_id=630355374]
+layout_mode = 2
+alignment = 1
+
+[node name="PoolItem" parent="Background/MarginContainer/PoolItemContainer" unique_id=1902957870 instance=ExtResource("2_awvb6")]
+layout_mode = 2

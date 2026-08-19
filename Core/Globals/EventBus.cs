@@ -50,17 +50,18 @@ public partial class EventBus : Node
 	// -- Abilities --
 
 	[Signal] public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData abilityData);
-
 	[Signal] public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability, EffectResult result);
 
+	[Signal] public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
+	
 	[Signal] public delegate void EffectTriggerStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
-
 	[Signal] public delegate void EffectTriggerEndEventHandler(Unit unit, AbilityData ability, EffectData effect);
 
 	[Signal] public delegate void EffectApplyStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
-
 	[Signal] public delegate void EffectApplyEndEventHandler(Unit unit, AbilityData ability, EffectData effect, EffectResult result);
 
+	
+	
 	// -- UI SIGNALS --
 
 	[Signal] public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);
