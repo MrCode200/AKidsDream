@@ -47,7 +47,7 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
 
 When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
 
-**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. It is a game which is inspired by my childhood imagination, handmade rules, and the fun of creating something new (and old at the same time).
+**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. It is a game which is inspired by my childhood imagination, handmade rules, and the fun of creating something new (and old at the same time ;b).
 
 
 ## 🚀 Play the build
@@ -136,9 +136,7 @@ This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full 
 
 ## 🤖 AI Usage
 
-AI tools were used only as development assistance. They helped with debugging, troubleshooting, and providing suggestions for the design and implementation of individual systems.
-
-AI was also used to help write and improve documentation (docstrings). All final implementation decisions, code implementation, and project choices were reviewed and made by me.
+AI was used as a development assitante, in the areas for debugging, suggestion for creation of individual systems, writing documentation (docstrings).
 
 ## ✨ Credits
 
