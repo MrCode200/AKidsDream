@@ -74,7 +74,6 @@ public partial class AbilityComponent : Node
         {
             poolData.CurrentCount = poolData.MaxCount;
         }
-        EventBus.Instance.EmitSignal(EventBus.SignalName.PoolReset, Unit);
     }
 
     /// <summary>
