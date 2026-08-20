@@ -3,7 +3,7 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
-public class EndTurnBaseCommand(PlayerId playerId) : IGameBaseCommand
+public class EndTurnCommand(PlayerId playerId) : IGameCommand
 {
     public CommandResult Execute(GameContext context)
     {
@@ -12,7 +12,7 @@ public class EndTurnBaseCommand(PlayerId playerId) : IGameBaseCommand
             return CommandResult.Fail(this, CommandFailureType.NotPlayerTurn, $"Not {playerId}'s turn");
         }
         
-        Log.ForContext<EndTurnBaseCommand>().Here().Info(
+        Log.ForContext<EndTurnCommand>().Here().Info(
             "Successfully ended {PlayerId}'s turn",
             playerId
         );

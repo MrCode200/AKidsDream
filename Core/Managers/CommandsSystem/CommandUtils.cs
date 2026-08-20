@@ -2,6 +2,7 @@
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers;
+using AKidsDream.Units.Resources.Components;
 
 namespace AKidsDream.Commands;
 
@@ -14,7 +15,7 @@ public interface IBaseCommand { }
 /// A command that can be executed in the game.
 /// Should only log on success change...
 /// </summary>
-public interface IGameBaseCommand : IBaseCommand
+public interface IGameCommand : IBaseCommand
 {
     CommandResult Execute(GameContext context);
 }
@@ -42,7 +43,7 @@ public enum CommandFailureType
     AbilityNotFound,
     MissingAbilityPoints,
     EffectExecutionFailed,
-    InvalidTargetCount,
+    InvalidTargetsSelected,
     
     // Turn management failures (specific - different handling)
     NotPlayerTurn,
@@ -80,5 +81,20 @@ public sealed class GameContext(
     public override string ToString()
     {
         return $"Board: {Board}, EventBus: {EventBus}, GameLoopManager: {GameLoopManager}, AbilityVisualizer: {AbilityVisualizer}";
+    }
+}
+
+public static class CommandFailureMapper
+{
+    public static CommandFailureType MapCastFailureToCommandFailure(CastFailureReason reason)
+    {
+        return reason switch
+        {
+            CastFailureReason.AbilityNotFound => CommandFailureType.AbilityNotFound,
+            CastFailureReason.InvalidTargetsSelected => CommandFailureType.InvalidTargetsSelected,
+            CastFailureReason.TilesOutOfRange => CommandFailureType.InvalidTargetLocation,
+            CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints,
+            _ => CommandFailureType.Unknown
+        };
     }
 }

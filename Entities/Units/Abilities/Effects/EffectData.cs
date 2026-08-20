@@ -125,8 +125,8 @@ public abstract partial class EffectData : Resource
 		}
 		catch (Exception exception)
 		{
-			Log.ForContext("UnitId", ctx.Source.UnitId)
-				.ForContext("UnitName", ctx.Source.Name)
+			Log.ForContext("UnitId", ctx.Caster.UnitId)
+				.ForContext("UnitName", ctx.Caster.Name)
 				.Here().Error(exception, "Error executing effect");
 
 			return finalResult;
@@ -140,22 +140,22 @@ public abstract partial class EffectData : Resource
 		// Trigger Logic (& UpdatePayload)
 		if (_trigger != EffectTrigger.Instant)
 		{
-			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerStart, ctx.Source, ctx.Ability, this);
+			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerStart, ctx.Caster, ctx.Ability, this);
         
 			var waitTask = WaitForTriggerAsync(ctx);
 			UpdatePayload(ctx, payload); 
 			await waitTask;
 
-			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerEnd, ctx.Source, ctx.Ability, this);
+			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerEnd, ctx.Caster, ctx.Ability, this);
 		}
 		else
 		{
 			UpdatePayload(ctx, payload);
 		}
 
-		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.Source, ctx.Ability, this);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.Caster, ctx.Ability, this);
 		var result = ApplyEffect(ctx, payload);
-		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.Source, ctx.Ability, this, result);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.Caster, ctx.Ability, this, result);
 		
 		return result;
 	}
@@ -163,10 +163,10 @@ public abstract partial class EffectData : Resource
 	private void PlayAnimationIfNeeded(AbilityContext ctx)
 	{
 		if (string.IsNullOrEmpty(AnimationName)) return;
-		if (!ReplayIfAlreadyPlaying && ctx.Source.AnimationC.CurrentAnimation() == AnimationName)
+		if (!ReplayIfAlreadyPlaying && ctx.Caster.AnimationC.CurrentAnimation() == AnimationName)
 			return;
 		
-		ctx.Source.AnimationC.PlayAnimation(AnimationName);
+		ctx.Caster.AnimationC.PlayAnimation(AnimationName);
 	}
 
 	private async Task WaitForTriggerAsync(AbilityContext context)
@@ -176,22 +176,22 @@ public abstract partial class EffectData : Resource
 			case EffectTrigger.Instant:
 				break;
 			case EffectTrigger.TimerEnd:
-				var timer = context.Source.GetTree().CreateTimer(DelaySeconds);
-				await context.Source.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
+				var timer = context.Caster.GetTree().CreateTimer(DelaySeconds);
+				await context.Caster.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
 				break;
 			case EffectTrigger.CastOnFrame:
-				if (context.Source.AnimationC.HasReachedFrame(TriggerValue))
+				if (context.Caster.AnimationC.HasReachedFrame(TriggerValue))
 					break;
-				await context.Source.AnimationC.WaitForTargetFrame(TriggerValue);
+				await context.Caster.AnimationC.WaitForTargetFrame(TriggerValue);
 				break;
 			case EffectTrigger.CastAfterLoops:
-				await context.Source.AnimationC.WaitForLoopCount(TriggerValue);
+				await context.Caster.AnimationC.WaitForLoopCount(TriggerValue);
 				break;
 			case EffectTrigger.CastAfterFrames:
-				await context.Source.AnimationC.WaitForFrames(TriggerValue);
+				await context.Caster.AnimationC.WaitForFrames(TriggerValue);
 				break;
 			case EffectTrigger.CastOnLoop:
-				await context.Source.AnimationC.WaitForTargetLoop(TriggerValue);
+				await context.Caster.AnimationC.WaitForTargetLoop(TriggerValue);
 				break;
 		}
 	}

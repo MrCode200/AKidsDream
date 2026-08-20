@@ -1,4 +1,5 @@
 #nullable enable
+using System.Linq;
 using AKidsDream.Abilities;
 using AKidsDream.Commands;
 using AKidsDream.GameBoard;
@@ -35,12 +36,14 @@ Ability Selected:
 public readonly struct PlayerInteractionPayload(
     InputEvent inputEvent,
     TileData.TileData? tileAtMousePos,
-    bool isLeftClickPressed
+    bool isLeftClickPressed,
+    bool isRightClickPressed
 )
 {
     public readonly InputEvent InputEvent = inputEvent;
     public readonly TileData.TileData? TileAtMousePos = tileAtMousePos;
     public readonly bool IsLeftClickPressed = isLeftClickPressed;
+    public readonly bool IsRightClickPressed = isRightClickPressed;
 
     public Unit? UnitAtMousePos => TileAtMousePos?.Unit;
     public Vector2I? TileLocationAtMousePos => TileAtMousePos?.TileLocation;
@@ -129,7 +132,8 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         return new PlayerInteractionPayload(
             @event,
             tile,
-            Input.IsActionJustPressed(nameof(Global.InputMapActions.LeftClick))
+            Input.IsActionJustPressed(nameof(Global.InputMapActions.LeftClick)),
+            Input.IsActionJustPressed(nameof(Global.InputMapActions.RightClick))
         );
     }
 
@@ -152,7 +156,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     private void OnEndTurnButtonPressed(int callerPlayerIdInt)
     {
         if (callerPlayerIdInt != PlayerId.Value) return;
-        CommandExecutor.Execute(new EndTurnBaseCommand(PlayerId));
+        CommandExecutor.Execute(new EndTurnCommand(PlayerId));
     }
 
     // -- --
@@ -165,7 +169,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         DeselectCurrentUnit();
 
         CurrentSelectedUnit = unit;
-        CommandExecutor.Execute(new SelectUnitBaseCommand(unit));
+        CommandExecutor.Execute(new SelectUnitCommand(unit));
     }
 
     /// <summary>
@@ -176,7 +180,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         if (CurrentSelectedUnit is null)
             return;
         
-        CommandExecutor.Execute(new DeselectUnitBaseCommand(CurrentSelectedUnit));
+        CommandExecutor.Execute(new DeselectUnitCommand(CurrentSelectedUnit));
         ClearCurrentAbility();
         CurrentSelectedUnit = null;
     }
@@ -186,7 +190,12 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
         if (CurrentSelectedAbility is null)
             return;
 
-        CommandExecutor.Execute(new DeselectAbilityBaseCommand(CurrentSelectedUnit));
+        // Check if any unit is currently casting a blocking ability
+        bool isAnyUnitCasting = Board.GetAllUnits().Any(unit => unit.AbilityC.IsCasting);
+
+        if (!isAnyUnitCasting)
+            AbilityVisualizer.ClearTilemaps();
+        
         CurrentSelectedAbility = null;
         StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
     }

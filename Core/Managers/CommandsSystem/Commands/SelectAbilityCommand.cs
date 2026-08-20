@@ -6,12 +6,12 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
-public class SelectAbilityBaseCommand(
+public class SelectAbilityCommand(
     Unit caster,
     StringName abilityName,
     AbilityContext abilityContext,
     AbilityPayload payload
-) : IGameBaseCommand
+) : IGameCommand
 {
     public CommandResult Execute(GameContext context)
     {
@@ -27,7 +27,7 @@ public class SelectAbilityBaseCommand(
             ability
         );
 
-        Log.ForContext<SelectAbilityBaseCommand>().Here().Info(
+        Log.ForContext<SelectAbilityCommand>().Here().Info(
             "Selected ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
             abilityName,
             caster.UnitName,

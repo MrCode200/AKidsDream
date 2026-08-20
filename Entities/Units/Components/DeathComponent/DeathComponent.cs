@@ -6,7 +6,7 @@ using Serilog;
 namespace AKidsDream.Units.Resources.Components;
 
 [GlobalClass]
-[Icon("res://Assets/Node Icons/icon-skull-50.png")]
+[Icon("res://Assets/NodeIcons/icon-skull-50.svg")]
 public partial class DeathComponent : Node
 {
 	[Export] public Unit Unit;

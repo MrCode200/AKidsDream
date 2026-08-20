@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c2vkehvslp083" path="res://Core/Managers/GameLoopManager.cs" id="5_1totg"]
 [ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://UI/UnitInfoBar/UnitInfoBar.tscn" id="5_d2vp3"]
 [ext_resource type="Script" uid="uid://irt720bqh762" path="res://Core/Managers/AbilityVisualizer.cs" id="5_ypqj4"]
+[ext_resource type="Texture2D" uid="uid://3jk5l3n0aj8y" path="res://Entities/Board/Assets/numberedTiles.png" id="6_083uc"]
 [ext_resource type="Script" uid="uid://dqhgr3soqc73f" path="res://Core/Controllers/ControllerFactory.cs" id="7_30lfw"]
 [ext_resource type="Script" uid="uid://cvx2p6rlu6y3s" path="res://Utilities/ConsoleCommands/ConsoleManager.cs" id="8_30lfw"]
 [ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
@@ -32,6 +33,35 @@ texture = ExtResource("4_cpkaj")
 
 [sub_resource type="TileSet" id="TileSet_1totg"]
 sources/0 = SubResource("TileSetAtlasSource_cpkaj")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xn4h7"]
+texture = ExtResource("4_cpkaj")
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_e2nsu"]
+sources/0 = SubResource("TileSetAtlasSource_xn4h7")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7vbhu"]
+texture = ExtResource("6_083uc")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_cgf4g"]
+sources/0 = SubResource("TileSetAtlasSource_7vbhu")
 
 [node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "EntityLayer", "GameLoopManager", "GameBoard")]
 script = ExtResource("1_ypqj4")
@@ -60,21 +90,25 @@ ActionPanRight = "CameraPanRight"
 ActionZoomIn = "CameraZoomIn"
 ActionZoomOut = "CameraZoomOut"
 
-[node name="AbilityVisualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Board", "ReachTilemap", "EffectTilemap")]
+[node name="AbilityVisualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Board", "ReachTilemap", "EffectTilemap", "NumberedTilemap")]
 script = ExtResource("5_ypqj4")
 Board = NodePath("../Board")
-ReachTilemap = NodePath("ReachAbilityTiles")
-EffectTilemap = NodePath("EffectTiles")
+ReachTilemap = NodePath("ReachAbilityTilemap")
+EffectTilemap = NodePath("EffectTilemap")
+NumberedTilemap = NodePath("NumberedTilemap")
 
-[node name="ReachAbilityTiles" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1879383876]
+[node name="ReachAbilityTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1879383876]
 modulate = Color(1, 1, 1, 0.3137255)
 scale = Vector2(3.25, 3.25)
 tile_set = SubResource("TileSet_1totg")
 
-[node name="EffectTiles" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=910760774]
+[node name="EffectTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1728788862]
 modulate = Color(1, 1, 1, 0.3137255)
-scale = Vector2(3.25, 3.25)
-tile_set = SubResource("TileSet_1totg")
+tile_set = SubResource("TileSet_e2nsu")
+
+[node name="NumberedTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=2104659044]
+modulate = Color(1, 1, 1, 0.60784316)
+tile_set = SubResource("TileSet_cgf4g")
 
 [node name="CommandExecutor" type="Node" parent="SystemsLayer" unique_id=716602167 node_paths=PackedStringArray("AbilityVisualizer", "Board", "GameLoopManager")]
 script = ExtResource("4_ypqj4")

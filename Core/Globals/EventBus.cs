@@ -53,7 +53,9 @@ public partial class EventBus : Node
 	[Signal] public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability, EffectResult result);
 
 	[Signal] public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
-	
+
+	[Signal] public delegate void PoolResetEventHandler(Unit unit);
+
 	[Signal] public delegate void EffectTriggerStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
 	[Signal] public delegate void EffectTriggerEndEventHandler(Unit unit, AbilityData ability, EffectData effect);
 

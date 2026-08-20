@@ -7,7 +7,6 @@ namespace AKidsDream.Units.Resources;
 [Tool]
 public partial class PoolData : Resource
 {
-	public PoolId PoolId = PoolId.GetNextId();
 	private int _currentCount;
 	private int _maxCount;
 
@@ -29,6 +28,6 @@ public partial class PoolData : Resource
 		}
 	}	
 	
-	[Export] public string Name;
+	[Export] public StringName Name;
 	[Export] public Texture2D Icon;
 }

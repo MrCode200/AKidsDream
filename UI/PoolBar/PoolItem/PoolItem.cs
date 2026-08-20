@@ -3,12 +3,12 @@ using Godot;
 using System;
 using AKidsDream.Units.Resources;
 
-// TODO: make instead of PoolId, uniquePoolName? (as Name is identifier for Id, and has to be unique (?)
 public partial class PoolItem : Control
 {
 	[ExportCategory("UI Nodes")]
 	[Export] public HBoxContainer PoolContainer = null!;
 	[Export] public Label PoolLabel = null!;
+	[Export] public Label DeltaCostLabel = null!;
 	[Export] public Sprite2D PoolIcon = null!;
 	
 	[ExportCategory("Animation Parameters")]
@@ -19,10 +19,15 @@ public partial class PoolItem : Control
 	private Tween? _activeTween;
 	private PoolData? _currentPool;
 	private int _displayedCount;
-	
+
+	/// <summary>
+	/// It will update the pool item if the pool is different from the current pool,
+	/// or animate the count change if the count is different. 
+	/// </summary>
+	/// <param name="pool"></param>
 	public void SetPoolItem(PoolData pool)
 	{
-		if (pool.PoolId != _currentPool?.PoolId)
+		if (pool.Name != _currentPool?.Name)
 		{
 			_currentPool = pool;
 			PoolIcon.Texture = pool.Icon;
@@ -36,11 +41,6 @@ public partial class PoolItem : Control
 			AnimateCountChange(_displayedCount, pool.CurrentCount);
 			_displayedCount = pool.CurrentCount;
 		}
-	}
-	
-	public PoolId GetPoolId()
-	{
-		return _currentPool?.PoolId ?? PoolId.None;
 	}
 	
 	private void AnimateCountChange(int startValue, int endValue)
@@ -59,7 +59,7 @@ public partial class PoolItem : Control
 			startValue,
 			endValue,
 			duration
-			).SetTrans(Tween.TransitionType.Cubic)
+			).SetTrans(Tween.TransitionType.Quint)
 			.SetEase(Tween.EaseType.InOut);
 	}
 	
@@ -68,15 +68,16 @@ public partial class PoolItem : Control
 		PoolLabel.Text = $"{value} / {_currentPool?.MaxCount}";
 	}
 	
-	// CHECK: try to make above method only for creation, and below for updating already set pool
 	public void UpdatePoolPreview(PoolData pool, int previewCost)
 	{
+		if (_currentPool?.Name != pool.Name) return;
+		
 		var costChange = previewCost switch
 		{
 			< 0 => $"[color=#E74C3C]({previewCost})[/color]",  // Red: (-3)
 			> 0 => $"[color=#4CD964](+{previewCost})[/color]", // Green: (+3)
 			0 => $"[color=#A0A0A0](=0)[/color]",               // Grey: (=0)
 		};
-		PoolLabel.Text = $"{pool.CurrentCount} / {pool.MaxCount} {costChange}";
+		DeltaCostLabel.Text = costChange;
 	}
 }

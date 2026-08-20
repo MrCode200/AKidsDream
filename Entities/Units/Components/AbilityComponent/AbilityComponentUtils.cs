@@ -14,7 +14,7 @@ public enum CastFailureReason
     CannotAfford,
     TilesOutOfRange,
     EffectExecutionFailed,
-    InvalidTargetCount
+    InvalidTargetsSelected
 }
 
 public readonly record struct CastResult(bool Success, CastFailureReason FailureReason, EffectResult? EffectResult)
@@ -29,10 +29,10 @@ public readonly record struct CastResult(bool Success, CastFailureReason Failure
 /// </summary>
 public sealed class AbilityContext
 {
-    public required Unit Source { get; init; }
+    public required Unit Caster { get; init; }
     public required AbilityData Ability { get; init; }
     public required Board Board { get; init; }
-    public PlayerId CasterId => Source.OwnerId;
+    public PlayerId CasterId => Caster.OwnerId;
 }
 
 /// <summary>
@@ -45,7 +45,7 @@ public sealed class AbilityPayload
     /// Accumulated targets from incremental selection (e.g., during AddAbilityTargetCommand).
     /// Cost modifiers can use this to calculate cost based on all tiles selected so far.
     /// </summary>
-    public List<Vector2I> AccumulatedTargets = [];
+    public List<Vector2I> AccumulatedTargets = []; // CHECK: Should accumulatedTargets instead hold TileData, rather than TileLocation (location is unique and thus identifier)
     public List<Vector2I> ProcessingTiles = [];
     // public Vector2I[] AdditionalReachTiles = [];
     public required AbilityState State = new();

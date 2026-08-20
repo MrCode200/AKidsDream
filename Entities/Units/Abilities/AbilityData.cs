@@ -122,7 +122,7 @@ public partial class AbilityData : Resource
 
 		var payload = new AbilityPayload
 		{
-			CurrentOrigin = context.Source.TileLocation,
+			CurrentOrigin = context.Caster.TileLocation,
 			ProcessingTiles = targetedTiles,
 			AccumulatedTargets = targetedTiles,
 			State = state

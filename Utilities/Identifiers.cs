@@ -1,7 +1,6 @@
 global using UnitId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.UnitIdTag>;
 global using PlayerId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.PlayerIdTag>;
 global using TeamId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.TeamIdTag>;
-global using PoolId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.PoolIdTag>;
 
 using System;
 using AKidsDream.Common.Logging;

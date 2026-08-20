@@ -11,7 +11,7 @@ public partial class PoolBar : Control
 	[Export] public Node PoolItemsContainer = null!;
 	
 	private Unit? _selectedUnit;
-	private readonly System.Collections.Generic.Dictionary<PoolId, PoolItem> _poolItemsMap = new();
+	private readonly System.Collections.Generic.Dictionary<StringName, PoolItem> _poolItemsMap = new();
 	
 	// -- LOGIC --
 	public override void _Ready()
@@ -46,7 +46,7 @@ public partial class PoolBar : Control
 			PoolItem.ResourceName = poolData.Name;
 			poolItem!.SetPoolItem(poolData);
 			PoolItemsContainer.AddChild(poolItem);
-			_poolItemsMap[poolData.PoolId] = poolItem;
+			_poolItemsMap[poolData.Name] = poolItem;
 		}
 	}
 	
@@ -57,7 +57,7 @@ public partial class PoolBar : Control
 		foreach (var (_, poolData) in _selectedUnit.AbilityC.Pools)
 		{
 			if (!updateAll && !poolsToUpdate.Contains(poolData.Name)) continue;
-			if (_poolItemsMap.TryGetValue(poolData.PoolId, out var poolItem))
+			if (_poolItemsMap.TryGetValue(poolData.Name, out var poolItem))
 			{
 				poolItem.SetPoolItem(poolData);
 			}

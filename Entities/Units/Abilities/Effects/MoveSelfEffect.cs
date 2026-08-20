@@ -38,15 +38,15 @@ public partial class MoveSelfEffect : EffectData
         {
             return new ErrorResult
             {
-                Source = context.Source,
+                Source = context.Caster,
                 Effect = this,
                 Error = "MoveSelfEffect pattern returned no tiles"
             };
         }
         
-        Vector2I from = context.Source.TileLocation;
+        Vector2I from = context.Caster.TileLocation;
         Vector2I to = tiles[0];
-        context.Source.Move(to);
-        return new MoveResult { Source = context.Source, From = from, To = to };
+        context.Caster.Move(to);
+        return new MoveResult { Source = context.Caster, From = from, To = to };
     }
 }

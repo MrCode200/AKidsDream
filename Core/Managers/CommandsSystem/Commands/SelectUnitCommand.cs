@@ -4,14 +4,14 @@ using Serilog;
 
 namespace AKidsDream.Commands;
 
-public sealed class SelectUnitBaseCommand(Unit unit) : IGameBaseCommand
+public sealed class SelectUnitCommand(Unit unit) : IGameCommand
 {
     public CommandResult Execute(GameContext context)
     {
         if (unit is null)
             return CommandResult.Fail(this, CommandFailureType.NullArgument, "Unit is null");
 
-        Log.ForContext<SelectUnitBaseCommand>().Here().Info(
+        Log.ForContext<SelectUnitCommand>().Here().Info(
             "Selected unit '{UnitName}' (id: {UnitId}) at {TileLocation}",
             unit.UnitName,
             unit.UnitId,

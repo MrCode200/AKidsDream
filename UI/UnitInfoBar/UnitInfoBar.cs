@@ -59,6 +59,8 @@ public partial class UnitInfoBar : Control, IBlockable
             btn.SpawnAnimation();
         }
 
+        
+        PoolBar.SetPool(unit);
         if (_selectedUnit?.UnitId == unit.UnitId)
         {
             return;
@@ -75,7 +77,6 @@ public partial class UnitInfoBar : Control, IBlockable
 
         var abilityC = _selectedUnit.AbilityC;
 
-        GD.Print("Abilities", abilityC.Abilities.Count);
         foreach (AbilityData ability in abilityC.Abilities.Values)
         {
             var newAbilityBtn = AbilityBtnScene.Instantiate<AbilityButton>();
@@ -88,9 +89,6 @@ public partial class UnitInfoBar : Control, IBlockable
         }
 
         _UpdateButtonStates();
-        
-        PoolBar.SetPool(_selectedUnit);
-        GD.Print("psdfa");
     }
     
     // -- SIGNAL HANDLING --

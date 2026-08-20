@@ -236,7 +236,7 @@ animations = [{
 script = ExtResource("7_evswn")
 CurrentCount = 99
 MaxCount = 99
-Name = "Move"
+Name = &"Move"
 Icon = ExtResource("8_6fdhl")
 metadata/_custom_type_script = "uid://b14gay7t266tc"
 
@@ -244,7 +244,7 @@ metadata/_custom_type_script = "uid://b14gay7t266tc"
 script = ExtResource("7_evswn")
 CurrentCount = 5
 MaxCount = 5
-Name = "Special"
+Name = &"Special"
 Icon = ExtResource("9_6fdhl")
 metadata/_custom_type_script = "uid://b14gay7t266tc"
 

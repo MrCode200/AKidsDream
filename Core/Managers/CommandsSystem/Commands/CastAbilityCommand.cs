@@ -32,7 +32,7 @@ public class CastAbilityBaseCommand(
                 CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints,
                 CastFailureReason.TilesOutOfRange => CommandFailureType.InvalidTargetLocation,
                 CastFailureReason.EffectExecutionFailed => CommandFailureType.EffectExecutionFailed,
-                CastFailureReason.InvalidTargetCount => CommandFailureType.InvalidTargetCount,
+                CastFailureReason.InvalidTargetsSelected => CommandFailureType.InvalidTargetsSelected,
                 _ => CommandFailureType.Unknown
             };
             
@@ -44,6 +44,8 @@ public class CastAbilityBaseCommand(
                 
             return CommandResult.Fail(this, failureType, $"Ability cast failed: {castResult.FailureReason}");
         }
+        
+        context.AbilityVisualizer.ClearTilemaps();
 
         Log.ForContext<CastAbilityBaseCommand>().Here().Info(
             "Casted ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId}) at {TargetCount} target(s)",

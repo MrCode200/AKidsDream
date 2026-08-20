@@ -123,7 +123,7 @@ public partial class Unit : CharacterBody2D
             Log.Debug("Initialization complete, proceeding with _Ready() logic.");
         }
 
-        EventBus.Instance.NewRoundStarted += OnNewRoundStarted;
+        EventBus.Instance.TurnStarted += OnTurnStarted;
         _injectReferenceAndAssignComponents();
         _log.Here()
             .Debug("Unit ready at {TileLocation}", TileLocation);
@@ -132,7 +132,7 @@ public partial class Unit : CharacterBody2D
     public override void _ExitTree()
     {
         if (EventBus.Instance != null)
-            EventBus.Instance.NewRoundStarted -= OnNewRoundStarted;
+            EventBus.Instance.TurnStarted -= OnTurnStarted;
     }
 
     private void _injectReferenceAndAssignComponents()
@@ -152,9 +152,12 @@ public partial class Unit : CharacterBody2D
     }
     
     // -- Signal Handlers --
-    private void OnNewRoundStarted(int playerIdInt, int round)
+    private void OnTurnStarted(int playerIdInt, int round)
     {
-        AbilityC.ResetPool();
+        if (OwnerIdInt == playerIdInt)
+        {
+            AbilityC.ResetPool();
+        }
     }
 
     // --- LOGIC ---

@@ -29,23 +29,23 @@ public partial class CommandExecutor : Node
         _log.Here().Info("CommandExecutor initialized with GameContext");
     }
 
-    public CommandResult Execute(IGameBaseCommand baseCommand)
+    public CommandResult Execute(IGameCommand command)
     {
         _log.Here().Debug(
             "Executing command {CommandType}",
-            baseCommand.GetType().Name
+            command.GetType().Name
         );
 
         CommandResult result;
         try
         {
-            result = baseCommand.Execute(_context);
+            result = command.Execute(_context);
 
             if (!result.Success)
             {
                 _log.Here().Warn(
                     "Command {CommandName} failed with due to {FailureType} with reason: {FailureReason}",
-                    baseCommand.GetType().Name,
+                    command.GetType().Name,
                     result.FailureType,
                     result.FailureReason);
             }
@@ -53,13 +53,13 @@ public partial class CommandExecutor : Node
             {
                 _log.Here().Debug(
                     "Command {CommandType} succeeded",
-                    baseCommand.GetType().Name);
+                    command.GetType().Name);
             }
         }
         catch (Exception e)
         {
-            _log.Here().Error(e, "Command {CommandType} failed with exception", baseCommand.GetType().Name);
-            result = CommandResult.Fail(baseCommand, CommandFailureType.Unknown, e.Message);
+            _log.Here().Error(e, "Command {CommandType} failed with exception", command.GetType().Name);
+            result = CommandResult.Fail(command, CommandFailureType.Unknown, e.Message);
         }
 
         return result;

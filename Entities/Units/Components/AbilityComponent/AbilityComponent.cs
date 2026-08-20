@@ -10,14 +10,13 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Logging;
-using AKidsDream.Units.Resources;
 using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.Units.Resources.Components;
 
 [GlobalClass]
-[Icon("res://Assets/Node Icons/icon-attack-50.png")]
+[Icon("res://Assets/NodeIcons/icon-attack-50.svg")]
 public partial class AbilityComponent : Node
 {
     [Export] public Unit Unit = null!;
@@ -61,7 +60,6 @@ public partial class AbilityComponent : Node
         {
             if (!Pools.TryAdd(poolData.Name, poolData))
                 throw new ArgumentException($"Pool '{poolData.Name}' with the same name is already registered");
-            
         }
         InitialPoolDatas.Clear();
 
@@ -76,6 +74,7 @@ public partial class AbilityComponent : Node
         {
             poolData.CurrentCount = poolData.MaxCount;
         }
+        EventBus.Instance.EmitSignal(EventBus.SignalName.PoolReset, Unit);
     }
 
     /// <summary>
@@ -115,7 +114,7 @@ public partial class AbilityComponent : Node
     )
     {
         if (!TryGetAbilityState(abilityName, out var state))
-            throw new System.ArgumentException($"Ability '{abilityName}' not found");
+            throw new ArgumentException($"Ability '{abilityName}' not found");
 
         var payload = new AbilityPayload
         {
@@ -187,7 +186,7 @@ public partial class AbilityComponent : Node
 
         if (!ability.HasValidTargetCount(targetedTiles))
         {
-            reason = CastFailureReason.InvalidTargetCount;
+            reason = CastFailureReason.InvalidTargetsSelected;
             return false;
         }
 
@@ -195,7 +194,7 @@ public partial class AbilityComponent : Node
 
         payload = new AbilityPayload
         {
-            CurrentOrigin = context.Source.TileLocation,
+            CurrentOrigin = context.Caster.TileLocation,
             ProcessingTiles = targetedTiles,
             AccumulatedTargets = targetedTiles,
             State = state
@@ -302,11 +301,6 @@ public partial class AbilityComponent : Node
 
         try
         {
-            // CHECK: why cost not reduced correclty before await 
-            // TODO: (CHECK ABOVE FIRST IF NOT WORKED READ BELOW WHY WE NEED IT)
-            // if trigger is nonblocking, user can cast infinite, as cost will only get subtracted after await
-            // (so if trigger is onDamage, then it won't get subtracted until the user damages, after which the cost will be subtracted (and could go into the negative)) 
-
             Pools[ability.PoolName].CurrentCount -= ability.GetCost(context, payload);
             EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCostUpdated, Unit, ability, Pools[ability.PoolName].CurrentCount);
             
