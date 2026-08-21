@@ -62,10 +62,12 @@ Open the project in Godot and press Play.
 
 ## 🎮 How to play (quick)
 
-`Left click` — select units and interact with tiles \
-`End Turn` — finish your turn \
-`~` (tilde) — open the developer console for debug/test commands \
-**Typical turn**: select a unit → move → use an ability → end turn. Win conditions are still being refined — suggestions welcome.
+`Left click` -- select units and interact with tiles \
+`Right click` -- Deletes selected tile (for multi selected tiles)
+`End Turn` -- finish your turn \
+`~` (tilde) -- open the developer console for debug/test commands \
+**Typical turn**: select a unit → move → use an ability → end turn. \
+***Win conditions are not yet implemented, any (any) suggestions are really WELCOME:)***
 
 ## 🛠️ Developer console commands
 
