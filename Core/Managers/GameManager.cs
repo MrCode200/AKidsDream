@@ -1,3 +1,4 @@
+using System.IO;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
@@ -149,7 +150,7 @@ public class GameCreationPayload
 
 // TODO:
 // Make its processing happen first, over all other nodes... as it may be called through Instance etc...
-// SOLUTION: use await ToSignal() in _Ready()
+// SOLUTION: use await ToSignal() in _Ready() (not ideal or good enough?)
 
 // TODO: Make OnAbilitySelectedState handle failure of cast (what to do with tiles...) (stay selected, later add back key/btn to ability tiles?)
 
@@ -223,8 +224,14 @@ public partial class GameManager : Node2D
 				SaveFileName);
 			
 			// NOTE: delete later the 2 following lines (force creates save file for testing)
-			var savePath = System.IO.Path.Combine(Global.SavePath, gameCreationPayload.LoadGameFileName);
-			System.IO.File.WriteAllText(savePath, GameCreationPayload.testingFile);
+			// TODO: move the verification for existing directory into SaveLoadManager(?) or how to make sure that those folders exist..
+			var savePath = Path.Combine(Global.SavePath, gameCreationPayload.LoadGameFileName);
+			var directory = Path.GetDirectoryName(savePath);
+			if (!string.IsNullOrEmpty(directory))
+			{
+				Directory.CreateDirectory(directory);
+			}
+			File.WriteAllText(savePath, GameCreationPayload.testingFile);
 			
 			SaveLoadManager.LoadGameState(loadFileName, GameBoard, GameLoopManager, EntityLayer);
 			EventBus.Instance.EmitSignal(EventBus.SignalName.GameInitialized);
