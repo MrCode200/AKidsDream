@@ -45,7 +45,7 @@ public sealed class AbilityPayload
     /// Accumulated targets from incremental selection (e.g., during AddAbilityTargetCommand).
     /// Cost modifiers can use this to calculate cost based on all tiles selected so far.
     /// </summary>
-    public List<Vector2I> AccumulatedTargets = []; // CHECK: Should accumulatedTargets instead hold TileData, rather than TileLocation (location is unique and thus identifier)
+    public List<Vector2I> AccumulatedTargets = [];
     public List<Vector2I> ProcessingTiles = [];
     // public Vector2I[] AdditionalReachTiles = [];
     public required AbilityState State = new();

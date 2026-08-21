@@ -1,16 +1,6 @@
-# 🎮✨ A Kid's Dream — Turn-based Tactics War Game
+﻿# A Kid's Dream — Turn-based Tactics War Game
 
-<div align="center">
-
-[![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)](https://godotengine.org)
-[![C%23](https://img.shields.io/badge/C%23-12.0-512BD4?logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![License](https://img.shields.io/badge/License-Non--Commercial-EA4335?&logo=creativecommons&logoColor=white)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.1.0--pre--alpha.1-F59E0B?&logo=git&logoColor=white)](https://github.com/MrCode200/AKidsDream)
-[![Hackatime](https://hackatime-badge.hackclub.com/U0BMQSUV1DG/AKidsDream)](https://hackatime.hackclub.com/)
-
-</div>
-
-A Kid’s Dream is a **turn‑based tactical** war game where players take turns **commanding diverse units** (to be added 🤫) with unique abilities to fight epic battles.
+A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scissors board game I made as a kid. Command modular units with unique abilities over a tiled battlefield and see how battles unfold.
 
 <p align="center">
   <a
@@ -25,8 +15,6 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
   </a>
 </p>
 
----
-
 ## 📖 Table of Contents
 
 - [Why “A Kid’s Dream”?](#-why-a-kids-dream)
@@ -37,113 +25,86 @@ A Kid’s Dream is a **turn‑based tactical** war game where players take turns
 - [Developer Console Commands](#️-developer-console-commands)
 - [Documentation](#-documentation)
 - [How It Works](#-how-it-works)
-- [Contributing](#-contributing)
 - [License](#-license)
 - [AI Usage](#-ai-usage)
 - [Credits](#-credits)
 
----
 ## 🤔 Why “A Kid’s Dream”?
 
 When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
-
-**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. It is a game which is inspired by my childhood imagination, handmade rules, and the fun of creating something new (and old at the same time ;b).
-
+**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. 
 
 ## 🚀 Play the build
 
-> [!TIP]
-> To spawn units for testing, see the [Developer Console Commands](#️-developer-console-commands) section.
+Tip: use the developer console to spawn units for testing (see Developer console commands).
 
-I attach exported builds to the [GitHub Release](https://github.com/MrCode200/AKidsDream/releases), these can be run without needing to install godot.
+I attach exported builds on the Releases page — those run without Godot.
 
-To run locally with the project files:
+To run locally:
 
-1. Install Godot 4.7.x.
-2. Clone this repository:
-
-   git clone https://github.com/MrCode200/AKidsDream.git
-   cd AKidsDream
-
-3. Install [Dotnet 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-4. Press Play to run the game and have fun:)
+Install Godot 4.7.x.
+Clone the repo: git clone https://github.com/MrCode200/AKidsDream.git cd AKidsDream
+Install .NET 10.0: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
+Open the project in Godot and press Play.
 
 ## 🌟 Features
 
-- 🎯 Turn-based tactical combat on a tile grid
-- 🧩 Modular unit system (stats, abilities, components)
-- 💾 Save/load and Serilog structured logging
+- Turn-based tactical combat on a tile grid
+- Modular unit system (stats, abilities, components)
+- Save/load and Serilog structured logging
 
-## 🛣️ Roadmap
+## Roadmap
 
-- [ ] 🤖 Add Enemy AI Logic
-- [ ] 👀 More unique Units
-- [ ] 💎 Mana System and Upgrades
-- [ ] 🌐 Online matchmaking
+- Enemy AI logic
+- More unique units
+- Mana system and upgrades
+- Online matchmaking
 
 ## 🎮 How to play (quick)
 
-- Left click — select units and interact with tiles
-- End Turn — finish your turn
-- `~` (tilde) — open developer console for debug/test commands
-
-Short loop: select a unit → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
+`Left click` — select units and interact with tiles \
+`End Turn` — finish your turn \
+`~` (tilde) — open the developer console for debug/test commands \
+**Typical turn**: select a unit → move → use an ability → end turn. Win conditions are still being refined — suggestions welcome.
 
 ## 🛠️ Developer console commands
 
-- `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
-> [!NOTE]
-> Available Units: Soldier, TestUnit
->
-> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create Soldier 1 1 2 4)
+> unit_create <name> <player_id> <team_id> <.x> <.y> — spawn a unit at (x,y)
+
+**NOTE:** \
+Available units: Soldier, TestUnit. Currently player_id and team_id accept 1 or 2 only (example: unit_create Soldier 1 1 2 4).
 
 ## 📃 Documentation
-View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
+To read the documentation visit:
+- Project layout and roadmap on [Miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025)
+- Ask targeted questions via [Devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main) 
+## 🔧 How it works
 
-Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main)
+The project uses a modular, data-driven architecture:
 
-## 🤔 How it works
+Units are composed from components. \
+Abilities are composed from Effects. \
+Payloads & States let abilities communicate and chain behavior. \
+Abilities execute two main ways:
 
-A Kid's Dream is built around a *modular & data-driven* architecture.
-- `Units` which are built from `components`
-- `Abilities` which are built from `Effects`
-- `Paylaods&States` which allow Abilities to talk to each other 
+1. **Sequential:** run the effect on selected tiles one at a time.
+2. **Batch:** apply the effect to all selected tiles together. 
 
-### Abilities
-The new system introduces two ways of running abilities:
-
-> ⛓️Sequential
-> Runs all selected *tiles* one by one, and casts the effect
-
-> 📦Batch
-> Runs the effect on all selected tiles.
-
-Each Abilitie can contain *multiple* Effects, and each Effect (damage/moveself/...),
-contains triggers, on which frame of an animation or time to be cast.
-
-This system is built to be as modular as possible, to increase devspeed when implementing new units.
-(I have learned the hard way that to `rebuild systems is hard ～(　TロT)σ`, so I tried to built a `future proof system`)
-
-## 🙌 Contributing
-
-Contributions are very welcome:)! Open issues or PRs. Use conventional commits.
-If anyone is interested in ***Joining the project***, also always welcome`( •̀ ω •́ )✧`
+Each ability can include multiple effects. Effects (damage, move-self, etc.) 
+can include triggers such as animation frame or timed moments. 
+This way of implementing enables easy and modular way to create abilities very fast.
 
 
 ## 📜 License
 
-This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing inquiries.
+This project uses the AKidsDream Non-Commercial License. See LICENSE for details. Contact the maintainer for commercial licensing inquiries.
 
 ## 🤖 AI Usage
 
-AI was used as a development assitante, in the areas for debugging, suggestion for creation of individual systems, writing documentation (docstrings).
+AI was used as a development assitante, in the areas for debugging, suggestion for creation of individual systems, writing documentation for the code (docstrings).
 
 ## ✨ Credits
 
 - Author: MrCode200
-- Thanks to the helpful members of the Godot Discord community who helped me solve problems during development
+- Thanks to the Godot Discord community for help during development
 - Built with Godot 4 and C#
-
----
-
-<p align="center">Made with ❤️ using Godot 4 &amp; C#</p>
