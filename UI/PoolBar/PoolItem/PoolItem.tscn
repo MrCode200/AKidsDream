@@ -9,7 +9,13 @@ shadow_size = 5
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(0, 0)
 
-[node name="PoolItem" type="Control" unique_id=1902957870 node_paths=PackedStringArray("PoolContainer", "PoolLabel", "PoolIcon")]
+[sub_resource type="LabelSettings" id="LabelSettings_h1dto"]
+font_size = 10
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(0, 0)
+
+[node name="PoolItem" type="Control" unique_id=1902957870 node_paths=PackedStringArray("PoolContainer", "PoolLabel", "DeltaCostLabel", "PoolIcon")]
 custom_minimum_size = Vector2(50, 22)
 layout_mode = 3
 anchors_preset = 8
@@ -21,7 +27,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h1dto")
 PoolContainer = NodePath("HBoxContainer")
-PoolLabel = NodePath("HBoxContainer/Label")
+PoolLabel = NodePath("HBoxContainer/CountLabel")
+DeltaCostLabel = NodePath("HBoxContainer/ChangeLabel")
 PoolIcon = NodePath("HBoxContainer/Sprite2D")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=929875118]
@@ -31,11 +38,16 @@ size_flags_horizontal = 0
 size_flags_vertical = 6
 tooltip_text = "Pool Name"
 
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=1695032496]
+[node name="CountLabel" type="Label" parent="HBoxContainer" unique_id=1695032496]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "XX / YY"
 label_settings = SubResource("LabelSettings_tjdi3")
+
+[node name="ChangeLabel" type="Label" parent="HBoxContainer" unique_id=1749158819]
+layout_mode = 2
+text = "(+ZZ)"
+label_settings = SubResource("LabelSettings_h1dto")
 
 [node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=1087154222]
 position = Vector2(-8.5, 10)

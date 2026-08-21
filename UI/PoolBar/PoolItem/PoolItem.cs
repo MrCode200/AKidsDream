@@ -34,6 +34,7 @@ public partial class PoolItem : Control
 			PoolContainer.TooltipText = pool.Name;
 
 			UpdateLabelValue(pool.CurrentCount);
+			ResetPoolPreview();
 			_displayedCount = pool.CurrentCount;
 		}
 		else if (_displayedCount != pool.CurrentCount)
@@ -68,16 +69,29 @@ public partial class PoolItem : Control
 		PoolLabel.Text = $"{value} / {_currentPool?.MaxCount}";
 	}
 	
-	public void UpdatePoolPreview(PoolData pool, int previewCost)
+	public void UpdatePoolPreview(int previewCost)
 	{
-		if (_currentPool?.Name != pool.Name) return;
+		previewCost = -previewCost;
 		
-		var costChange = previewCost switch
+		DeltaCostLabel.Text = previewCost switch
 		{
-			< 0 => $"[color=#E74C3C]({previewCost})[/color]",  // Red: (-3)
-			> 0 => $"[color=#4CD964](+{previewCost})[/color]", // Green: (+3)
-			0 => $"[color=#A0A0A0](=0)[/color]",               // Grey: (=0)
+			< 0 => $"({previewCost})",
+			> 0 => $"(+{previewCost})",
+			_ => "(=0)",
 		};
-		DeltaCostLabel.Text = costChange;
+
+		var color = previewCost switch
+		{
+			< 0 => new Color("#E74C3C"),
+			> 0 => new Color("#4CD964"),
+			_ => new Color("#A0A0A0"),
+		};
+
+		DeltaCostLabel.LabelSettings.FontColor = color;
+	}
+	
+	public void ResetPoolPreview()
+	{
+		DeltaCostLabel.Text = "";
 	}
 }

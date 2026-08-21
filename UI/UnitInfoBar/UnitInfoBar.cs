@@ -53,16 +53,14 @@ public partial class UnitInfoBar : Control, IBlockable
     private void CreateUnitBar(Unit unit)
     {
         Visible = true;
-        // Move if needed to Visible get set method 
-        foreach (var btn in _abilityButtonsMap.Values)
-        {
-            btn.SpawnAnimation();
-        }
-
         
         PoolBar.SetPool(unit);
         if (_selectedUnit?.UnitId == unit.UnitId)
         {
+            foreach (var btn in _abilityButtonsMap.Values)
+            {
+                btn.SpawnAnimation();
+            }
             return;
         }
 

@@ -27,7 +27,7 @@ public readonly record struct CastResult(bool Success, CastFailureReason Failure
 /// Immutable context containing the environment for ability execution.
 /// Contains references to the game state that should not be modified during ability execution.
 /// </summary>
-public sealed class AbilityContext
+public partial class AbilityContext : Resource
 {
     public required Unit Caster { get; init; }
     public required AbilityData Ability { get; init; }
@@ -39,7 +39,7 @@ public sealed class AbilityContext
 /// Mutable payload containing the parameters for ability execution.
 /// Contains data that can be modified during ability execution (targets, origin, results).
 /// </summary>
-public sealed class AbilityPayload
+public partial class AbilityPayload : Resource
 {
     /// <summary>
     /// Accumulated targets from incremental selection (e.g., during AddAbilityTargetCommand).

@@ -1,70 +1,99 @@
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Units.Resources;
+using AKidsDream.Units.Resources.Components;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;
 
 public partial class EventBus : Node
 {
-	public static EventBus Instance { get; private set; }
+    public static EventBus Instance { get; private set; }
 
-	public override void _EnterTree()
-	{
-		Instance = this;
-	}
-	
-	public override void _ExitTree()
-	{
-		Instance = null;
-	}
+    public override void _EnterTree()
+    {
+        Instance = this;
+    }
 
-	// -- GAME SIGNALS --
+    public override void _ExitTree()
+    {
+        Instance = null;
+    }
 
-	[Signal] public delegate void GameInitializedEventHandler();
+    // -- GAME SIGNALS --
 
-	[Signal] public delegate void NewRoundStartedEventHandler(int playerIdInt, int newRound);
+    [Signal]
+    public delegate void GameInitializedEventHandler();
 
-	[Signal] public delegate void TurnStartedEventHandler(int playerIdInt, int round);
+    [Signal]
+    public delegate void NewRoundStartedEventHandler(int playerIdInt, int newRound);
 
-	[Signal] public delegate void TurnEndedEventHandler(int playerIdInt, int round);
+    [Signal]
+    public delegate void TurnStartedEventHandler(int playerIdInt, int round);
 
-	// [Signal] public delegate void ActivePlayerChangedEventHandler(int previousPlayerIdInt, int currentPlayerIdInt, int round);
+    [Signal]
+    public delegate void TurnEndedEventHandler(int playerIdInt, int round);
 
-	[Signal] public delegate void RoundStartedEventHandler(int round);
+    // [Signal] public delegate void ActivePlayerChangedEventHandler(int previousPlayerIdInt, int currentPlayerIdInt, int round);
 
-	// -- UNIT SIGNALS --
+    [Signal]
+    public delegate void RoundStartedEventHandler(int round);
 
-	// NOTE: Unit Created gets emitted on _Ready not on Unit.Init(...);
+    // -- UNIT SIGNALS --
 
-	[Signal] public delegate void UnitCreatedEventHandler(Unit unit);
+    // NOTE: Unit Created gets emitted on _Ready not on Unit.Init(...);
 
-	[Signal] public delegate void UnitSelectedEventHandler(Unit unit);
+    [Signal]
+    public delegate void UnitCreatedEventHandler(Unit unit);
 
-	[Signal] public delegate void UnitDeselectedEventHandler(Unit unit);
+    [Signal]
+    public delegate void UnitSelectedEventHandler(Unit unit);
 
-	[Signal] public delegate void UnitKilledEventHandler(Unit unit);
+    [Signal]
+    public delegate void UnitDeselectedEventHandler(Unit unit);
 
-	[Signal] public delegate void UnitMovedEventHandler(Unit unit, Vector2I oldTile, Vector2I newTile);
+    [Signal]
+    public delegate void UnitKilledEventHandler(Unit unit);
 
-	// -- Abilities --
+    [Signal]
+    public delegate void UnitMovedEventHandler(Unit unit, Vector2I oldTile, Vector2I newTile);
 
-	[Signal] public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData abilityData);
-	[Signal] public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability, EffectResult result);
+    // -- PIC --
+    [Signal]
+    public delegate void NewTileHoveredEventHandler(Unit unit, AbilityContext ctx, AbilityPayload payload);
 
-	[Signal] public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
-	
-	[Signal] public delegate void EffectTriggerStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
-	[Signal] public delegate void EffectTriggerEndEventHandler(Unit unit, AbilityData ability, EffectData effect);
+    // -- Abilities --
 
-	[Signal] public delegate void EffectApplyStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
-	[Signal] public delegate void EffectApplyEndEventHandler(Unit unit, AbilityData ability, EffectData effect, EffectResult result);
+    [Signal]
+    public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData abilityData);
 
-	
-	
-	// -- UI SIGNALS --
+    [Signal]
+    public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability, EffectResult result);
 
-	[Signal] public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);
+    [Signal]
+    public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
 
-	[Signal] public delegate void EndTurnButtonPressedEventHandler(int callerPlayerIdInt);
+    [Signal]
+    public delegate void EffectTriggerStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
+
+    [Signal]
+    public delegate void EffectTriggerEndEventHandler(Unit unit, AbilityData ability, EffectData effect);
+
+    [Signal]
+    public delegate void EffectApplyStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
+
+    [Signal]
+    public delegate void EffectApplyEndEventHandler(Unit unit, AbilityData ability, EffectData effect,
+        EffectResult result);
+
+    [Signal]
+    public delegate void AbilityDeselectedEventHandler(Unit unit);
+
+    // -- UI SIGNALS --
+
+    [Signal]
+    public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);
+
+    [Signal]
+    public delegate void EndTurnButtonPressedEventHandler(int callerPlayerIdInt);
 }

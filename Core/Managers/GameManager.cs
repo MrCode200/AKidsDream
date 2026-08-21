@@ -155,6 +155,15 @@ public class GameCreationPayload
 
 // CHECK: if commands DeselectAbilityCommand and SelectAbilityCommand are needed? (as can be bug as DeselectUnitCommand takes Unit)
 
+
+// NEXT:
+// TODO:
+// make modular tweenComponent, update abilityButton to use its animation when visibility changed, or ready
+// Use Visibility changed signal to trigger animation, 
+// how to make sure for ready that the tweenComponent is faster (set as child for node which to tween?)
+
+// TODO: on ability selected, if no tile exist to select return error (don't let it become selected in the first place)
+// TODO: make pool bar stretch automatically with animation based on label size (numbers)
 public partial class GameManager : Node2D
 {
 	[Export] public ControllerFactory ControllerFactory;

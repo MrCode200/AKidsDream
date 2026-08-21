@@ -148,6 +148,8 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
     private void OnAbilityBtnPressed(Unit unit, AbilityData ability)
     {
         if (!_isMyTurn) return;
+        
+        ClearCurrentAbility();
         CurrentSelectedAbility = ability;
 
         StateMachine.ChangeState(null, nameof(OnAbilitySelectedState), true);
@@ -195,7 +197,10 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 
         if (!isAnyUnitCasting)
             AbilityVisualizer.ClearTilemaps();
-        
+
+        if (CurrentSelectedUnit != null)
+            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityDeselected, CurrentSelectedUnit);
+
         CurrentSelectedAbility = null;
         StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
     }
