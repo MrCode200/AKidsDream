@@ -63,7 +63,8 @@ Open the project in Godot and press Play.
 ## 🎮 How to play (quick)
 
 `Left click` -- select units and interact with tiles \
-`Right click` -- Deletes selected tile (for multi selected tiles)
+`Right click` -- Deletes selected tile (for multi selected tiles) \
+`Hover` -- To see ability Descriptions hover of the respected Button \
 `End Turn` -- finish your turn \
 `~` (tilde) -- open the developer console for debug/test commands \
 **Typical turn**: select a unit → move → use an ability → end turn. \
