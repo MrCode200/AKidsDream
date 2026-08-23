@@ -1,6 +1,6 @@
 ﻿# A Kid's Dream — Turn-based Tactics War Game
 
-A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scissors board game I made as a kid. Command modular units with unique abilities over a tiled battlefield and see how battles unfold.
+A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scissors board game I made as a kid. Command modular units with unique abilities over a tiled battlefield and see how battles play out.
 
 <p align="center">
   <a
@@ -38,7 +38,7 @@ When I was a child, I created a small board game using paper and scissors. It wa
 
 Tip: use the developer console to spawn units for testing (see Developer console commands).
 
-I attach exported builds on the Releases page — those run without Godot.
+I attach exported builds on the Releases page, those run without Godot.
 
 To run locally:
 
