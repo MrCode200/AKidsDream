@@ -38,7 +38,7 @@ public readonly struct Id<TTag> : IEquatable<Id<TTag>> where TTag : IIdTag
         {
             case <= 0 when _noneValueSet:
                 Log.Here()
-                    .Error("{Type} initialized with unrecommended id <= 0: {Id}", typeof(TTag).Name, id);
+                    .Err("{Type} initialized with unrecommended id <= 0: {Id}", typeof(TTag).Name, id);
                 break;
             case <= 0:
                 _noneValueSet = true;

@@ -1,7 +1,7 @@
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
-using AKidsDream.Units.Resources;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common;
+using AKidsDream.Common.Components;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;
@@ -9,6 +9,18 @@ namespace AKidsDream.Managers.SaveSystems;
 public partial class EventBus : Node
 {
     public static EventBus Instance { get; private set; }
+    
+    [Signal] public delegate void CallDeferredReachedEventHandler();
+
+    public override void _Process(double delta)
+    {
+        CallDeferred(nameof(EmitCallDeferredReached));
+    }
+    
+    private void EmitCallDeferredReached()
+    {
+        EmitSignal(SignalName.CallDeferredReached);
+    }
 
     public override void _EnterTree()
     {

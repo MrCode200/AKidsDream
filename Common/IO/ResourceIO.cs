@@ -34,7 +34,7 @@ public static class ResourceIO
         path = SetFileExtension(path, ".tres");
         if (string.IsNullOrEmpty(path))
         {
-            _log.Here().Error("Path is not set, cannot load resource");
+            _log.Here().Err("Path is not set, cannot load resource");
             return null;
         }
         
@@ -53,7 +53,7 @@ public static class ResourceIO
         }
         catch (InvalidCastException e)
         {
-            _log.Here().Error(e, "Resource at {Path} is not of type {ExpectedType}", path, typeof(T).Name);
+            _log.Here().Err(e, "Resource at {Path} is not of type {ExpectedType}", path, typeof(T).Name);
             return null;
         }
     }
@@ -64,7 +64,7 @@ public static class ResourceIO
 
         if (string.IsNullOrEmpty(path))
         {
-            _log.Here().Error("Path is not set, cannot save resource");
+            _log.Here().Err("Path is not set, cannot save resource");
             return Error.InvalidParameter;
         }
         
@@ -74,7 +74,7 @@ public static class ResourceIO
         if (result == Error.Ok)
             _log.Here().Debug("Resource saved to {Path} {ResourceType}", path, resource.GetType().Name);
         else
-            _log.Here().Error("Failed to save resource to {Path} {Error}", path, result);
+            _log.Here().Err("Failed to save resource to {Path} {Error}", path, result);
         
         return result;
     }

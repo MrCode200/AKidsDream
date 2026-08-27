@@ -58,7 +58,7 @@ public partial class CommandExecutor : Node
         }
         catch (Exception e)
         {
-            _log.Here().Error(e, "Command {CommandType} failed with exception", command.GetType().Name);
+            _log.Here().Err(e, "Command {CommandType} failed with exception", command.GetType().Name);
             result = CommandResult.Fail(command, CommandFailureType.Unknown, e.Message);
         }
 
@@ -94,7 +94,7 @@ public partial class CommandExecutor : Node
         }
         catch (Exception e)
         {
-            _log.Here().Error(e, "Async command {CommandType} failed with exception", baseCommand.GetType().Name);
+            _log.Here().Err(e, "Async command {CommandType} failed with exception", baseCommand.GetType().Name);
             result = CommandResult.Fail(baseCommand, CommandFailureType.Unknown, e.Message);
         }
 

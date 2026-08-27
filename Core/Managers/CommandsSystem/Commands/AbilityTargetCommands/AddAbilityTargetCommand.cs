@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common.Components;
 using Godot;
 
 namespace AKidsDream.Commands;

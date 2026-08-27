@@ -4,175 +4,227 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
 using Serilog;
 
+[GlobalClass]
+[Icon("res://Assets/NodeIcons/animation.svg")]
 public partial class AnimationComponent : Node
 {
-	[Export] public Unit Unit;
-	[Export] public AnimatedSprite2D Animator;
-	[Export] public StringName DefaultAnimation = "Idle";
-	public Global.UnitColor UnitColor;
+    [Export] public Unit Unit;
+    [Export] public AnimatedSprite2D Animator;
+    [Export] public StringName DefaultAnimation = "Idle";
 
-	private ILogger _log = GameLogger.For<AnimationComponent>();
+    public Global.UnitColor UnitColor;
 
-	private int _currentFrame = -1;
-	private int _loopCount;
-	private readonly HashSet<int> _reachedFrames = [];
-	private StringName _currentAnimation;
+    private ILogger _log = GameLogger.For<AnimationComponent>();
 
-	public override void _Ready()
-	{
-		_log = _log.ForContext("UnitName", Unit?.UnitName)
-			.ForContext("UnitId", Unit?.UnitId);
+    private readonly HashSet<int> _reachedFrames = [];
+    private StringName _activeAnimation;
+    private int _currentFrame = -1;
+    private int _loopCount;
+
+    /*
+    public StringName _activeAnimation
+    {
+        get => _activeAnimation;
+        set
+        {
+            _activeAnimation = value;
+            EmitSignal(SignalName.TrackingUpdated);
+        }
+    }
+
+    private int _currentFrame
+    {
+        get => _currentFrame;
+        set
+        {
+            if (_currentFrame == value) return;
+            _currentFrame = value;
+            EmitSignal(SignalName.TrackingUpdated);
+        }
+    }
+
+    private int _loopCount
+    {
+        get => _loopCount;
+        set
+        {
+            _loopCount = value;
+            EmitSignal(SignalName.TrackingUpdated);
+        }
+    }
+
+        [Signal]
+    public delegate void TrackingUpdatedEventHandler();
+    */
 
 
-		if (Animator == null) return;
+    public override void _Ready()
+    {
+        _log = _log.ForContext("UnitName", Unit?.UnitName)
+            .ForContext("UnitId", Unit?.UnitId);
 
-		Animator.AnimationLooped += OnAnimationLooped;
-		Animator.AnimationFinished += OnAnimationFinished;
-		
-		var defaultAnimationName = CreateAnimationString(DefaultAnimation);
-		
-		if (!string.IsNullOrEmpty(defaultAnimationName) && !Animator.SpriteFrames.HasAnimation(defaultAnimationName))
-		{
-			_log.Here().Warn("Default animation '{DefaultAnimation}' not found in sprite frames", defaultAnimationName);
-			return;
-		}
 
-		PlayAnimation(DefaultAnimation);
-	}
+        if (Animator == null) return;
 
-	public override void _Process(double delta)
-	{
-		if (Animator == null || !Animator.IsPlaying())
-			return;
+        Animator.AnimationLooped += OnAnimationLooped;
+        Animator.AnimationFinished += OnAnimationFinished;
+        Animator.FrameChanged += OnFrameChanged;
+        Animator.AnimationChanged += OnAnimationChanged;
 
-		var newFrame = Animator.Frame;
-		if (newFrame != _currentFrame)
-		{
-			_currentFrame = newFrame;
-			_reachedFrames.Add(_currentFrame);
-		}
-	}
+        var defaultAnimationName = CreateAnimationString(DefaultAnimation);
 
-	private StringName CreateAnimationString(StringName animationName)
-	{
-		return $"{UnitColor}{Unit.UnitName}{animationName}";
-	}
+        if (!string.IsNullOrEmpty(defaultAnimationName) && !Animator.SpriteFrames.HasAnimation(defaultAnimationName))
+        {
+            _log.Here().Warn("Default animation '{DefaultAnimation}' not found in sprite frames", defaultAnimationName);
+            return;
+        }
 
-	public void PlayAnimation(StringName animationName)
-	{
-		var animationString = CreateAnimationString(animationName);
-		if (!Animator.SpriteFrames.HasAnimation(animationString))
-		{
-			Log.ForContext<AnimationComponent>().Here().Warn("Animation not found {AnimationString}", animationString);
-			return;
-		}
+        PlayAnimation(DefaultAnimation);
+    }
 
-		Animator.Stop();
-		ResetTracking();
-		_currentAnimation = animationString;
-		_log.Here().Debug("Playing animation {AnimationString}", animationString);
-		Animator.Play(animationString);
-	}
+    private StringName CreateAnimationString(StringName animationName)
+    {
+        return $"{UnitColor}{animationName}";
+    }
 
-	public void StopAnimation()
-	{
-		Animator.Stop();
-		ResetTracking();
-		TryPlayDefaultAnimation();
-	}
+    public void PlayAnimation(StringName animationName)
+    {
+        var animationString = CreateAnimationString(animationName);
+        if (!Animator.SpriteFrames.HasAnimation(animationString))
+        {
+            Log.ForContext<AnimationComponent>().Here().Warn("Animation not found {AnimationString}", animationString);
+            return;
+        }
 
-	// -- UTIL MEHTODS --
+        Animator.Stop();
+        ResetTracking();
+        _activeAnimation = animationString;
+        _log.Here().Debug("Playing animation {AnimationString}", animationString);
+        Animator.Play(animationString);
+    }
 
-	public int GetCurrentFrame() => _currentFrame;
+    public void StopAnimation()
+    {
+        Animator.Stop();
+        ResetTracking();
+        TryPlayDefaultAnimation();
+    }
 
-	public int GetLoopCount() => _loopCount;
+// -- UTIL MEHTODS --
 
-	public StringName CurrentAnimation() => _currentAnimation;
+    public int GetCurrentFrame() => _currentFrame;
 
-	public bool HasReachedFrame(int frame) => _reachedFrames.Contains(frame);
+    public int GetLoopCount() => _loopCount;
 
-	public int GetAnimationFrameCount()
-	{
-		if (Animator?.SpriteFrames == null || _currentAnimation == null)
-			return 0;
-		return Animator.SpriteFrames.GetFrameCount(_currentAnimation);
-	}
+    public StringName GetCurrentAnimation() => _activeAnimation;
 
-	private void ResetTracking()
-	{
-		_currentFrame = -1;
-		_loopCount = 0;
-		_reachedFrames.Clear();
-		_currentAnimation = new StringName("");
-	}
+    public bool HasReachedFrame(int frame) => _reachedFrames.Contains(frame);
 
-	private void TryPlayDefaultAnimation()
-	{
-		if (!string.IsNullOrEmpty(DefaultAnimation))
-		{
-			PlayAnimation(DefaultAnimation);
-		}
-	}
+    public int GetAnimationFrameCount()
+    {
+        if (Animator?.SpriteFrames == null || _activeAnimation == null)
+            return 0;
+        return Animator.SpriteFrames.GetFrameCount(_activeAnimation);
+    }
 
-	// -- WAIT METHODS --
+    private void ResetTracking()
+    {
+        _currentFrame = -1;
+        _loopCount = 0;
+        _reachedFrames.Clear();
+        _activeAnimation = new StringName("");
+    }
 
-	/// <summary>
-	/// Waits until the animation reaches a specific frame.
-	/// </summary>
-	/// <param name="targetFrame">The frame number to wait for.</param>
-	public async Task WaitForTargetFrame(int targetFrame)
-	{
-		while (Animator.IsPlaying() && _currentFrame != targetFrame)
-			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-	}
+    private void TryPlayDefaultAnimation()
+    {
+        if (!string.IsNullOrEmpty(DefaultAnimation))
+        {
+            PlayAnimation(DefaultAnimation);
+        }
+    }
 
-	public async Task WaitForTargetLoop(int targetLoop)
-	{
-		while (Animator.IsPlaying() && _loopCount < targetLoop)
-			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-	}
+// -- WAIT METHODS --
 
-	/// <summary>
-	/// Waits until the animation has looped a specific number of times.
-	/// </summary>
-	/// <param name="loopCount">The target loop count to wait for.</param>
-	public async Task WaitForLoopCount(int loopCount)
-	{
-		while (Animator.IsPlaying() && _loopCount < loopCount)
-			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-	}
+    /// <summary>
+    /// Waits until the animation reaches a specific frame.
+    /// </summary>
+    /// <param name="targetFrame">The frame number to wait for.</param>
+    public async Task WaitForTargetFrame(int targetFrame)
+    {
+        var targetAnimation = _activeAnimation;
+        while (Animator.IsPlaying() && targetAnimation == _activeAnimation && _currentFrame != targetFrame)
+            await ToSignal(EventBus.Instance, EventBus.SignalName.CallDeferredReached);
+    }
 
-	/// <summary>
-	/// Waits for a specific number of frames to pass from the current frame.
-	/// </summary>
-	/// <param name="frameCount">The number of frames to wait for.</param>
-	public async Task WaitForFrames(int frameCount)
-	{
-		var targetFrame = (_currentFrame + frameCount) % GetAnimationFrameCount();
-		var targetLoops = (_currentFrame + frameCount) / GetAnimationFrameCount();
+    public async Task WaitForTargetLoop(int targetLoop)
+    {
+        var targetAnimation = _activeAnimation;
+        while (Animator.IsPlaying() && targetAnimation == _activeAnimation && _loopCount < targetLoop)
+            await ToSignal(EventBus.Instance, EventBus.SignalName.CallDeferredReached);
+    }
 
-		while (Animator.IsPlaying())
-		{
-			if (_loopCount < targetLoops && _currentFrame < targetFrame)
-				await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-		}
-	}
+    /// <summary>
+    /// Waits until the animation has looped a specific number of times.
+    /// </summary>
+    /// <param name="loopCount">The target loop count to wait for.</param>
+    public async Task WaitForLoopCount(int loopCount)
+    {
+        await WaitForFrames(loopCount * GetAnimationFrameCount());
+    }
 
-	// -- ON SIGNALS --
+    /// <summary>
+    /// Waits for a specific number of frames to pass from the current frame.
+    /// </summary>
+    /// <param name="frameCount">The number of frames to wait for.</param>
+    public async Task WaitForFrames(int frameCount)
+    {
+        var currentFrame = (_currentFrame >= 0) ? _currentFrame : 0;
+        var targetFrame = (currentFrame + frameCount) % GetAnimationFrameCount();
+        var targetLoops = (currentFrame + frameCount) / GetAnimationFrameCount();
 
-	private void OnAnimationLooped()
-	{
-		_loopCount++;
-		_reachedFrames.Clear();
-	}
+        var targetAnimation = _activeAnimation;
+        while (
+            Animator.IsPlaying()
+            && targetAnimation == _activeAnimation
+            && ( // While Loop count hasn't been reached, don't yet check for frames
+                _loopCount < targetLoops ||
+                _loopCount == targetLoops && _currentFrame < targetFrame
+            )
+        )
+            await ToSignal(EventBus.Instance, EventBus.SignalName.CallDeferredReached);
+    }
 
-	private void OnAnimationFinished()
-	{
-		_loopCount++;
-		_log.Here().Debug("Animation finished. Loop count: {LoopCount}", _loopCount);
-		TryPlayDefaultAnimation();
-	}
+// -- ON SIGNALS --
+
+    private void OnFrameChanged()
+    {
+        var frame = Animator.Frame;
+        if (frame == _currentFrame)
+            return;
+
+        _currentFrame = frame;
+        _reachedFrames.Add(_currentFrame);
+    }
+
+    private void OnAnimationChanged()
+    {
+        ResetTracking();
+        _activeAnimation = Animator.Animation;
+    }
+
+    private void OnAnimationLooped()
+    {
+        _loopCount++;
+        _reachedFrames.Clear();
+    }
+
+    private void OnAnimationFinished()
+    {
+        _loopCount++;
+        _log.Here().Debug("Animation finished. Loop count: {LoopCount}", _loopCount);
+        TryPlayDefaultAnimation();
+    }
 }

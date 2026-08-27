@@ -151,7 +151,10 @@ layer = 50
 [node name="UnitInforBar" parent="UILayer" unique_id=925057221 instance=ExtResource("5_d2vp3")]
 
 [node name="EndTurnButton" parent="UILayer" unique_id=136482551 instance=ExtResource("12_7hfl2")]
-offset_left = -373.0
-offset_right = -245.0
+modulate = Color(0.72464263, 0.7246426, 0.7246426, 1)
+offset_left = -254.0
+offset_top = -45.176025
+offset_right = -126.0
+offset_bottom = 82.823975
 
 [node name="RoundCounter" parent="UILayer" unique_id=319109358 instance=ExtResource("12_j3kke")]

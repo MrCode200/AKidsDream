@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using AKidsDream.Common.Logging;
 using AKidsDream.GameBoard;
-using AKidsDream.Units.Resources;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common;
+using AKidsDream.Common.Components;
 using Godot;
 using Serilog;
 

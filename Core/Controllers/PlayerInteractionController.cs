@@ -5,7 +5,7 @@ using AKidsDream.Commands;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.Managers;

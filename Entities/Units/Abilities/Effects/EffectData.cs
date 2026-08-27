@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common.Components;
 using Godot.Collections;
 using Serilog;
 
@@ -127,7 +127,7 @@ public abstract partial class EffectData : Resource
 		{
 			Log.ForContext("UnitId", ctx.Caster.UnitId)
 				.ForContext("UnitName", ctx.Caster.Name)
-				.Here().Error(exception, "Error executing effect");
+				.Here().Err(exception, "Error executing effect");
 
 			return finalResult;
 		}
@@ -142,7 +142,7 @@ public abstract partial class EffectData : Resource
 		{
 			EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerStart, ctx.Caster, ctx.Ability, this);
         
-			var waitTask = WaitForTriggerAsync(ctx);
+			var waitTask = AwaitTriggerAsync(ctx);
 			UpdatePayload(ctx, payload); 
 			await waitTask;
 
@@ -163,13 +163,13 @@ public abstract partial class EffectData : Resource
 	private void PlayAnimationIfNeeded(AbilityContext ctx)
 	{
 		if (string.IsNullOrEmpty(AnimationName)) return;
-		if (!ReplayIfAlreadyPlaying && ctx.Caster.AnimationC.CurrentAnimation() == AnimationName)
+		if (!ReplayIfAlreadyPlaying && ctx.Caster.AnimationC.GetCurrentAnimation() == AnimationName)
 			return;
 		
 		ctx.Caster.AnimationC.PlayAnimation(AnimationName);
 	}
 
-	private async Task WaitForTriggerAsync(AbilityContext context)
+	private async Task AwaitTriggerAsync(AbilityContext context)
 	{
 		switch (_trigger)
 		{
@@ -216,7 +216,7 @@ public abstract partial class EffectData : Resource
 				.SelectMany(tile => EffectPattern.GetTiles(tile, context.Board, context.CasterId))
 				.ToArray();
 
-		Log.ForContext<EffectData>().Here().Error("EffectPattern is null {EffectType}", GetType().Name);
+		Log.ForContext<EffectData>().Here().Err("EffectPattern is null {EffectType}", GetType().Name);
 		return [];
 	}
 

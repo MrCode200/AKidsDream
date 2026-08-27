@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://basi3xn2nv474"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_uqonn"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_xamx4"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_t5fn1"]
+
+[sub_resource type="Resource" id="Resource_rnaty"]
+script = ExtResource("2_xamx4")
+Property = NodePath("modulate:a")
+UseExplicitFrom = true
+FromValue = 1.0
+ToValue = 0.0
+Duration = 0.75
+
+[sub_resource type="Resource" id="Resource_s4tw3"]
+script = ExtResource("2_xamx4")
+Property = NodePath("position")
+FromValue = Vector2(0, -16)
+ToValue = Vector2(0, -64)
+SetValueRelative = true
+Duration = 0.75
+Transition = 7
+Ease = 0
+RunParallelWithPrevious = true
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_fkssm"]
+script = ExtResource("2_xamx4")
+Property = NodePath("position")
+FromValue = null
+ToValue = Vector2(0, 64)
+SetValueRelative = true
+Duration = 0.001
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[resource]
+script = ExtResource("3_t5fn1")
+Steps = Array[ExtResource("2_xamx4")]([SubResource("Resource_rnaty"), SubResource("Resource_s4tw3"), SubResource("Resource_fkssm")])
+Triggers = Array[int]([])
+Identifier = &"FloatUpAndFade"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

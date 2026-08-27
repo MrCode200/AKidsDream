@@ -62,13 +62,13 @@ public partial class StateMachine : Node
 	{
 		if (state == null!)
 		{
-			_log.Here().Error("Cannot add a null state");
+			_log.Here().Err("Cannot add a null state");
 			return;
 		}
 
 		if (state is Node && !_isRegisteringNodeStatesFromReady)
 		{
-			_log.Here().Error("Cannot add Node states through AddState. Node states must be added as children in the scene tree.");
+			_log.Here().Err("Cannot add Node states through AddState. Node states must be added as children in the scene tree.");
 			return;
 		}
 
@@ -100,7 +100,7 @@ public partial class StateMachine : Node
 		if (!_states.ContainsKey(stateName)) return;
 		if (_states[stateName] is Node)
 		{
-			_log.Here().Error("Cannot remove Node states through RemoveState. Node states are managed by the scene tree.");
+			_log.Here().Err("Cannot remove Node states through RemoveState. Node states are managed by the scene tree.");
 			return;
 		}
 		_states[stateName].ChangeState = null!;
@@ -131,7 +131,7 @@ public partial class StateMachine : Node
 	{
 		if (!force && state?.GetType().Name != _currentState?.GetType().Name)
 		{
-			_log.Here().Error(
+			_log.Here().Err(
 				"Trying to change state to '{TargetState}', but caller '{CallerState}' is not current state '{CurrentState}'",
 				stateName,
 				state?.GetType().Name,
@@ -140,7 +140,7 @@ public partial class StateMachine : Node
 		}
 		if (!_states.TryGetValue(stateName, out var value))
 		{
-			_log.Here().Error("State '{StateName}' does not exist. Not changing state.", stateName);
+			_log.Here().Err("State '{StateName}' does not exist. Not changing state.", stateName);
 			return;
 		}
 

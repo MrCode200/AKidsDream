@@ -7,8 +7,8 @@ using AKidsDream.Common.Logging;
 using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
-using AKidsDream.Units.Resources;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common;
+using AKidsDream.Common.Components;
 using Godot;
 using Serilog;
 

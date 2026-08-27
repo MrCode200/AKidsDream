@@ -14,6 +14,81 @@
 [ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="9_07yln"]
 [ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="10_yktuj"]
 
+[sub_resource type="Shader" id="Shader_35v56"]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+// Variable for hit effect
+uniform bool get_hit = false;
+
+// Strength of the hit flash and shake.
+uniform float hit_effect : hint_range(0.0, 1.0) = 1.0;
+uniform float shake_intensity : hint_range(0.0, 50.0, 0.1) = 10.0;
+
+uniform float flash_dur_seconds = 30;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.0, 0.0, 1.0);
+
+float rand(vec2 co) {
+    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void vertex() {
+	if (get_hit) {
+		float time = TIME * 30.0;
+
+		vec2 random_offset = vec2(
+			rand(vec2(time, 0.0)) * 2.0 - 1.0,
+			rand(vec2(time, 10.0)) * 2.0 - 1.0
+		);
+
+		VERTEX += random_offset * shake_intensity * hit_effect;
+	}
+}
+
+void fragment() {
+	vec4 original_color = texture(TEXTURE, UV);
+
+	if (get_hit) {
+		// sin(TIME * (2.0 * PI / flashSpeedSeconds)) // starts at 0.5 color
+        float flash = sin(TIME * (2.0 * PI / flash_dur_seconds) - PI * 0.5) * 0.5 + 0.5; // starts at 0 color
+        flash *= original_color.a;
+
+		vec4 final_color = mix(original_color, flash_color, flash);
+        final_color = mix(original_color, final_color, hit_effect);
+		final_color.a = original_color.a;
+
+		COLOR = final_color;
+	} else {
+		COLOR = original_color;
+	}
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_07yln"]
+resource_local_to_scene = true
+shader = SubResource("Shader_35v56")
+shader_parameter/get_hit = false
+shader_parameter/hit_effect = 0.53600002546
+shader_parameter/shake_intensity = 2.70000004023324
+shader_parameter/flash_dur_seconds = 0.3
+shader_parameter/flash_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_77vot"]
+script = ExtResource("8_35v56")
+MaxCount = 1
+CurrentCount = 1
+Name = &"Move"
+Icon = ExtResource("10_yktuj")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
+[sub_resource type="Resource" id="Resource_dwawl"]
+script = ExtResource("8_35v56")
+MaxCount = 1
+CurrentCount = 1
+Name = &"Combat"
+Icon = ExtResource("9_07yln")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3pasa"]
 shader = ExtResource("4_e8lk0")
 shader_parameter/color = Color(0, 0, 0, 1)
@@ -134,7 +209,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_bnfj8")
 }],
 "loop": 0,
-"name": &"BlueSoldierAttack",
+"name": &"BlueAttack",
 "speed": 5.0
 }, {
 "frames": [{
@@ -163,7 +238,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_yktuj")
 }],
 "loop": 1,
-"name": &"BlueSoldierIdle",
+"name": &"BlueIdle",
 "speed": 5.0
 }, {
 "frames": [{
@@ -180,7 +255,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_s2b7g")
 }],
 "loop": 0,
-"name": &"RedSoldierAttack",
+"name": &"RedAttack",
 "speed": 5.0
 }, {
 "frames": [{
@@ -209,105 +284,30 @@ animations = [{
 "texture": SubResource("AtlasTexture_1gaix")
 }],
 "loop": 1,
-"name": &"RedSoldierIdle",
+"name": &"RedIdle",
 "speed": 5.0
 }]
-
-[sub_resource type="Shader" id="Shader_35v56"]
-resource_local_to_scene = true
-code = "shader_type canvas_item;
-
-// Variable for hit effect
-uniform bool get_hit = false;
-
-// Strength of the hit flash and shake.
-uniform float hit_effect : hint_range(0.0, 1.0) = 1.0;
-uniform float shake_intensity : hint_range(0.0, 50.0, 0.1) = 10.0;
-
-uniform float flash_dur_seconds = 30;
-uniform vec4 flash_color : source_color = vec4(1.0, 0.0, 0.0, 1.0);
-
-float rand(vec2 co) {
-    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
-}
-
-void vertex() {
-	if (get_hit) {
-		float time = TIME * 30.0;
-
-		vec2 random_offset = vec2(
-			rand(vec2(time, 0.0)) * 2.0 - 1.0,
-			rand(vec2(time, 10.0)) * 2.0 - 1.0
-		);
-
-		VERTEX += random_offset * shake_intensity * hit_effect;
-	}
-}
-
-void fragment() {
-	vec4 original_color = texture(TEXTURE, UV);
-
-	if (get_hit) {
-		// sin(TIME * (2.0 * PI / flashSpeedSeconds)) // starts at 0.5 color
-        float flash = sin(TIME * (2.0 * PI / flash_dur_seconds) - PI * 0.5) * 0.5 + 0.5; // starts at 0 color
-        flash *= original_color.a;
-
-		vec4 final_color = mix(original_color, flash_color, flash);
-        final_color = mix(original_color, final_color, hit_effect);
-		final_color.a = original_color.a;
-
-		COLOR = final_color;
-	} else {
-		COLOR = original_color;
-	}
-}
-"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_07yln"]
-resource_local_to_scene = true
-shader = SubResource("Shader_35v56")
-shader_parameter/get_hit = false
-shader_parameter/hit_effect = 0.53600002546
-shader_parameter/shake_intensity = 2.70000004023324
-shader_parameter/flash_dur_seconds = 0.3
-shader_parameter/flash_color = Color(1, 0, 0, 1)
-
-[sub_resource type="Resource" id="Resource_77vot"]
-script = ExtResource("8_35v56")
-CurrentCount = 1
-MaxCount = 1
-Name = "Move"
-Icon = ExtResource("10_yktuj")
-metadata/_custom_type_script = "uid://b14gay7t266tc"
-
-[sub_resource type="Resource" id="Resource_dwawl"]
-script = ExtResource("8_35v56")
-CurrentCount = 1
-MaxCount = 1
-Name = "Combat"
-Icon = ExtResource("9_07yln")
-metadata/_custom_type_script = "uid://b14gay7t266tc"
 
 [node name="Soldier" unique_id=1080513067 instance=ExtResource("1_jxj1f")]
 UnitStats = ExtResource("2_cord0")
 
-[node name="AnimatedSprite2D" parent="." index="0" unique_id=452479933]
-material = SubResource("ShaderMaterial_3pasa")
-scale = Vector2(0.7, 0.7)
-sprite_frames = SubResource("SpriteFrames_jo37d")
-animation = &"RedSoldierAttack"
-autoplay = "BlueSoldierIdle"
-SelectionMaterial = SubResource("ShaderMaterial_3pasa")
-
-[node name="SelectableComponent" parent="." index="2" unique_id=1872887520 node_paths=PackedStringArray("HoverIndicator")]
+[node name="SelectableComponent" parent="." index="1" unique_id=1872887520 node_paths=PackedStringArray("HoverIndicator")]
 HoverIndicator = NodePath("SelectionIndicatorSprite")
 
 [node name="CollisionShape2D" parent="SelectableComponent" index="0" unique_id=1804653846]
 position = Vector2(-0.421875, 0.25)
 
-[node name="HealthComponent" parent="." index="3" unique_id=1411632328]
+[node name="HealthComponent" parent="." index="2" unique_id=1411632328]
 OnDamageShader = SubResource("ShaderMaterial_07yln")
 
-[node name="AbilityComponent" parent="." index="5" unique_id=509071314]
+[node name="AbilityComponent" parent="." index="4" unique_id=509071314]
 InitialPoolDatas = Array[ExtResource("8_35v56")]([SubResource("Resource_77vot"), SubResource("Resource_dwawl")])
 InitialAbilityDatas = Array[ExtResource("2_x3wfe")]([ExtResource("4_f1fyr"), ExtResource("3_40uuh")])
+
+[node name="AnimatedSprite2D" parent="." index="5" unique_id=452479933]
+material = SubResource("ShaderMaterial_3pasa")
+scale = Vector2(0.7, 0.7)
+sprite_frames = SubResource("SpriteFrames_jo37d")
+animation = &"RedIdle"
+autoplay = "BlueIdle"
+SelectionMaterial = SubResource("ShaderMaterial_3pasa")

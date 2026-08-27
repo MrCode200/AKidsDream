@@ -3,7 +3,7 @@ using System.Linq;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
 using Godot;
 using Godot.Collections;
 

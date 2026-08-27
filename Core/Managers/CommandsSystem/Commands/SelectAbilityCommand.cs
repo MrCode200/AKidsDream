@@ -1,5 +1,5 @@
-﻿using AKidsDream.Units.Resources;
-using AKidsDream.Units.Resources.Components;
+﻿using AKidsDream.Common;
+using AKidsDream.Common.Components;
 using AKidsDream.Common.Logging;
 using Godot;
 using Serilog;

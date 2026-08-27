@@ -1,14 +1,14 @@
+using AKidsDream.Common.Components;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources.Components;
 using AKidsDream.Utilities;
 using Godot;
 using Serilog;
 
-namespace AKidsDream.Units.Resources;
+namespace AKidsDream.Common;
 
 /// <summary>
 /// Base class for all unit types in the game.

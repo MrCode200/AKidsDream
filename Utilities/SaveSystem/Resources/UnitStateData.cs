@@ -1,8 +1,9 @@
 ﻿using AKidsDream.Managers.SaveSystems;
 using Godot;
 
-namespace AKidsDream.Units.Resources;
+namespace AKidsDream.Common;
 
+// TODO: add pool count etc to save logic
 [Tool]
 public partial class UnitStateData : Resource
 {

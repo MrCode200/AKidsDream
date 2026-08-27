@@ -4,18 +4,19 @@ using Godot;
 using AKidsDream.Common.Logging;
 using Serilog;
 
-namespace AKidsDream.Units.Resources.Components;
+namespace AKidsDream.Common.Components;
 
 /// <summary>
 /// Manages health-related functionality for a game entity.
 /// Handles damage, healing, and death events through signals.
 /// </summary>
 [GlobalClass]
-[Icon("res://Assets/NodeIcons/icon-heart-50.svg")]
+[Icon("res://Assets/NodeIcons/heart.svg")]
 public partial class HealthComponent : Node
 {
 	[Export] public required AnimatedSprite2D Animator;
 	[Export] public ShaderMaterial? OnDamageShader;
+	[Export] public FloatingText? FloatingText;
 
 	/// <summary>
 	/// The stats data containing health information for this component.
@@ -85,6 +86,7 @@ public partial class HealthComponent : Node
 		UnitStats.Health -= amount;
 
 		PlayDamageShader();
+		FloatingText?.SetNewFloatingText($"-{amount} HP", new Color(220, 90, 90));
 
 		_log.Here().Info(
 			"Took {DamageAmount} damage, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
@@ -111,16 +113,15 @@ public partial class HealthComponent : Node
 		var previousHealth = UnitStats.Health;
 		amount = Math.Min(UnitStats.MaxHealth - UnitStats.Health, amount);
 		UnitStats.Health += amount;
-
-		if (amount > 0)
-		{
-			_log.Here().Info(
-				"Healed {HealAmount} health, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
-				amount,
-				previousHealth,
-				UnitStats.Health,
-				UnitStats.MaxHealth);
-		}
+		FloatingText?.SetNewFloatingText($"+{amount} HP", new Color(140, 210, 140));
+		
+		_log.Here().Info(
+			"Healed {HealAmount} health, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
+			amount,
+			previousHealth,
+			UnitStats.Health,
+			UnitStats.MaxHealth);
+	
 
 		EmitSignal(SignalName.HealthChanged, amount);
 	}

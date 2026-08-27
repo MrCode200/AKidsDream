@@ -6,7 +6,7 @@ using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Managers.SaveSystems.Rehydration;
 using Godot;

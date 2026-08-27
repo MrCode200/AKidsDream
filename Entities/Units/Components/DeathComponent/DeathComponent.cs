@@ -3,10 +3,10 @@ using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Logging;
 using Serilog;
 
-namespace AKidsDream.Units.Resources.Components;
+namespace AKidsDream.Common.Components;
 
 [GlobalClass]
-[Icon("res://Assets/NodeIcons/icon-skull-50.svg")]
+[Icon("res://Assets/NodeIcons/Skull.png")]
 public partial class DeathComponent : Node
 {
 	[Export] public Unit Unit;

@@ -2,7 +2,7 @@ using System;
 using AKidsDream.Common.Logging;
 using Godot;
 using Godot.Collections;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers.SaveSystems.Rehydration;
 using Serilog;

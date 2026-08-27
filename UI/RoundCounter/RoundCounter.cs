@@ -10,6 +10,8 @@ public partial class RoundCounter : Control
 {
     [Export] public Label RoundLabel;
     
+    [Signal] public delegate void UpdatedRoundCounterEventHandler(); // Used for tween as signal wrapper
+    
     public override void _Ready()
     {
         EventBus.Instance.NewRoundStarted += OnNewRoundStarted;
@@ -18,5 +20,6 @@ public partial class RoundCounter : Control
     private void OnNewRoundStarted(int playerIdInt, int newRound)
     {
         RoundLabel.Text = "Round " + newRound;
+        EmitSignal(SignalName.UpdatedRoundCounter);
     }
 }

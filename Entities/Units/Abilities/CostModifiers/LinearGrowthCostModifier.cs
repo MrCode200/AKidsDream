@@ -1,5 +1,5 @@
 using System;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common.Components;
 using Godot;
 
 namespace AKidsDream.Abilities.CostModifiers;
@@ -10,7 +10,8 @@ public partial class LinearGrowthCostModifier : CostModifier
 {
     [Export] public int Growth = 1;
     [Export] public bool IgnoreFirstTarget = true;
-    
+    public override bool CanReplenishPool() { return Growth < 0; }
+
     public override int GetCost(int baseCost, AbilityContext context, AbilityPayload payload)
     {
         var growthMult = Math.Max(payload.AccumulatedTargets.Count - (IgnoreFirstTarget ? 1 : 0), 0);

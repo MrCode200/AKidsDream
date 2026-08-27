@@ -3,8 +3,8 @@ using Godot;
 using System;
 using AKidsDream.Abilities;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common;
+using AKidsDream.Common.Components;
 
 public partial class PoolBar : Control
 {

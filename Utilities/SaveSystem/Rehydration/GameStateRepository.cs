@@ -36,7 +36,7 @@ public class GameStateRepository
         {
             Log.ForContext("StateFileName", stateFileName)
                 .Here()
-                .Error("Save file '{StateFileName}' exists at '{Path}' but failed to load", stateFileName, path);
+                .Err("Save file '{StateFileName}' exists at '{Path}' but failed to load", stateFileName, path);
  
             throw new InvalidDataException(
                 $"Save file '{stateFileName}' could not be parsed. The file is likely corrupted.");

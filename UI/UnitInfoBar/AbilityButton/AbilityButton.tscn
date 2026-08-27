@@ -2,7 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bxppoo78as3rs" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.cs" id="1_6y4ib"]
 [ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/UnitInfoBar/AbilityButton/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
+[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="2_mvhx4"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="5_53lnc"]
+[ext_resource type="Resource" uid="uid://dci64dn3kcor2" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseEnteredAnimation.tres" id="5_mvhx4"]
+[ext_resource type="Resource" uid="uid://ux8g57pgldjc" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseExitAnimation.tres" id="8_c0fnx"]
+[ext_resource type="Resource" uid="uid://bvv474knme5pp" path="res://UI/UnitInfoBar/AbilityButton/BtnSpawnAnimation.tres" id="9_t77bu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_m53bf"]
 shadow_size = 9
@@ -41,12 +46,14 @@ offset_right = 57.5
 offset_bottom = 51.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 6.283
 pivot_offset_ratio = Vector2(0.5, 0.5)
 alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="VSplitContainer" unique_id=951919968]
 custom_maximum_size = Vector2(115, 81)
 layout_mode = 2
+offset_transform_enabled = true
 theme_override_constants/margin_left = 17
 theme_override_constants/margin_right = 17
 
@@ -71,6 +78,12 @@ icon = ExtResource("3_6y4ib")
 icon_alignment = 1
 expand_icon = true
 
+[node name="TweenOnMouse" type="Node" parent="VSplitContainer/MarginContainer" unique_id=1536189066 node_paths=PackedStringArray("Target")]
+script = ExtResource("2_mvhx4")
+Target = NodePath("../Button")
+TweenDatas = Array[ExtResource("5_53lnc")]([ExtResource("8_c0fnx"), ExtResource("5_mvhx4")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+
 [node name="AbilityName" type="Label" parent="VSplitContainer" unique_id=504616585]
 custom_minimum_size = Vector2(115, 0)
 layout_mode = 2
@@ -80,3 +93,9 @@ text = "Ability Name"
 label_settings = SubResource("LabelSettings_m53bf")
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="TweenSpawn" type="Node" parent="VSplitContainer" unique_id=521254148 node_paths=PackedStringArray("Target")]
+script = ExtResource("2_mvhx4")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("5_53lnc")]([ExtResource("9_t77bu")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"

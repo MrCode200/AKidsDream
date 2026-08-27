@@ -5,7 +5,7 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
-using AKidsDream.Units.Resources.Components;
+using AKidsDream.Common.Components;
 
 namespace AKidsDream.Managers;
 

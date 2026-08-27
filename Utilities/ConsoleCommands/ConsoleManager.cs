@@ -49,7 +49,7 @@ public partial class ConsoleManager : Node
                 Log.Here().Debug("Added command '{CommandType}' as child", commandType);
             }
             else
-                Log.Here().Error("Failed to add command '{CommandType}' as child. (Command is not a Node)", commandType);
+                Log.Here().Err("Failed to add command '{CommandType}' as child. (Command is not a Node)", commandType);
         }
     }
 }

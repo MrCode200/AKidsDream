@@ -46,7 +46,7 @@ label_settings = SubResource("LabelSettings_tjdi3")
 
 [node name="ChangeLabel" type="Label" parent="HBoxContainer" unique_id=1749158819]
 layout_mode = 2
-text = "(+ZZ)"
+text = "(+00)"
 label_settings = SubResource("LabelSettings_h1dto")
 
 [node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=1087154222]

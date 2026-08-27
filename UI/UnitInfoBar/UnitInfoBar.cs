@@ -4,12 +4,17 @@ using AKidsDream.Abilities;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Units.Resources;
+using AKidsDream.Common;
+using AKidsDream.Common.Components;
 using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
+// TODO:
+// remake how UnitSeleciton is handled, add UpdateUnitInfoBar Method
+// If new unit is selected deselect old unit silently?/new signal for unit changed
+// When updated play animation only if deselected with no other unit selected,
 public partial class UnitInfoBar : Control, IBlockable
 {
     [Export]
@@ -24,15 +29,20 @@ public partial class UnitInfoBar : Control, IBlockable
     [Export] public HBoxContainer AbilityContainer = null!;
     [Export] public PackedScene AbilityBtnScene = null!;
     [Export] public PoolBar PoolBar = null!;
+    [Export] public TweenComponent SpawnTweenComponent = null!;
 
     private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
-
+    
     private Dictionary<StringName, AbilityButton> _abilityButtonsMap = new();
     private Unit? _selectedUnit;
     public bool IsBlocked { get; set; }
 
 
-    private void OnUnitDeselected(Unit _) => Visible = false;
+    private void OnUnitDeselected(Unit _)
+    {
+        _selectedUnit = null;
+        SpawnTweenComponent.RunAnimation("OnHide");
+    }
 
     public override void _Ready()
     {
@@ -49,20 +59,12 @@ public partial class UnitInfoBar : Control, IBlockable
     }
     
     // -- SIGNAL HANDLING --
-
     private void CreateUnitBar(Unit unit)
     {
         Visible = true;
+        SpawnTweenComponent.RunAnimation("OnShow");
         
         PoolBar.SetPool(unit);
-        if (_selectedUnit?.UnitId == unit.UnitId)
-        {
-            foreach (var btn in _abilityButtonsMap.Values)
-            {
-                btn.SpawnAnimation();
-            }
-            return;
-        }
 
         _selectedUnit = unit;
 

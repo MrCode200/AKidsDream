@@ -5,7 +5,12 @@
 [ext_resource type="PackedScene" uid="uid://bg45tgydfujx" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.tscn" id="2_00si8"]
 [ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://UI/UnitInfoBar/Assets/SmallRibbons_Joint.png" id="3_bvm5s"]
 [ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://UI/UnitInfoBar/Assets/Big Heart Idle (18x14).png" id="4_hvlrc"]
+[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="5_lbkgl"]
 [ext_resource type="PackedScene" uid="uid://dlrjsccvo38gr" path="res://UI/PoolBar/PoolBar.tscn" id="6_3yeci"]
+[ext_resource type="Resource" uid="uid://claswqmgsghq1" path="res://Common/Components/TweenComponent/TweenPresets/HoverTween.tres" id="6_80pi6"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="10_t08io"]
+[ext_resource type="Resource" uid="uid://bkxhhs2fa8hia" path="res://UI/UnitInfoBar/Tween/FadeInAndBounceTween.tres" id="12_h4pqt"]
+[ext_resource type="Resource" uid="uid://b4mqfv5p7ca6s" path="res://UI/UnitInfoBar/Tween/FadeOutTween.tres" id="13_t08io"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1j5su"]
 shadow_size = 9
@@ -75,7 +80,8 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="UnitInforBar" type="Control" unique_id=925057221 node_paths=PackedStringArray("UnitNameLabel", "UnitHealthLabel", "AbilityContainer", "PoolBar")]
+[node name="UnitInforBar" type="Control" unique_id=925057221 node_paths=PackedStringArray("UnitNameLabel", "UnitHealthLabel", "AbilityContainer", "PoolBar", "SpawnTweenComponent")]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -84,14 +90,16 @@ anchor_right = 0.5
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
+scale = Vector2(0.9, 0.9)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("1_hvlrc")
 UnitNameLabel = NodePath("UnitInforBoard/UnitBanner/UnitName")
-UnitHealthLabel = NodePath("UnitInforBoard/HealthAmount")
+UnitHealthLabel = NodePath("UnitInforBoard/CenterContainer/HealthAmount")
 AbilityContainer = NodePath("AbilityContainer")
 AbilityBtnScene = ExtResource("2_00si8")
 PoolBar = NodePath("PoolBar")
+SpawnTweenComponent = NodePath("SpawnDespawnTween")
 
 [node name="UnitInforBoard" type="NinePatchRect" parent="." unique_id=185800890]
 layout_mode = 1
@@ -122,14 +130,20 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -110.0
-offset_top = -31.0
-offset_right = 110.0
-offset_bottom = 24.0
+offset_top = -24.59879
+offset_right = 109.999756
+offset_bottom = 30.400913
 grow_horizontal = 2
 texture = ExtResource("3_bvm5s")
 region_rect = Rect2(66, 132, 188, 60)
 patch_margin_left = 62
 patch_margin_right = 62
+
+[node name="HoverTweenBanner" type="Node" parent="UnitInforBoard/UnitBanner" unique_id=2130561440 node_paths=PackedStringArray("Target")]
+script = ExtResource("5_lbkgl")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("10_t08io")]([ExtResource("6_80pi6")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
 
 [node name="UnitName" type="Label" parent="UnitInforBoard/UnitBanner" unique_id=801129393]
 layout_mode = 1
@@ -153,28 +167,31 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_top = -17.0
-offset_bottom = -17.0
+offset_left = -5.0
+offset_top = -11.908274
+offset_right = 5.0
+offset_bottom = 11.091726
 grow_horizontal = 2
 
 [node name="HeartAnimatedSprite" type="AnimatedSprite2D" parent="UnitInforBoard/CenterContainer" unique_id=302565983]
-position = Vector2(-79, 29)
-scale = Vector2(3.3, 3)
+position = Vector2(-79, 28.999939)
+scale = Vector2(3.2999997, 2.9999998)
 sprite_frames = SubResource("SpriteFrames_gc5hf")
 animation = &"HeartBeat"
 frame_progress = 0.86981684
 
-[node name="HealthAmount" type="Label" parent="UnitInforBoard" unique_id=31394976]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -75.0
-offset_right = -65.0
-offset_bottom = 23.0
-grow_horizontal = 2
+[node name="HealthAmount" type="Label" parent="UnitInforBoard/CenterContainer" unique_id=31394976]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(-76.155, 16.255)
 text = "2"
 label_settings = SubResource("LabelSettings_1j5su")
+
+[node name="HoverTweenHeart" type="Node" parent="UnitInforBoard/CenterContainer" unique_id=518069948 node_paths=PackedStringArray("Target")]
+script = ExtResource("5_lbkgl")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("10_t08io")]([ExtResource("6_80pi6")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
 
 [node name="AbilityContainer" type="HBoxContainer" parent="." unique_id=708369522]
 layout_mode = 0
@@ -190,9 +207,18 @@ layout_mode = 2
 [node name="AblityButton2" parent="AbilityContainer" unique_id=1450503306 instance=ExtResource("2_00si8")]
 layout_mode = 2
 
+[node name="AblityButton3" parent="AbilityContainer" unique_id=1847204124 instance=ExtResource("2_00si8")]
+layout_mode = 2
+
 [node name="PoolBar" parent="." unique_id=823338190 instance=ExtResource("6_3yeci")]
 layout_mode = 1
 offset_left = 299.0
 offset_top = -6.0
 offset_right = 299.0
 offset_bottom = -6.0
+
+[node name="SpawnDespawnTween" type="Node" parent="." unique_id=979007405 node_paths=PackedStringArray("Target")]
+script = ExtResource("5_lbkgl")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("10_t08io")]([ExtResource("12_h4pqt"), ExtResource("13_t08io")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"

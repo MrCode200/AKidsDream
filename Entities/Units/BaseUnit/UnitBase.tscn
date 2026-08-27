@@ -6,10 +6,21 @@
 [ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://Common/Components/SelectableComponent/selectableComponent.tscn" id="3_v54ow"]
 [ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://Assets/sprites/atlas.png" id="4_2atpx"]
 [ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://Common/Components/AddonsScripts/SetMaterialUponSelection.cs" id="4_bhfaj"]
+[ext_resource type="PackedScene" uid="uid://djhx822tsjxm6" path="res://Common/VFX/FloatingText/FloatingText.tscn" id="6_oeoug"]
 [ext_resource type="Shader" uid="uid://jdba7aiglun3" path="res://Common/Shaders/hitFlash.gdshader" id="7_bhfaj"]
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://Entities/Units/Components/DeathComponent/DeathComponent.tscn" id="8_3x03u"]
 [ext_resource type="PackedScene" uid="uid://c1s7nvqnuwc8m" path="res://Entities/Units/Components/AnimationComponent/AnimationComponent.tscn" id="9_okks6"]
 [ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://Entities/Units/Components/AbilityComponent/AbilityComponent.tscn" id="13_mlqjw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
+size = Vector2(51.9, 51.9)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tk6em"]
+size = Vector2(51.9, 51.9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_am3og"]
+atlas = ExtResource("4_2atpx")
+region = Rect2(48, 192, 16, 16)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oeoug"]
 shader = ExtResource("3_jrfw0")
@@ -21,16 +32,6 @@ shader_parameter/minimal_flickering_alpha = 0.670000031825
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_r5yor"]
 animations = []
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
-size = Vector2(51.9, 51.9)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_tk6em"]
-size = Vector2(51.9, 51.9)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_am3og"]
-atlas = ExtResource("4_2atpx")
-region = Rect2(48, 192, 16, 16)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bhfaj"]
 shader = ExtResource("7_bhfaj")
@@ -47,14 +48,6 @@ motion_mode = 1
 script = ExtResource("1_wfjo2")
 OnMoveCallEventBus = &"UnitMoved"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=452479933 node_paths=PackedStringArray("SelectableC")]
-material = SubResource("ShaderMaterial_oeoug")
-sprite_frames = SubResource("SpriteFrames_r5yor")
-animation = &""
-script = ExtResource("4_bhfaj")
-SelectionMaterial = SubResource("ShaderMaterial_oeoug")
-SelectableC = NodePath("../SelectableComponent")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=797591978]
 shape = SubResource("RectangleShape2D_2atpx")
 
@@ -70,10 +63,6 @@ shape = SubResource("RectangleShape2D_tk6em")
 visible = false
 texture = SubResource("AtlasTexture_am3og")
 
-[node name="HealthComponent" parent="." unique_id=1411632328 node_paths=PackedStringArray("Animator") instance=ExtResource("3_4vwke")]
-Animator = NodePath("../AnimatedSprite2D")
-OnDamageShader = SubResource("ShaderMaterial_bhfaj")
-
 [node name="DeathComponent" parent="." unique_id=1226265474 node_paths=PackedStringArray("Unit", "HealthC") instance=ExtResource("8_3x03u")]
 Unit = NodePath("..")
 OnUnitKilledCallEventBus = &"UnitKilled"
@@ -82,6 +71,26 @@ HealthC = NodePath("../HealthComponent")
 [node name="AbilityComponent" parent="." unique_id=509071314 node_paths=PackedStringArray("Unit") instance=ExtResource("13_mlqjw")]
 Unit = NodePath("..")
 
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=452479933 node_paths=PackedStringArray("SelectableC")]
+material = SubResource("ShaderMaterial_oeoug")
+sprite_frames = SubResource("SpriteFrames_r5yor")
+animation = &""
+script = ExtResource("4_bhfaj")
+SelectionMaterial = SubResource("ShaderMaterial_oeoug")
+SelectableC = NodePath("../SelectableComponent")
+
 [node name="AnimationComponent" parent="." unique_id=1672340263 node_paths=PackedStringArray("Unit", "Animator") instance=ExtResource("9_okks6")]
 Unit = NodePath("..")
 Animator = NodePath("../AnimatedSprite2D")
+
+[node name="HealthComponent" parent="." unique_id=1411632328 node_paths=PackedStringArray("Animator", "FloatingText") instance=ExtResource("3_4vwke")]
+Animator = NodePath("../AnimatedSprite2D")
+OnDamageShader = SubResource("ShaderMaterial_bhfaj")
+FloatingText = NodePath("../FloatingText")
+
+[node name="FloatingText" parent="." unique_id=1135333433 instance=ExtResource("6_oeoug")]
+offset_left = -38.999996
+offset_top = -11.000001
+offset_right = 40.000004
+offset_bottom = 11.999999
+text = "+0 Health"

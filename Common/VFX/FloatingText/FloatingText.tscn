@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://djhx822tsjxm6"]
+
+[ext_resource type="Script" uid="uid://begttxk4pgx0p" path="res://Common/VFX/FloatingText/FloatingText.cs" id="1_jdf5u"]
+[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="2_imc32"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_r41e1"]
+[ext_resource type="Resource" uid="uid://basi3xn2nv474" path="res://Common/VFX/FloatingText/Animations/FloatUpAndFadeTween.tres" id="4_y8dj0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_imc32"]
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 0.5372549)
+
+[node name="FloatingText" type="Label" unique_id=1135333433 node_paths=PackedStringArray("TweenComponent")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -39.5
+offset_top = -11.5
+offset_right = 39.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+text = "+ 0 Health"
+label_settings = SubResource("LabelSettings_imc32")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("1_jdf5u")
+TweenComponent = NodePath("TweenComponent")
+
+[node name="TweenComponent" type="Node" parent="." unique_id=407187244 node_paths=PackedStringArray("Target")]
+script = ExtResource("2_imc32")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("3_r41e1")]([ExtResource("4_y8dj0")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"

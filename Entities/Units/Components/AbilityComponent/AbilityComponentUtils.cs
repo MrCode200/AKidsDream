@@ -5,7 +5,7 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using Godot;
 
-namespace AKidsDream.Units.Resources.Components;
+namespace AKidsDream.Common.Components;
 
 public enum CastFailureReason
 {

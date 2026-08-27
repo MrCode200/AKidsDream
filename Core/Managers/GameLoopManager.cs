@@ -55,7 +55,7 @@ public partial class GameLoopManager : Node
 		}
 		catch (Exception e)
 		{
-			Log.Here().Error("A unexpected error occurred in GameLoopManager _Ready: {exception}", e);
+			Log.Here().Err("A unexpected error occurred in GameLoopManager _Ready: {exception}", e);
 		}
 	}
 
@@ -89,6 +89,7 @@ public partial class GameLoopManager : Node
 		
 		Log.Here().Info("Player {PlayerId} ended turn, starting {NextPlayerId}", playerId, nextPlayerId);
 
+		_playerTurnOrder[ActivePlayerId].Mana += 1;
 		_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
 		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
 			ActivePlayerId.Value, CurrentRound);

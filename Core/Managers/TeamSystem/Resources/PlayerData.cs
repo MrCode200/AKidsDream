@@ -12,6 +12,17 @@ public partial class PlayerData : Resource
     [Export] public int TeamIdInt;
     [Export] public Global.UnitColor UnitColor;
     [Export] public ControllerType ControllerType;
+
+    private int _mana;
+    [Export]
+    public int Mana
+    {
+        get { return _mana; }
+        set
+        {
+            _mana = Mathf.Max(value, 0);
+        }
+    }
     
     public PlayerId PlayerId => new(PlayerIdInt);
     public TeamId TeamId => new(TeamIdInt);

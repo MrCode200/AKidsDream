@@ -37,11 +37,12 @@ public readonly struct CallerLogger
         _log = log; _member = member; _line = line;
     }
 
+    public void Verbose(string template, params object[] args) => Write(LogEventLevel.Verbose, null, template, args);
     public void Debug(string template, params object[] args) => Write(LogEventLevel.Debug, null, template, args);
     public void Info(string template, params object[] args)  => Write(LogEventLevel.Information, null, template, args);
     public void Warn(string template, params object[] args)  => Write(LogEventLevel.Warning, null, template, args);
-    public void Error(string template, params object[] args) => Write(LogEventLevel.Error, null, template, args);
-    public void Error(Exception ex, string template, params object[] args) => Write(LogEventLevel.Error, ex, template, args);
+    public void Err(string template, params object[] args) => Write(LogEventLevel.Error, null, template, args);
+    public void Err(Exception ex, string template, params object[] args) => Write(LogEventLevel.Error, ex, template, args);
     public void Fatal(string template, params object[] args) => Write(LogEventLevel.Fatal, null, template, args);
     public void Fatal(Exception ex, string template, params object[] args) => Write(LogEventLevel.Fatal, ex, template, args);
 

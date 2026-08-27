@@ -2,7 +2,7 @@ using Godot;
 using System;
 using AKidsDream.Managers.SaveSystems;
 
-namespace AKidsDream.Units.Resources;
+namespace AKidsDream.Common;
 
 [GlobalClass]
 [Tool]
