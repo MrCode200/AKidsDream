@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AKidsDream.Abilities.CostModifiers;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 using Godot;
 using Godot.Collections;
 

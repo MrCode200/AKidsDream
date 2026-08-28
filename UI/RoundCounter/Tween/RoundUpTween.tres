@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://cbx68dur33vb8"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_4isu2"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_s33vv"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_yb418"]
+
+[sub_resource type="Resource" id="Resource_4uhwf"]
+script = ExtResource("1_4isu2")
+EmitterPath = NodePath("../..")
+CustomSignalName = &"UpdatedRoundCounter"
+metadata/_custom_type_script = "uid://bdnteh7isw3xe"
+
+[sub_resource type="Resource" id="Resource_8lias"]
+script = ExtResource("2_s33vv")
+Property = NodePath("offset_transform_scale")
+FromValue = null
+ToValue = Vector2(1.1, 1.1)
+Duration = 0.03
+Transition = 1
+Ease = 1
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_8yat2"]
+script = ExtResource("2_s33vv")
+Property = NodePath("offset_transform_scale")
+FromValue = null
+ToValue = Vector2(1, 1)
+Duration = 0.1
+Delay = 0.1
+Transition = 5
+Ease = 1
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[resource]
+script = ExtResource("3_yb418")
+Steps = Array[ExtResource("2_s33vv")]([SubResource("Resource_8lias"), SubResource("Resource_8yat2")])
+Triggers = Array[int]([5])
+CustomSignals = Array[ExtResource("1_4isu2")]([SubResource("Resource_4uhwf")])
+MaxLoopCount = 1
+ConflictPolicy = 1
+Identifier = &"RoundUp"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

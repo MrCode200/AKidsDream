@@ -13,7 +13,7 @@ using AKidsDream.Common.Logging;
 using Godot.Collections;
 using Serilog;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
 [Icon("res://Assets/NodeIcons/star.svg")]

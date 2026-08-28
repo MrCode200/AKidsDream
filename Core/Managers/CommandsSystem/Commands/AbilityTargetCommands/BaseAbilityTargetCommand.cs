@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 using Godot;
 using Serilog;
 

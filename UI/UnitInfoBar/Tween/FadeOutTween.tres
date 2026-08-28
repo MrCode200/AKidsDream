@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://b4mqfv5p7ca6s"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_erdak"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_xno4y"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_b7mai"]
+
+[sub_resource type="Resource" id="Resource_erdak"]
+script = ExtResource("2_xno4y")
+Property = NodePath("modulate:a")
+FromValue = 1.0
+ToValue = 0.0
+Duration = 0.49
+Transition = 10
+Ease = 1
+
+[sub_resource type="Resource" id="Resource_xno4y"]
+script = ExtResource("2_xno4y")
+Property = NodePath("scale")
+FromValue = Vector2(1, 1)
+ToValue = Vector2(0.9, 0.9)
+Duration = 0.455
+Transition = 10
+Ease = 1
+RunParallelWithPrevious = true
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[resource]
+script = ExtResource("3_b7mai")
+Steps = Array[ExtResource("2_xno4y")]([SubResource("Resource_erdak"), SubResource("Resource_xno4y")])
+Triggers = Array[int]([])
+MaxLoopCount = 1
+HideTargetOnFinish = true
+Identifier = &"UIBOnHide"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

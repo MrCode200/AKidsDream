@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://ux8g57pgldjc"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_i5q78"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_yqo0r"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_6mkda"]
+
+[sub_resource type="Resource" id="Resource_53lnc"]
+script = ExtResource("2_yqo0r")
+Property = NodePath("offset_transform_scale")
+FromValue = null
+ToValue = Vector2(1, 1)
+Duration = 0.25
+Transition = 3
+TargetOverride = NodePath("..")
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[resource]
+script = ExtResource("3_6mkda")
+Steps = Array[ExtResource("2_yqo0r")]([SubResource("Resource_53lnc")])
+Triggers = Array[int]([4])
+MaxLoopCount = 1
+Identifier = &"MouseExitDelarge"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

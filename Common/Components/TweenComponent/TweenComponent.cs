@@ -9,7 +9,7 @@ using Godot;
 using Godot.Collections;
 using Serilog;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
 [Icon("res://Assets/NodeIcons/animate.png")]
@@ -183,7 +183,6 @@ public partial class TweenComponent : Node
 
         if (data.Triggers.Contains(TweenTrigger.Show))
         {
-            Log.Here().Warn("Subscribing to Show event may contain bugs (especially if subscribing to Hide at the same time(?))");
             void RunOnShowWrapper() => RunOnShow(data);
             Target.VisibilityChanged += RunOnShowWrapper;
             _unsubscribers.Add(() => Target.VisibilityChanged -= RunOnShowWrapper);

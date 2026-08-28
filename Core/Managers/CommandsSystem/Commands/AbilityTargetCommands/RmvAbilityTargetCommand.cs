@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 using Godot;
 
 namespace AKidsDream.Commands;

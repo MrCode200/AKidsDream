@@ -1,7 +1,7 @@
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;

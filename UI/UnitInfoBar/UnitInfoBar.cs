@@ -5,7 +5,8 @@ using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Res.Common.Components.TweenComponent.Resources;
 using Godot.Collections;
 using Serilog;
 
@@ -41,7 +42,7 @@ public partial class UnitInfoBar : Control, IBlockable
     private void OnUnitDeselected(Unit _)
     {
         _selectedUnit = null;
-        SpawnTweenComponent.RunAnimation("OnHide");
+        SpawnTweenComponent.RunAnimation(TweenAnimationIdentifiers.UIBOnHide);
     }
 
     public override void _Ready()
@@ -62,7 +63,7 @@ public partial class UnitInfoBar : Control, IBlockable
     private void CreateUnitBar(Unit unit)
     {
         Visible = true;
-        SpawnTweenComponent.RunAnimation("OnShow");
+        SpawnTweenComponent.RunAnimation(TweenAnimationIdentifiers.UIBOnShow);
         
         PoolBar.SetPool(unit);
 

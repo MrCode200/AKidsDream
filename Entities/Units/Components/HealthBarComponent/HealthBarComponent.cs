@@ -1,8 +1,8 @@
 using Godot;
 using System;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
 public partial class HealthBarComponent : Node

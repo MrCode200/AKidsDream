@@ -1,8 +1,9 @@
 #nullable enable
+using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 public enum TweenTrigger
 {
@@ -80,7 +81,29 @@ public partial class TweenAnimationData : Resource
     
     [ExportGroup("")]
     [Export] public float DelayAnimStart = 0f;
-    [Export] public StringName Identifier = "";
+    
+    public static readonly HashSet<StringName> Identifiers = [];
+    private StringName _identifier = "UniqueIdentifier";
+    [Export]
+    public StringName Identifier
+    {
+        get => _identifier;
+        set
+        {
+            if (!Engine.IsEditorHint())
+            {
+                _identifier = value;
+                return;
+            }
+
+            Identifiers.Remove(_identifier);
+            _identifier = value;
+            if (!Identifiers.Add(value))
+                OS.Alert($"Duplicate identifier: {value}", "Warning");
+        }
+    }
+    
+    
 
     public override void _ValidateProperty(Dictionary property)
     {

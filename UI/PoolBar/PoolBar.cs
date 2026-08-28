@@ -4,7 +4,7 @@ using System;
 using AKidsDream.Abilities;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 
 public partial class PoolBar : Control
 {

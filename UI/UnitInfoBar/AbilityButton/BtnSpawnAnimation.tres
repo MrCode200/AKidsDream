@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://bvv474knme5pp"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_vgg8e"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_eu1q2"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_vp4tl"]
+
+[sub_resource type="Resource" id="Resource_deoqd"]
+script = ExtResource("2_eu1q2")
+Property = NodePath("scale")
+UseExplicitFrom = true
+FromValue = Vector2(0, 0)
+ToValue = Vector2(1, 1)
+Duration = 0.5
+Transition = 10
+Ease = 1
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_uhnti"]
+script = ExtResource("2_eu1q2")
+Property = NodePath("rotation")
+UseExplicitFrom = true
+FromValue = 4.712
+ToValue = 6.283
+Duration = 0.4
+Transition = 7
+Ease = 1
+RunParallelWithPrevious = true
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[resource]
+script = ExtResource("3_vp4tl")
+Steps = Array[ExtResource("2_eu1q2")]([SubResource("Resource_deoqd"), SubResource("Resource_uhnti")])
+Triggers = Array[int]([1, 0])
+MaxLoopCount = 2
+Identifier = &"SpawnButton"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

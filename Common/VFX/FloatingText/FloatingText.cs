@@ -1,6 +1,9 @@
 using Godot;
 using System;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Res.Common.Components.TweenComponent.Resources;
+
+namespace AKidsDream.Common.VFX;
 
 [GlobalClass]
 public partial class FloatingText : Label
@@ -21,6 +24,6 @@ public partial class FloatingText : Label
 		else if (Modulate != DefaultColor)
 			Modulate = Modulate with { R = DefaultColor.R, G = DefaultColor.G, B = DefaultColor.B };
 		
-		TweenComponent.RunAnimation("FloatUpAndFade");
+		TweenComponent.RunAnimation(TweenAnimationIdentifiers.FloatUpAndFade);
 	}
 }

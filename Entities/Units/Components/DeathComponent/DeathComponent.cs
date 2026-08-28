@@ -3,7 +3,7 @@ using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Logging;
 using Serilog;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
 [Icon("res://Assets/NodeIcons/Skull.png")]

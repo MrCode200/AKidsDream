@@ -2,9 +2,10 @@
 using System;
 using Godot;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.VFX;
 using Serilog;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 /// <summary>
 /// Manages health-related functionality for a game entity.

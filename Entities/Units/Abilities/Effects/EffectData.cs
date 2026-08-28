@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
-using AKidsDream.Common.Components;
+using AKidsDream.Common.Components.TweenComponent.Resources;
 using Godot.Collections;
 using Serilog;
 

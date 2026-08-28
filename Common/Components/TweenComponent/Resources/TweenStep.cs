@@ -2,7 +2,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace AKidsDream.Common.Components;
+namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
 [Tool]
