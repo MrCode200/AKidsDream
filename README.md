@@ -72,10 +72,10 @@ Open the project in Godot and press Play.
 
 ## 🛠️ Developer console commands
 
-> unit_create <name> <player_id> <team_id> <.x> <.y> — spawn a unit at (x,y)
+> unit_create <name> <player_id> <.x> <.y> — spawn a unit at (x,y)
 
 **NOTE:** \
-Available units: Soldier, TestUnit. Currently player_id and team_id accept 1 or 2 only (example: unit_create Soldier 1 1 2 4).
+Available units: Soldier, TestUnit. Currently player_id accept 1 or 2 only (example: unit_create Soldier 1 2 4).
 
 ## 📃 Documentation
 To read the documentation visit:

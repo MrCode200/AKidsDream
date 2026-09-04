@@ -1,5 +1,6 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers.SaveSystem.Resources;
@@ -24,7 +25,7 @@ public partial class Board : Node2D
     /// TileMap layer used only for rendering the board visuals.
     /// Gameplay data is stored separately in <see cref="StateData"/>.
     /// </summary>
-    [Export] public TileMapLayer Tilemap;
+    [Export] public required TileMapLayer Tilemap;
 
     /// <summary>
     /// Contains the logical board data:
@@ -49,7 +50,11 @@ public partial class Board : Node2D
         _generateBoard();
     });
 
-
+    public override void _EnterTree()
+    {
+        AddToGroup(nameof(Global.Groups.Board));
+    }
+    
     // -- LIFECYCLE --
     public void Init(BoardStateData boardStateData, Array<Unit>? initialUnits = null)
     {
@@ -72,7 +77,6 @@ public partial class Board : Node2D
 
         EventBus.Instance.UnitCreated += OnUnitCreated;
         EventBus.Instance.UnitKilled += OnUnitKilled;
-        EventBus.Instance.UnitMoved += OnUnitMoved;
 
         _log.Here().Info(
             "Board '{BoardName}' initialized with {UnitCount} Units",
@@ -164,18 +168,6 @@ public partial class Board : Node2D
     /// </summary>
     /// <param name="unit">The unit that was killed.</param>
     private void OnUnitKilled(Unit unit) => RemoveUnit(unit.TileLocation);
-
-    /// <summary>
-    /// Handles the UnitMoved event by updating the unit's position in the board state.
-    /// </summary>
-    /// <param name="unit">The unit that moved.</param>
-    /// <param name="oldTile">The previous tile location.</param>
-    /// <param name="newTile">The new tile location.</param>
-    private void OnUnitMoved(Unit unit, Vector2I oldTile, Vector2I newTile)
-    {
-        RemoveUnit(oldTile);
-        AddUnit(unit, newTile);
-    }
 
     // -- QUERIES --
     /// <summary>
@@ -353,5 +345,63 @@ public partial class Board : Node2D
     public Unit[] GetAllUnits()
     {
         return [.. _unitsById.Values];
+    }
+    
+    public Vector2I[] GetAllTileLocations()
+    {
+        return [.. GetAllTiles().Select(t => t.TileLocation).ToArray()];
+    }
+    
+    public TileData[] GetAllTiles()
+    {
+        return [.. StateData.Tiles.SelectMany(t => t).ToArray()];
+    }
+
+    /// <summary>
+    /// Moves a unit from its current tile to a target tile with validation.
+    /// </summary>
+    /// <param name="unit">The unit to move.</param>
+    /// <param name="toTile">The target tile location.</param>
+    /// <param name="position">The world position of the target tile (output).</param>
+    /// <returns>True if the move was valid and executed, false otherwise.</returns>
+    public bool MoveUnit(Unit unit, Vector2I toTile, out Vector2 position)
+    {
+        position = Vector2.Zero;
+        var oldTile = unit.TileLocation;
+
+        if (!TileInBoard(toTile))
+        {
+            _log.ForContext("Unit", unit.UnitName)
+                .ForContext("IdTag", unit.UnitId)
+                .ForContext("FromTile", oldTile)
+                .Here()
+                .Warn("Move failed: target tile {ToTile} is out of board bounds", toTile);
+            return false;
+        }
+
+        // Validate target tile is not occupied by another unit
+        if (TryGetUnitAt(toTile, out var occupyingUnit) && occupyingUnit != unit)
+        {
+            _log.ForContext("Unit", unit.UnitName)
+                .ForContext("IdTag", unit.UnitId)
+                .ForContext("FromTile", oldTile)
+                .Here()
+                .Warn("Move failed: target tile {ToTile} is occupied by {OccupyingUnit}", toTile, occupyingUnit.UnitName);
+            return false;
+        }
+
+        RemoveUnit(oldTile);
+        AddUnit(unit, toTile);
+
+        position = TileToWorldPosition(toTile);
+
+        EventBus.Instance.EmitSignal(EventBus.SignalName.UnitMoved, unit, oldTile, toTile);
+
+        _log.ForContext("Unit", unit.UnitName)
+            .ForContext("IdTag", unit.UnitId)
+            .Here()
+            .Debug("Moved unit from {FromTile} to {ToTile}", oldTile, toTile);
+
+        return true;
     }
 }

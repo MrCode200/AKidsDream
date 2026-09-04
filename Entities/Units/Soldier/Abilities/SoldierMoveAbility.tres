@@ -20,7 +20,6 @@ metadata/_custom_type_script = "uid://cnajkqpahjyk1"
 
 [sub_resource type="Resource" id="Resource_f4ppk"]
 script = ExtResource("4_okmh8")
-AllowedTargets = 1
 metadata/_custom_type_script = "uid://thbe6n87osxo"
 
 [resource]

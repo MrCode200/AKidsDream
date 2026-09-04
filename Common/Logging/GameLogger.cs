@@ -89,7 +89,7 @@ public static class GameLogger
             "[[color=" + LogColors.SourceContext + "]{ShortSourceContext}[/color] | " +
             "[color=" + LogColors.MethodLine + "]{Method}:{Line}[/color]] " +
             "[color=" + levelColor + "]" + levelOpen + "[{Level:u3}]" + levelClose + "[/color] => " +
-            "[color=" + LogColors.UnitTag + "][{UnitName}:{UnitId}][/color]: " +
+            "[color=" + LogColors.UnitTag + "][{NameTag}:{IdTag}][/color]: " +
             "[color=" + levelColor + "]{Message:lj}[/color]" +
             "{NewLine}" +
             "[color=" + LogColors.Error + "]{Exception}[/color]";

@@ -81,6 +81,7 @@ RightClick={
 [layer_names]
 
 2d_physics/layer_1="Units"
+2d_physics/layer_5="Cards"
 
 [physics]
 

@@ -12,7 +12,7 @@ namespace AKidsDream.Common.Components.TweenComponent.Resources;
 /// Handles damage, healing, and death events through signals.
 /// </summary>
 [GlobalClass]
-[Icon("res://Assets/NodeIcons/heart.svg")]
+[Icon("res://Entities/Units/Components/HealthComponent/heart.svg")]
 public partial class HealthComponent : Node
 {
 	[Export] public required AnimatedSprite2D Animator;
@@ -44,8 +44,8 @@ public partial class HealthComponent : Node
 	public override void _Ready()
 	{
 		var unit = Owner as Unit;
-		_log = _log.ForContext("UnitName", unit?.UnitName)
-			.ForContext("UnitId", unit?.UnitId);
+		_log = _log.ForContext("NameTag", unit?.UnitName)
+			.ForContext("IdTag", unit?.UnitId);
 
 		_damageShaderTimer = new Timer() { OneShot = true };
 		_damageShaderTimer.Timeout += StopDamageShader;

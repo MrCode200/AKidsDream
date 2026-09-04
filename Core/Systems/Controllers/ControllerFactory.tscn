@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://36ctam2p2bu0"]
+
+[ext_resource type="Script" uid="uid://dqhgr3soqc73f" path="res://Core/Systems/Controllers/ControllerFactory.cs" id="1_3v2tj"]
+
+[node name="ControllerFactory" type="Node" unique_id=715429253]
+script = ExtResource("1_3v2tj")

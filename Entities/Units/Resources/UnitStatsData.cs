@@ -8,6 +8,8 @@ namespace AKidsDream.Common;
 [Tool]
 public partial class UnitStatsData : Resource
 {
+	[Export] public Global.UnitName UnitName;
+	
 	[Export] public int MaxHealth;
 	[Export] public int Health;
 	/*

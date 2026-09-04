@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d2yy7wcxi8s4u"]
+
+[ext_resource type="Script" uid="uid://cvx2p6rlu6y3s" path="res://Core/Systems/ConsoleManager/ConsoleManager.cs" id="1_3hdh5"]
+
+[node name="ConsoleManager" type="Node" unique_id=1872037228]
+script = ExtResource("1_3hdh5")

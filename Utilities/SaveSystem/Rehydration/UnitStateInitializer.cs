@@ -1,7 +1,7 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using AKidsDream.Common.Logging;
-using AKidsDream.Core.Controllers;
+using AKidsDream.Util.Identifiers;
 using AKidsDream.GameBoard;
 using AKidsDream.Common;
 using Godot;
@@ -20,23 +20,33 @@ public static class UnitStateInitializer
 {
     private static readonly ILogger Log = GameLogger.For(typeof(UnitStateInitializer));
 
-    public static Array<Unit> InitializeUnits(Node parent, Array<UnitStateData>? savedUnits)
+    public static Array<Unit> InitializeUnits(
+        Node parent,
+        Array<UnitStateData>? savedUnits,
+        PlayerTeamRegistry playerTeamRegistry,
+        Board board
+    )
     {
         var initializedUnits = new Array<Unit>();
 
         if (savedUnits == null)
             return initializedUnits;
-
+        
         foreach (var state in savedUnits)
         {
-            if (TryCreateUnit(parent, state, out var unit))
+            if (TryCreateUnit(parent, state, playerTeamRegistry, board, out var unit))
                 initializedUnits.Add(unit);
         }
 
         return initializedUnits;
     }
 
-    private static bool TryCreateUnit(Node parent, UnitStateData state, [NotNullWhen(true)] out Unit? unit)
+    private static bool TryCreateUnit(
+        Node parent,
+        UnitStateData state,
+        PlayerTeamRegistry playerTeamRegistry,
+        Board board,
+        [NotNullWhen(true)] out Unit? unit)
     {
         unit = null;
 
@@ -44,7 +54,7 @@ public static class UnitStateInitializer
             .Debug("Attempting to create unit '{UnitName}' at {TileLocation}",
                 state.UnitName, state.TileLocation);
 
-        if (!UnitOwnershipResolver.TryResolve(state, out var ownership))
+        if (!UnitOwnershipResolver.TryResolve(state, playerTeamRegistry, out var ownership))
             return false;
 
         var unitName = state.UnitName.ToString();
@@ -56,20 +66,19 @@ public static class UnitStateInitializer
         var newUnit = unitScene.Instantiate<Unit>();
 
         newUnit.Init(
-            state.UnitName,
-            ownership.Value.OwnerId,
-            ownership.Value.TeamId,
+            ownership.Value.PlayerData,
             state.TileLocation,
             state.UnitStats,
+            board,
             unitId
         );
-        
+
         // Set position directly (rather than via movement) to skip the signal emission
         // that a normal Unit move would trigger during initial load.
         newUnit.Position = Board.TileToWorldPosition(state.TileLocation);
-        
+
         parent.AddChild(newUnit);
- 
+
         unit = newUnit;
         return true;
     }

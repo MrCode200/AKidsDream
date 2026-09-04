@@ -5,7 +5,7 @@ using System.Reflection;
 using AKidsDream.Common.Generators;
 using Godot;
 
-namespace AKidsDream.Core.Controllers.EditorTools;
+namespace AKidsDream.Util.Identifiers.EditorTools;
 
 public enum ClassOptions
 {

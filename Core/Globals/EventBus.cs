@@ -2,6 +2,7 @@ using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Entities.Cards;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;
@@ -62,6 +63,9 @@ public partial class EventBus : Node
     public delegate void UnitSelectedEventHandler(Unit unit);
 
     [Signal]
+    public delegate void UnitChangedEventHandler(Unit oldUnit, Unit newUnit);
+    
+    [Signal]
     public delegate void UnitDeselectedEventHandler(Unit unit);
 
     [Signal]
@@ -86,20 +90,25 @@ public partial class EventBus : Node
     public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
 
     [Signal]
-    public delegate void EffectTriggerStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
+    public delegate void EffectTriggerStartEventHandler(Node caster, AbilityData ability, EffectData effect);
 
     [Signal]
-    public delegate void EffectTriggerEndEventHandler(Unit unit, AbilityData ability, EffectData effect);
+    public delegate void EffectTriggerEndEventHandler(Node caster, AbilityData ability, EffectData effect);
 
     [Signal]
-    public delegate void EffectApplyStartEventHandler(Unit unit, AbilityData ability, EffectData effect);
+    public delegate void EffectApplyStartEventHandler(Node caster, AbilityData ability, EffectData effect);
 
     [Signal]
-    public delegate void EffectApplyEndEventHandler(Unit unit, AbilityData ability, EffectData effect,
+    public delegate void EffectApplyEndEventHandler(Node caster, AbilityData ability, EffectData effect,
         EffectResult result);
 
     [Signal]
     public delegate void AbilityDeselectedEventHandler(Unit unit);
+    
+    // -- CARD SIGNALS --
+    [Signal] public delegate void CardSelectedEventHandler(AbilityCard card);
+    [Signal] public delegate void CardChangedEventHandler(AbilityCard oldCard, AbilityCard newCard);
+    [Signal] public delegate void CardDeselectedEventHandler(AbilityCard card);
 
     // -- UI SIGNALS --
 

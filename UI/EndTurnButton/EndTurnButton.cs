@@ -1,4 +1,4 @@
-using AKidsDream.Core.Controllers;
+using AKidsDream.Util.Identifiers;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
@@ -8,10 +8,11 @@ namespace AKidsDream.UI;
 
 public partial class EndTurnButton : TextureButton, IBlockable
 {
+	[Export] public GameManager GameManager;
 	private PlayerId? _currentTurnPlayerId;
 	public bool IsBlocked { get; set; }
 
-	[Export] public Array<BlockingStrategy> Strategies { get; set; } =
+	[Export] public Array<BlockingStrategy> BlockingStrategies { get; set; } =
 		[BlockingStrategy.BlockOnBlockingTrigger, BlockingStrategy.BlockOnEffectApply];
 	
 	public override void _Ready()
@@ -42,9 +43,9 @@ public partial class EndTurnButton : TextureButton, IBlockable
 	}
 
 
-	private static bool HasPlayerInteractionController(int playerIdInt)
+	private bool HasPlayerInteractionController(int playerIdInt)
 	{
-		GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(new PlayerId(playerIdInt), out var playerData);
+		GameManager.PlayerTeamRegistry.TryGetPlayer(new PlayerId(playerIdInt), out var playerData);
 		return playerData?.ControllerType == ControllerType.PlayerInteractionController;
 	}
 	

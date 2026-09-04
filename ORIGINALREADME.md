@@ -91,11 +91,11 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 
 ## 🛠️ Developer console commands
 
-- `unit_create <name> <player_id> <team_id> <x> <y>` — spawn a unit at (x,y)
+- `unit_create <name> <player_id> <x> <y>` — spawn a unit at (x,y)
 > [!NOTE]
 > Available Units: Soldier, TestUnit
 >
-> (currently only 1 1, or 2 2 work for player_id and team_id. ex: unit_create Soldier 1 1 2 4)
+> (currently only 1 or 2 work for player_id. ex: unit_create Soldier 1 2 4)
 
 ## 📃 Documentation
 View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).

@@ -12,7 +12,7 @@ using Serilog;
 namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
-[Icon("res://Assets/NodeIcons/animate.png")]
+[Icon("res://Common/Components/TweenComponent/animate.png")]
 [Tool]
 public partial class TweenComponent : Node
 {
@@ -69,7 +69,7 @@ public partial class TweenComponent : Node
         Tween?.Kill();
         if (_resolvedStepTargets.Count == 0)
             ResolveAllStepTargets();
-        
+
         foreach (var data in TweenDatas)
             ResetToOriginalValues(data);
     });
@@ -111,6 +111,7 @@ public partial class TweenComponent : Node
         for (var i = 0; i < data.Steps.Count; i++)
             values[i] = targets[i].Get(new StringName(data.Steps[i].Property));
 
+
         _originalValues[data] = values;
     }
 
@@ -131,6 +132,9 @@ public partial class TweenComponent : Node
         ResolveAllStepTargets();
 
         if (!_ValidateTriggers())
+            return;
+
+        if (!_ValidateProperties())
             return;
 
         if (!_ValidateIdentifiers())
@@ -175,7 +179,8 @@ public partial class TweenComponent : Node
 
         if (data.Triggers.Contains(TweenTrigger.Hide))
         {
-            Log.Here().Warn("Subscribing to Hidden event may contain bugs (especially if subscribing to Show at the same time(?))");
+            Log.Here().Warn(
+                "Subscribing to Hidden event may contain bugs (especially if subscribing to Show at the same time(?))");
             void RunOnHideWrapper() => RunOnHide(data);
             Target.Hidden += RunOnHideWrapper;
             _unsubscribers.Add(() => Target.Hidden -= RunOnHideWrapper);
@@ -264,6 +269,37 @@ public partial class TweenComponent : Node
         }
 
         return true;
+    }
+
+    private bool _ValidateProperties()
+    {
+        return true;
+        foreach (var data in TweenDatas)
+        {
+            for (var i = 0; i < data.Steps.Count; i++)
+            {
+                var step = data.Steps[i];
+                if (step.Property.IsEmpty) continue;
+
+                var stepTarget = _resolvedStepTargets[data][i];
+                if (HasProperty(stepTarget, step.Property))
+                    continue;
+
+                Log.Here().Warn(
+                    $"Disabled TweenComponent => Property '{step.Property}' not found on target '{stepTarget.Name}':'{stepTarget}'");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    static bool HasProperty(Node node, string name)
+    {
+        if (node.Get(name).VariantType != Variant.Type.Nil) return true;
+
+        var list = node.GetPropertyList();
+        return list.Any(p => p["name"].AsString() == name);
     }
 
     private bool _ValidateIdentifiers()
@@ -405,7 +441,7 @@ public partial class TweenComponent : Node
                     break;
             }
         }
-        
+
         _tweenCompletion?.TrySetResult(false);
         _queuedReplay = 0;
         ClearRuntimeSubscribers();
@@ -450,14 +486,43 @@ public partial class TweenComponent : Node
             var step = data.Steps[i];
             if (step.Disable)
                 continue;
-            
+
             var stepTarget = targets[i];
 
+            // Parallel running
             if (step.RunParallelWithPrevious && i > 0)
                 Tween.SetParallel();
             else
                 Tween.SetParallel(false);
 
+            // TreeOrderAction
+            if (step.TreeOrderAction != TreeOrderAction.None)
+            {
+                step.FromTreeIndex = stepTarget.GetIndex();
+                Tween.TweenCallback(Callable.From(() =>
+                {
+                    switch (step.TreeOrderAction)
+                    {
+                        case TreeOrderAction.MoveToFront:
+                            stepTarget.GetParent().MoveChild(stepTarget, -1);
+                            break;
+
+                        case TreeOrderAction.MoveToBack:
+                            stepTarget.GetParent().MoveChild(stepTarget, 0);
+                            break;
+
+                        case TreeOrderAction.MoveToIndex:
+                            stepTarget.GetParent().MoveChild(stepTarget, step.ToTreeIndex);
+                            break;
+                    }
+                }));
+            }
+
+            // Check if property is set, if set to 
+            if (step.Property.IsEmpty)
+                continue;
+
+            // Property values
             fromValues[i] = step.UseExplicitFrom
                 ? step.FromValue
                 : stepTarget.Get(new StringName(step.Property));
@@ -485,9 +550,23 @@ public partial class TweenComponent : Node
                 var stepTarget = targets[i];
                 var prevStep = i < count - 1 ? data.Steps[i + 1] : null;
 
+                // Parallel
                 var wasParallelWithNext = prevStep?.RunParallelWithPrevious;
                 if (wasParallelWithNext is not null)
                     Tween.SetParallel(wasParallelWithNext.Value);
+
+                // TreeOrderAction
+                if (step.TreeOrderAction != TreeOrderAction.None)
+                {
+                    Tween.TweenCallback(Callable.From(() =>
+                    {
+                        stepTarget.GetParent().MoveChild(stepTarget, step.FromTreeIndex);
+                    }));
+                }
+
+                // Check if property is set, if set to 
+                if (step.Property.IsEmpty)
+                    continue;
 
                 var newToValue = step.SetValueRelative ? Negate(toValues[i]) : fromValues[i];
                 var backward = Tween.TweenProperty(stepTarget, step.Property, newToValue, step.Duration)
@@ -515,6 +594,7 @@ public partial class TweenComponent : Node
                 Tween.SetLoops();
         }
 
+        // Finished event subscription
         if (!_hasFinishedSubscription)
         {
             _hasFinishedSubscription = true;

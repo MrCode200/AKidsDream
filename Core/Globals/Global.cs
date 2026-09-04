@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using AKidsDream.Utilities.TypeExtensions;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;
@@ -21,9 +22,18 @@ public static class Global
 
 	public enum Groups
 	{
+		Board,
 		Units,
 		EnemyUnits,
 		PlayerUnits
+	}
+
+	public enum CollisionMasks
+	{
+		[FieldValue<uint>(1)] // Mask 2 ^0 = 1
+		UnitsMask,
+		[FieldValue<uint>(32)] // Mask 2 ^5 = 32
+		CardsMask
 	}
 	
 	public enum UnitColor
@@ -34,7 +44,7 @@ public static class Global
 	
 	public enum UnitName
 	{ 
-		TestUnit,
+		Timmy,
 		Soldier
 	}
 

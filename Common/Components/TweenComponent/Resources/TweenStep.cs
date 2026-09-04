@@ -4,12 +4,30 @@ using Godot.Collections;
 
 namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
+public enum TreeOrderAction
+{
+    None,
+    MoveToFront,
+    MoveToBack,
+    MoveToIndex
+}
+
 [GlobalClass]
 [Tool]
 public partial class TweenStep : Resource
 {
     [ExportGroup("Property")]
-    [Export] public NodePath Property = new();
+    private NodePath _property = new();
+    [Export]
+    public NodePath Property
+    {
+        get => _property;
+        set
+        {
+            _property = value;
+            NotifyPropertyListChanged();
+        }
+    }
     private bool _useExplicitFrom;
     [Export] public bool UseExplicitFrom
     {
@@ -30,7 +48,22 @@ public partial class TweenStep : Resource
     [Export] public Tween.TransitionType Transition = Tween.TransitionType.Linear;
     [Export] public Tween.EaseType Ease = Tween.EaseType.InOut;
     
-    [ExportCategory("Other")]
+    [ExportGroup("Other")]
+    private TreeOrderAction _treeOrderAction = TreeOrderAction.None;
+
+    [Export]
+    public TreeOrderAction TreeOrderAction
+    {
+        get => _treeOrderAction;
+        set
+        {
+            _treeOrderAction = value;
+            NotifyPropertyListChanged();
+        }
+    }
+    public int FromTreeIndex;
+    [Export] public int ToTreeIndex;
+    
     private bool _runParallelWithPrevious;
     [Export] public bool RunParallelWithPrevious
     {
@@ -42,7 +75,20 @@ public partial class TweenStep : Resource
         }
     }
     [Export] public NodePath TargetOverride = "";
-    [Export] public bool Disable;
+
+    [ExportGroup("")] 
+    private bool _disable;
+
+    [Export]
+    public bool Disable
+    {
+        get => _disable;
+        set
+        {
+            _disable = value;
+            NotifyPropertyListChanged();
+        }
+    }
 
 
     public override void _ValidateProperty(Dictionary property)
@@ -53,10 +99,32 @@ public partial class TweenStep : Resource
         {
             nameof(FromValue) => UseExplicitFrom,
             nameof(Delay) => !RunParallelWithPrevious,
+            nameof(ToTreeIndex) => TreeOrderAction == TreeOrderAction.MoveToIndex,
             _ => true
         };
-
+        
         if (!show)
+        {
             property["usage"] = (int)PropertyUsageFlags.NoEditor;
+            return;
+        }
+
+        bool disable = propertyName switch
+        {
+            nameof(UseExplicitFrom) 
+                or nameof(FromValue)
+                or nameof(ToValue)
+                or nameof(SetValueRelative)
+                or nameof(Duration)
+                or nameof(Transition)
+                or nameof(Ease) => Property.IsEmpty,
+            
+            nameof(Disable) => false,
+            
+            _ => Disable
+        };
+        
+        if (disable)
+            property["usage"] = (int)(property["usage"].AsInt32() | (long)PropertyUsageFlags.ReadOnly);
     }
 }

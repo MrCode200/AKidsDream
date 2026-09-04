@@ -1,13 +1,14 @@
-global using UnitId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.UnitIdTag>;
-global using PlayerId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.PlayerIdTag>;
-global using TeamId = AKidsDream.Core.Controllers.Id<AKidsDream.Core.Controllers.TeamIdTag>;
+global using UnitId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.UnitIdTag>;
+global using PlayerId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.PlayerIdTag>;
+global using CardId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.CardIdTag>;
+global using TeamId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.TeamIdTag>;
 
 using System;
 using AKidsDream.Common.Logging;
 using Serilog;
 
 
-namespace AKidsDream.Core.Controllers;
+namespace AKidsDream.Util.Identifiers;
 
 public enum TeamRelation
 {
@@ -15,14 +16,17 @@ public enum TeamRelation
     Enemy
 }
 
-public interface IIdTag { }
+public interface IIdTag;
 
-public readonly struct UnitIdTag : IIdTag { }
-public readonly struct PlayerIdTag : IIdTag { }
-public readonly struct TeamIdTag: IIdTag { }
-public readonly struct PoolIdTag: IIdTag { }
+public readonly struct UnitIdTag : IIdTag;
 
-public readonly struct Id<TTag> : IEquatable<Id<TTag>> where TTag : IIdTag
+public readonly struct PlayerIdTag : IIdTag;
+
+public readonly struct TeamIdTag : IIdTag;
+
+public readonly struct CardIdTag : IIdTag;
+
+public readonly struct Id<TTag> : IEquatable<Id<TTag>>, IIdTag where TTag : IIdTag
 {
     public static readonly Id<TTag> None = new(0);
 

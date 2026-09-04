@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cdacftbeumh8x"]
+
+[ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://Core/Systems/CommandsSystem/CommandExecutor.cs" id="1_06cw4"]
+
+[node name="CommandExecutor" type="Node" unique_id=1418848601 node_paths=PackedStringArray("AbilityVisualizer", "Board", "GameLoopManager")]
+script = ExtResource("1_06cw4")
+AbilityVisualizer = NodePath("")
+Board = NodePath("")
+GameLoopManager = NodePath("")

@@ -21,6 +21,12 @@ namespace AKidsDream.Abilities.Effects;
 [Flags]
 public enum TargetFilter
 {
+    
+    /// <summary>
+    /// Targets any tile on the board, including empty tiles and tiles with units.
+    /// </summary>
+    AnyTile = EmptyTiles | Friendly | Hostile,
+    
     /// <summary>
     /// Targets empty tiles on the board (tiles without any unit).
     /// </summary>
@@ -48,19 +54,14 @@ public enum TargetFilter
     /// Targets any unit, regardless of relationship (friendly or hostile).
     /// </summary>
     AnyUnit = Friendly | Hostile,
-
-    /// <summary>
-    /// Targets any tile on the board, including empty tiles and tiles with units.
-    /// </summary>
-    AnyTile = EmptyTiles | Friendly | Hostile,
 }
 
 [GlobalClass]
 public abstract partial class AccessFieldPattern : Resource
 {
-    [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.AnyTile;
+    [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.EmptyTiles;
 
-    public Vector2I[] GetTiles(Vector2I origin, Board board, PlayerId casterId)
+    public Vector2I[] GetTiles(Vector2I origin, Board board, PlayerId playerCasterId, PlayerTeamRegistry playerTeamRegistry)
     {
         var tiles = GetTilesUnfiltered(origin, board);
         if (tiles.Length == 0 || AllowedTargets == TargetFilter.AnyTile) return tiles;
@@ -76,21 +77,21 @@ public abstract partial class AccessFieldPattern : Resource
             
             if (AllowedTargets.HasFlag(TargetFilter.OwnedUnits) &&
                 tileData.Unit is not null &&
-                tileData.Unit.OwnerId == casterId)
+                tileData.Unit.OwnerId == playerCasterId)
             {
                 return true;
             }
             
             if (AllowedTargets.HasFlag(TargetFilter.Friendly) &&
                 tileData.Unit is not null &&
-                !GameManager.Instance.PlayerTeamRegistry.IsHostileToPlayer(casterId, tileData.Unit.OwnerId))
+                !playerTeamRegistry.IsHostileToPlayer(playerCasterId, tileData.Unit.OwnerId))
             {
                 return true;
             }
 
             if (AllowedTargets.HasFlag(TargetFilter.Hostile) &&
                 tileData.Unit is not null &&
-                GameManager.Instance.PlayerTeamRegistry.IsHostileToPlayer(casterId, tileData.Unit.OwnerId))
+                playerTeamRegistry.IsHostileToPlayer(playerCasterId, tileData.Unit.OwnerId))
             {
                 return true;
             }

@@ -6,7 +6,7 @@ using Serilog;
 namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 [GlobalClass]
-[Icon("res://Assets/NodeIcons/Skull.png")]
+[Icon("res://Entities/Units/Components/DeathComponent/Skull.png")]
 public partial class DeathComponent : Node
 {
 	[Export] public Unit Unit;
@@ -18,8 +18,8 @@ public partial class DeathComponent : Node
 
 	public override void _Ready()
 	{
-		_log = _log.ForContext("UnitName", Unit.UnitName)
-			.ForContext("UnitId", Unit.UnitId);
+		_log = _log.ForContext("NameTag", Unit.UnitName)
+			.ForContext("IdTag", Unit.UnitId);
 		HealthC.HealthDepleted += OnHealthDepleted;
 	}
 

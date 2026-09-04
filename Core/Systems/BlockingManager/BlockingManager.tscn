@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b0nx8wkcv0h57"]
+
+[ext_resource type="Script" uid="uid://cupp0qmi6xr2h" path="res://Core/Systems/BlockingManager/BlockingManager.cs" id="1_wygr7"]
+
+[node name="BlockingManager" type="Node" unique_id=392230459]
+script = ExtResource("1_wygr7")

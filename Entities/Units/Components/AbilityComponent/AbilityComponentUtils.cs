@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
+using AKidsDream.Commands;
 using AKidsDream.GameBoard;
 using Godot;
 
@@ -29,10 +30,11 @@ public readonly record struct CastResult(bool Success, CastFailureReason Failure
 /// </summary>
 public partial class AbilityContext : Resource
 {
-    public required Unit Caster { get; init; }
+    public required IAbilityCaster Caster { get; init; }
+    public required Node CasterNode { get; init; }
     public required AbilityData Ability { get; init; }
-    public required Board Board { get; init; }
-    public PlayerId CasterId => Caster.OwnerId;
+    public PlayerId PlayerCasterId => Caster.OwnerId;
+    public required GameContext GameContext { get; init; }
 }
 
 /// <summary>

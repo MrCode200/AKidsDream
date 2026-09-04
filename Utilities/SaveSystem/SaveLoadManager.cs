@@ -33,12 +33,14 @@ public static class SaveLoadManager
     /// <param name="board">The board, which gets used to init itself.</param>
     /// <param name="gameLoopManager">The GameLoopManager, which gets used to init itself.</param>
     /// <param name="entityLayer">To where the child Unit Nodes should be added to</param>
+    /// <param name="gameManager"></param>
     public static void LoadGameState(
-        string stateFileName, 
-        Board board, 
-        GameLoopManager gameLoopManager,  
-        Node entityLayer
-        )
+        string stateFileName,
+        Board board,
+        GameLoopManager gameLoopManager,
+        Node entityLayer,
+        GameManager gameManager
+    )
     {
         Log.ForContext("StateFileName", stateFileName)
             .Here()
@@ -56,13 +58,20 @@ public static class SaveLoadManager
                 .Fatal(ex, "Failed to load game state from '{StateFileName}'", stateFileName);
             throw;
         }
-        GameManager.Instance.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
-        GameManager.Instance.InitializeControllers(state.PlayerData);
+
+        gameManager.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
+        gameManager.InitializeControllers(state.PlayerData);
 
         gameLoopManager.LoadState(state);
 
         AssignNextIds(state.UnitStateResources!, state.PlayerData, state.TeamData);
-        var initializedUnits = UnitStateInitializer.InitializeUnits(entityLayer, state.UnitStateResources);
+        var initializedUnits =
+            UnitStateInitializer.InitializeUnits(
+                entityLayer,
+                state.UnitStateResources,
+                gameManager.PlayerTeamRegistry,
+                board
+            );
         board.Init(state.BoardStateData, initializedUnits);
 
         Log.Here()
@@ -76,8 +85,15 @@ public static class SaveLoadManager
     /// <param name="gameLoopManager">The GameLoopManager, which is used to get the current state.</param>
     /// <param name="saveFileName">The name of the save file.
     /// If null Generates: GameState + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")</param>
+    /// <param name="playerTeamRegistry">The registry of players and teams</param>
+    /// <param name="teamRelationResolver">The resolver of team relations</param>
     /// <returns>True on success, else false.</returns>
-    public static void SaveState(Board board, GameLoopManager gameLoopManager, string? saveFileName = null)
+    public static void SaveState(Board board,
+        PlayerTeamRegistry playerTeamRegistry,
+        TeamRelationResolver teamRelationResolver,
+        GameLoopManager gameLoopManager,
+        string? saveFileName = null
+    )
     {
         saveFileName ??= "GameState" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
         var state = new GameStateData
@@ -85,10 +101,9 @@ public static class SaveLoadManager
             GameRound = gameLoopManager.CurrentRound,
             PlayerTurnOrder = gameLoopManager.PlayerTurnOrder(),
             ActivePlayerIdInt = gameLoopManager.ActivePlayerId.Value,
-            PlayerData = new Array<PlayerData>(GameManager.Instance.PlayerTeamRegistry.GetAllPlayers()),
-            LocalPlayerIdInt = GameManager.Instance.LocalPlayerId.Value,
-            TeamData = new Array<TeamData>(GameManager.Instance.PlayerTeamRegistry.GetAllTeams()),
-            TeamRelations = GameManager.Instance.TeamRelationResolver.Relations,
+            PlayerData = new Array<PlayerData>(playerTeamRegistry.GetAllPlayers()),
+            TeamData = new Array<TeamData>(playerTeamRegistry.GetAllTeams()),
+            TeamRelations = teamRelationResolver.Relations,
             BoardStateData = board.StateData
         };
 

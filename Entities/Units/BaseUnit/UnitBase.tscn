@@ -1,16 +1,22 @@
 [gd_scene format=3 uid="uid://cmiql00ctnb8s"]
 
 [ext_resource type="Script" uid="uid://dsl153k67ljph" path="res://Entities/Units/BaseUnit/Unit.cs" id="1_wfjo2"]
+[ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="2_j835c"]
 [ext_resource type="PackedScene" uid="uid://b3l8gwl37g2l2" path="res://Entities/Units/Components/HealthComponent/HealthComponent.tscn" id="3_4vwke"]
 [ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="3_jrfw0"]
 [ext_resource type="PackedScene" uid="uid://bjrsavixrtq2k" path="res://Common/Components/SelectableComponent/selectableComponent.tscn" id="3_v54ow"]
 [ext_resource type="Texture2D" uid="uid://cj0tnup416mrm" path="res://Assets/sprites/atlas.png" id="4_2atpx"]
-[ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://Common/Components/AddonsScripts/SetMaterialUponSelection.cs" id="4_bhfaj"]
 [ext_resource type="PackedScene" uid="uid://djhx822tsjxm6" path="res://Common/VFX/FloatingText/FloatingText.tscn" id="6_oeoug"]
 [ext_resource type="Shader" uid="uid://jdba7aiglun3" path="res://Common/Shaders/hitFlash.gdshader" id="7_bhfaj"]
+[ext_resource type="PackedScene" uid="uid://cavjv48ti5xiq" path="res://Common/Components/SelectableComponent/Addons/SelectionMaterialSetter.tscn" id="7_oeoug"]
 [ext_resource type="PackedScene" uid="uid://cuqwvtdrfa1jd" path="res://Entities/Units/Components/DeathComponent/DeathComponent.tscn" id="8_3x03u"]
 [ext_resource type="PackedScene" uid="uid://c1s7nvqnuwc8m" path="res://Entities/Units/Components/AnimationComponent/AnimationComponent.tscn" id="9_okks6"]
 [ext_resource type="PackedScene" uid="uid://buxl3vsion3gd" path="res://Entities/Units/Components/AbilityComponent/AbilityComponent.tscn" id="13_mlqjw"]
+
+[sub_resource type="Resource" id="Resource_kdo1m"]
+resource_local_to_scene = true
+script = ExtResource("2_j835c")
+metadata/_custom_type_script = "uid://8ujfv88riuka"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2atpx"]
 size = Vector2(51.9, 51.9)
@@ -26,12 +32,65 @@ region = Rect2(48, 192, 16, 16)
 shader = ExtResource("3_jrfw0")
 shader_parameter/color = Color(0, 0, 0, 1)
 shader_parameter/type = 2
-shader_parameter/thickness = 2.6000001235
-shader_parameter/flickering_speed = 3.499999921768
-shader_parameter/minimal_flickering_alpha = 0.670000031825
+shader_parameter/thickness = 2.182000103645
+shader_parameter/flickering_speed = 1.93999995663712
+shader_parameter/minimal_flickering_alpha = 0.2450000116375
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_r5yor"]
 animations = []
+
+[sub_resource type="Shader" id="Shader_j835c"]
+code = "shader_type canvas_item;
+
+uniform vec4 color:source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform int type: hint_enum(\"Disable\", \"Round\", \"Square\") = 2;
+uniform float thickness:hint_range(0, 10) = 1.0;
+// uniform vec4 flicker_color: source_color = vec4(0.0, 0.0, 0.0, 0.0); // Add maybe later
+uniform float flickering_speed: hint_range(0.0, 25.0, .01);
+uniform float minimal_flickering_alpha: hint_range(0.0, 1);
+
+const vec2[8] DIRECTIONS = {
+	vec2(1.0, 0.0),
+	vec2(0.0, 1.0),
+	vec2(-1.0, 0.0),
+	vec2(0.0, -1.0),
+	vec2(1.0, 1.0),
+	vec2(-1.0, 1.0),
+	vec2(-1.0, -1.0),
+	vec2(1.0, -1.0)
+};
+
+float gtz(float input) { return max(0, sign(input)); }
+// returns 1 if input > 0, else 0
+
+float check(sampler2D tex, vec2 from, vec2 size) {
+	float result = 0.0;
+	for (int i = 0; i < 4 * type; i ++)
+	{
+		result += texture(tex, from + DIRECTIONS[i] * size * thickness).a;
+	}
+	return gtz(result);
+}
+
+void fragment() {
+    float outline = check(TEXTURE, UV, TEXTURE_PIXEL_SIZE) * (1.0 - gtz(COLOR.a));
+	
+	float flicker = mix(
+		minimal_flickering_alpha,
+		1.0,
+		0.5 + 0.5 * sin(TIME * flickering_speed)
+	);
+	COLOR = mix( COLOR, color, outline * flicker);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cqabt"]
+shader = SubResource("Shader_j835c")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/type = 2
+shader_parameter/thickness = 2.182000103645
+shader_parameter/flickering_speed = 1.93999995663712
+shader_parameter/minimal_flickering_alpha = 0.2450000116375
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bhfaj"]
 shader = ExtResource("7_bhfaj")
@@ -42,11 +101,10 @@ shader_parameter/flash_dur_seconds = 0.3
 shader_parameter/flash_color = Color(1, 0, 0, 1)
 
 [node name="Unit" type="CharacterBody2D" unique_id=1080513067]
-position = Vector2(26, 26)
 collision_mask = 0
 motion_mode = 1
 script = ExtResource("1_wfjo2")
-OnMoveCallEventBus = &"UnitMoved"
+UnitStats = SubResource("Resource_kdo1m")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=797591978]
 shape = SubResource("RectangleShape2D_2atpx")
@@ -71,13 +129,15 @@ HealthC = NodePath("../HealthComponent")
 [node name="AbilityComponent" parent="." unique_id=509071314 node_paths=PackedStringArray("Unit") instance=ExtResource("13_mlqjw")]
 Unit = NodePath("..")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=452479933 node_paths=PackedStringArray("SelectableC")]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=452479933]
 material = SubResource("ShaderMaterial_oeoug")
 sprite_frames = SubResource("SpriteFrames_r5yor")
 animation = &""
-script = ExtResource("4_bhfaj")
-SelectionMaterial = SubResource("ShaderMaterial_oeoug")
-SelectableC = NodePath("../SelectableComponent")
+
+[node name="SelectionMaterialSetter" parent="AnimatedSprite2D" unique_id=859094201 node_paths=PackedStringArray("TargetNode2D", "SelectableC") instance=ExtResource("7_oeoug")]
+TargetNode2D = NodePath("..")
+SelectionMaterial = SubResource("ShaderMaterial_cqabt")
+SelectableC = NodePath("../../SelectableComponent")
 
 [node name="AnimationComponent" parent="." unique_id=1672340263 node_paths=PackedStringArray("Unit", "Animator") instance=ExtResource("9_okks6")]
 Unit = NodePath("..")

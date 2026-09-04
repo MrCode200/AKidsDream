@@ -1,10 +1,10 @@
+using AKidsDream.Abilities;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Logging;
-using AKidsDream.Core.Managers;
-using AKidsDream.Managers;
+using AKidsDream.Util.Identifiers;
+using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Utilities;
 using Godot;
 using Serilog;
 
@@ -16,49 +16,73 @@ namespace AKidsDream.Common;
 /// </summary>
 [GlobalClass]
 [Tool]
-public partial class Unit : CharacterBody2D
+public partial class Unit : CharacterBody2D, IAbilityCaster
 {
     // -- PROPERTIES --
     public UnitId UnitId { get; private set; }
+    public IIdTag CasterId => UnitId; // IAbilityCaster interface
+    public string CasterName => UnitName.ToString(); // IAbilityCaster interface
 
     [Export] public Global.UnitName UnitName;
 
     [Export] public int TeamIdInt;
     [Export] public int OwnerIdInt;
+
     public PlayerId OwnerId => new(OwnerIdInt);
     public TeamId TeamId => new(TeamIdInt);
 
     /// <summary>
     /// The current tile location of the unit.
     /// </summary>
-    [Export] public Vector2I TileLocation;
+    [Export] public Vector2I TileLocation {get; set;}
 
     [Export] public UnitStatsData UnitStats;
-
-    [Export] public StringName OnMoveCallEventBus;
-
 
     [Signal]
     public delegate void UnitMovedEventHandler(Unit unit, Vector2I from, Vector2I to);
     [Signal]
     public delegate void UnitInitializedEventHandler();
 
-    public HealthComponent HealthC { get; private set; }
-    public SelectableComponent SelectableC { get; private set; }
+    /// <summary>
+    /// The components of the unit.
+    /// </summary>
+    public HealthComponent HealthComp { get; private set; }
+    public SelectableComponent SelectableComp { get; private set; }
     public DeathComponent DeathC { get; private set; }
     public AbilityComponent AbilityC { get; private set; }
-    public AnimationComponent AnimationC { get; private set; }
+    public AnimationComponent AnimComp { get; private set; }
+    private Board Board { get; set; }
 
 
     private ILogger _log = GameLogger.For<Unit>();
     public bool Initialized { get; private set; }
 
+    
+    public override async void _Ready()
+    {
+        if (Engine.IsEditorHint()) return;
+
+        if (!Initialized)
+        {
+            await ToSignal(this, SignalName.UnitInitialized);
+        }
+
+        AnimComp!.PlayAnimation(AnimComp.DefaultAnimation);
+    }
+    
+    public override void _ExitTree()
+    {
+        if (EventBus.Instance != null)
+            EventBus.Instance.TurnStarted -= OnTurnStarted;
+    }
+
+    // -- LOGIC --
+
     public void Init(
-        Global.UnitName unitName,
-        PlayerId playerId,
-        TeamId teamId,
+        PlayerData ownerPlayerData,
         Vector2I tileLocation,
         UnitStatsData unitStats,
+        Board board,
         UnitId? unitId = null
     )
     {
@@ -73,29 +97,28 @@ public partial class Unit : CharacterBody2D
             UnitId = unitId.Value;
         }
 
-        UnitName = unitName;
-        OwnerIdInt = playerId.Value;
-        TeamIdInt = teamId.Value;
+        Board = board;
+        
+        UnitName = unitStats.UnitName;
+        OwnerIdInt = ownerPlayerData.PlayerId.Value;
+        TeamIdInt = ownerPlayerData.TeamId.Value;
         TileLocation = tileLocation;
-        if (unitStats is not null) UnitStats = unitStats;
+        Position = Board.TileToWorldPosition(TileLocation);
+
+        UnitStats = (UnitStatsData)unitStats.Duplicate();
 
         AddToGroup(nameof(Global.Groups.Units));
-        AddToGroup(teamId.ToString());
+        AddToGroup(ownerPlayerData.TeamId.ToString());
+        
+        EventBus.Instance.TurnStarted += OnTurnStarted;
+        _initializeDependencies(ownerPlayerData.UnitColor);
 
         Initialized = true;
-
         EmitSignal(SignalName.UnitInitialized);
-        
-        // If _Ready was already called before Init, call _Ready again to set appearance
-        if (IsNodeReady())
-        {
-            Log.Error("Init() called after _Ready(). Recalling _Ready() to set appearance.");
-            _Ready();
-        }
 
         // Set static context for all future log calls
-        _log = _log.ForContext("UnitId", UnitId)
-            .ForContext("UnitName", UnitName)
+        _log = _log.ForContext("IdTag", UnitId)
+            .ForContext("NameTag", UnitName)
             .ForContext("PlayerId", OwnerIdInt);
 
         if (externalIdPassed)
@@ -108,47 +131,17 @@ public partial class Unit : CharacterBody2D
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
     }
 
-    // -- LOGIC --
-
-    public override async void _Ready()
-    {
-        Position = Board.TileToWorldPosition(TileLocation);
-
-        if (Engine.IsEditorHint()) return;
-
-        if (!Initialized)
-        {
-            Log.Debug("_Ready() called before Init(). Waiting for initialization...");
-            await ToSignal(this, SignalName.UnitInitialized);
-            Log.Debug("Initialization complete, proceeding with _Ready() logic.");
-        }
-
-        EventBus.Instance.TurnStarted += OnTurnStarted;
-        _injectReferenceAndAssignComponents();
-        _log.Here()
-            .Debug("Unit ready at {TileLocation}", TileLocation);
-    }
-
-    public override void _ExitTree()
-    {
-        if (EventBus.Instance != null)
-            EventBus.Instance.TurnStarted -= OnTurnStarted;
-    }
-
-    private void _injectReferenceAndAssignComponents()
+    private void _initializeDependencies(Global.UnitColor unitColor)
     {
         DeathC = GetNode<DeathComponent>("DeathComponent");
-        SelectableC = GetNode<SelectableComponent>("SelectableComponent");
+        SelectableComp = GetNode<SelectableComponent>("SelectableComponent");
         AbilityC = GetNode<AbilityComponent>("AbilityComponent");
         
-        AnimationC = GetNode<AnimationComponent>("AnimationComponent");
-        AnimationC.Unit = this;
-        GameManager.Instance.PlayerTeamRegistry.TryGetPlayer(OwnerId, out var ownerData);
-        AnimationC.UnitColor = ownerData!.UnitColor;
-        AnimationC.PlayAnimation("Idle");
+        AnimComp = GetNode<AnimationComponent>("AnimationComponent");
+        AnimComp!.Init(this, unitColor);
 
-        HealthC = GetNode<HealthComponent>("HealthComponent");
-        HealthC.UnitStats = UnitStats;
+        HealthComp = GetNode<HealthComponent>("HealthComponent");
+        HealthComp.UnitStats = UnitStats;
     }
     
     // -- Signal Handlers --
@@ -161,20 +154,19 @@ public partial class Unit : CharacterBody2D
     }
 
     // --- LOGIC ---
-    public bool Move(Vector2I targetTile)
+    public bool Move(Vector2I toTile)
     {
-        var oldTile = TileLocation;
-        TileLocation = targetTile;
-        Position = Board.TileToWorldPosition(targetTile);
+        if (Board is null)
+        {
+            _log.Here().Err("Board not found in group '{GroupName}'", nameof(Global.Groups.Board));
+            return false;
+        }        
+        
+        if (!Board.MoveUnit(this, toTile, out var position))
+            return false;
 
-        if (!string.IsNullOrEmpty(OnMoveCallEventBus))
-            EventBus.Instance.EmitSignal(OnMoveCallEventBus, this, oldTile, targetTile);
-        EmitSignal(SignalName.UnitMoved, this, oldTile, targetTile);
-
-        _log.ForContext("FromTile", oldTile)
-            .ForContext("ToTile", targetTile)
-            .Here()
-            .Debug("Moved from {FromTile} to {ToTile}", oldTile, targetTile);
+        Position = position;
+        TileLocation = toTile;
 
         return true;
     }

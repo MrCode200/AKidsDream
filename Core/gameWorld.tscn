@@ -1,81 +1,74 @@
 [gd_scene format=3 uid="uid://cyhkas8bsi7kd"]
 
 [ext_resource type="PackedScene" uid="uid://dflp0g851uh1k" path="res://Entities/Board/board.tscn" id="1_jnam8"]
-[ext_resource type="Script" uid="uid://c85ubqn5h1vee" path="res://Core/Managers/GameManager.cs" id="1_ypqj4"]
-[ext_resource type="Texture2D" uid="uid://ttl3cvsve1lc" path="res://Entities/Board/Assets/tiles.png" id="4_cpkaj"]
+[ext_resource type="Script" uid="uid://c85ubqn5h1vee" path="res://Core/Systems/GameManager.cs" id="1_ypqj4"]
+[ext_resource type="PackedScene" uid="uid://llk58pj181s0" path="res://Core/Systems/AbilityVisualizer/AbilityVisualizer.tscn" id="4_083uc"]
 [ext_resource type="Script" uid="uid://vyrgj8w0vnjo" path="res://Common/Components/InputMoveComponent.cs" id="4_xn4h7"]
-[ext_resource type="Script" uid="uid://bmvyosbiktsyd" path="res://Core/Managers/CommandsSystem/CommandExecutor.cs" id="4_ypqj4"]
-[ext_resource type="Script" uid="uid://c2vkehvslp083" path="res://Core/Managers/GameLoopManager.cs" id="5_1totg"]
+[ext_resource type="PackedScene" uid="uid://b4jld3axlya56" path="res://Core/Systems/GameLoopManager/GameLoopManager.tscn" id="5_7vbhu"]
 [ext_resource type="PackedScene" uid="uid://dktd8vy0gf1h0" path="res://UI/UnitInfoBar/UnitInfoBar.tscn" id="5_d2vp3"]
-[ext_resource type="Script" uid="uid://irt720bqh762" path="res://Core/Managers/AbilityVisualizer.cs" id="5_ypqj4"]
-[ext_resource type="Texture2D" uid="uid://3jk5l3n0aj8y" path="res://Entities/Board/Assets/numberedTiles.png" id="6_083uc"]
-[ext_resource type="Script" uid="uid://dqhgr3soqc73f" path="res://Core/Controllers/ControllerFactory.cs" id="7_30lfw"]
-[ext_resource type="Script" uid="uid://cvx2p6rlu6y3s" path="res://Utilities/ConsoleCommands/ConsoleManager.cs" id="8_30lfw"]
+[ext_resource type="PackedScene" uid="uid://cdacftbeumh8x" path="res://Core/Systems/CommandsSystem/CommandExecutor.tscn" id="6_c66ua"]
+[ext_resource type="PackedScene" uid="uid://36ctam2p2bu0" path="res://Core/Systems/Controllers/ControllerFactory.tscn" id="9_7vbhu"]
 [ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="9_n2opw"]
-[ext_resource type="Script" uid="uid://cupp0qmi6xr2h" path="res://Core/Managers/BlockingManager.cs" id="10_xn4h7"]
+[ext_resource type="PackedScene" uid="uid://d2yy7wcxi8s4u" path="res://Core/Systems/ConsoleManager/ConsoleManager.tscn" id="10_7vbhu"]
+[ext_resource type="PackedScene" uid="uid://b0nx8wkcv0h57" path="res://Core/Systems/BlockingManager/BlockingManager.tscn" id="11_7vbhu"]
 [ext_resource type="PackedScene" uid="uid://ddst6dppshn3c" path="res://UI/EndTurnButton/EndTurnButton.tscn" id="12_7hfl2"]
+[ext_resource type="PackedScene" uid="uid://c4h6ufe6dmgvo" path="res://Entities/Cards/AbilityCard.tscn" id="12_7vbhu"]
+[ext_resource type="PackedScene" uid="uid://bbvgn3fa8g1e4" path="res://Core/Systems/CardManager/CardManager.tscn" id="12_c66ua"]
 [ext_resource type="PackedScene" uid="uid://f0e2ejne7mxf" path="res://UI/RoundCounter/RoundCounter.tscn" id="12_j3kke"]
+[ext_resource type="Script" uid="uid://bhj4qnvac3my3" path="res://Core/Systems/CardManager/CardManager.cs" id="13_emgvh"]
+[ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="13_ruhs7"]
+[ext_resource type="Script" uid="uid://xbyufx1hp2mw" path="res://Entities/Cards/PlayerHand.cs" id="17_078hk"]
+[ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="17_c66ua"]
+[ext_resource type="Resource" uid="uid://c8xhy0vyekyc" path="res://Entities/Units/Timmy/TimmyCardData.tres" id="19_l4a23"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cpkaj"]
-texture = ExtResource("4_cpkaj")
-1:12/0 = 0
-2:12/0 = 0
-3:12/0 = 0
-4:12/0 = 0
-5:12/0 = 0
-0:0/0 = 0
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
+[sub_resource type="Resource" id="Resource_078hk"]
+resource_local_to_scene = true
+script = ExtResource("13_ruhs7")
+MaxHealth = 2
+Health = 2
+metadata/_custom_type_script = "uid://8ujfv88riuka"
 
-[sub_resource type="TileSet" id="TileSet_1totg"]
-sources/0 = SubResource("TileSetAtlasSource_cpkaj")
+[sub_resource type="Resource" id="Resource_l4a23"]
+resource_local_to_scene = true
+script = ExtResource("13_ruhs7")
+MaxHealth = 2
+Health = 2
+metadata/_custom_type_script = "uid://8ujfv88riuka"
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xn4h7"]
-texture = ExtResource("4_cpkaj")
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
-0:0/0 = 0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5sb20"]
+resource_local_to_scene = true
+shader = ExtResource("17_c66ua")
+shader_parameter/color = Color(0.7125535, 0.36380315, 1, 0.64705884)
+shader_parameter/type = 1
+shader_parameter/thickness = 1.0
+shader_parameter/flickering_speed = 2.5499999430024
+shader_parameter/minimal_flickering_alpha = 0.454000021565
 
-[sub_resource type="TileSet" id="TileSet_e2nsu"]
-sources/0 = SubResource("TileSetAtlasSource_xn4h7")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8tpgw"]
+resource_local_to_scene = true
+shader = ExtResource("17_c66ua")
+shader_parameter/color = Color(0.7125535, 0.36380315, 1, 0.64705884)
+shader_parameter/type = 1
+shader_parameter/thickness = 1.0
+shader_parameter/flickering_speed = 2.5499999430024
+shader_parameter/minimal_flickering_alpha = 0.454000021565
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7vbhu"]
-texture = ExtResource("6_083uc")
-0:0/0 = 0
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
-4:0/0 = 0
-5:0/0 = 0
-6:0/0 = 0
-7:0/0 = 0
-8:0/0 = 0
-9:0/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_cgf4g"]
-sources/0 = SubResource("TileSetAtlasSource_7vbhu")
-
-[node name="GameWorld" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "EntityLayer", "GameLoopManager", "GameBoard")]
+[node name="GameManager" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "GameBoard", "CommandExecutor", "AbilityVisualizer", "ConsoleManager", "EntityLayer", "GameLoopManager", "CardManager")]
 script = ExtResource("1_ypqj4")
-ControllerFactory = NodePath("SystemsLayer/ControllerFactory")
 LoadFileName = "NewSave.tres"
+SaveOnExit = false
+ControllerFactory = NodePath("SystemsLayer/ControllerFactory")
+GameBoard = NodePath("SystemsLayer/Board")
+CommandExecutor = NodePath("SystemsLayer/CommandExecutor")
+AbilityVisualizer = NodePath("SystemsLayer/AbilityVisualizer")
+ConsoleManager = NodePath("SystemsLayer/ConsoleManager")
 EntityLayer = NodePath("EntityLayer")
 GameLoopManager = NodePath("SystemsLayer/GameLoopManager")
-SaveOnExit = false
-GameBoard = NodePath("SystemsLayer/Board")
+CardManager = NodePath("SystemsLayer/CardManager")
 
 [node name="SystemsLayer" type="Node" parent="." unique_id=1659508561]
 
 [node name="Board" parent="SystemsLayer" unique_id=2027072769 instance=ExtResource("1_jnam8")]
-unique_name_in_owner = true
 
 [node name="Camera2D" type="Camera2D" parent="SystemsLayer" unique_id=2043432226 node_paths=PackedStringArray("Board")]
 position = Vector2(234, 294)
@@ -90,46 +83,24 @@ ActionPanRight = "CameraPanRight"
 ActionZoomIn = "CameraZoomIn"
 ActionZoomOut = "CameraZoomOut"
 
-[node name="AbilityVisualizer" type="Node" parent="SystemsLayer" unique_id=1367663625 node_paths=PackedStringArray("Board", "ReachTilemap", "EffectTilemap", "NumberedTilemap")]
-script = ExtResource("5_ypqj4")
+[node name="AbilityVisualizer" parent="SystemsLayer" unique_id=1371961309 node_paths=PackedStringArray("Board") instance=ExtResource("4_083uc")]
 Board = NodePath("../Board")
-ReachTilemap = NodePath("ReachAbilityTilemap")
-EffectTilemap = NodePath("EffectTilemap")
-NumberedTilemap = NodePath("NumberedTilemap")
 
-[node name="ReachAbilityTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1879383876]
-modulate = Color(1, 1, 1, 0.3137255)
-scale = Vector2(3.25, 3.25)
-tile_set = SubResource("TileSet_1totg")
+[node name="GameLoopManager" parent="SystemsLayer" unique_id=800224779 instance=ExtResource("5_7vbhu")]
 
-[node name="EffectTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=1728788862]
-modulate = Color(1, 1, 1, 0.3137255)
-tile_set = SubResource("TileSet_e2nsu")
+[node name="ControllerFactory" parent="SystemsLayer" unique_id=715429253 instance=ExtResource("9_7vbhu")]
 
-[node name="NumberedTilemap" type="TileMapLayer" parent="SystemsLayer/AbilityVisualizer" unique_id=2104659044]
-modulate = Color(1, 1, 1, 0.60784316)
-tile_set = SubResource("TileSet_cgf4g")
+[node name="ConsoleManager" parent="SystemsLayer" unique_id=1872037228 instance=ExtResource("10_7vbhu")]
 
-[node name="CommandExecutor" type="Node" parent="SystemsLayer" unique_id=716602167 node_paths=PackedStringArray("AbilityVisualizer", "Board", "GameLoopManager")]
-script = ExtResource("4_ypqj4")
+[node name="CommandExecutor" parent="SystemsLayer" unique_id=1418848601 instance=ExtResource("6_c66ua")]
+
+[node name="BlockingManager" parent="SystemsLayer" unique_id=392230459 instance=ExtResource("11_7vbhu")]
+
+[node name="CardManager" parent="SystemsLayer" unique_id=26640750 node_paths=PackedStringArray("AbilityVisualizer", "PlayerHand") instance=ExtResource("12_c66ua")]
+script = ExtResource("13_emgvh")
+SelectionInputName = "LeftClick"
 AbilityVisualizer = NodePath("../AbilityVisualizer")
-Board = NodePath("../Board")
-GameLoopManager = NodePath("../GameLoopManager")
-
-[node name="GameLoopManager" type="Node" parent="SystemsLayer" unique_id=1524335731]
-script = ExtResource("5_1totg")
-
-[node name="ControllerFactory" type="Node" parent="SystemsLayer" unique_id=2102470731 node_paths=PackedStringArray("Board", "AbilityVisualizer", "CommandExecutor")]
-script = ExtResource("7_30lfw")
-Board = NodePath("../Board")
-AbilityVisualizer = NodePath("../AbilityVisualizer")
-CommandExecutor = NodePath("../CommandExecutor")
-
-[node name="ConsoleManager" type="Node" parent="SystemsLayer" unique_id=1335128765]
-script = ExtResource("8_30lfw")
-
-[node name="BlockingManager" type="Node" parent="SystemsLayer" unique_id=1442946026]
-script = ExtResource("10_xn4h7")
+PlayerHand = NodePath("../../UILayer/PlayerHand")
 
 [node name="EntityLayer" type="Node" parent="." unique_id=2094553575]
 
@@ -138,23 +109,43 @@ position = Vector2(26, 78)
 TeamIdInt = 2
 OwnerIdInt = 2
 TileLocation = Vector2i(0, 1)
+UnitStats = SubResource("Resource_078hk")
 
 [node name="Soldier2" parent="EntityLayer" unique_id=2133163599 instance=ExtResource("9_n2opw")]
 position = Vector2(78, 78)
 TeamIdInt = 1
 OwnerIdInt = 1
 TileLocation = Vector2i(1, 1)
+UnitStats = SubResource("Resource_l4a23")
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=140492902]
 layer = 50
 
 [node name="UnitInforBar" parent="UILayer" unique_id=925057221 instance=ExtResource("5_d2vp3")]
 
-[node name="EndTurnButton" parent="UILayer" unique_id=136482551 instance=ExtResource("12_7hfl2")]
+[node name="EndTurnButton" parent="UILayer" unique_id=136482551 node_paths=PackedStringArray("GameManager") instance=ExtResource("12_7hfl2")]
 modulate = Color(0.72464263, 0.7246426, 0.7246426, 1)
 offset_left = -254.0
 offset_top = -45.176025
 offset_right = -126.0
 offset_bottom = 82.823975
+GameManager = NodePath("../..")
 
 [node name="RoundCounter" parent="UILayer" unique_id=319109358 instance=ExtResource("12_j3kke")]
+
+[node name="PlayerHand" type="Node2D" parent="UILayer" unique_id=1109723636]
+script = ExtResource("17_078hk")
+HandYScreenRatio = 0.605
+MaxHandWidthScreenRatio = 0.8
+CardPrefab = ExtResource("12_7vbhu")
+CardData = ExtResource("19_l4a23")
+
+[node name="UnitCard" parent="UILayer/PlayerHand" unique_id=1986214613 instance=ExtResource("12_7vbhu")]
+SelectionMaterial = SubResource("ShaderMaterial_5sb20")
+
+[node name="UnitCard2" parent="UILayer/PlayerHand" unique_id=1740297122 instance=ExtResource("12_7vbhu")]
+offset_left = -345.0
+offset_top = -17.0
+offset_right = -176.0
+offset_bottom = 195.0
+SelectionMaterial = SubResource("ShaderMaterial_8tpgw")

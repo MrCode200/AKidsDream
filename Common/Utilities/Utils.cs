@@ -1,7 +1,7 @@
-using System;
-using System.Reflection;
+#nullable enable
+using System.Collections.Generic;
+using AKidsDream.Managers.SaveSystems;
 using Godot;
-using Array = Godot.Collections.Array;
 
 namespace AKidsDream.Utilities;
 
@@ -11,6 +11,8 @@ namespace AKidsDream.Utilities;
 [Tool]
 public static class Utils
 {
+    public static string GetUnitPath(Global.UnitName unitName) => $"res://Entities/Units/{unitName.ToString()}/";
+    
     /// <summary>
     /// Rebuilds a resource by copying all properties from a source resource to a new typed instance.
     /// </summary>
@@ -40,6 +42,31 @@ public static class Utils
         }
 
         return target;
+    }
+
+    public static IEnumerable<(T1? first, T2? second)> ZipLongest<T1, T2>(
+        IEnumerable<T1> first,
+        IEnumerable<T2> second
+    )
+        where T1 : class
+        where T2 : class
+    {
+        using var e1 = first.GetEnumerator();
+        using var e2 = second.GetEnumerator();
+
+        while (true)
+        {
+            bool has1 = e1.MoveNext();
+            bool has2 = e2.MoveNext();
+
+            if (!has1 && !has2)
+                yield break;
+
+            yield return (
+                has1 ? e1.Current : null,
+                has2 ? e2.Current : null
+            );
+        }
     }
 }
 
