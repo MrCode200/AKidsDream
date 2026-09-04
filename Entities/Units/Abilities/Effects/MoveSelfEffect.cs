@@ -29,7 +29,7 @@ public partial class MoveSelfEffect : EffectData
         payload.CurrentOrigin = payload.ProcessingTiles[^1];
     }
 
-    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
+    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles)
     {
         if (context.Caster is not Unit castingUnit)
             return new ErrorResult
@@ -39,8 +39,7 @@ public partial class MoveSelfEffect : EffectData
                 Error = "Cannot request MoveSelfEffect to be applied to a non-unit"
             };
         
-        var tiles = GetAffectedTiles(context, payload);
-        if (tiles.Length == 0)
+        if (affectedTiles.Length == 0)
         {
             return new ErrorResult
             {
@@ -51,7 +50,7 @@ public partial class MoveSelfEffect : EffectData
         }
 
         Vector2I from = castingUnit.TileLocation;
-        Vector2I to = tiles[0];
+        Vector2I to = affectedTiles[0];
         if (!castingUnit.Move(to))
             return new ErrorResult()
             {

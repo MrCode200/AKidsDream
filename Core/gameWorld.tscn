@@ -135,6 +135,7 @@ GameManager = NodePath("../..")
 
 [node name="PlayerHand" type="Node2D" parent="UILayer" unique_id=1109723636]
 script = ExtResource("17_078hk")
+PlayerHandSize = 6
 HandYScreenRatio = 0.605
 MaxHandWidthScreenRatio = 0.8
 CardPrefab = ExtResource("12_7vbhu")

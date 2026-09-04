@@ -51,7 +51,7 @@ public partial class AbilityPayload : Resource
     public List<Vector2I> ProcessingTiles = [];
     // public Vector2I[] AdditionalReachTiles = [];
     public required AbilityState State = new();
-    public required Vector2I CurrentOrigin { get; set; }
+    public Vector2I? CurrentOrigin { get; set; }
 
     public AbilityPayload Copy()
     {

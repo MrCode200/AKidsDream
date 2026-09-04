@@ -73,6 +73,7 @@ public class GameCreationPayload
 									   PlayerIdInt = 1
 									   PlayerName = "MrMagic"
 									   TeamIdInt = 1
+									   Mana = 10
 
 									   [sub_resource type="Resource" id="Resource_ojjb5"]
 									   script = ExtResource("2_ucnw2")
@@ -80,6 +81,7 @@ public class GameCreationPayload
 									   PlayerName = "MrSorceress"
 									   TeamIdInt = 2
 									   UnitColor = 1
+									   Mana = 10
 
 									   [sub_resource type="Resource" id="Resource_xurp1"]
 									   script = ExtResource("3_4n8g7")

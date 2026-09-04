@@ -56,7 +56,7 @@ public partial class CardManager : Node2D
         _screenSize = GetViewport().GetVisibleRect().Size;
         _cachedAbilityPayload = new AbilityPayload
         {
-            CurrentOrigin = new Vector2I(-1, -1),
+            CurrentOrigin = null,
             State = new AbilityState()
         };
     }
@@ -236,7 +236,7 @@ public partial class CardManager : Node2D
 
         _cachedAbilityContext = new AbilityContext
         {
-            Caster = cardCaster, // Will be updated in GetMouseTile
+            Caster = cardCaster,
             CasterNode = SelectedCard,
             Ability = SelectedCard.CardData.Ability,
             GameContext = _gameContext
@@ -253,6 +253,7 @@ public partial class CardManager : Node2D
     private async void TryCastCard()
     {
         var manaCost = 0;
+        EffectResult castResult = new CompositeResult();
 
         try
         {
@@ -273,17 +274,17 @@ public partial class CardManager : Node2D
 
             if (!valid)
             {
-                _log.Here().Debug("Card validation failed: {CastFailureReason}", reason);
                 PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
                 return;
             }
 
             // -- Cast --
+            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, SelectedCard.CardData.Ability);
 
             manaCost = SelectedCard.CardData.Ability.GetCost(_cachedAbilityContext, simPayload);
-            _gameContext.GameLoopManager.GetActivePlayer().Mana -= manaCost;
+            castingPlayer.Mana -= manaCost;
 
-            var castResult = await SelectedCard.CastAsync(
+            castResult = await SelectedCard.CastAsync(
                 _cachedAbilityContext,
                 _cachedAbilityPayload.AccumulatedTargets,
                 null
@@ -292,7 +293,8 @@ public partial class CardManager : Node2D
             if (castResult is null or ErrorResult)
             {
                 _log.Here().Debug("Card casting failed: {EffectResult}", castResult);
-                _gameContext.GameLoopManager.GetActivePlayer().Mana += manaCost;
+                castingPlayer.Mana += manaCost;
+
                 PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
                 return;
             }
@@ -312,6 +314,14 @@ public partial class CardManager : Node2D
 
             if (SelectedCard is not null)
                 PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
+        }
+        finally
+        {
+            EventBus.Instance.EmitSignal(
+                EventBus.SignalName.AbilityCastEnd,
+                SelectedCard?.CardData.Ability,
+                castResult
+            );
         }
     }
 }

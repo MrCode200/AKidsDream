@@ -61,7 +61,7 @@ public abstract partial class AccessFieldPattern : Resource
 {
     [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.EmptyTiles;
 
-    public Vector2I[] GetTiles(Vector2I origin, Board board, PlayerId playerCasterId, PlayerTeamRegistry playerTeamRegistry)
+    public Vector2I[] GetTiles(Vector2I? origin, Board board, PlayerId playerCasterId, PlayerTeamRegistry playerTeamRegistry)
     {
         var tiles = GetTilesUnfiltered(origin, board);
         if (tiles.Length == 0 || AllowedTargets == TargetFilter.AnyTile) return tiles;
@@ -102,5 +102,5 @@ public abstract partial class AccessFieldPattern : Resource
         return tiles;
     }
 
-    public abstract Vector2I[] GetTilesUnfiltered(Vector2I origin, Board board);
+    public abstract Vector2I[] GetTilesUnfiltered(Vector2I? origin, Board board);
 }

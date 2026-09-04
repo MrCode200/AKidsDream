@@ -12,12 +12,10 @@ public partial class SummonUnitEffect : EffectData
     [Export] public PackedScene SummonedUnit;
     [Export] public UnitStatsData SummonedUnitStats;
 
-    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
+    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles)
     {
-        var tiles = GetAffectedTiles(context, payload);
-        
         var results = new List<EffectResult>();
-        foreach (var tile in tiles)
+        foreach (var tile in affectedTiles)
         {
             if (!context.GameContext.PlayerTeamRegistry.TryGetPlayer(context.Caster.OwnerId, out var playerData))
             {

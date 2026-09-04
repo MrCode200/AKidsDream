@@ -7,13 +7,6 @@ namespace AKidsDream.Entities.Cards;
 [Tool]
 public partial class AbilityCardData : Resource
 {
-    [Export]
-    public int BaseManaCost
-    {
-        get => Ability.BaseCost;
-        set => Ability.BaseCost = value;
-    }
-
     [Export(PropertyHint.Range, "0,100")] public int SpawnDelay;
     [Export] public AbilityData Ability;
     

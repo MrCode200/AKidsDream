@@ -3,13 +3,11 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Managers;
-using AKidsDream.GameBoard;
 using Godot.Collections;
 using Serilog;
 

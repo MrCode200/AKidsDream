@@ -217,7 +217,7 @@ public partial class AbilityData : Resource
     public bool IsTileInReach(
         AbilityContext context,
         Vector2I tile,
-        Vector2I origin
+        Vector2I? origin
     )
     {
         return AllTilesInReach(context, [tile], origin);
@@ -230,7 +230,7 @@ public partial class AbilityData : Resource
     public bool AllTilesInReach(
         AbilityContext context,
         IEnumerable<Vector2I> tiles,
-        Vector2I origin
+        Vector2I? origin
     )
     {
         if (ReachPattern is null) return true;

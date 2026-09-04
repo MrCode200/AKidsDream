@@ -7,8 +7,9 @@ namespace AKidsDream.Abilities.Effects;
 [Tool]
 public partial class OneTilePattern : AccessFieldPattern
 {
-	public override Vector2I[] GetTilesUnfiltered(Vector2I origin, Board board)
+	public override Vector2I[] GetTilesUnfiltered(Vector2I? origin, Board board)
 	{
-		return board.TileInBoard(origin) ? [origin] : [];
+		if (!origin.HasValue) return [];
+		return board.TileInBoard(origin.Value) ? [origin.Value] : [];
 	}
 }

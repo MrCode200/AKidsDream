@@ -35,6 +35,14 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     /// The current tile location of the unit.
     /// </summary>
     [Export] public Vector2I TileLocation {get; set;}
+    Vector2I? IAbilityCaster.TileLocation
+    {
+        get => TileLocation;
+        set
+        {
+            if (value.HasValue) TileLocation = value.Value;
+        }
+    }
 
     [Export] public UnitStatsData UnitStats;
 

@@ -154,8 +154,10 @@ public abstract partial class EffectData : Resource
             UpdatePayload(ctx, payload);
         }
 
+        var affectedTiles = GetAffectedTiles(ctx, payload);
+
         EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.CasterNode, ctx.Ability, this);
-        var result = ApplyEffect(ctx, payload);
+        var result = ApplyEffect(ctx, payload, affectedTiles);
         EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.CasterNode, ctx.Ability, this, result);
 
         return result;
@@ -254,7 +256,7 @@ public abstract partial class EffectData : Resource
     }
 
 
-    public abstract EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload);
+    public abstract EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles);
 
     public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload)
     {

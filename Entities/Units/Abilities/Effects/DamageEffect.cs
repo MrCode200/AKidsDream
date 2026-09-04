@@ -11,12 +11,11 @@ public partial class DamageEffect : EffectData
 {
     [Export] public int Amount = 1;
     
-    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload)
+    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles)
     {
-        var tiles = GetAffectedTiles(context, payload);
         List<EffectResult> results = [];
 
-        foreach (var tile in tiles)
+        foreach (var tile in affectedTiles)
         {
             if (!context.GameContext.Board.TryGetUnitAt(tile, out var target)) continue;
             

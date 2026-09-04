@@ -20,7 +20,7 @@ Review, verify, and resolve logic bugs and architectural inconsistencies in the 
 **1. Ability Casting**
 - [x] ~~**Premature Resource Deduction & Lack of Rollback**: In `CardManager.TryCastCard()`, `castingPlayer.Mana` is deducted *before* `await SelectedCard.CastAsync()`. If casting fails (e.g. `ErrorResult` returned or exception thrown), mana is lost and the card is still removed from `PlayerHand` and freed.~~
 - [ ] **Async Race Condition**: `TryCastCard()` is `async void`. If the player interacts with another card while the async cast is awaiting animation/trigger completion, `SelectedCard` changes. `var castCard = SelectedCard` after `await` destroys the newly selected card instead of the cast card.
-- [ ] **Missing EventBus Signals**: Unlike `AbilityComponent.CastAsync()`, `CardManager` / `AbilityCard` cast flow does not emit `AbilityCastStart`, `AbilityCostUpdated`, or `AbilityCastEnd` events on `EventBus`, breaking UI synchronization.
+- [X] ~~**Missing EventBus Signals**: Unlike `AbilityComponent.CastAsync()`, `CardManager` / `AbilityCard` cast flow does not emit `AbilityCastStart`, `AbilityCostUpdated`, or `AbilityCastEnd` events on `EventBus`, breaking UI synchronization.~~
 - [X] ~~**`CardCaster` Trigger Compatibility**: `CardCaster` has `AnimComp = null`, which causes frame-based animation triggers (`CastOnFrame`, `CastOnLoop`, etc.) to fail or log warnings without graceful fallback.~~
 
 **2. Checking & Validating**
