@@ -4,10 +4,10 @@ A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scisso
 Command modular units with unique abilities over a tiled battlefield and see how battles play out.
 
 > [!NOTE] 
-> The following README.md is a **stripped down rewritten version** of the [original Readme](https://github.com/MrCode200/AKidsDream/ORIGINALREADME.md). \
+> The following README.md is a **stripped down rewritten version** of the [original Readme](ORIGINALREADME.md). \
 > The original was seen as written by AI by the shipwrights *(hackclub stardance event).* \
 > To **respect** the shipwrights decision this is the main page, if you trust me *(selfproclaimed!: I did write the original myself)* or don't care if its written by AI \
-> i **recommend** you to read the [original Readme](https://github.com/MrCode200/AKidsDream/ORIGINALREADME.md). 
+> i **recommend** you to read the [original Readme](ORIGINALREADME.md). 
 
 <p align="center">
   <a
