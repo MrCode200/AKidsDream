@@ -1,6 +1,13 @@
 ﻿# A Kid's Dream — Turn-based Tactics War Game
 
-A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scissors board game I made as a kid. Command modular units with unique abilities over a tiled battlefield and see how battles play out.
+A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scissors board game I made as a kid. \
+Command modular units with unique abilities over a tiled battlefield and see how battles play out.
+
+> [!NOTE] 
+> The following README.md is a **stripped down rewritten version** of the [original Readme](https://github.com/MrCode200/AKidsDream/ORIGINALREADME.md). \
+> The original was seen as written by AI by the shipwrights *(hackclub stardance event).* \
+> To **respect** the shipwrights decision this is the main page, if you trust me *(selfproclaimed!: I did write the original myself)* or don't care if its written by AI \
+> i **recommend** you to read the [original Readme](https://github.com/MrCode200/AKidsDream/ORIGINALREADME.md). 
 
 <p align="center">
   <a
@@ -15,7 +22,7 @@ A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scisso
   </a>
 </p>
 
-## 📖 Table of Contents
+## Table of Contents
 
 - [Why “A Kid’s Dream”?](#-why-a-kids-dream)
 - [Play the Build](#-play-the-build)
@@ -29,12 +36,12 @@ A Kid's Dream is a turn‑based tactical war game inspired by a paper-and-scisso
 - [AI Usage](#-ai-usage)
 - [Credits](#-credits)
 
-## 🤔 Why “A Kid’s Dream”?
+## Why “A Kid’s Dream”?
 
 When I was a child, I created a small board game using paper and scissors. It was simple, but incredibly fun to play.
-**A Kid’s Dream** is my attempt to recreate that experience, not exactly as it was, but with the pieces that remained in my memory. 
+**A Kid’s Dream** is my attempt to recreate that experience the way i still remember it to be. And to improve all the areas i forgot ;b.
 
-## 🚀 Play the build
+## Play the build
 
 Tip: use the developer console to spawn units for testing (see Developer console commands).
 
@@ -47,7 +54,7 @@ Clone the repo: git clone https://github.com/MrCode200/AKidsDream.git cd AKidsDr
 Install .NET 10.0: https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 Open the project in Godot and press Play.
 
-## 🌟 Features
+## Features
 
 - Turn-based tactical combat on a tile grid
 - Modular unit system (stats, abilities, components)
@@ -60,7 +67,7 @@ Open the project in Godot and press Play.
 - Mana system and upgrades
 - Online matchmaking
 
-## 🎮 How to play (quick)
+## How to play (quick)
 
 `Left click` -- select units and interact with tiles \
 `Right click` -- Deletes selected tile (for multi selected tiles) \
@@ -70,18 +77,18 @@ Open the project in Godot and press Play.
 **Typical turn**: select a unit → move → use an ability → end turn. \
 ***Win conditions are not yet implemented, any (any) suggestions are really WELCOME:)***
 
-## 🛠️ Developer console commands
+## Developer console commands
 
 > unit_create <name> <player_id> <.x> <.y> — spawn a unit at (x,y)
 
 **NOTE:** \
 Available units: Soldier, TestUnit. Currently player_id accept 1 or 2 only (example: unit_create Soldier 1 2 4).
 
-## 📃 Documentation
+## Documentation
 To read the documentation visit:
 - Project layout and roadmap on [Miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025)
 - Ask targeted questions via [Devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main) 
-## 🔧 How it works
+## How it works
 
 The project uses a modular, data-driven architecture:
 
@@ -98,16 +105,15 @@ can include triggers such as animation frame or timed moments.
 This way of implementing enables easy and modular way to create abilities very fast.
 
 
-## 📜 License
+## License
 
-This project uses the AKidsDream Non-Commercial License. See LICENSE for details. Contact the maintainer for commercial licensing inquiries.
+This project uses the AKidsDream Non-Commercial License. See LICENSE for details.
 
-## 🤖 AI Usage
+## AI Usage
 
 AI was used as a development assitante, in the areas for debugging, suggestion for creation of individual systems, writing documentation for the code (docstrings).
 
-## ✨ Credits
+## Credits
 
-- Author: MrCode200
 - Thanks to the Godot Discord community for help during development
 - Built with Godot 4 and C#
