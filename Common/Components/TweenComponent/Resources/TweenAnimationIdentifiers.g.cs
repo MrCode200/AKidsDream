@@ -5,12 +5,16 @@ using Godot;
 namespace AKidsDream.Res.Common.Components.TweenComponent.Resources;
 public static class TweenAnimationIdentifiers
 {
-	public static readonly StringName MouseEnterDelarge = new StringName("MouseEnterDelarge");
-	public static readonly StringName MouseExitEnlarge = new StringName("MouseExitEnlarge");
-	public static readonly StringName SpawnButton = new StringName("SpawnButton");
-	public static readonly StringName Hover = new StringName("Hover");
-	public static readonly StringName UIBOnHide = new StringName("UIBOnHide");
-	public static readonly StringName UIBOnShow = new StringName("UIBOnShow");
-	public static readonly StringName FloatUpAndFade = new StringName("FloatUpAndFade");
-	public static readonly StringName RoundUp = new StringName("RoundUp");
+    public static readonly StringName MouseExitEnlarge = new StringName("MouseExitEnlarge");
+    public static readonly StringName MouseExitDelarge = new StringName("MouseExitDelarge");
+    public static readonly StringName SpawnButton = new StringName("SpawnButton");
+    public static readonly StringName Hover = new StringName("Hover");
+    public static readonly StringName UIBOnShow = new StringName("UIBOnShow");
+    public static readonly StringName UIBOnHide = new StringName("UIBOnHide");
+    public static readonly StringName FloatUpAndFade = new StringName("FloatUpAndFade");
+    public static readonly StringName OnSelectCard = new StringName("OnSelectCard");
+    public static readonly StringName OnDeselectCard = new StringName("OnDeselectCard");
+    public static readonly StringName MouseEnterEnlargeCard = new StringName("MouseEnterEnlargeCard");
+    public static readonly StringName MouseExitDelargeCard = new StringName("MouseExitDelargeCard");
+    public static readonly StringName RoundUp = new StringName("RoundUp");
 }

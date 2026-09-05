@@ -50,8 +50,8 @@ public static class Global
 
 	public enum InputMapActions
 	{
-		LeftClick,
-		RightClick
+		Select,
+		Deselect
 	}
 
 	public enum AtlasCoordsSprite

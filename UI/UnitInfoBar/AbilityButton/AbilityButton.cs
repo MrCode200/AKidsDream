@@ -64,7 +64,7 @@ public partial class AbilityButton : Control
         EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityBtnPressed, Unit, Ability);
     }
 
-    private void CheckCanAffordCast(AbilityData ability, EffectResult _ = null)
+    private void CheckCanAffordCast(AbilityData ability)
     {
         if (!ability.CanReplenishPool() &&
             Unit.AbilityC.TryCanAffordBaseCost(ability.Name, out var canAfford) &&

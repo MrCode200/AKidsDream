@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://bgw21rhfyln6e"]
+
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_ori0v"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_yb0hg"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_8ymps"]
+
+[sub_resource type="Curve" id="Curve_2i624"]
+_data = [Vector2(0, 0), 0.0, -0.48689127, 0, 0, Vector2(1, 1), -1.7528094, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Resource" id="Resource_ori0v"]
+script = ExtResource("2_yb0hg")
+Property = NodePath("position")
+FromValue = null
+ToValue = Vector2(0, 25)
+SetValueRelative = true
+Duration = 0.22
+CustomCurve = SubResource("Curve_2i624")
+Transition = 10
+
+[resource]
+script = ExtResource("3_8ymps")
+Steps = Array[ExtResource("2_yb0hg")]([SubResource("Resource_ori0v")])
+Triggers = Array[int]([0])
+CurveMode = 0
+Identifier = &"OnDeselectCard"
+metadata/_custom_type_script = "uid://dgx06qq13talq"

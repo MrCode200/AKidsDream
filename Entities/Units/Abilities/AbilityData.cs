@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AKidsDream.Abilities.CostModifiers;
 using AKidsDream.Abilities.Effects;
-using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Results;
+using AKidsDream.Managers.SaveSystems;
 using Godot;
 
 namespace AKidsDream.Abilities;
@@ -90,8 +92,9 @@ public partial class AbilityData : Resource
             _maxDuplicateTargets = value;
         }
     }
-    
-    [Signal] public delegate void AbilityCastEventHandler(AbilityData ability, EffectResult result);
+
+    [Signal]
+    public delegate void AbilityCastEventHandler(AbilityData ability);
 
     // -- LOGIC --
     /// <summary>
@@ -110,13 +113,12 @@ public partial class AbilityData : Resource
 
     /// <summary>
     /// Casts the ability by executing all effects in insertion order.
-    /// Each effect is calculated independently and returns its individual EffectResult.
     /// </summary>
     /// <param name="context">The context, containing unmodifiable classes</param>
     /// <param name="targetedTiles">The tiles the User selected in insertion order</param>
     /// <param name="state">The state of the ability (Counters etc.)</param>
-    /// <returns>Returns a CompositeResult containing all individual effect results</returns>
-    public async Task<(EffectResult Result, AbilityPayload Payload)> CastAsync(
+    /// <returns>Returns a Result containing the composite outcome and payload, or CastError.</returns>
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> CastAsync(
         AbilityContext context,
         List<Vector2I> targetedTiles,
         AbilityState? state
@@ -128,23 +130,24 @@ public partial class AbilityData : Resource
             CurrentOrigin = context.Caster.TileLocation,
             State = state
         };
-        
-        var effectResults = new EffectResult[Effects.Length];
+
+        var outcomes = new List<EffectOutcome>(Effects.Length);
         for (var i = 0; i < Effects.Length; i++)
         {
             var effectResult = await Effects[i].ExecuteAsync(context, targetedTiles, payload);
-            effectResults[i] = effectResult;
+            if (effectResult.IsFailure)
+                return Result.Fail<(CompositeOutcome, AbilityPayload), CastError>(new CastError.EffectFailed(effectResult.Error));
 
-            if (effectResult is ErrorResult) return (effectResult, payload);
+            outcomes.Add(effectResult.Value);
         }
-        
-        var result = new CompositeResult { Results = effectResults };
-        EmitSignal(SignalName.AbilityCast, this, result);
-        return (new CompositeResult { Results = effectResults }, payload);
+
+        var compositeOutcome = new CompositeOutcome(outcomes, flatten: true) { Caster = context.Caster };
+        EmitSignal(SignalName.AbilityCast, this);
+        return Result.Ok<(CompositeOutcome, AbilityPayload), CastError>((compositeOutcome, payload));
     }
 
     // -- UTIL METHODS --
-    
+
     public (Vector2I atlasCoord, Vector2I[] tiles) GetReachVisualizationData(
         AbilityContext context,
         AbilityPayload payload)
@@ -155,7 +158,6 @@ public partial class AbilityData : Resource
 
         var tiles = new List<Vector2I>();
         var allReachTiles = new[] { payload.CurrentOrigin };
-        // allReachTiles = allReachTiles.Concat(payload.AccumulatedTargets).ToArray();
 
         foreach (var t in allReachTiles)
         {
@@ -173,25 +175,25 @@ public partial class AbilityData : Resource
     {
         return CostMod?.GetCost(BaseCost, context, payload) ?? BaseCost;
     }
-    
+
     public bool CanReplenishPool()
     {
         if (CostMod == null) return BaseCost < 0;
         return CostMod?.CanReplenishPool() ?? false;
     }
-    
+
     // -- VALIDATION --
 
     /// <summary>
     /// Checks if the number of Tiles the User selected is valid.
-    /// Cheks that no duplicate tile counted exceeds <see cref="MaxDuplicateTargets"/>.
+    /// Checks that no duplicate tile counted exceeds <see cref="MaxDuplicateTargets"/>.
     /// </summary>
     /// <param name="targetTiles">The Tiles the User selected.</param>
-    public bool HasValidTargetCount(List<Vector2I> targetTiles)
+    public Result<CastError> ValidateTargetCount(List<Vector2I> targetTiles)
     {
         var count = targetTiles.Count;
         if (count < MinTargets || count > MaxTargets)
-            return false;
+            return Result.Fail<CastError>(new CastError.InvalidTargetCount(MinTargets, MaxTargets, count));
 
         var duplicates = targetTiles.GroupBy(t => t)
             .Select(g => new { Value = g.Key, Count = g.Count() })
@@ -199,12 +201,16 @@ public partial class AbilityData : Resource
 
         foreach (var duplicate in duplicates)
         {
-            if (duplicate.Count > _maxDuplicateTargets) return false;
+            if (duplicate.Count > _maxDuplicateTargets)
+                return Result.Fail<CastError>(new CastError.MaxDuplicateTargetsExceeded(duplicate.Value, _maxDuplicateTargets, duplicate.Count));
         }
 
-        return true;
+        return Result.Ok<CastError>();
     }
-    
+
+    public bool HasValidTargetCount(List<Vector2I> targetTiles) =>
+        ValidateTargetCount(targetTiles).IsSuccess;
+
     public bool CanAfford(int balance, AbilityContext context, AbilityPayload payload)
     {
         return GetCost(context, payload) <= balance;
@@ -263,23 +269,20 @@ public partial class AbilityData : Resource
     /// Updates the payload sequentially tile by tile for a sequential effect,
     /// checking reach for each tile if requested.
     /// </summary>
-    public bool TryUpdatePayloadSequential(
+    public Result<CastError> TryUpdatePayloadSequential(
         EffectData effect,
         AbilityContext context,
         List<Vector2I> targetedTiles,
-        AbilityPayload payload,
-        bool checkReach,
-        out CastFailureReason reason)
+        AbilityPayload payload
+    )
     {
-        reason = CastFailureReason.None;
         payload.AccumulatedTargets = [];
 
         foreach (var tile in targetedTiles)
         {
-            if (checkReach && !IsTileInReach(context, tile, payload.CurrentOrigin))
+            if (!IsTileInReach(context, tile, payload.CurrentOrigin))
             {
-                reason = CastFailureReason.TilesOutOfRange;
-                return false;
+                return Result.Fail<CastError>(new CastError.TargetOutOfRange(tile, payload.CurrentOrigin));
             }
 
             payload.AccumulatedTargets.Add(tile);
@@ -287,44 +290,29 @@ public partial class AbilityData : Resource
             effect.UpdatePayload(context, payload);
         }
 
-        return true;
+        return Result.Ok<CastError>();
     }
 
     /// <summary>
     /// Main validation dispatcher for the ability. Validates target count and reachability,
     /// and simulates each effect's payload update (sequential or batch) in insertion order.
-    /// Does not check pool costs or affordability.
+    /// Does not check pool costs or affordability unless balance is provided.
     /// </summary>
-    /// <param name="context">The context for the cast.</param>
-    /// <param name="targetedTiles">The tiles selected for the ability.</param>
-    /// <param name="payload">The resulting payload populated with updated state, origin, and targets upon successful validation.</param>
-    /// <param name="reason">The failure reason if validation fails.</param>
-    /// <param name="balance">The balance to check the cost against if null check is skipped.</param>
-    /// <param name="state">Optional ability state. If null, a new AbilityState instance is used.</param>
-    /// <param name="initialOrigin">Optional initial origin. If null, context.Caster.TileLocation is used.</param>
-    /// <returns>True if the cast parameters and target reachability are valid; otherwise false.</returns>
-    public bool ValidateCast(
+    public Result<AbilityPayload, CastError> ValidateCast(
         AbilityContext context,
         List<Vector2I> targetedTiles,
-        [NotNullWhen(true)] out AbilityPayload? payload,
-        out CastFailureReason reason,
         int? balance = null,
         AbilityState? state = null,
         Vector2I? initialOrigin = null)
     {
-        reason = CastFailureReason.None;
-        payload = null;
-
-        if (!HasValidTargetCount(targetedTiles))
-        {
-            reason = CastFailureReason.InvalidTargetsSelected;
-            return false;
-        }
+        var targetCountResult = ValidateTargetCount(targetedTiles);
+        if (targetCountResult.IsFailure)
+            return Result.Fail<AbilityPayload, CastError>(targetCountResult.Error);
 
         var abilityState = state?.Copy() ?? new AbilityState();
         var origin = initialOrigin ?? context.Caster.TileLocation;
 
-        payload = new AbilityPayload
+        var payload = new AbilityPayload
         {
             CurrentOrigin = origin,
             ProcessingTiles = targetedTiles,
@@ -335,36 +323,31 @@ public partial class AbilityData : Resource
         for (var i = 0; i < Effects.Length; i++)
         {
             var effect = Effects[i];
-            var isFirst = i == 0;
 
             if (effect.RunSequential)
             {
-                // Sequential effect checks reachability for each tile itself
-                if (!TryUpdatePayloadSequential(effect, context, targetedTiles, payload, isFirst, out reason))
-                {
-                    payload = null;
-                    return false;
-                }
+                var seqResult = TryUpdatePayloadSequential(effect, context, targetedTiles, payload);
+                if (seqResult.IsFailure)
+                    return Result.Fail<AbilityPayload, CastError>(seqResult.Error);
             }
             else
             {
-                // Batch effect checks reachability for the origin
-                if (isFirst && !AllTilesInReach(context, targetedTiles, payload.CurrentOrigin))
+                if (targetedTiles.Count > 0 && !AllTilesInReach(context, targetedTiles, payload.CurrentOrigin))
                 {
-                    reason = CastFailureReason.TilesOutOfRange;
-                    payload = null;
-                    return false;
+                    var invalidTile = targetedTiles.FirstOrDefault(t => !IsTileInReach(context, t, payload.CurrentOrigin));
+                    return Result.Fail<AbilityPayload, CastError>(new CastError.TargetOutOfRange(invalidTile, payload.CurrentOrigin));
                 }
 
                 UpdatePayloadBatch(effect, context, targetedTiles, payload);
             }
         }
-        
+
         if (balance != null && !CanAfford(balance.Value, context, payload))
         {
-            reason = CastFailureReason.CannotAfford;
-            return false;
+            var cost = GetCost(context, payload);
+            return Result.Fail<AbilityPayload, CastError>(new CastError.CannotAfford(PoolName.ToString(), cost, balance.Value));
         }
-        return true;
+
+        return Result.Ok<AbilityPayload, CastError>(payload);
     }
 }

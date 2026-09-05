@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using AKidsDream.Core.Managers;
 using AKidsDream.GameBoard;
 using Godot;
 
@@ -21,12 +20,11 @@ namespace AKidsDream.Abilities.Effects;
 [Flags]
 public enum TargetFilter
 {
-    
     /// <summary>
     /// Targets any tile on the board, including empty tiles and tiles with units.
     /// </summary>
     AnyTile = EmptyTiles | Friendly | Hostile,
-    
+
     /// <summary>
     /// Targets empty tiles on the board (tiles without any unit).
     /// </summary>
@@ -56,32 +54,51 @@ public enum TargetFilter
     AnyUnit = Friendly | Hostile,
 }
 
+/*
+[AttributeUsage(AttributeTargets.Method)]
+public class RequiresOriginAttribute(bool required = true) : Attribute
+{
+    public bool Required { get; set; } = required;
+}
+*/
+
 [GlobalClass]
 public abstract partial class AccessFieldPattern : Resource
 {
     [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.EmptyTiles;
 
-    public Vector2I[] GetTiles(Vector2I? origin, Board board, PlayerId playerCasterId, PlayerTeamRegistry playerTeamRegistry)
+    public Vector2I[] GetTiles(Vector2I? origin, Board board, PlayerId playerCasterId,
+        PlayerTeamRegistry playerTeamRegistry)
     {
+        /*
+        var requiresOrigin = GetType()
+            .GetMethod(nameof(GetTilesUnfiltered), BindingFlags.Instance | BindingFlags.NonPublic)?
+            .GetCustomAttribute<RequiresOriginAttribute>(inherit: true)?
+            .Required ?? false;
+
+        if (requiresOrigin && !origin.HasValue)
+            return [];
+            */
+
         var tiles = GetTilesUnfiltered(origin, board);
         if (tiles.Length == 0 || AllowedTargets == TargetFilter.AnyTile) return tiles;
 
         tiles = tiles.Where(tile =>
         {
-            if(!board.TryGetTileAt(tile, out var tileData)) return false;
+            if (!board.TryGetTileAt(tile, out var tileData)) return false;
 
             if (AllowedTargets.HasFlag(TargetFilter.EmptyTiles) && tileData.Unit == null)
             {
                 return true;
             }
-            
+
             if (AllowedTargets.HasFlag(TargetFilter.OwnedUnits) &&
                 tileData.Unit is not null &&
                 tileData.Unit.OwnerId == playerCasterId)
             {
                 return true;
             }
-            
+
             if (AllowedTargets.HasFlag(TargetFilter.Friendly) &&
                 tileData.Unit is not null &&
                 !playerTeamRegistry.IsHostileToPlayer(playerCasterId, tileData.Unit.OwnerId))

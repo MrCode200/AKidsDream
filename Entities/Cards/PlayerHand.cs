@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -9,6 +10,9 @@ public partial class PlayerHand : Node2D
     [ExportCategory("Card Settings")]
     [Export(PropertyHint.Range, "0, 10")] public int PlayerHandSize;
     [Export(PropertyHint.Range, "0, 100")] public float CardSpacing = 10f;
+    [Export] public Vector2 CardSpawnPoint;
+    
+    [Export(PropertyHint.Range, "0, 100")] public float SelectedCardHeightDelta = 25f;
     [Export(PropertyHint.Range, "0, 1")] public float HandYScreenRatio;
     [Export(PropertyHint.Range, "0, 1")] public float MaxHandWidthScreenRatio;
     
@@ -16,7 +20,7 @@ public partial class PlayerHand : Node2D
     [Export] public PackedScene CardPrefab;
     [Export] public AbilityCardData CardData; // make later card pool
     
-    private readonly List<AbilityCard> _hand = [];
+    public readonly List<AbilityCard> Hand = [];
     private readonly Dictionary<AbilityCard, Tween> _activeTweens = [];
     private Vector2 _cardSize;
     private Vector2 _centerScreen;
@@ -37,42 +41,54 @@ public partial class PlayerHand : Node2D
         DrawCards(PlayerHandSize);
     }
 
+    public void ShowHand()
+    {
+        RefreshHandLayout();
+    }
+
+    public void HideHand() // TODO: what func name should UpdateCardPos take?
+    {
+        foreach (var card in Hand)
+            MoveCardTo(card, CardSpawnPoint);
+    }
+
     public void DrawCards(int count)
     {
         for (var i = 0; i < count; i++)
         {
             var newCard = CardPrefab.Instantiate<AbilityCard>();
             newCard.DisplayCard(CardData);
+            newCard.Position = CardSpawnPoint;
             
             AddChild(newCard);
-            _hand.Add(newCard);
+            Hand.Add(newCard);
         }
 
-        UpdateCardPosition();
+        RefreshHandLayout();
     }
 
     public void RemoveCard(AbilityCard card)
     {
-        if (!_hand.Contains(card)) return;
+        if (!Hand.Contains(card)) return;
         
-        _hand.Remove(card);
-        UpdateCardPosition();
+        Hand.Remove(card);
+        RefreshHandLayout();
     }
 
-    private void UpdateCardPosition()
+    private void RefreshHandLayout()
     {
         var cardWidth = _cardSize.X + CardSpacing;
-        var totalWidth = _hand.Count * cardWidth;
+        var totalWidth = Hand.Count * cardWidth;
         float? overflow = null;
         if (totalWidth > _maxHandWidth)
         {
             overflow = totalWidth - _maxHandWidth;
-            cardWidth -= overflow.Value / _hand.Count;
+            cardWidth -= overflow.Value / Hand.Count;
             totalWidth = _maxHandWidth;
         }
 
         var index = 0;
-        foreach (var card in _hand)
+        foreach (var card in Hand)
         {
              var xOffset = _centerScreen.X + index * cardWidth - totalWidth / 2;
              xOffset -= overflow != null ? CardSpacing / 2 : 0; // Simulate Spacing from both sides
@@ -92,6 +108,9 @@ public partial class PlayerHand : Node2D
             existingTween.Kill();
             _activeTweens.Remove(card);
         }
+        
+        if (card.IsSelected)
+            newPosition -= new Vector2(0, SelectedCardHeightDelta);
 
         var tween = CreateTween();
         tween.TweenProperty(card, "position", newPosition, 0.5f)

@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bogcpv1c0qi5q"]
+
+[ext_resource type="Shader" uid="uid://bu6a6u38i4nla" path="res://Common/Shaders/outline.gdshader" id="1_bxpv3"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_bxpv3")
+shader_parameter/color = Color(0.7125535, 0.36380315, 1, 0.64705884)
+shader_parameter/type = 0
+shader_parameter/thickness = 2.000000095
+shader_parameter/flickering_speed = 2.5499999430024
+shader_parameter/minimal_flickering_alpha = 0.454000021565

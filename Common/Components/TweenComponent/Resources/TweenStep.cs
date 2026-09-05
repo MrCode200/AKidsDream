@@ -45,6 +45,21 @@ public partial class TweenStep : Resource
     [ExportGroup("Timing")]
     [Export(PropertyHint.Range, "0.001,10,,or_greater")] public float Duration = 0.3f;
     [Export(PropertyHint.Range, "0,10,,or_greater")] public float Delay;
+
+    private Curve? _customCurve;
+
+    [Export]
+    public Curve? CustomCurve
+    {
+        get => _customCurve;
+        set
+        {
+            _customCurve = value;
+            NotifyPropertyListChanged();
+        }
+    }
+
+    [Export] public bool BakeCurve = true;
     [Export] public Tween.TransitionType Transition = Tween.TransitionType.Linear;
     [Export] public Tween.EaseType Ease = Tween.EaseType.InOut;
     
@@ -99,6 +114,7 @@ public partial class TweenStep : Resource
         {
             nameof(FromValue) => UseExplicitFrom,
             nameof(Delay) => !RunParallelWithPrevious,
+            nameof(BakeCurve) => CustomCurve is not null,
             nameof(ToTreeIndex) => TreeOrderAction == TreeOrderAction.MoveToIndex,
             _ => true
         };
@@ -109,20 +125,16 @@ public partial class TweenStep : Resource
             return;
         }
 
-        bool disable = propertyName switch
+        var disable = false;
+        if (!Property.IsEmpty && propertyName != nameof(Disable))
         {
-            nameof(UseExplicitFrom) 
-                or nameof(FromValue)
-                or nameof(ToValue)
-                or nameof(SetValueRelative)
-                or nameof(Duration)
-                or nameof(Transition)
-                or nameof(Ease) => Property.IsEmpty,
-            
-            nameof(Disable) => false,
-            
-            _ => Disable
-        };
+            disable = propertyName switch
+            {
+                nameof(Transition) or nameof(Ease) => CustomCurve is not null,
+                
+                _ => Disable
+            };
+        }
         
         if (disable)
             property["usage"] = (int)(property["usage"].AsInt32() | (long)PropertyUsageFlags.ReadOnly);

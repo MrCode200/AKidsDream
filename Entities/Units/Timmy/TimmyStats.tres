@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="UnitStatsData" format=3 uid="uid://ckw0d1mbflys6"]
+
+[ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="1_j7ae6"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_j7ae6")
+MaxHealth = 5
+Health = 5
+metadata/_custom_type_script = "uid://8ujfv88riuka"

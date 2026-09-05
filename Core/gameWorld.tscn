@@ -98,7 +98,7 @@ Board = NodePath("../Board")
 
 [node name="CardManager" parent="SystemsLayer" unique_id=26640750 node_paths=PackedStringArray("AbilityVisualizer", "PlayerHand") instance=ExtResource("12_c66ua")]
 script = ExtResource("13_emgvh")
-SelectionInputName = "LeftClick"
+SelectionInputName = "Select"
 AbilityVisualizer = NodePath("../AbilityVisualizer")
 PlayerHand = NodePath("../../UILayer/PlayerHand")
 
@@ -142,6 +142,10 @@ CardPrefab = ExtResource("12_7vbhu")
 CardData = ExtResource("19_l4a23")
 
 [node name="UnitCard" parent="UILayer/PlayerHand" unique_id=1986214613 instance=ExtResource("12_7vbhu")]
+offset_left = -247.0
+offset_top = 248.0
+offset_right = -78.0
+offset_bottom = 460.00076
 SelectionMaterial = SubResource("ShaderMaterial_5sb20")
 
 [node name="UnitCard2" parent="UILayer/PlayerHand" unique_id=1740297122 instance=ExtResource("12_7vbhu")]

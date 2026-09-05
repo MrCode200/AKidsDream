@@ -1,34 +1,56 @@
 #nullable enable
-using Godot;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
-using AKidsDream.Core.Managers;
-using Godot.Collections;
+using AKidsDream.Common.Results;
+using AKidsDream.Res.Common.Components.TweenComponent.Resources;
+using Godot;
 using Serilog;
 
 namespace AKidsDream.Entities.Cards;
 
+// DO not modify this class
+[GlobalClass]
 [Tool]
-[Icon("res://Entities/Cards/Assets/card-icon.png")]
-public partial class AbilityCard : Control, IBlockable
+public partial class AbilityCard : Control
 {
+    public CardId Id = CardId.GetNextId();
+
     [Export] public required AbilityCardData CardData;
     [Export] public required Label CardName;
     [Export] public required Sprite2D CardBackground;
     [Export] public required Sprite2D CardPortrait;
-    [Export] public Array<BlockingStrategy> BlockingStrategies { get; set; } =
-        [BlockingStrategy.BlockOnBlockingTrigger, BlockingStrategy.BlockOnEffectApply];
-    public bool IsBlocked { get; set; }
-
+    
     [Export] public required ShaderMaterial SelectionMaterial;
+    [Export] public required TweenComponent SelectionTweenComp;
+    
+    public Vector2 HandPosition { get; set; }
+    private Tween? _disablingTween;
 
-    public Vector2 HandPosition;
-    private readonly ILogger _log = GameLogger.For<AbilityCard>();
+    private ILogger _log = GameLogger.For<AbilityCard>();
+
+
+    private bool _disabled;
+
+    public bool Disabled
+    {
+        get => _disabled;
+        set
+        {
+            if (_disabled == value) return;
+
+            _disabled = value;
+            var targetColor = _disabled ? new Color(0.35f, 0.35f, 0.35f) : new Color(1, 1, 1);
+
+            _disablingTween?.Kill();
+            _disablingTween = CreateTween();
+            _disablingTween.TweenProperty(CardBackground, "modulate", targetColor, 0.2f);
+        }
+    }
 
     private bool _isSelected;
 
@@ -36,11 +58,23 @@ public partial class AbilityCard : Control, IBlockable
     public bool IsSelected
     {
         get => _isSelected;
-        set => _isSelected = value;
+        set
+        {
+            if (_isSelected.Equals(value)) return;
+            
+            _isSelected = value;
+            
+            var tweenAnimation = _isSelected
+                ? nameof(TweenAnimationIdentifiers.OnSelectCard)
+                : nameof(TweenAnimationIdentifiers.OnDeselectCard);
+            SelectionTweenComp.PlayTween(tweenAnimation);
+
+            var shaderMaterial = (ShaderMaterial)CardBackground.Material;
+            shaderMaterial.SetShaderParameter("type" , _isSelected ? 1 : 0); // 1 = round, 0 = disabled
+            GD.Print(shaderMaterial.GetShaderParameter("Type"));
+        }
     }
-
-    public CardId Id = CardId.GetNextId();
-
+    
     [ExportToolButton("Set Portrait Scale")]
     private Callable SetPortraitScaleBtn => Callable.From(() =>
     {
@@ -50,13 +84,13 @@ public partial class AbilityCard : Control, IBlockable
 
     public override void _Ready()
     {
-        _log.ForContext("IdTag", Id)
+        _log = _log.ForContext("IdTag", Id)
             .ForContext("NameTag", CardData.Name + "Card");
 
         CardBackground.Material = SelectionMaterial;
         _SetPortraitScale();
     }
-
+    
     private void _SetPortraitScale(float padding = 5f)
     {
         Vector2 portraitSize = CardPortrait.Texture.GetSize();
@@ -82,7 +116,7 @@ public partial class AbilityCard : Control, IBlockable
     /// Pure async cast method - executes the ability without validation or cost deduction.
     /// Use this if you want to handle validation and cost logic separately.
     /// </summary>
-    public async Task<EffectResult?> CastAsync(
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> CastAsync(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
         AbilityState? state = null
@@ -91,26 +125,26 @@ public partial class AbilityCard : Control, IBlockable
         if (CardData.Ability == null)
         {
             _log.Here().Err("Attempted to cast a card without ability data");
-            return null;
+            return Result.Fail<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>(
+                new CastError.AbilityNotFound("CardAbility"));
         }
-
         try
         {
-            var (result, _) = await CardData.Ability.CastAsync(abilityContext, targetedTiles, state);
-            if (result is ErrorResult er)
+            var castResult = await CardData.Ability.CastAsync(abilityContext, targetedTiles, state);
+            if (castResult.IsFailure)
             {
-                _log.Here().Err($"Card cast failed: {er.Error}");
-                return er;
+                _log.Here().Err("Card cast failed: {CastError}", castResult.Error);
+                return castResult;
             }
 
-            GD.Print(result);
-            _log.Here().Info($"Card cast successfully");
-            return result;
+            _log.Here().Info("Card cast successfully");
+            return castResult;
         }
         catch (Exception e)
         {
-            _log.Here().Err("Exception while casting card: {Exception}", e);
-            return null;
+            _log.Here().Err(e, "Exception while casting card");
+            return Result.Fail<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>(
+                new CastError.EffectFailed(new EffectError.ExecutionFailed(e.Message)));
         }
     }
 
@@ -118,67 +152,45 @@ public partial class AbilityCard : Control, IBlockable
     /// Validates the cast and returns the simulated payload.
     /// Use this to get the payload for custom logic before casting.
     /// </summary>
-    public bool ValidateCast(
+    public Result<AbilityPayload, CastError> ValidateCast(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
-        [NotNullWhen(true)] out AbilityPayload? payload,
-        out CastFailureReason reason,
         AbilityState? state = null,
         int? balance = null
     )
     {
-        payload = null;
-        reason = CastFailureReason.None;
-
         if (CardData.Ability == null)
         {
             _log.Here().Err("Attempted to validate a card without ability data");
-            reason = CastFailureReason.AbilityNotFound;
-            return false;
+            return Result.Fail<AbilityPayload, CastError>(new CastError.AbilityNotFound("CardAbility"));
         }
 
-        if (!CardData.Ability.ValidateCast(
-                abilityContext,
-                targetedTiles,
-                out payload,
-                out reason,
-                state: state,
-                balance: balance))
-        {
-            _log.Here().Debug("Casting Card validation failed: {CastFailureReason}", reason);
-            return false;
-        }
+        var validationResult = CardData.Ability.ValidateCast(
+            abilityContext,
+            targetedTiles,
+            state: state,
+            balance: balance);
 
-        return true;
+        return validationResult;
     }
 
     /// <summary>
     /// Validates and casts the card.
     /// Use this for the standard casting flow without the need to access simulated payloads.
     /// </summary>
-    public async Task<EffectResult?> ValidateAndCastAsync(
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> ValidateAndCastAsync(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
-        AbilityState state,
+        AbilityState? state = null,
         int? balance = null
     )
     {
-        if (!ValidateCast(
-                abilityContext,
-                targetedTiles,
-                out _,
-                out _,
-                state: state,
-                balance: balance))
+        var validation = ValidateCast(abilityContext, targetedTiles, state: state, balance: balance);
+        if (validation.IsFailure)
         {
-            return null;
+            return Result.Fail<(CompositeOutcome, AbilityPayload), CastError>(validation.Error);
         }
-        
+
         return await CastAsync(abilityContext, targetedTiles, state);
-    }
-    
-    public void SetBlocked(bool block)
-    {
-        IsBlocked = block;
     }
 }

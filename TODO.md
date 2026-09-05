@@ -19,14 +19,14 @@ Review, verify, and resolve logic bugs and architectural inconsistencies in the 
 
 **1. Ability Casting**
 - [x] ~~**Premature Resource Deduction & Lack of Rollback**: In `CardManager.TryCastCard()`, `castingPlayer.Mana` is deducted *before* `await SelectedCard.CastAsync()`. If casting fails (e.g. `ErrorResult` returned or exception thrown), mana is lost and the card is still removed from `PlayerHand` and freed.~~
-- [ ] **Async Race Condition**: `TryCastCard()` is `async void`. If the player interacts with another card while the async cast is awaiting animation/trigger completion, `SelectedCard` changes. `var castCard = SelectedCard` after `await` destroys the newly selected card instead of the cast card.
+- [X] ~~**Async Race Condition**: `TryCastCard()` is `async void`. If the player interacts with another card while the async cast is awaiting animation/trigger completion, `SelectedCard` changes. `var castCard = SelectedCard` after `await` destroys the newly selected card instead of the cast card.~~
 - [X] ~~**Missing EventBus Signals**: Unlike `AbilityComponent.CastAsync()`, `CardManager` / `AbilityCard` cast flow does not emit `AbilityCastStart`, `AbilityCostUpdated`, or `AbilityCastEnd` events on `EventBus`, breaking UI synchronization.~~
 - [X] ~~**`CardCaster` Trigger Compatibility**: `CardCaster` has `AnimComp = null`, which causes frame-based animation triggers (`CastOnFrame`, `CastOnLoop`, etc.) to fail or log warnings without graceful fallback.~~
 
 **2. Checking & Validating**
-- [ ] **Invalid Reach Origin for Cards**: `CardCaster.TileLocation` is initialized to `(-1, -1)`. In `CardManager`, `_cachedAbilityPayload.CurrentOrigin` is never updated during mouse move. Any card with an `AccessFieldPattern` that is not `AllTilesPattern` (e.g. `AdjacentPattern`, `OneTilePattern`) evaluates reach relative to `(-1, -1)` and fails validation.
-> // TODO: make GetUnfilteredTiles and check for if reach -1 -1 (ergo none) to be ignored thus
-- [ ] **Sequential Reach Validation Logic**: In `AbilityData.ValidateCast()`, `isFirst` is only true for the first effect in `Effects[]`. Subsequent effects skip reachability verification during sequential payload updates.
+- [x] **Invalid Reach Origin for Cards**: `CardCaster.TileLocation` is initialized to `(-1, -1)`. In `CardManager`, `_cachedAbilityPayload.CurrentOrigin` is never updated during mouse move. Any card with an `AccessFieldPattern` that is not `AllTilesPattern` (e.g. `AdjacentPattern`, `OneTilePattern`) evaluates reach relative to `(-1, -1)` and fails validation.
+> // DONE: make TileLocation nullable for CardCaster
+- [x] **Sequential Reach Validation Logic**: In `AbilityData.ValidateCast()`, `isFirst` is only true for the first effect in `Effects[]`. Subsequent effects skip reachability verification during sequential payload updates.
 
 **3. Card Management**
 - **Input Block on Card Release / Drag**: `CardManager._Input()` immediately returns if `GetViewport().GuiGetHoveredControl()` is not an `AbilityCard`. When releasing or dragging the card over the board, the hovered control is no longer the `AbilityCard`, causing `IsActionReleased` to never trigger `TryCastCard()`.

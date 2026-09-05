@@ -44,7 +44,7 @@ public partial class UnitInfoBar : Control, IBlockable
 	private void OnUnitDeselected(Unit _)
 	{
 		_selectedUnit = null;
-		SpawnTweenComponent.RunAnimation(TweenAnimationIdentifiers.UIBOnHide);
+		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.UIBOnHide);
 	}
 
 	public override void _Ready()
@@ -59,6 +59,7 @@ public partial class UnitInfoBar : Control, IBlockable
 
 	public override void _ExitTree()
 	{
+		BlockingManager.Instance.Unregister(this);
 		EventBus.Instance.UnitSelected -= CreateUnitBar;
 		EventBus.Instance.UnitDeselected -= OnUnitDeselected;
 		EventBus.Instance.UnitChanged -= UpdateUnitBar;
@@ -68,7 +69,7 @@ public partial class UnitInfoBar : Control, IBlockable
 	private void CreateUnitBar(Unit unit)
 	{
 		Visible = true;
-		SpawnTweenComponent.RunAnimation(TweenAnimationIdentifiers.UIBOnShow);
+		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.UIBOnShow);
 		// _abilityButtonsMap.Clear();
 
 		// foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();

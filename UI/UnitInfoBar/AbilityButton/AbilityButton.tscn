@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="2_mvhx4"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
 [ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="5_53lnc"]
-[ext_resource type="Resource" uid="uid://dci64dn3kcor2" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseEnteredAnimation.tres" id="5_mvhx4"]
-[ext_resource type="Resource" uid="uid://ux8g57pgldjc" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseExitAnimation.tres" id="8_c0fnx"]
-[ext_resource type="Resource" uid="uid://bvv474knme5pp" path="res://UI/UnitInfoBar/AbilityButton/BtnSpawnAnimation.tres" id="9_t77bu"]
+[ext_resource type="Resource" uid="uid://dci64dn3kcor2" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseEnteredTween.tres" id="5_mvhx4"]
+[ext_resource type="Resource" uid="uid://ux8g57pgldjc" path="res://UI/UnitInfoBar/AbilityButton/BtnMouseExitTween.tres" id="8_c0fnx"]
+[ext_resource type="Resource" uid="uid://bvv474knme5pp" path="res://UI/UnitInfoBar/AbilityButton/BtnSpawnTween.tres" id="9_t77bu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_m53bf"]
 shadow_size = 9

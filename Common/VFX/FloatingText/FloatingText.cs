@@ -24,6 +24,6 @@ public partial class FloatingText : Label
 		else if (Modulate != DefaultColor)
 			Modulate = Modulate with { R = DefaultColor.R, G = DefaultColor.G, B = DefaultColor.B };
 		
-		TweenComponent.RunAnimation(TweenAnimationIdentifiers.FloatUpAndFade);
+		TweenComponent.PlayTween(TweenAnimationIdentifiers.FloatUpAndFade);
 	}
 }

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
 using AKidsDream.GameBoard;
 using Godot;
@@ -10,9 +12,12 @@ public partial class AdjacentPattern : AccessFieldPattern
 {
 	[Export] public int Radius = 1;
 	[Export] public int Width = 1;
+	
+	// [RequiresOrigin]
 	public override Vector2I[] GetTilesUnfiltered(Vector2I? origin, Board board)
 	{
-		if (!origin.HasValue) return [];
+		if (origin == null) return [];
+		
 		var o = origin.Value;
 		var numRowTiles = 2 * Radius + 1;
 		

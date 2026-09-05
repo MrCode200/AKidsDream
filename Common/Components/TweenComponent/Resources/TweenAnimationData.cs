@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -7,6 +8,7 @@ namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 public enum TweenTrigger
 {
+    Manual,
     Ready,
     Show,
     Hide,
@@ -17,10 +19,16 @@ public enum TweenTrigger
 
 public enum TweenLoopMode
 {
-    None, 
+    None,
     Loop,
     PingPong,
     // ReverseOnRetrigger
+}
+
+public enum CurveMode
+{
+    None,
+    Mirror
 }
 
 public enum TweenConflictPolicy
@@ -37,7 +45,9 @@ public partial class TweenAnimationData : Resource
     private Array<TweenTrigger> _triggers = [TweenTrigger.Ready];
 
     [Export] public Array<TweenStep> Steps = [new()];
-    [Export] public Array<TweenTrigger> Triggers
+
+    [Export]
+    public Array<TweenTrigger> Triggers
     {
         get => _triggers;
         set
@@ -46,11 +56,13 @@ public partial class TweenAnimationData : Resource
             NotifyPropertyListChanged();
         }
     }
+
     [Export] public Array<CustomSignalData> CustomSignals = [];
 
-    [ExportGroup("Looping")]
-    private TweenLoopMode _loopMode = TweenLoopMode.None;
-    [Export] public TweenLoopMode LoopMode
+    [ExportGroup("Looping")] private TweenLoopMode _loopMode = TweenLoopMode.None;
+
+    [Export]
+    public TweenLoopMode LoopMode
     {
         get => _loopMode;
         set
@@ -59,11 +71,14 @@ public partial class TweenAnimationData : Resource
             NotifyPropertyListChanged();
         }
     }
-    [Export] public int MaxLoopCount = -1;
 
-    [ExportGroup("PlayBackBehaviour")]
-    private TweenConflictPolicy _conflictPolicy = TweenConflictPolicy.Ignore;
-    [Export] public TweenConflictPolicy ConflictPolicy
+    [Export] public int MaxLoopCount = -1;
+    [Export] public CurveMode CurveMode = CurveMode.Mirror;
+
+    [ExportGroup("PlayBackBehaviour")] private TweenConflictPolicy _conflictPolicy = TweenConflictPolicy.Ignore;
+
+    [Export]
+    public TweenConflictPolicy ConflictPolicy
     {
         get => _conflictPolicy;
         set
@@ -72,18 +87,18 @@ public partial class TweenAnimationData : Resource
             NotifyPropertyListChanged();
         }
     }
+
     [Export] public int MaxQueueCount = -1;
     [Export] public Tween.TweenPauseMode PauseMode = Tween.TweenPauseMode.Bound;
-    
-    [ExportGroup("Post-Finish")]
-    [Export] public bool HideTargetOnFinish;
+
+    [ExportGroup("Post-Finish")] [Export] public bool HideTargetOnFinish;
     [Export] public bool QueueFreeTargetOnFinish;
-    
-    [ExportGroup("")]
-    [Export] public float DelayAnimStart = 0f;
-    
+
+    [ExportGroup("")] [Export] public float DelayAnimStart;
+
     public static readonly HashSet<StringName> Identifiers = [];
     private StringName _identifier = "UniqueIdentifier";
+
     [Export]
     public StringName Identifier
     {
@@ -102,28 +117,39 @@ public partial class TweenAnimationData : Resource
                 OS.Alert($"Duplicate identifier: {value}", "Warning");
         }
     }
-    
-    
+
 
     public override void _ValidateProperty(Dictionary property)
     {
         var propertyName = property["name"].AsString();
 
-        var (show, hint) = propertyName switch
+        var show = propertyName switch
         {
-            nameof(CustomSignals) => (Triggers.Contains(TweenTrigger.CustomSignal),
-                "Add 'CustomSignal' to Triggers array to use this"),
-            nameof(MaxLoopCount) => (LoopMode != TweenLoopMode.None,
-                "Set LoopMode to Loop or PingPong to use this"),
-            nameof(MaxQueueCount) => (ConflictPolicy == TweenConflictPolicy.Queue,
-                "Set ConflictPolicy to Queue to use this"),
-            _ => (true, "")
+            nameof(CustomSignals) => Triggers.Contains(TweenTrigger.CustomSignal),
+            nameof(MaxLoopCount) => LoopMode != TweenLoopMode.None,
+            nameof(MaxQueueCount) => ConflictPolicy == TweenConflictPolicy.Queue,
+            nameof(CurveMode) => LoopMode == TweenLoopMode.PingPong,
+
+            _ => true
+        };
+
+        if (!show)
+        {
+            property["usage"] = (int)PropertyUsageFlags.NoEditor;
+            return;
+        }
+        
+        var (disable, hint) = propertyName switch
+        {
+            nameof(CurveMode) => (!Steps.Any(x => x.CustomCurve is not null),
+                "To use CurveMode, at least 1 step must have a custom curve defined."),
+            _ => (false, "")
         };
 
         if (!string.IsNullOrEmpty(hint))
             property["hint_text"] = hint;
-
-        if (!show)
-            property["usage"] = (int)PropertyUsageFlags.NoEditor;
+        
+        if (disable)
+            property["usage"] = (int)(property["usage"].AsInt32() | (long)PropertyUsageFlags.ReadOnly);
     }
 }

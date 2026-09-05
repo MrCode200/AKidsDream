@@ -26,213 +26,213 @@ Upon reaching Max Targets Selected, cast automatically. (Config Option) // CONFI
 */
 public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 {
-    public Action<IState, string, bool> ChangeState { get; set; } = null!;
+	public Action<IState, string, bool> ChangeState { get; set; } = null!;
 
-    private AbilityData _ability = null!;
-    private Unit _caster = null!;
-    private AbilityContext _abilityContext = null!;
-    private AbilityPayload _abilityPayload = null!;
-    private static readonly ILogger Log = GameLogger.For<OnAbilitySelectedState>();
-    private Vector2I? _lastHoveredTile;
+	private AbilityData _ability = null!;
+	private Unit _caster = null!;
+	private AbilityContext _abilityContext = null!;
+	private AbilityPayload _abilityPayload = null!;
+	private static readonly ILogger Log = GameLogger.For<OnAbilitySelectedState>();
+	private Vector2I? _lastHoveredTile;
 
-    public void Enter()
-    {
-        pic.GCtx.AbilityVisualizer.ClearTilemaps();
+	public void Enter()
+	{
+		pic.GCtx.AbilityVisualizer.ClearTilemaps();
 
-        _ability = pic.CurrentSelectedAbility!;
-        _caster = pic.CurrentSelectedUnit!;
+		_ability = pic.CurrentSelectedAbility!;
+		_caster = pic.CurrentSelectedUnit!;
 
-        _abilityPayload = _caster.AbilityC.CreatePayload(
-            _ability.Name,
-            [],
-            pic.GCtx.Board
-        );
-        _abilityContext = new AbilityContext
-        {
-            Caster = _caster,
-            CasterNode = _caster,
-            Ability = _ability,
-            GameContext = pic.GCtx
-        };
+		_abilityPayload = _caster.AbilityC.CreatePayload(
+			_ability.Name,
+			[],
+			pic.GCtx.Board
+		);
+		_abilityContext = new AbilityContext
+		{
+			Caster = _caster,
+			CasterNode = _caster,
+			Ability = _ability,
+			GameContext = pic.GCtx
+		};
 
-        pic.GCtx.CommandExecutor.Execute(new SelectAbilityCommand(
-            _caster,
-            _ability.Name,
-            _abilityContext,
-            _abilityPayload
-        ));
-    }
+		pic.GCtx.CommandExecutor.Execute(new SelectAbilityCommand(
+			_caster,
+			_ability.Name,
+			_abilityContext,
+			_abilityPayload
+		));
+	}
 
-    public void Update(object? payload)
-    {
-        if (payload is not PlayerInteractionPayload interaction)
-            return;
+	public void Update(object? payload)
+	{
+		if (payload is not PlayerInteractionPayload interaction)
+			return;
 
-        switch (interaction)
-        {
-            case { IsLeftClickPressed: true, HasTile: true }:
-                HandleLeftClick(interaction);
-                break;
-            case { IsRightClickPressed: true, HasTile: true }:
-                HandleRightClick(interaction);
-                break;
-            default:
-                HandleHover(interaction);
-                break;
-        }
+		switch (interaction)
+		{
+			case { IsSelectPressed: true, HasTile: true }:
+				HandleSelectClick(interaction);
+				break;
+			case { IsDeselectPressed: true, HasTile: true }:
+				HandleDeselectClick(interaction);
+				break;
+			default:
+				HandleHover(interaction);
+				break;
+		}
 
-        if (_caster.AbilityC.IsCasting)
-        {
-            // REMOVE HIGHLIGHTS OF ALREADY PROCESSED TILES
-        }
-    }
+		if (_caster.AbilityC.IsCasting)
+		{
+			// REMOVE HIGHLIGHTS OF ALREADY PROCESSED TILES
+		}
+	}
 
-    public void Exit()
-    {
-        _abilityContext = null!;
-        _abilityPayload = null!;
-    }
+	public void Exit()
+	{
+		_abilityContext = null!;
+		_abilityPayload = null!;
+	}
 
-    // -- HANDLERS --
-    private void HandleLeftClick(PlayerInteractionPayload interaction)
-    {
-        // 1. Clicking outside the ability reach cancels the active ability.
-        // The click is consumed and does not select another unit on the same frame.
-        if (!IsTileInsideReach(interaction.TileLocationAtMousePos))
-        {
-            CancelAbilityFromClick();
-            return;
-        }
+	// -- HANDLERS --
+	private void HandleSelectClick(PlayerInteractionPayload interaction)
+	{
+		// 1. Clicking outside the ability reach cancels the active ability.
+		// The click is consumed and does not select another unit on the same frame.
+		if (!IsTileInsideReach(interaction.TileLocationAtMousePos))
+		{
+			CancelAbilityFromClick();
+			return;
+		}
 
-        // 2. Clicking inside the reach pattern targets that tile.
-        HandleReachTileClick(interaction.TileLocationAtMousePos!.Value);
-    }
+		// 2. Clicking inside the reach pattern targets that tile.
+		HandleReachTileClick(interaction.TileLocationAtMousePos!.Value);
+	}
 
-    private void HandleRightClick(PlayerInteractionPayload interaction)
-    {
-        // Prevent tile removal while ability is being cast
-        if (_caster.AbilityC.IsCasting)
-        {
-            Log.Here().Debug(
-                "Cannot remove target - ability '{AbilityName}' is currently being cast for unit '{UnitName}' (id: {UnitId})",
-                _ability.Name,
-                _caster.UnitName,
-                _caster.UnitId);
-            return;
-        }
+	private void HandleDeselectClick(PlayerInteractionPayload interaction)
+	{
+		// Prevent tile removal while ability is being cast
+		if (_caster.AbilityC.IsCasting)
+		{
+			Log.Here().Debug(
+				"Cannot remove target - ability '{AbilityName}' is currently being cast for unit '{UnitName}' (id: {UnitId})",
+				_ability.Name,
+				_caster.UnitName,
+				_caster.UnitId);
+			return;
+		}
 
-        // 3. Right-clicking a selected tile deselects that tile.
-        if (_abilityPayload.AccumulatedTargets.Count == 1)
-        {
-            CancelAbilityFromClick();
-            return;
-        }
+		// 3. Right-clicking a selected tile deselects that tile.
+		if (_abilityPayload.AccumulatedTargets.Count == 1)
+		{
+			CancelAbilityFromClick();
+			return;
+		}
 
-        pic.GCtx.CommandExecutor.Execute(new RmvAbilityTargetCommand(
-            interaction.TileAtMousePos!.TileLocation,
-            _abilityContext,
-            _abilityPayload
-        ));
-    }
+		pic.GCtx.CommandExecutor.Execute(new RmvAbilityTargetCommand(
+			interaction.TileAtMousePos!.TileLocation,
+			_abilityContext,
+			_abilityPayload
+		));
+	}
 
-    private void HandleHover(PlayerInteractionPayload interaction)
-    {
-        if (_caster.AbilityC.IsCasting || _lastHoveredTile == interaction.TileLocationAtMousePos)
-            return;
+	private void HandleHover(PlayerInteractionPayload interaction)
+	{
+		if (_caster.AbilityC.IsCasting || _lastHoveredTile == interaction.TileLocationAtMousePos)
+			return;
 
-        _lastHoveredTile = interaction.TileLocationAtMousePos;
-        var tileIsInsideReach = IsTileInsideReach(interaction.TileLocationAtMousePos);
-        
-        AbilityPayload? previewPayload = null;
+		_lastHoveredTile = interaction.TileLocationAtMousePos;
+		var tileIsInsideReach = IsTileInsideReach(interaction.TileLocationAtMousePos);
+		
+		AbilityPayload? previewPayload = null;
 
-        // 1. If the tile is inside the reach, add it to the preview payload
-        if (tileIsInsideReach)
-        {
-            previewPayload = _abilityPayload.Copy();
-            previewPayload.ProcessingTiles.Add(interaction.TileLocationAtMousePos!.Value);
-            previewPayload.AccumulatedTargets.Add(interaction.TileLocationAtMousePos!.Value);
-        }
-        
-        var visualizationPayload = previewPayload ?? _abilityPayload;
-        
-        // 2. Show effect visualization for all effects
-        pic.GCtx.AbilityVisualizer.ShowEffectVisualization(
-            _abilityContext,
-            visualizationPayload,
-            _ability.Effects
-        ); // TODO add to the above /* */ to see if its needed there or not... (prob needed xd)
-        
-        // 3. Remove number visualization if only 1 target, if tile is outside reach update visualization
-        if (visualizationPayload.AccumulatedTargets.Count <= 1)
-            pic.GCtx.AbilityVisualizer.ClearNumberedTilemap();
-        else if (!tileIsInsideReach)
-            pic.GCtx.AbilityVisualizer.ShowNumberedTilemap(visualizationPayload.AccumulatedTargets);
-        
-        // 4. Emit signal to update preview cost on tile hover
-        EventBus.Instance.EmitSignal(
-            EventBus.SignalName.NewTileHovered,
-            _caster,
-            _abilityContext,
-            visualizationPayload
-        );
-    }
+		// 1. If the tile is inside the reach, add it to the preview payload
+		if (tileIsInsideReach)
+		{
+			previewPayload = _abilityPayload.Copy();
+			previewPayload.ProcessingTiles.Add(interaction.TileLocationAtMousePos!.Value);
+			previewPayload.AccumulatedTargets.Add(interaction.TileLocationAtMousePos!.Value);
+		}
+		
+		var visualizationPayload = previewPayload ?? _abilityPayload;
+		
+		// 2. Show effect visualization for all effects
+		pic.GCtx.AbilityVisualizer.ShowEffectVisualization(
+			_abilityContext,
+			visualizationPayload,
+			_ability.Effects
+		); // TODO add to the above /* */ to see if its needed there or not... (prob needed xd)
+		
+		// 3. Remove number visualization if only 1 target, if tile is outside reach update visualization
+		if (visualizationPayload.AccumulatedTargets.Count <= 1)
+			pic.GCtx.AbilityVisualizer.ClearNumberedTilemap();
+		else if (!tileIsInsideReach)
+			pic.GCtx.AbilityVisualizer.ShowNumberedTilemap(visualizationPayload.AccumulatedTargets);
+		
+		// 4. Emit signal to update preview cost on tile hover
+		EventBus.Instance.EmitSignal(
+			EventBus.SignalName.NewTileHovered,
+			_caster,
+			_abilityContext,
+			visualizationPayload
+		);
+	}
 
-    private void HandleReachTileClick(Vector2I targetedTile)
-    {
-        // Visualizes the Effect tiles
-        var result = pic.GCtx.CommandExecutor.Execute(new AddAbilityTargetCommand(
-            targetedTile,
-            _abilityContext,
-            _abilityPayload
-        ));
+	private void HandleReachTileClick(Vector2I targetedTile)
+	{
+		// Visualizes the Effect tiles
+		var result = pic.GCtx.CommandExecutor.Execute(new AddAbilityTargetCommand(
+			targetedTile,
+			_abilityContext,
+			_abilityPayload
+		));
 
-        if (result.FailureType is not CommandFailureType.None)
-            return; // logs in command executor
+		if (!result.IsSuccess)
+			return; // logs in command executor
 
-        // Recalculate and update reach visualization after target addition
-        pic.GCtx.AbilityVisualizer.ShowReachVisualization(_abilityContext, _abilityPayload, _ability);
+		// Recalculate and update reach visualization after target addition
+		pic.GCtx.AbilityVisualizer.ShowReachVisualization(_abilityContext, _abilityPayload, _ability);
 
-        // If reached Max Targets, cast the ability.
-        if (_abilityPayload.AccumulatedTargets.Count >= _ability.MaxTargets)
-        {
-            Log.ForContext("NameTag", _caster.UnitName)
-                .ForContext("IdTag", _caster.UnitId)
-                .Here()
-                .Debug("Max targets reached for ability '{AbilityName}', Auto-Casting...", _ability.Name);
-            CastAbility();
-        }
-    }
+		// If reached Max Targets, cast the ability.
+		if (_abilityPayload.AccumulatedTargets.Count >= _ability.MaxTargets)
+		{
+			Log.ForContext("NameTag", _caster.UnitName)
+				.ForContext("IdTag", _caster.UnitId)
+				.Here()
+				.Debug("Max targets reached for ability '{AbilityName}', Auto-Casting...", _ability.Name);
+			CastAbility();
+		}
+	}
 
-    // -- HELPERS --
-    private bool IsTileInsideReach(Vector2I? tileLocation)
-    {
-        if (tileLocation is null) return false;
-        var reachData = _ability.GetReachVisualizationData(_abilityContext, _abilityPayload);
-        return reachData.tiles.Contains(tileLocation.Value);
-    }
+	// -- HELPERS --
+	private bool IsTileInsideReach(Vector2I? tileLocation)
+	{
+		if (tileLocation is null) return false;
+		var reachData = _ability.GetReachVisualizationData(_abilityContext, _abilityPayload);
+		return reachData.tiles.Contains(tileLocation.Value);
+	}
 
-    private void CastAbility()
-    {
-        pic.GCtx.AbilityVisualizer.ClearReachTilemap();
+	private void CastAbility()
+	{
+		pic.GCtx.AbilityVisualizer.ClearReachTilemap();
 
-        _ = pic.GCtx.CommandExecutor.ExecuteAsync(new CastAbilityBaseCommand(
-            _caster,
-            _ability.Name,
-            _abilityContext,
-            _abilityPayload
-        ));
+		_ = pic.GCtx.CommandExecutor.ExecuteAsync(new CastAbilityBaseCommand(
+			_caster,
+			_ability.Name,
+			_abilityContext,
+			_abilityPayload
+		));
 
-        pic.ClearCurrentAbility(); // StateChange is called in that function
-    }
+		pic.ClearCurrentAbility(); // StateChange is called in that function
+	}
 
-    private void CancelAbilityFromClick()
-    {
-        Log.Here().Debug(
-            "Ability '{AbilityName}' cancelled due to click outside reach for unit '{UnitName}' (id: {UnitId})",
-            _ability.Name,
-            _caster.UnitName,
-            _caster.UnitId);
-        pic.ClearCurrentAbility(); // StateChange is called in that function
-        pic.GetViewport().SetInputAsHandled(); // So that on click doesn't select Unit again when canceled.
-    }
+	private void CancelAbilityFromClick()
+	{
+		Log.Here().Debug(
+			"Ability '{AbilityName}' cancelled due to click outside reach for unit '{UnitName}' (id: {UnitId})",
+			_ability.Name,
+			_caster.UnitName,
+			_caster.UnitId);
+		pic.ClearCurrentAbility(); // StateChange is called in that function
+		pic.GetViewport().SetInputAsHandled(); // So that on click doesn't select Unit again when canceled.
+	}
 }

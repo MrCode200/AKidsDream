@@ -75,7 +75,7 @@ public partial class BlockingManager : Node
 
 	private void OnAbilityCastStart(Unit _, AbilityData __) => SetBlocking(BlockingStrategy.BlockOnAbilityCast, true);
 
-	private void OnAbilityCastEnd(Unit _, AbilityData __, EffectResult ___) =>
+	private void OnAbilityCastEnd(Unit _, AbilityData __) =>
 		SetBlocking(BlockingStrategy.BlockOnAbilityCast, false);
 
 	private void OnEffectTriggerStart(Node _, AbilityData __, EffectData effectData)
@@ -93,7 +93,7 @@ public partial class BlockingManager : Node
 	private void OnEffectApplyStart(Node _, AbilityData __, EffectData ___) =>
 		SetBlocking(BlockingStrategy.BlockOnEffectApply, true);
 
-	private void OnEffectApplyEnd(Node _, AbilityData __, EffectData ___, EffectResult ____) =>
+	private void OnEffectApplyEnd(Node _, AbilityData __, EffectData ___) =>
 		SetBlocking(BlockingStrategy.BlockOnEffectApply, false);
 
 	// -- REGISTRATION LOGIC --
@@ -114,7 +114,7 @@ public partial class BlockingManager : Node
 		Refresh(blockable);
 	}
 
-	public void UnregisterIBlockable(IBlockable obj)
+	public void Unregister(IBlockable obj)
 	{
 		foreach (var strat in obj.BlockingStrategies)
 		{

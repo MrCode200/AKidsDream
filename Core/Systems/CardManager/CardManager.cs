@@ -1,14 +1,18 @@
+#nullable enable
 using System;
-using System.Threading.Tasks;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Commands;
+using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using AKidsDream.Entities.Cards;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
+using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.Core.Managers;
@@ -24,41 +28,73 @@ namespace AKidsDream.Core.Managers;
  */
 
 [Icon("res://Core/Systems/CardManager/playing-cards.png")]
-public partial class CardManager : Node2D
+public partial class CardManager : Node2D, IBlockable
 {
     [Export(PropertyHint.InputName, "show_builtin")]
-    public string SelectionInputName;
+    public required string SelectionInputName;
 
-    [Export] public float DragThreshold = 10;
+    [Export] public float DragThreshold = 10f;
 
-    [ExportGroup("Dependencies")] [Export] public AbilityVisualizer AbilityVisualizer;
-    [Export] public PlayerHand PlayerHand;
+    [ExportGroup("Dependencies")] [Export] public required AbilityVisualizer AbilityVisualizer;
+    [Export] public required PlayerHand PlayerHand;
 
-    public AbilityCard SelectedCard;
+    public AbilityCard? SelectedCard { get; private set; }
+
+    public bool IsBlocked { get; set; }
+
+    public Array<BlockingStrategy> BlockingStrategies { get; set; } =
+        [BlockingStrategy.BlockOnBlockingTrigger, BlockingStrategy.BlockOnEffectApply];
 
     private bool _isDragging;
     private bool _isPressed;
+    private bool _isCasting;
 
+    private AbilityCard? _pressedCard;
     private Vector2? _cardDraggingAnchor;
     private Vector2 _pressPosition;
-    private Vector2 _screenSize;
-    private GameContext _gameContext;
+    private Vector2I? _lastTargetTile;
 
-    private AbilityContext _cachedAbilityContext;
+    private GameContext _gameContext = null!;
+    private AbilityContext? _cachedAbilityContext;
+    private AbilityPayload _cachedAbilityPayload = null!;
 
-    // Doesn't change as there are no ability.state mutating operations
-    private AbilityPayload _cachedAbilityPayload;
+    private readonly ILogger _log = GameLogger.For<CardManager>();
 
-    private readonly ILogger _log = Log.ForContext<CardManager>();
+    // -- GODOT LIFECYCLE --
 
     public override void _Ready()
     {
-        _screenSize = GetViewport().GetVisibleRect().Size;
+        BlockingManager.Instance.Register(this);
         _cachedAbilityPayload = new AbilityPayload
         {
             CurrentOrigin = null,
-            State = new AbilityState()
+            State = new AbilityState(),
+            AccumulatedTargets = [],
+            ProcessingTiles = []
         };
+
+        EventBus.Instance.UnitSelected += OnUnitSelected;
+        EventBus.Instance.UnitDeselected += OnUnitDeselected;
+    }
+
+    public override void _ExitTree()
+    {
+        BlockingManager.Instance.Unregister(this);
+        EventBus.Instance.UnitSelected -= OnUnitSelected;
+        EventBus.Instance.UnitDeselected -= OnUnitDeselected;
+    }
+
+    private void OnUnitDeselected(Unit unit)
+    {
+        PlayerHand.ShowHand();
+    }
+
+    private void OnUnitSelected(Unit unit)
+    {
+        if (SelectedCard is not null)
+            DeselectCard(SelectedCard);
+
+        PlayerHand.HideHand();
     }
 
     public void Init(GameContext gameContext)
@@ -68,124 +104,146 @@ public partial class CardManager : Node2D
 
     public override void _Input(InputEvent @event)
     {
-        if (string.IsNullOrEmpty(SelectionInputName)) return;
+        if (string.IsNullOrEmpty(SelectionInputName) || _isCasting) return;
 
-        // Check if Card hovered
-        var hoveredControl = GetViewport().GuiGetHoveredControl();
-        if (hoveredControl is not AbilityCard clickedCard) return;
-
-        // Handle PRESS: save state
-        if (@event.IsActionPressed(SelectionInputName))
+        // Handle PRESS: record anchor and pressed card
+        if (Input.IsActionJustPressed(SelectionInputName))
         {
+            var hoveredControl = GetViewport().GuiGetHoveredControl();
+            _pressedCard = hoveredControl as AbilityCard;
             _pressPosition = GetViewport().GetMousePosition();
             _isDragging = false;
             _isPressed = true;
             _cardDraggingAnchor = null;
         }
-        // Handle RELEASE: check if click or drag end
+        // Handle RELEASE: trigger cast if dragging, or handle click selection
         else if (@event.IsActionReleased(SelectionInputName))
         {
             _isPressed = false;
 
             if (_isDragging)
             {
-                // Rule 4: Stop dragging, but don't deselect
-                TryCastCard();
                 _isDragging = false;
-                ClearAbilityContextPayload();
+                _cardDraggingAnchor = null;
+                _lastTargetTile = null;
+                TryCastCard();
             }
             else
             {
-                // It's a click - handle selection rule
-                HandleCardClick(clickedCard);
+                HandleCardClick(_pressedCard);
             }
+
+            _pressedCard = null;
         }
-        // Rule 4: Handle HOLD: check if drag threshold reached
-        else if (_isPressed && @event is InputEventMouseMotion mouseMotion)
+        // Handle MOTION / DRAG THRESHOLD
+        else if (
+            _isPressed &&
+            !IsBlocked &&
+            !_isDragging &&
+            _pressedCard is not null &&
+            @event is InputEventMouseMotion mouseMotion
+        )
         {
-            float distance = _pressPosition.DistanceTo(mouseMotion.Position);
-            if (distance >= DragThreshold && !_isDragging)
+            var distance = _pressPosition.DistanceTo(mouseMotion.Position);
+            if (!(distance >= DragThreshold)) return;
+
+            _isDragging = true;
+            _cardDraggingAnchor = mouseMotion.Position - _pressedCard.Position;
+
+            if (SelectedCard is null || SelectedCard != _pressedCard)
             {
-                _isDragging = true;
-                _cardDraggingAnchor = mouseMotion.Position - clickedCard.Position;
-
-                // Select when started dragging, while mouse is pressed
-                if (SelectedCard is null || SelectedCard != clickedCard)
-                    HandleCardClick(clickedCard);
-
-                // Initialize cached context and payload when dragging starts
-                BuildAbilityContextPayload();
+                HandleCardClick(_pressedCard);
+                SelectedCard?.SelectionTweenComp.KillTween();
             }
+            else
+                BuildAbilityContextPayload();
         }
     }
 
     public override void _Process(double delta)
     {
-        if (SelectedCard is null || !_isDragging || _cardDraggingAnchor is null) return;
+        if (SelectedCard is null || !_isDragging || _cardDraggingAnchor is null || IsBlocked) return;
 
-        UpdateCardPosition(); // TODO: lerp card towards mouse pos
-        GetMouseTile();
+        MoveCardToMousePos();
+        UpdateTargetTileVisualization();
     }
 
-    // -- LOGIC --
-    private void HandleCardClick(AbilityCard clickedCard)
+    // -- SELECTION STATE MANAGEMENT --
+
+    private void HandleCardClick(AbilityCard? clickedCard)
     {
-        // 1. When click and no card is selected, select
+        if (clickedCard is null || IsBlocked) return;
+
         if (SelectedCard is null)
         {
             SelectCard(clickedCard);
         }
-        // 2. When click on the ALREADY SELECTED card deselect
         else if (SelectedCard.Id == clickedCard.Id)
         {
             DeselectCard(clickedCard);
         }
-        // 3. When click on NEW CARD, switch selection
-        else if (SelectedCard.Id != clickedCard.Id)
+        else
         {
             ChangeCard(clickedCard);
         }
     }
 
-    private void DeselectCard(AbilityCard clickedCard)
+    private void DeselectCard(AbilityCard cardToDeselect)
     {
-        _log.Here().Debug("Deselected card: {NameTag}:{IdTag}", SelectedCard.CardData.Name, SelectedCard.Id);
+        if (cardToDeselect.Id != SelectedCard?.Id)
+        {
+            //_log.Here().Warn("Tried to deselect card {CardId} when selected card is {SelectedCardId}",
+            //    cardToDeselect.Id, SelectedCard?.Id);
+            return;
+        }
 
-        SelectedCard.IsSelected = false;
+        _log.Here().Debug("Deselected card {NameTag}:{IdTag}", cardToDeselect.CardData.Name, cardToDeselect.Id);
+
+        cardToDeselect.IsSelected = false;
         SelectedCard = null;
         _cardDraggingAnchor = null;
-        ClearAbilityContextPayload();
-        _gameContext.AbilityVisualizer.ClearTilemaps();
+        _lastTargetTile = null;
 
-        EventBus.Instance.EmitSignal(EventBus.SignalName.CardDeselected, clickedCard);
+        ClearAbilityContextPayload();
+        AbilityVisualizer.ClearTilemaps();
+
+        EventBus.Instance.EmitSignal(EventBus.SignalName.CardDeselected, cardToDeselect);
     }
 
-    private void SelectCard(AbilityCard clickedCard)
+    private void SelectCard(AbilityCard cardToSelect)
     {
-        SelectedCard = clickedCard;
+        SelectedCard = cardToSelect;
+        cardToSelect.IsSelected = true;
         BuildAbilityContextPayload();
 
-        _gameContext.AbilityVisualizer.ShowReachVisualization(
-            _cachedAbilityContext,
+        AbilityVisualizer.ShowReachVisualization(
+            _cachedAbilityContext!,
             _cachedAbilityPayload,
             SelectedCard.CardData.Ability
         );
 
         _log.Here().Debug("Selected card: {NameTag}:{IdTag}", SelectedCard.CardData.Name, SelectedCard.Id);
-        EventBus.Instance.EmitSignal(EventBus.SignalName.CardSelected, clickedCard);
+        EventBus.Instance.EmitSignal(EventBus.SignalName.CardSelected, cardToSelect);
     }
 
-    private void ChangeCard(AbilityCard clickedCard)
+    private void ChangeCard(AbilityCard newCard)
     {
+        if (SelectedCard is null || SelectedCard.Id == newCard.Id)
+        {
+            _log.Here().Warn("Tried to change from card:{SelectedCardId} to clickedCard:{ClickedCardId}",
+                SelectedCard?.Id, newCard.Id);
+            return;
+        }
+
         var oldCard = SelectedCard;
         oldCard.IsSelected = false;
 
-        SelectedCard = clickedCard;
+        SelectedCard = newCard;
         SelectedCard.IsSelected = true;
 
         BuildAbilityContextPayload();
-        _gameContext.AbilityVisualizer.ShowReachVisualization(
-            _cachedAbilityContext,
+        AbilityVisualizer.ShowReachVisualization(
+            _cachedAbilityContext!,
             _cachedAbilityPayload,
             SelectedCard.CardData.Ability
         );
@@ -195,35 +253,44 @@ public partial class CardManager : Node2D
         EventBus.Instance.EmitSignal(EventBus.SignalName.CardChanged, oldCard, SelectedCard);
     }
 
-    // -- WHILE SELECTED --
-    private void UpdateCardPosition()
+    // -- DRAGGING & TARGETING --
+
+    private void MoveCardToMousePos()
     {
+        if (SelectedCard is null || _cardDraggingAnchor is null) return;
+
+        var viewportSize = GetViewport().GetVisibleRect().Size;
         var mousePos = GetViewport().GetMousePosition();
-        var newCardPos = mousePos - _cardDraggingAnchor!.Value;
+        var targetPos = mousePos - _cardDraggingAnchor.Value;
 
         SelectedCard.Position = new Vector2(
-            Mathf.Clamp(newCardPos.X, 0, _screenSize.X - SelectedCard.Size.X),
-            Mathf.Clamp(newCardPos.Y, 0, _screenSize.Y - SelectedCard.Size.Y)
+            Mathf.Clamp(targetPos.X, 0, viewportSize.X - SelectedCard.Size.X),
+            Mathf.Clamp(targetPos.Y, 0, viewportSize.Y - SelectedCard.Size.Y)
         );
     }
 
-    private void GetMouseTile()
+    private void UpdateTargetTileVisualization()
     {
+        if (SelectedCard is null || _cachedAbilityContext is null) return;
+
         var mousePos = GetGlobalMousePosition();
         var mouseTile = Board.WorldPositionToTilePosition(mousePos);
 
-        // Update cached payload with new tile position
+        if (_lastTargetTile.HasValue && _lastTargetTile.Value == mouseTile) return;
+
+        _lastTargetTile = mouseTile;
         _cachedAbilityPayload.AccumulatedTargets = [mouseTile];
         _cachedAbilityPayload.ProcessingTiles = [mouseTile];
 
-        _gameContext.AbilityVisualizer.ShowEffectVisualization(
+        AbilityVisualizer.ShowEffectVisualization(
             _cachedAbilityContext,
             _cachedAbilityPayload,
             SelectedCard.CardData.Ability.Effects
         );
     }
 
-    // -- ABILITY CASTING --
+    // -- ABILITY CONTEXT & CASTING --
+
     private void BuildAbilityContextPayload()
     {
         if (SelectedCard is null) return;
@@ -252,76 +319,105 @@ public partial class CardManager : Node2D
 
     private async void TryCastCard()
     {
-        var manaCost = 0;
-        EffectResult castResult = new CompositeResult();
+        if (SelectedCard is null || _isCasting) return;
+
+        var castingCard = SelectedCard;
+        if (_cachedAbilityContext is null)
+            BuildAbilityContextPayload();
+
+        if (_cachedAbilityContext is null) return;
+
+        _isCasting = true;
+        var hasCastStarted = false;
+        var isSuccess = false;
 
         try
         {
-            if (SelectedCard is null) return;
-            if (_cachedAbilityContext is null)
-                BuildAbilityContextPayload();
-
-            // -- Validate --
             var castingPlayer = _gameContext.GameLoopManager.GetActivePlayer();
-            var valid = SelectedCard.ValidateCast(
-                _cachedAbilityContext!,
+            var validationResult = castingCard.ValidateCast(
+                _cachedAbilityContext,
                 _cachedAbilityPayload.AccumulatedTargets,
-                out var simPayload,
-                out var reason,
                 state: null,
                 balance: castingPlayer.Mana
             );
 
-            if (!valid)
+            if (validationResult.IsFailure)
             {
-                PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
+                _log.Here().Debug("Card {CardName} cast validation failed: {CastError}",
+                    castingCard.CardData.Name, validationResult.Error);
+                PlayerHand.MoveCardTo(castingCard, castingCard.HandPosition);
+                AbilityVisualizer.ClearEffectTilemap();
                 return;
             }
 
-            // -- Cast --
-            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, SelectedCard.CardData.Ability);
+            var simPayload = validationResult.Value;
 
-            manaCost = SelectedCard.CardData.Ability.GetCost(_cachedAbilityContext, simPayload);
-            castingPlayer.Mana -= manaCost;
+            // -- Cast start --
+            hasCastStarted = true;
+            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, default(Variant),
+                castingCard.CardData.Ability);
 
-            castResult = await SelectedCard.CastAsync(
+            var castResult = await castingCard.CastAsync(
                 _cachedAbilityContext,
-                _cachedAbilityPayload.AccumulatedTargets,
-                null
+                _cachedAbilityPayload.AccumulatedTargets
             );
 
-            if (castResult is null or ErrorResult)
+            if (castResult.IsFailure)
             {
-                _log.Here().Debug("Card casting failed: {EffectResult}", castResult);
-                castingPlayer.Mana += manaCost;
-
-                PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
+                _log.Here().Warn("Card {CardName} casting failed with error: {CastError}",
+                    castingCard.CardData.Name, castResult.Error);
                 return;
             }
 
-            // -- Cleanup --
-            var castCard = SelectedCard;
-            PlayerHand.RemoveCard(castCard);
-            DeselectCard(castCard);
-            castCard.QueueFree();
+            // Commit state changes atomically on success
+            var manaCost = castingCard.CardData.Ability.GetCost(_cachedAbilityContext, simPayload);
+            castingPlayer.Mana -= manaCost;
+
+            isSuccess = true;
+            PlayerHand.RemoveCard(castingCard);
+            DeselectCard(castingCard);
+            castingCard.QueueFree();
         }
         catch (Exception e)
         {
-            // -- Rollback --
-            _log.Here().Err(e, "Failed to cast card");
-            if (manaCost > 0)
-                _gameContext.GameLoopManager.GetActivePlayer().Mana += manaCost;
-
-            if (SelectedCard is not null)
-                PlayerHand.MoveCardTo(SelectedCard, SelectedCard.HandPosition);
+            _log.Here().Err(e, "Exception while attempting to cast card {CardName}", castingCard.CardData.Name);
         }
         finally
         {
-            EventBus.Instance.EmitSignal(
-                EventBus.SignalName.AbilityCastEnd,
-                SelectedCard?.CardData.Ability,
-                castResult
-            );
+            // Return card to hand position if not successfully cast and freed
+            if (!isSuccess && IsInstanceValid(castingCard) && !castingCard.IsQueuedForDeletion())
+            {
+                PlayerHand.MoveCardTo(castingCard, castingCard.HandPosition);
+                AbilityVisualizer.ClearEffectTilemap();
+            }
+
+            if (hasCastStarted)
+            {
+                EventBus.Instance.EmitSignal(
+                    EventBus.SignalName.AbilityCastEnd,
+                    default(Variant),
+                    castingCard.CardData.Ability
+                );
+            }
+
+            _isCasting = false;
         }
+    }
+
+    // -- BLOCKING --
+    public void UpdateCardDisable(bool disable)
+    {
+        foreach (var card in PlayerHand.Hand)
+        {
+            card.Disabled = disable;
+        }
+    }
+
+    public void SetBlocked(bool block)
+    {
+        IsBlocked = block;
+        UpdateCardDisable(block);
+        if (SelectedCard is not null)
+            DeselectCard(SelectedCard);
     }
 }

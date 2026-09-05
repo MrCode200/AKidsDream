@@ -1,5 +1,7 @@
-﻿using AKidsDream.Common;
+#nullable enable
+using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
 using Godot;
 using Serilog;
@@ -16,11 +18,11 @@ public class SelectAbilityCommand(
     public CommandResult Execute(GameContext context)
     {
         if (caster is null)
-            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
-        
+            return CommandResult.Fail(this, new CommandError.NullArgument(nameof(caster), "No caster was provided."));
+
         if (!caster.AbilityC.Abilities.TryGetValue(abilityName, out var ability))
-            return CommandResult.Fail(this, CommandFailureType.NullArgument, $"Ability '{abilityName}' for '{caster.UnitName}' was not found.");
-        
+            return CommandResult.Fail(this, new CommandError.AbilityNotFound(abilityName));
+
         context.AbilityVisualizer.ShowReachVisualization(
             abilityContext,
             payload,

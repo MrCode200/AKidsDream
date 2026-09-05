@@ -1,0 +1,136 @@
+[gd_scene format=3 uid="uid://c4h6ufe6dmgvo"]
+
+[ext_resource type="Script" uid="uid://dt2i0bugje5e7" path="res://Entities/Cards/AbilityCard.cs" id="1_5scqc"]
+[ext_resource type="Resource" uid="uid://c8xhy0vyekyc" path="res://Entities/Units/Timmy/TimmyCardData.tres" id="2_52sku"]
+[ext_resource type="Texture2D" uid="uid://bknwtl1exv8ce" path="res://Entities/Cards/Assets/pixcard_border_40x51.png" id="2_e2rsf"]
+[ext_resource type="Material" uid="uid://bogcpv1c0qi5q" path="res://Entities/Cards/Assets/CardSelectionShader.tres" id="3_ifk1h"]
+[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="7_wg0xy"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="8_0iecu"]
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="9_487rm"]
+[ext_resource type="Texture2D" uid="uid://g50tl2yoi4cy" path="res://Entities/Units/Timmy/Assets/BlueTimmy/Pawn_Run Gold.png" id="9_exwvu"]
+[ext_resource type="Resource" uid="uid://dg0r723sd4a8x" path="res://Entities/Cards/Tweens/OnSelectCardTween.tres" id="10_c01wi"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="10_s6ho1"]
+[ext_resource type="Resource" uid="uid://bgw21rhfyln6e" path="res://Entities/Cards/Tweens/OnDeselectCardTween.tres" id="11_61pmt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgf4g"]
+atlas = ExtResource("2_e2rsf")
+region = Rect2(7, 204, 42, 53)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k24um"]
+atlas = ExtResource("9_exwvu")
+region = Rect2(640, 48, 80, 96)
+
+[sub_resource type="Resource" id="Resource_ifk1h"]
+script = ExtResource("10_s6ho1")
+FromValue = null
+ToValue = null
+Duration = 0.001
+TreeOrderAction = 1
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_8lias"]
+script = ExtResource("10_s6ho1")
+Property = NodePath("scale")
+FromValue = null
+ToValue = Vector2(4.2, 4.2)
+Duration = 0.2
+Transition = 3
+TreeOrderAction = 1
+TargetOverride = NodePath("..")
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_pfyvg"]
+script = ExtResource("8_0iecu")
+Steps = Array[ExtResource("10_s6ho1")]([SubResource("Resource_ifk1h"), SubResource("Resource_8lias")])
+Triggers = Array[int]([3])
+LoopMode = 2
+MaxLoopCount = 1
+CurveMode = 0
+Identifier = &"MouseEnterEnlargeCard"
+metadata/_custom_type_script = "uid://dgx06qq13talq"
+
+[sub_resource type="Resource" id="Resource_53lnc"]
+script = ExtResource("10_s6ho1")
+Property = NodePath("scale")
+FromValue = null
+ToValue = Vector2(4, 4)
+Duration = 0.25
+Transition = 3
+TargetOverride = NodePath("..")
+metadata/_custom_type_script = "uid://babs031xcw23x"
+
+[sub_resource type="Resource" id="Resource_8njy4"]
+script = ExtResource("8_0iecu")
+Steps = Array[ExtResource("10_s6ho1")]([SubResource("Resource_53lnc")])
+Triggers = Array[int]([4])
+MaxLoopCount = 1
+CurveMode = 0
+Identifier = &"MouseExitDelargeCard"
+metadata/_custom_type_script = "uid://dgx06qq13talq"
+
+[node name="AbilityCard" type="Control" unique_id=1986214613 node_paths=PackedStringArray("CardName", "CardBackground", "CardPortrait", "SelectionTweenComp")]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -84.5
+offset_top = -106.0
+offset_right = 84.5
+offset_bottom = 106.00076
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+script = ExtResource("1_5scqc")
+CardData = ExtResource("2_52sku")
+CardName = NodePath("CardBackground/UnitNameLabel")
+CardBackground = NodePath("CardBackground")
+CardPortrait = NodePath("CardBackground/UnitPortrait")
+SelectionMaterial = ExtResource("3_ifk1h")
+SelectionTweenComp = NodePath("SelectionTweenComp")
+
+[node name="CardBackground" type="Sprite2D" parent="." unique_id=1599375724]
+material = ExtResource("3_ifk1h")
+scale = Vector2(4, 4)
+texture = SubResource("AtlasTexture_cgf4g")
+centered = false
+
+[node name="UnitPortrait" type="Sprite2D" parent="CardBackground" unique_id=224559461]
+position = Vector2(2.749998, 0)
+scale = Vector2(0.4625, 0.4625)
+texture = SubResource("AtlasTexture_k24um")
+centered = false
+
+[node name="UnitNameLabel" type="Label" parent="CardBackground" unique_id=2117919147]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.625
+offset_top = 13.0
+offset_right = 91.375
+offset_bottom = 36.001038
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.25, 0.25)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 6
+text = "TestUnit"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MouseEnterExitTweenComp" type="Node" parent="CardBackground" unique_id=569269390 node_paths=PackedStringArray("Target")]
+script = ExtResource("7_wg0xy")
+Target = NodePath("../..")
+TweenDatas = Array[ExtResource("8_0iecu")]([SubResource("Resource_pfyvg"), SubResource("Resource_8njy4")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+
+[node name="SelectionTweenComp" type="Node" parent="." unique_id=667643131 node_paths=PackedStringArray("Target")]
+script = ExtResource("7_wg0xy")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("8_0iecu")]([ExtResource("10_c01wi"), ExtResource("11_61pmt")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"

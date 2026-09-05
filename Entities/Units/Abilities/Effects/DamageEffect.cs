@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+#nullable enable
+using System.Collections.Generic;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Results;
 using Godot;
 
 namespace AKidsDream.Abilities.Effects;
@@ -10,20 +12,33 @@ namespace AKidsDream.Abilities.Effects;
 public partial class DamageEffect : EffectData
 {
     [Export] public int Amount = 1;
-    
-    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles)
+
+    public override Result<EffectOutcome, EffectError> ApplyEffect(
+        AbilityContext context,
+        AbilityPayload payload,
+        Vector2I[] affectedTiles)
     {
-        List<EffectResult> results = [];
+        List<EffectOutcome> outcomes = [];
 
         foreach (var tile in affectedTiles)
         {
             if (!context.GameContext.Board.TryGetUnitAt(tile, out var target)) continue;
-            
+
             target.HealthComp.Damage(Amount);
-            results.Add(new DamageResult { Target = target, Tile = tile, Amount = Amount });
+            outcomes.Add(new DamageOutcome
+            {
+                Caster = context.Caster,
+                Target = target,
+                Tile = tile,
+                Amount = Amount
+            });
         }
-        if (results.Count == 0) 
-            return new CompositeResult { Results = [] };
-        return results.Count > 1 ? new CompositeResult { Results = [.. results] } : results[0];
+
+        if (outcomes.Count == 0)
+            return Result.Ok<EffectOutcome, EffectError>(CompositeOutcome.Empty);
+
+        return outcomes.Count == 1
+            ? Result.Ok<EffectOutcome, EffectError>(outcomes[0])
+            : Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome { Outcomes = outcomes, Caster = context.Caster });
     }
 }

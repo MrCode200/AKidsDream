@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="AbilityData" format=3 uid="uid://cxchs07a32ck2"]
+
+[ext_resource type="Script" uid="uid://0dih1yuksljh" path="res://Entities/Units/Abilities/CostModifiers/LinearGrowthCostModifier.cs" id="1_lf0ek"]
+[ext_resource type="Script" uid="uid://dqpieu0uvgg8d" path="res://Entities/Units/Abilities/Patterns/OneTilePattern.cs" id="2_ex6xr"]
+[ext_resource type="Script" uid="uid://cnajkqpahjyk1" path="res://Entities/Units/Abilities/Effects/MoveSelfEffect.cs" id="3_ctw0t"]
+[ext_resource type="Texture2D" uid="uid://c47lt1uhjuxm3" path="res://Assets/NodeIcons/icon-attack-50.svg" id="4_j1nhp"]
+[ext_resource type="Script" uid="uid://thbe6n87osxo" path="res://Entities/Units/Abilities/Patterns/AdjacentPattern.cs" id="5_ju2d3"]
+[ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="6_kgdib"]
+
+[sub_resource type="Resource" id="Resource_bxpc3"]
+script = ExtResource("1_lf0ek")
+Growth = 17
+metadata/_custom_type_script = "uid://0dih1yuksljh"
+
+[sub_resource type="Resource" id="Resource_lf0ek"]
+script = ExtResource("2_ex6xr")
+metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
+
+[sub_resource type="Resource" id="Resource_ex6xr"]
+script = ExtResource("3_ctw0t")
+EffectPattern = SubResource("Resource_lf0ek")
+EffectAtlasCoords = 5
+RunSequential = true
+AnimationName = &"Run"
+ReplayIfAlreadyPlaying = true
+Trigger = 32
+DelaySeconds = 5.0
+TriggerValue = 1
+metadata/_custom_type_script = "uid://cnajkqpahjyk1"
+
+[sub_resource type="Resource" id="Resource_5mrbn"]
+script = ExtResource("5_ju2d3")
+Radius = 2
+metadata/_custom_type_script = "uid://thbe6n87osxo"
+
+[resource]
+script = ExtResource("6_kgdib")
+Icon = ExtResource("4_j1nhp")
+Name = &"TPChain"
+Description = &"Chain TP\'s to selected tiles, Casts only when 3 tiles are selected. Each tile selected decreases casting cost by 5"
+ReachPattern = SubResource("Resource_5mrbn")
+ReachAtlasCoords = 3
+Effects = [SubResource("Resource_ex6xr")]
+CostMod = SubResource("Resource_bxpc3")
+PoolName = &"Move"
+MaxTargets = 3
+MaxDuplicateTargets = 2
+metadata/_custom_type_script = "uid://bc2xq8b7msrkv"

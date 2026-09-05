@@ -1,5 +1,7 @@
-using AKidsDream.Common.Logging;
+#nullable enable
 using AKidsDream.Common;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Logging;
 using AKidsDream.Managers.SaveSystems;
 using Serilog;
 
@@ -9,8 +11,10 @@ public sealed class SwitchUnitCommand(Unit oldUnit, Unit newUnit) : IGameCommand
 {
     public CommandResult Execute(GameContext context)
     {
-        if (oldUnit is null || newUnit is null)
-            return CommandResult.Fail(this, CommandFailureType.NullArgument, "Unit is null");
+        if (oldUnit is null)
+            return CommandResult.Fail(this, new CommandError.NullArgument(nameof(oldUnit), "Old unit is null"));
+        if (newUnit is null)
+            return CommandResult.Fail(this, new CommandError.NullArgument(nameof(newUnit), "New unit is null"));
 
         Log.ForContext<SwitchUnitCommand>().Here().Info(
             "Switching from unit '{OldUnitName}' (id: {OldUnitId}) to unit '{NewUnitName}' (id: {NewUnitId})",

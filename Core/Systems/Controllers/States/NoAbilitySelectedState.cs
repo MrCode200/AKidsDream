@@ -28,7 +28,7 @@ public class NoAbilitySelectedState(PlayerInteractionController pic) : IState
 		if (payload is not PlayerInteractionPayload interaction)
 			return;
 
-		if (!interaction.IsLeftClickPressed)
+		if (!interaction.IsSelectPressed)
 			return;
 
 		HandleLeftClick(interaction);

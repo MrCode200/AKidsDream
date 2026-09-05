@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cavjv48ti5xiq"]
+
+[ext_resource type="Script" uid="uid://d3mfg0orp26f8" path="res://Common/Components/SelectableComponent/Addons/SetMaterialUponSelection.cs" id="1_64pi8"]
+
+[node name="SelectionMaterialSetter" type="Node" unique_id=859094201 node_paths=PackedStringArray("TargetNode2D", "SelectableC")]
+script = ExtResource("1_64pi8")
+TargetNode2D = NodePath("")
+SelectableC = NodePath("")

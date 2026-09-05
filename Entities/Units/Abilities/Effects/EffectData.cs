@@ -5,7 +5,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Threading.Tasks;
+using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 using AKidsDream.Common.Components.TweenComponent.Resources;
@@ -91,15 +93,13 @@ public abstract partial class EffectData : Resource
     /// <param name="targetedTiles">The tiles the User selected in insertion order</param>
     /// <param name="payload">The payload, containing modifiable data</param>
     /// <remarks>Note: The execution passed may be modified during execution.</remarks>
-    /// <returns>Returns an <see cref="EffectResult"/> which contains data of what effect did what.</returns>
-    public async Task<EffectResult> ExecuteAsync(
+    /// <returns>Returns a <see cref="Result{EffectOutcome, EffectError}"/> indicating success or failure.</returns>
+    public async Task<Result<EffectOutcome, EffectError>> ExecuteAsync(
         AbilityContext ctx,
         List<Vector2I> targetedTiles,
         AbilityPayload payload
     )
     {
-        EffectResult finalResult = new CompositeResult { Results = [] };
-
         try
         {
             if (!RunSequential)
@@ -109,8 +109,7 @@ public abstract partial class EffectData : Resource
                 return await ExecuteEffectAsync(ctx, payload);
             }
 
-            var index = 0;
-            var results = new EffectResult[targetedTiles.Count];
+            var outcomes = new List<EffectOutcome>(targetedTiles.Count);
 
             payload.AccumulatedTargets = [];
             foreach (var tile in targetedTiles)
@@ -118,11 +117,18 @@ public abstract partial class EffectData : Resource
                 payload.AccumulatedTargets.Add(tile);
                 payload.ProcessingTiles = [tile];
 
-                results[index++] = await ExecuteEffectAsync(ctx, payload);
+                var effectResult = await ExecuteEffectAsync(ctx, payload);
+                if (effectResult.IsFailure)
+                    return effectResult;
+
+                outcomes.Add(effectResult.Value);
             }
 
-            finalResult = new CompositeResult { Results = results };
-            return finalResult;
+            return Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome
+            {
+                Caster = ctx.Caster,
+                Outcomes = outcomes
+            });
         }
         catch (Exception exception)
         {
@@ -130,11 +136,12 @@ public abstract partial class EffectData : Resource
                 .ForContext("NameTag", ctx.Caster.CasterName)
                 .Here().Err(exception, "Error executing effect");
 
-            return finalResult;
+            return Result.Fail<EffectOutcome, EffectError>(
+                new EffectError.ExecutionFailed(exception.Message));
         }
     }
 
-    private async Task<EffectResult> ExecuteEffectAsync(AbilityContext ctx, AbilityPayload payload)
+    private async Task<Result<EffectOutcome, EffectError>> ExecuteEffectAsync(AbilityContext ctx, AbilityPayload payload)
     {
         PlayAnimationIfNeeded(ctx);
 
@@ -158,7 +165,7 @@ public abstract partial class EffectData : Resource
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.CasterNode, ctx.Ability, this);
         var result = ApplyEffect(ctx, payload, affectedTiles);
-        EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.CasterNode, ctx.Ability, this, result);
+        EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyEnd, ctx.CasterNode, ctx.Ability, this);
 
         return result;
     }
@@ -256,7 +263,7 @@ public abstract partial class EffectData : Resource
     }
 
 
-    public abstract EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles);
+    public abstract Result<EffectOutcome, EffectError> ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles);
 
     public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload)
     {

@@ -84,7 +84,7 @@ public partial class EventBus : Node
     public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData abilityData);
 
     [Signal]
-    public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability, EffectResult result);
+    public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability);
 
     [Signal]
     public delegate void AbilityCostUpdatedEventHandler(Unit unit, AbilityData ability, int newCount);
@@ -99,8 +99,7 @@ public partial class EventBus : Node
     public delegate void EffectApplyStartEventHandler(Node caster, AbilityData ability, EffectData effect);
 
     [Signal]
-    public delegate void EffectApplyEndEventHandler(Node caster, AbilityData ability, EffectData effect,
-        EffectResult result);
+    public delegate void EffectApplyEndEventHandler(Node caster, AbilityData ability, EffectData effect);
 
     [Signal]
     public delegate void AbilityDeselectedEventHandler(Unit unit);

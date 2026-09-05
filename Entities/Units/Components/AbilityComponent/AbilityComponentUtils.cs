@@ -3,26 +3,18 @@ using System.Collections.Generic;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Commands;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Results;
 using AKidsDream.GameBoard;
 using Godot;
 
 namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
-public enum CastFailureReason
-{
-    None,
-    AbilityNotFound,
-    CannotAfford,
-    TilesOutOfRange,
-    EffectExecutionFailed,
-    InvalidTargetsSelected
-}
-
-public readonly record struct CastResult(bool Success, CastFailureReason FailureReason, EffectResult? EffectResult)
-{
-    public static CastResult Ok(EffectResult effectResult) => new(true, CastFailureReason.None, effectResult);
-    public static CastResult Fail(CastFailureReason reason, EffectResult? effectResult = null) => new(false, reason, effectResult);
-}
+public sealed record CastOutcome(
+    CompositeOutcome Outcomes,
+    int CostPaid,
+    string PoolName
+);
 
 /// <summary>
 /// Immutable context containing the environment for ability execution.

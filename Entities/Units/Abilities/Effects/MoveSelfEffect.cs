@@ -1,7 +1,9 @@
-﻿#nullable enable
+#nullable enable
 using AKidsDream.Common;
-using AKidsDream.Common.Logging;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using Godot;
 using Serilog;
 
@@ -29,35 +31,37 @@ public partial class MoveSelfEffect : EffectData
         payload.CurrentOrigin = payload.ProcessingTiles[^1];
     }
 
-    public override EffectResult ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles)
+    public override Result<EffectOutcome, EffectError> ApplyEffect(
+        AbilityContext context,
+        AbilityPayload payload,
+        Vector2I[] affectedTiles)
     {
         if (context.Caster is not Unit castingUnit)
-            return new ErrorResult
-            {
-                Caster = context.Caster,
-                Effect = this,
-                Error = "Cannot request MoveSelfEffect to be applied to a non-unit"
-            };
-        
+        {
+            return Result.Fail<EffectOutcome, EffectError>(
+                new EffectError.InvalidCaster("Cannot apply MoveSelfEffect to a non-unit caster."));
+        }
+
         if (affectedTiles.Length == 0)
         {
-            return new ErrorResult
-            {
-                Caster = castingUnit,
-                Effect = this,
-                Error = "MoveSelfEffect pattern returned no tiles"
-            };
+            return Result.Fail<EffectOutcome, EffectError>(
+                new EffectError.NoAffectedTiles(nameof(MoveSelfEffect)));
         }
 
         Vector2I from = castingUnit.TileLocation;
         Vector2I to = affectedTiles[0];
         if (!castingUnit.Move(to))
-            return new ErrorResult()
-            {
-                Caster = castingUnit,
-                Effect = this,
-                Error = "Unit Move function returned false"
-            };
-        return new MoveResult { Caster = castingUnit, From = from, To = to };
+        {
+            return Result.Fail<EffectOutcome, EffectError>(
+                new EffectError.ExecutionFailed($"Unit move to tile {to} failed."));
+        }
+
+        return Result.Ok<EffectOutcome, EffectError>(new MoveOutcome
+        {
+            Caster = castingUnit,
+            Target = castingUnit,
+            From = from,
+            To = to
+        });
     }
 }

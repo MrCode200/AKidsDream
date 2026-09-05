@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
-using AKidsDream.Common.Logging;
+#nullable enable
+using System.Threading.Tasks;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
+using AKidsDream.Common.Logging;
 using Godot;
 using Serilog;
 
@@ -16,35 +18,15 @@ public class CastAbilityBaseCommand(
 {
     public async Task<CommandResult> ExecuteAsync(GameContext context)
     {
-        if (caster is null)
-            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No caster was provided.");
-
         if (payload.ProcessingTiles.Count == 0)
-            return CommandResult.Fail(this, CommandFailureType.NullArgument, "No target tiles were provided.");
+            return CommandResult.Fail(this,
+                new CommandError.InvalidArgument(nameof(payload), "No target tiles were provided."));
 
-        var castResult =  await caster.AbilityC.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
+        var castResult = await caster.AbilityC.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
 
-        CommandFailureType failureType = castResult.FailureReason switch
-        {
-            CastFailureReason.AbilityNotFound => CommandFailureType.AbilityNotFound,
-            CastFailureReason.CannotAfford => CommandFailureType.MissingAbilityPoints,
-            CastFailureReason.TilesOutOfRange => CommandFailureType.InvalidTargetLocation,
-            CastFailureReason.EffectExecutionFailed => CommandFailureType.EffectExecutionFailed,
-            CastFailureReason.InvalidTargetsSelected => CommandFailureType.InvalidTargetsSelected,
-            _ => CommandFailureType.Unknown
-        };
-        
-        if (!castResult.Success)
-        {
-            // NOTE:
-            // one day maybe add metadata?
-            // as different commands could contain info such as EffectResult which could become much to add to track in CommandResult...
-            if (failureType is CommandFailureType.EffectExecutionFailed)
-                return CommandResult.Fail(this, failureType, $"Effect Failed with: {castResult.EffectResult}"); 
-                
-            return CommandResult.Fail(this, failureType, $"Ability cast failed: {castResult.FailureReason}");
-        }
-        
+        if (castResult.IsFailure)
+            return CommandResult.Fail(this, new CommandError.CastFailed(castResult.Error));
+
         context.AbilityVisualizer.ClearTilemaps();
 
         Log.ForContext<CastAbilityBaseCommand>().Here().Info(

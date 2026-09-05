@@ -1,8 +1,9 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Linq;
-using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Common.Errors;
+using AKidsDream.Managers.SaveSystems;
 using Godot;
 
 namespace AKidsDream.Commands;
@@ -17,7 +18,7 @@ public class RmvAbilityTargetCommand(
     {
         int index = Payload.AccumulatedTargets.LastIndexOf(TargetedTile);
         if (index == -1)
-            return CommandResult.Fail(this, CommandFailureType.InvalidArgument, $"Target '{TargetedTile}' not present in payload.");
+            return CommandResult.Fail(this, new CommandError.InvalidArgument(nameof(TargetedTile), $"Target '{TargetedTile}' not present in payload."));
         return null;
     }
 
