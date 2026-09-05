@@ -132,7 +132,7 @@ If anyone is interested in ***Joining the project***, also always welcome`( •�
 
 ## 📜 License
 
-This project uses the AKidsDream Non-Commercial License. See `LICENSE` for full details. Contact the maintainer for commercial licensing inquiries.
+This project uses the AKidsDream Non-Commercial License. See [`LICENSE`](LICENSE) for full details. Contact the maintainer for commercial licensing inquiries.
 
 ## 🤖 AI Usage
 
