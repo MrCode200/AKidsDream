@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
+using AKidsDream.Common.Results;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
@@ -14,12 +15,12 @@ public class RmvAbilityTargetCommand(
     AbilityPayload payload
 ) : BaseAbilityTargetCommand(targetedTile, ctx, payload)
 {
-    protected override CommandResult? ValidatePreconditions()
+    protected override Result<GameError> ValidatePreconditions()
     {
         int index = Payload.AccumulatedTargets.LastIndexOf(TargetedTile);
         if (index == -1)
-            return CommandResult.Fail(this, new CommandError.InvalidArgument(nameof(TargetedTile), $"Target '{TargetedTile}' not present in payload."));
-        return null;
+            return Result<GameError>.Fail(new ValidationError.InvalidArgument(nameof(TargetedTile), $"Target '{TargetedTile}' not present in payload."));
+        return Result<GameError>.Ok();
     }
 
     protected override List<Vector2I> GetModifiedTargets()

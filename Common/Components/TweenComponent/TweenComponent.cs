@@ -275,7 +275,7 @@ public partial class TweenComponent : Node
 	{
 		var seen = new HashSet<TweenTrigger>();
 
-		foreach (var trigger in TweenDatas.SelectMany(x => x.Triggers))
+		foreach (var trigger in TweenDatas.SelectMany(x => x.Triggers).Where(t => t != TweenTrigger.Manual))
 		{
 			if (seen.Add(trigger)) continue;
 			Log.Here().Warn("Duplicate triggers {Trigger} found at: {NodePath}", trigger, GetPath());

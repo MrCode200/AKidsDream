@@ -57,7 +57,7 @@ public partial class AbilityComponent : Node
         }
 
         InitialPoolDatas.Clear();
-        
+
         foreach (var abilityData in InitialAbilityDatas)
         {
             if (!Abilities.TryAdd(abilityData.Name, abilityData))
@@ -81,7 +81,7 @@ public partial class AbilityComponent : Node
             poolData.CurrentCount = poolData.MaxCount;
         }
     }
-    
+
     public bool TryCanAffordBaseCost(StringName name, out bool canAfford)
     {
         canAfford = false;
@@ -91,7 +91,7 @@ public partial class AbilityComponent : Node
 
         if (ability.BaseCost <= poolData.CurrentCount)
             canAfford = true;
-        
+
         return true;
     }
 
@@ -134,7 +134,7 @@ public partial class AbilityComponent : Node
     /// then runs each effect's payload update (sequential or batch) in insertion order,
     /// and finally checks affordability against the fully updated payload (unless skipCostCheck is true).
     /// </summary>
-    public Result<AbilityPayload, CastError> ValidateCast(
+    public Result<AbilityPayload, AbilityError> ValidateCast(
         StringName abilityName,
         AbilityContext context,
         List<Vector2I> targetedTiles,
@@ -142,51 +142,48 @@ public partial class AbilityComponent : Node
     {
         if (!Abilities.TryGetValue(abilityName, out var ability))
         {
-            return Result.Fail<AbilityPayload, CastError>(new CastError.AbilityNotFound(abilityName));
+            return Result.Fail<AbilityPayload, AbilityError>(
+                new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
         }
 
         if (!TryGetAbilityState(abilityName, out var liveState))
         {
-            return Result.Fail<AbilityPayload, CastError>(new CastError.AbilityNotFound(abilityName));
+            return Result.Fail<AbilityPayload, AbilityError>(
+                new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
+        }
+        
+        if (!Pools.TryGetValue(ability.PoolName, out var poolData))
+        {
+            return Result.Fail<AbilityPayload, AbilityError>(
+                new AbilityError.CannotAfford(Unit.UnitId, abilityName, ability.PoolName, 0, null));
         }
 
-        var validationResult = ability.ValidateCast(context, targetedTiles, state: liveState);
+        var validationResult = ability.ValidateCast(
+            context,
+            targetedTiles,
+            skipCostCheck ? null : poolData.CurrentCount,
+            state: liveState
+        );
+        
         if (validationResult.IsFailure)
             return validationResult;
 
         var payload = validationResult.Value;
 
-        if (!skipCostCheck)
-        {
-            if (!Pools.TryGetValue(ability.PoolName, out var poolData))
-            {
-                return Result.Fail<AbilityPayload, CastError>(
-                    new CastError.CannotAfford(ability.PoolName.ToString(), ability.GetCost(context, payload), 0));
-            }
-
-            var cost = ability.GetCost(context, payload);
-            if (cost > poolData.CurrentCount)
-            {
-                return Result.Fail<AbilityPayload, CastError>(
-                    new CastError.CannotAfford(ability.PoolName.ToString(), cost, poolData.CurrentCount));
-            }
-        }
-
-        return Result.Ok<AbilityPayload, CastError>(payload);
+        return Result.Ok<AbilityPayload, AbilityError>(payload);
     }
 
-    public async Task<Result<CastOutcome, CastError>> CastAsync(
+    public async Task<Result<CastOutcome, GameError>> CastAsync(
         StringName abilityName,
         AbilityContext context,
         List<Vector2I> targetedTiles)
     {
-        if (!Abilities.TryGetValue(abilityName, out var ability))
-            return Result.Fail<CastOutcome, CastError>(new CastError.AbilityNotFound(abilityName));
-
         var validationResult = ValidateCast(abilityName, context, targetedTiles, skipCostCheck: false);
         if (validationResult.IsFailure)
-            return Result.Fail<CastOutcome, CastError>(validationResult.Error);
+            return Result.Fail<CastOutcome, GameError>(validationResult.Error);
 
+        var ability = Abilities[abilityName];
+        
         var payload = validationResult.Value;
         var cost = ability.GetCost(context, payload);
 
@@ -204,7 +201,7 @@ public partial class AbilityComponent : Node
             {
                 _log.Here().Err("Ability '{AbilityName}' execution failed with {Error}",
                     ability.Name, castResult.Error);
-                return Result.Fail<CastOutcome, CastError>(castResult.Error);
+                return Result.Fail<CastOutcome, GameError>(castResult.Error);
             }
 
             // Commit state changes atomically upon guaranteed success
@@ -220,11 +217,11 @@ public partial class AbilityComponent : Node
                 ability.PoolName);
 
             var outcome = new CastOutcome(
-                castResult.Value.Outcomes, 
-                cost, 
+                castResult.Value.Outcomes,
+                cost,
                 ability.PoolName.ToString()
-                );
-            return Result.Ok<CastOutcome, CastError>(outcome);
+            );
+            return Result.Ok<CastOutcome, GameError>(outcome);
         }
         finally
         {

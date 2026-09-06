@@ -1,23 +1,15 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace AKidsDream.Common.Results;
 
-
 public static class Result
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ok<TValue, TError>(TValue value) => Result<TValue, TError>.Ok(value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Fail<TValue, TError>(TError error) => Result<TValue, TError>.Fail(error);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TError> Ok<TError>() => Result<TError>.Ok();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TError> Fail<TError>(TError error) => Result<TError>.Fail(error);
 }
 
@@ -51,19 +43,13 @@ public readonly record struct Result<TValue, TError>
         _error = error;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ok(TValue value) => new(value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Fail(TError error) => new(error);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator Result<TValue, TError>(TValue value) => new(value);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator Result<TValue, TError>(TError error) => new(error);
-
-    public bool TryGetValue([NotNullWhen(true)] out TValue? value, [NotNullWhen(false)] out TError? error)
+    public bool TryGetValue(
+        [NotNullWhen(true)] out TValue? value,
+        [NotNullWhen(false)] out TError? error
+    )
     {
         if (IsSuccess)
         {
@@ -77,6 +63,9 @@ public readonly record struct Result<TValue, TError>
         return false;
     }
 
+    // -- HELPERS --
+    
+    // Match
     public TResult Match<TResult>(Func<TValue, TResult> onSuccess, Func<TError, TResult> onFailure) =>
         IsSuccess ? onSuccess(_value!) : onFailure(_error!);
 
@@ -85,7 +74,34 @@ public readonly record struct Result<TValue, TError>
         if (IsSuccess) onSuccess(_value!);
         else onFailure(_error!);
     }
+    
+    // Map
+    public Result<TNewValue, TError> Map<TNewValue>(Func<TValue, TNewValue> onSuccess)
+    {
+        return IsSuccess 
+            ? Result.Ok<TNewValue, TError>(onSuccess(_value!))
+            : Result.Fail<TNewValue, TError>(_error!);
+    }
 
+    public Result<TValue, TNewError> MapError<TNewError>(Func<TError, TNewError> onError)
+    {
+        return IsFailure 
+            ? Result.Fail<TValue, TNewError>(onError(_error!))
+            : Result.Ok<TValue, TNewError>(_value!);
+    }
+    
+    // Bind
+    public Result<TNewValue, TError> Bind<TNewValue>(
+        Func<TValue, Result<TNewValue, TError>> onSuccess
+    )
+    {
+        if (IsFailure)
+            return Result.Fail<TNewValue, TError>(_error!);
+        
+        return onSuccess(_value!);
+    }
+
+    // Tap
     public Result<TValue, TError> TapSuccess(Action<TValue> action)
     {
         if (IsSuccess) action(_value!);
@@ -95,6 +111,21 @@ public readonly record struct Result<TValue, TError>
     public Result<TValue, TError> TapError(Action<TError> action)
     {
         if (IsFailure) action(_error!);
+        return this;
+    }
+    
+    // Ensure
+    public Result<TValue, TError> Ensure(Func<bool> condition, TError error)
+    {
+        if (IsFailure) return this;
+        if (!condition()) return Result.Fail<TValue, TError>(error);
+        return this;
+    }    
+    
+    public Result<TValue, TError> Ensure(Func<TValue, bool> condition, TError error)
+    {
+        if (IsFailure) return this;
+        if (!condition(_value!)) return Result.Fail<TValue, TError>(error);
         return this;
     }
 
@@ -108,7 +139,7 @@ public readonly record struct Result<TError>
 
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
-    
+
     public TError Error => IsFailure
         ? _error!
         : throw new InvalidOperationException("Cannot access Error on a successful Result.");
@@ -119,15 +150,10 @@ public readonly record struct Result<TError>
         _error = error;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TError> Ok() => new(true, default);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TError> Fail(TError error) => new(false, error);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator Result<TError>(TError error) => new(false, error);
-
+    // Match
     public TResult Match<TResult>(Func<TResult> onSuccess, Func<TError, TResult> onFailure) =>
         IsSuccess ? onSuccess() : onFailure(_error!);
 
@@ -136,7 +162,17 @@ public readonly record struct Result<TError>
         if (IsSuccess) onSuccess();
         else onFailure(_error!);
     }
-
+    
+    // Map
+    public Result<TNewError> Map<TNewError>(Func<TError, TNewError> onError) =>
+        IsFailure ? Result.Fail(onError(_error!)) : Result.Ok<TNewError>();
+    
     public override string ToString() =>
         IsSuccess ? "Success()" : $"Failure({_error})";
+}
+
+public static class ResultExtensions
+{
+    public static Result<TError> DropValue<TValue, TError>(this Result<TValue, TError> result) =>
+        result.IsSuccess ? Result.Ok<TError>() : Result.Fail(result.Error);
 }

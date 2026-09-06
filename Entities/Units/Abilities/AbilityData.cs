@@ -118,7 +118,7 @@ public partial class AbilityData : Resource
     /// <param name="targetedTiles">The tiles the User selected in insertion order</param>
     /// <param name="state">The state of the ability (Counters etc.)</param>
     /// <returns>Returns a Result containing the composite outcome and payload, or CastError.</returns>
-    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> CastAsync(
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>> CastAsync(
         AbilityContext context,
         List<Vector2I> targetedTiles,
         AbilityState? state
@@ -136,14 +136,14 @@ public partial class AbilityData : Resource
         {
             var effectResult = await Effects[i].ExecuteAsync(context, targetedTiles, payload);
             if (effectResult.IsFailure)
-                return Result.Fail<(CompositeOutcome, AbilityPayload), CastError>(new CastError.EffectFailed(effectResult.Error));
+                return Result.Fail<(CompositeOutcome, AbilityPayload), GameError>(effectResult.Error);
 
             outcomes.Add(effectResult.Value);
         }
 
         var compositeOutcome = new CompositeOutcome(outcomes, flatten: true) { Caster = context.Caster };
         EmitSignal(SignalName.AbilityCast, this);
-        return Result.Ok<(CompositeOutcome, AbilityPayload), CastError>((compositeOutcome, payload));
+        return Result.Ok<(CompositeOutcome, AbilityPayload), GameError>((compositeOutcome, payload));
     }
 
     // -- UTIL METHODS --
@@ -189,12 +189,17 @@ public partial class AbilityData : Resource
     /// Checks that no duplicate tile counted exceeds <see cref="MaxDuplicateTargets"/>.
     /// </summary>
     /// <param name="targetTiles">The Tiles the User selected.</param>
-    public Result<CastError> ValidateTargetCount(List<Vector2I> targetTiles)
+    public bool ValidateTargetCount(List<Vector2I> targetTiles)
     {
         var count = targetTiles.Count;
         if (count < MinTargets || count > MaxTargets)
-            return Result.Fail<CastError>(new CastError.InvalidTargetCount(MinTargets, MaxTargets, count));
+            return false;
 
+        return true;
+    }
+    
+    public bool ValidateTargetDuplicates(List<Vector2I> targetTiles)
+    {
         var duplicates = targetTiles.GroupBy(t => t)
             .Select(g => new { Value = g.Key, Count = g.Count() })
             .ToArray();
@@ -202,14 +207,11 @@ public partial class AbilityData : Resource
         foreach (var duplicate in duplicates)
         {
             if (duplicate.Count > _maxDuplicateTargets)
-                return Result.Fail<CastError>(new CastError.MaxDuplicateTargetsExceeded(duplicate.Value, _maxDuplicateTargets, duplicate.Count));
+                return false;
         }
-
-        return Result.Ok<CastError>();
+        
+        return true;
     }
-
-    public bool HasValidTargetCount(List<Vector2I> targetTiles) =>
-        ValidateTargetCount(targetTiles).IsSuccess;
 
     public bool CanAfford(int balance, AbilityContext context, AbilityPayload payload)
     {
@@ -269,7 +271,7 @@ public partial class AbilityData : Resource
     /// Updates the payload sequentially tile by tile for a sequential effect,
     /// checking reach for each tile if requested.
     /// </summary>
-    public Result<CastError> TryUpdatePayloadSequential(
+    public Result<AbilityError> TryUpdatePayloadSequential(
         EffectData effect,
         AbilityContext context,
         List<Vector2I> targetedTiles,
@@ -282,7 +284,8 @@ public partial class AbilityData : Resource
         {
             if (!IsTileInReach(context, tile, payload.CurrentOrigin))
             {
-                return Result.Fail<CastError>(new CastError.TargetOutOfRange(tile, payload.CurrentOrigin));
+                return Result.Fail<AbilityError>(new AbilityError.TargetOutOfRange(
+                    context.Caster.CasterId, context.Ability.Name, tile, payload.CurrentOrigin));
             }
 
             payload.AccumulatedTargets.Add(tile);
@@ -290,7 +293,7 @@ public partial class AbilityData : Resource
             effect.UpdatePayload(context, payload);
         }
 
-        return Result.Ok<CastError>();
+        return Result.Ok<AbilityError>();
     }
 
     /// <summary>
@@ -298,23 +301,25 @@ public partial class AbilityData : Resource
     /// and simulates each effect's payload update (sequential or batch) in insertion order.
     /// Does not check pool costs or affordability unless balance is provided.
     /// </summary>
-    public Result<AbilityPayload, CastError> ValidateCast(
+    public Result<AbilityPayload, AbilityError> ValidateCast(
         AbilityContext context,
         List<Vector2I> targetedTiles,
         int? balance = null,
-        AbilityState? state = null,
-        Vector2I? initialOrigin = null)
+        AbilityState? state = null)
     {
-        var targetCountResult = ValidateTargetCount(targetedTiles);
-        if (targetCountResult.IsFailure)
-            return Result.Fail<AbilityPayload, CastError>(targetCountResult.Error);
+        if (!ValidateTargetCount(targetedTiles))
+            return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.InvalidTargetCount(
+                context.Caster.CasterId, context.Ability.Name, MinTargets, MaxTargets, targetedTiles.Count));
 
+        if (!ValidateTargetDuplicates(targetedTiles))
+            return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.MaxDuplicateTargetsExceeded(
+                context.Caster.CasterId, context.Ability.Name, targetedTiles[0], _maxDuplicateTargets, targetedTiles.Count));
+        
         var abilityState = state?.Copy() ?? new AbilityState();
-        var origin = initialOrigin ?? context.Caster.TileLocation;
 
         var payload = new AbilityPayload
         {
-            CurrentOrigin = origin,
+            CurrentOrigin = context.Caster.TileLocation,
             ProcessingTiles = targetedTiles,
             AccumulatedTargets = targetedTiles,
             State = abilityState
@@ -328,14 +333,15 @@ public partial class AbilityData : Resource
             {
                 var seqResult = TryUpdatePayloadSequential(effect, context, targetedTiles, payload);
                 if (seqResult.IsFailure)
-                    return Result.Fail<AbilityPayload, CastError>(seqResult.Error);
+                    return Result.Fail<AbilityPayload, AbilityError>(seqResult.Error);
             }
             else
             {
                 if (targetedTiles.Count > 0 && !AllTilesInReach(context, targetedTiles, payload.CurrentOrigin))
                 {
                     var invalidTile = targetedTiles.FirstOrDefault(t => !IsTileInReach(context, t, payload.CurrentOrigin));
-                    return Result.Fail<AbilityPayload, CastError>(new CastError.TargetOutOfRange(invalidTile, payload.CurrentOrigin));
+                    return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.TargetOutOfRange(
+                        context.Caster.CasterId, context.Ability.Name, invalidTile, payload.CurrentOrigin));
                 }
 
                 UpdatePayloadBatch(effect, context, targetedTiles, payload);
@@ -345,9 +351,10 @@ public partial class AbilityData : Resource
         if (balance != null && !CanAfford(balance.Value, context, payload))
         {
             var cost = GetCost(context, payload);
-            return Result.Fail<AbilityPayload, CastError>(new CastError.CannotAfford(PoolName.ToString(), cost, balance.Value));
+            return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.CannotAfford(
+                context.Caster.CasterId, context.Ability.Name, PoolName.ToString(), cost, balance.Value));
         }
 
-        return Result.Ok<AbilityPayload, CastError>(payload);
+        return Result.Ok<AbilityPayload, AbilityError>(payload);
     }
 }

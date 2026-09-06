@@ -1,12 +1,9 @@
 #nullable enable
 using System;
-using AKidsDream.Abilities.Effects;
 using AKidsDream.Commands;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
 using AKidsDream.Entities.Cards;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers;
@@ -196,16 +193,16 @@ public partial class CardManager : Node2D, IBlockable
             //    cardToDeselect.Id, SelectedCard?.Id);
             return;
         }
-
-        _log.Here().Debug("Deselected card {NameTag}:{IdTag}", cardToDeselect.CardData.Name, cardToDeselect.Id);
-
+        
         cardToDeselect.IsSelected = false;
         SelectedCard = null;
         _cardDraggingAnchor = null;
         _lastTargetTile = null;
-
+        
         ClearAbilityContextPayload();
         AbilityVisualizer.ClearTilemaps();
+        
+        _log.Here().Debug("Deselected card {CardName} (id: {CardId})", cardToDeselect.CardData.Name, cardToDeselect.Id);
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.CardDeselected, cardToDeselect);
     }
@@ -213,7 +210,7 @@ public partial class CardManager : Node2D, IBlockable
     private void SelectCard(AbilityCard cardToSelect)
     {
         SelectedCard = cardToSelect;
-        cardToSelect.IsSelected = true;
+        SelectedCard.IsSelected = true;
         BuildAbilityContextPayload();
 
         AbilityVisualizer.ShowReachVisualization(
@@ -222,7 +219,10 @@ public partial class CardManager : Node2D, IBlockable
             SelectedCard.CardData.Ability
         );
 
-        _log.Here().Debug("Selected card: {NameTag}:{IdTag}", SelectedCard.CardData.Name, SelectedCard.Id);
+        _log.ForContext("NameTag", cardToSelect.CardData.Name)
+            .ForContext("IdTag", cardToSelect.Id)
+            .Here().Debug("Card selected {NameTag} (id: {IdTag})");
+
         EventBus.Instance.EmitSignal(EventBus.SignalName.CardSelected, cardToSelect);
     }
 
@@ -248,8 +248,9 @@ public partial class CardManager : Node2D, IBlockable
             SelectedCard.CardData.Ability
         );
 
-        _log.Here().Debug("Changed Card {OldCardName}:{OldIdTag} to {NewCardName}:{NewIdTag}",
-            oldCard.CardData.Name, oldCard.Id, SelectedCard.CardData.Name, SelectedCard.Id);
+        _log.Here().Debug("Switched selection from {OldCardName}:{OldIdTag} to {NewCardName}:{NewIdTag}",
+            oldCard.CardData.Name, oldCard.Id, newCard.CardData.Name, newCard.Id);
+
         EventBus.Instance.EmitSignal(EventBus.SignalName.CardChanged, oldCard, SelectedCard);
     }
 

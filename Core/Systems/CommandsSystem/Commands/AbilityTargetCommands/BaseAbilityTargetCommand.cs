@@ -1,9 +1,11 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using Godot;
 using Serilog;
 
@@ -18,16 +20,16 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
     protected readonly AbilityContext Ctx = ctx;
     protected readonly AbilityPayload Payload = payload;
 
-    public CommandResult Execute(GameContext context)
+    public Result<GameError> Execute(GameContext context)
     {
         if (Ctx.Caster is not Unit caster)
-            return CommandResult.Fail(this, new CommandError.InvalidArgument(nameof(Ctx.Caster), "The caster is not a unit."));
+            throw new InvalidOperationException($"The caster is not a unit. Caster type: {Ctx.Caster.GetType().Name}");
 
         if (!caster.AbilityC.Abilities.TryGetValue(Ctx.Ability.Name, out var ability))
-            return CommandResult.Fail(this, new CommandError.AbilityNotFound(Ctx.Ability.Name));
+            return Result<GameError>.Fail(new AbilityError.AbilityNotFound(caster.CasterId, Ctx.Ability.Name));
 
         var preconditionsResult = ValidatePreconditions();
-        if (preconditionsResult != null)
+        if (preconditionsResult.IsFailure)
             return preconditionsResult;
 
         var modifiedTargets = GetModifiedTargets();
@@ -40,7 +42,7 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
 
         if (validationResult.IsFailure)
         {
-            return CommandResult.Fail(this, new CommandError.CastFailed(validationResult.Error));
+            return Result<GameError>.Fail(validationResult.Error);
         }
 
         var resimulatedPayload = validationResult.Value;
@@ -57,10 +59,10 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
         context.AbilityVisualizer.ShowEffectVisualization(Ctx, resimulatedPayload, ability.Effects);
         context.AbilityVisualizer.ShowReachVisualization(Ctx, resimulatedPayload, ability);
 
-        return CommandResult.Ok(this);
+        return Result<GameError>.Ok();
     }
 
-    protected virtual CommandResult? ValidatePreconditions() => null;
+    protected virtual Result<GameError> ValidatePreconditions() => Result<GameError>.Ok();
     protected abstract List<Vector2I> GetModifiedTargets();
     protected abstract string GetActionName();
 }

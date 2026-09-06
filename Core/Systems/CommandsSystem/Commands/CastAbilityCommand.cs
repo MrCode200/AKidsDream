@@ -4,6 +4,7 @@ using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using Godot;
 using Serilog;
 
@@ -16,16 +17,12 @@ public class CastAbilityBaseCommand(
     AbilityPayload payload
 ) : IAsyncGameBaseCommand
 {
-    public async Task<CommandResult> ExecuteAsync(GameContext context)
+    public async Task<Result<GameError>> ExecuteAsync(GameContext context)
     {
-        if (payload.ProcessingTiles.Count == 0)
-            return CommandResult.Fail(this,
-                new CommandError.InvalidArgument(nameof(payload), "No target tiles were provided."));
-
         var castResult = await caster.AbilityC.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
 
         if (castResult.IsFailure)
-            return CommandResult.Fail(this, new CommandError.CastFailed(castResult.Error));
+            return castResult.DropValue();
 
         context.AbilityVisualizer.ClearTilemaps();
 
@@ -36,6 +33,6 @@ public class CastAbilityBaseCommand(
             caster.UnitId,
             payload.ProcessingTiles.Count);
 
-        return CommandResult.Ok(this);
+        return Result<GameError>.Ok();
     }
 }

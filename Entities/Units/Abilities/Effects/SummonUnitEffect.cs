@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.Collections.Generic;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
@@ -20,13 +21,18 @@ public partial class SummonUnitEffect : EffectData
         AbilityPayload payload,
         Vector2I[] affectedTiles)
     {
+        if (SummonedUnit == null)
+            throw new InvalidOperationException("SummonUnitEffect.SummonedUnit is not set. This is a configuration error.");
+
+        if (SummonedUnitStats == null)
+            throw new InvalidOperationException("SummonUnitEffect.SummonedUnitStats is not set. This is a configuration error.");
+
         var outcomes = new List<EffectOutcome>();
         foreach (var tile in affectedTiles)
         {
             if (!context.GameContext.PlayerTeamRegistry.TryGetPlayer(context.Caster.OwnerId, out var playerData))
             {
-                return Result.Fail<EffectOutcome, EffectError>(
-                    new EffectError.ExecutionFailed($"PlayerData for owner ID {context.Caster.OwnerId} not found."));
+                throw new InvalidOperationException($"PlayerData for owner ID {context.Caster.OwnerId} not found.");
             }
 
             var summoned = SummonedUnit.Instantiate<Unit>();

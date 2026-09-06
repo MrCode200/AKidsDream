@@ -21,7 +21,7 @@ public interface IBaseCommand { }
 /// </summary>
 public interface IGameCommand : IBaseCommand
 {
-    CommandResult Execute(GameContext context);
+    Result<GameError> Execute(GameContext context);
 }
 
 /// <summary>
@@ -29,23 +29,7 @@ public interface IGameCommand : IBaseCommand
 /// </summary>
 public interface IAsyncGameBaseCommand : IBaseCommand
 {
-    Task<CommandResult> ExecuteAsync(GameContext context);
-}
-public sealed class CommandResult
-{
-    public required IBaseCommand BaseCommand { get; init; }
-    public Result<CommandError> Result { get; init; }
-
-    public bool IsSuccess => Result.IsSuccess;
-    public bool IsFailure => Result.IsFailure;
-    public CommandError? Error => Result.IsFailure ? Result.Error : null;
-    public string FailureReason => Result.IsFailure ? Result.Error.Message : string.Empty;
-
-    public static CommandResult Ok(IBaseCommand baseCommand) =>
-        new() { BaseCommand = baseCommand, Result = Result<CommandError>.Ok() };
-
-    public static CommandResult Fail(IBaseCommand baseCommand, CommandError error) =>
-        new() { BaseCommand = baseCommand, Result = Result<CommandError>.Fail(error) };
+    Task<Result<GameError>> ExecuteAsync(GameContext context);
 }
 
 public sealed class GameContext(

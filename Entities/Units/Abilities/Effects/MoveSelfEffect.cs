@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
@@ -38,14 +39,14 @@ public partial class MoveSelfEffect : EffectData
     {
         if (context.Caster is not Unit castingUnit)
         {
-            return Result.Fail<EffectOutcome, EffectError>(
-                new EffectError.InvalidCaster("Cannot apply MoveSelfEffect to a non-unit caster."));
+            throw new InvalidOperationException($"Cannot apply MoveSelfEffect to a non-unit caster. " +
+                                                $"Caster type: {context.Caster.GetType().Name}");
         }
 
-        if (affectedTiles.Length == 0)
+        if (affectedTiles.Length != 1)
         {
             return Result.Fail<EffectOutcome, EffectError>(
-                new EffectError.NoAffectedTiles(nameof(MoveSelfEffect)));
+                new EffectError.InvalidTargetCount(Min: 1, Max: 1, Actual: affectedTiles.Length));
         }
 
         Vector2I from = castingUnit.TileLocation;
@@ -53,7 +54,7 @@ public partial class MoveSelfEffect : EffectData
         if (!castingUnit.Move(to))
         {
             return Result.Fail<EffectOutcome, EffectError>(
-                new EffectError.ExecutionFailed($"Unit move to tile {to} failed."));
+                new EffectError.ExecutionFailed($"Unit move from {from} to tile {to} failed."));
         }
 
         return Result.Ok<EffectOutcome, EffectError>(new MoveOutcome

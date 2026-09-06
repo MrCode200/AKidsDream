@@ -3,6 +3,7 @@ using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using Godot;
 using Serilog;
 
@@ -15,13 +16,10 @@ public class SelectAbilityCommand(
     AbilityPayload payload
 ) : IGameCommand
 {
-    public CommandResult Execute(GameContext context)
+    public Result<GameError> Execute(GameContext context)
     {
-        if (caster is null)
-            return CommandResult.Fail(this, new CommandError.NullArgument(nameof(caster), "No caster was provided."));
-
         if (!caster.AbilityC.Abilities.TryGetValue(abilityName, out var ability))
-            return CommandResult.Fail(this, new CommandError.AbilityNotFound(abilityName));
+            return Result<GameError>.Fail(new AbilityError.AbilityNotFound(caster.CasterId, abilityName));
 
         context.AbilityVisualizer.ShowReachVisualization(
             abilityContext,
@@ -36,6 +34,6 @@ public class SelectAbilityCommand(
             caster.UnitId
         );
 
-        return CommandResult.Ok(this);
+        return Result<GameError>.Ok();
     }
 }

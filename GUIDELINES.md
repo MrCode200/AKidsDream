@@ -7,6 +7,19 @@
 | GD Console           | Godot developer console addon tutorial      | [Watch video](https://www.youtube.com/watch?v=M_ymfQtZad4)                       |
 | CallableStateMachine | Lightweight state machine gist for Godot C# | [View gist](https://gist.github.com/firebelley/96f2f82e3feaa2756fe647d8b9843174) |
 
+## 🕵️ Error-Handling Guidelines
+
+**Throw** when: Unexpected failure, programmer error, corrupted state, violated invariant \
+**Validate + return Result.Fail** when: Expected gameplay failure (insufficient mana, invalid target, ability not found)\
+**Catch** only when: Can meaningfully handle, translate, or recover
+
+### Decision Questions
+1. External/untrusted data? → Check + validate/throw
+2. Public API boundary? → Check + throw
+3. Expected gameplay failure? → Validate + return Result.Fail
+4. System invariant (guaranteed by caller)? → Don't check
+5. Corrupted state? → Throw immediately
+
 
 ## 📝 Changelog Guidelines
 

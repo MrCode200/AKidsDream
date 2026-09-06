@@ -71,7 +71,6 @@ public partial class AbilityCard : Control
 
             var shaderMaterial = (ShaderMaterial)CardBackground.Material;
             shaderMaterial.SetShaderParameter("type" , _isSelected ? 1 : 0); // 1 = round, 0 = disabled
-            GD.Print(shaderMaterial.GetShaderParameter("Type"));
         }
     }
     
@@ -116,18 +115,12 @@ public partial class AbilityCard : Control
     /// Pure async cast method - executes the ability without validation or cost deduction.
     /// Use this if you want to handle validation and cost logic separately.
     /// </summary>
-    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> CastAsync(
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>> CastAsync(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
         AbilityState? state = null
     )
     {
-        if (CardData.Ability == null)
-        {
-            _log.Here().Err("Attempted to cast a card without ability data");
-            return Result.Fail<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>(
-                new CastError.AbilityNotFound("CardAbility"));
-        }
         try
         {
             var castResult = await CardData.Ability.CastAsync(abilityContext, targetedTiles, state);
@@ -143,8 +136,8 @@ public partial class AbilityCard : Control
         catch (Exception e)
         {
             _log.Here().Err(e, "Exception while casting card");
-            return Result.Fail<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>(
-                new CastError.EffectFailed(new EffectError.ExecutionFailed(e.Message)));
+            return Result.Fail<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>(
+                new UnexpectedError(e));
         }
     }
 
@@ -152,19 +145,13 @@ public partial class AbilityCard : Control
     /// Validates the cast and returns the simulated payload.
     /// Use this to get the payload for custom logic before casting.
     /// </summary>
-    public Result<AbilityPayload, CastError> ValidateCast(
+    public Result<AbilityPayload, AbilityError> ValidateCast(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
         AbilityState? state = null,
         int? balance = null
     )
     {
-        if (CardData.Ability == null)
-        {
-            _log.Here().Err("Attempted to validate a card without ability data");
-            return Result.Fail<AbilityPayload, CastError>(new CastError.AbilityNotFound("CardAbility"));
-        }
-
         var validationResult = CardData.Ability.ValidateCast(
             abilityContext,
             targetedTiles,
@@ -178,7 +165,7 @@ public partial class AbilityCard : Control
     /// Validates and casts the card.
     /// Use this for the standard casting flow without the need to access simulated payloads.
     /// </summary>
-    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), CastError>> ValidateAndCastAsync(
+    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>> ValidateAndCastAsync(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
         AbilityState? state = null,
@@ -188,7 +175,7 @@ public partial class AbilityCard : Control
         var validation = ValidateCast(abilityContext, targetedTiles, state: state, balance: balance);
         if (validation.IsFailure)
         {
-            return Result.Fail<(CompositeOutcome, AbilityPayload), CastError>(validation.Error);
+            return Result.Fail<(CompositeOutcome, AbilityPayload), GameError>(validation.Error);
         }
 
         return await CastAsync(abilityContext, targetedTiles, state);

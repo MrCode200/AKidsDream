@@ -14,7 +14,6 @@
         <PackageReference Include="Serilog.Sinks.GodotConsole" Version="1.2.0"/>
     </ItemGroup>
     <ItemGroup>
-        <Content Include="TODO.md" />
         <Content Include="Git\Assets\Preview.mp4"/>
         <Content Include="ORIGINALREADME.md" />
         <Content Include="README.md" />

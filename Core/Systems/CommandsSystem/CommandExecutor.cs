@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
+using AKidsDream.Common.Results;
 using Godot;
 using Serilog;
 
@@ -20,105 +21,82 @@ public partial class CommandExecutor : Node
         _context = context;
     }
 
-    public CommandResult Execute(IGameCommand command)
+    public Result<GameError> Execute(IGameCommand command)
     {
         var commandName = command.GetType().Name;
         _log.Here().Debug("Executing command {CommandType}", commandName);
 
         var sw = Stopwatch.StartNew();
-        CommandResult result;
+        Result<GameError> result;
         try
         {
             result = command.Execute(_context);
             sw.Stop();
-
-            if (result.IsFailure)
-            {
-                _log.Here().Warn(
-                    "Command {CommandName} failed with code {ErrorCode} ({ElapsedMs}ms): {FailureReason}",
-                    commandName,
-                    result.Error?.Code ?? "UNKNOWN",
-                    sw.ElapsedMilliseconds,
-                    result.FailureReason);
-                
-                _log.ForContext("CommandType", commandName)
-                    .ForContext("ErrorCode", result.Error?.Code ?? "UNKNOWN")
-                    .ForContext("ErrorMessage", result.FailureReason)
-                    .ForContext("DurationMs", sw.ElapsedMilliseconds)
-                    .ForContext("ErrorType", result.Error?.GetType().Name ?? "Unknown")
-                    .Here().Debug("Command failure details");
-            }
-            else
-            {
-                _log.Here().Debug(
-                    "Command {CommandType} succeeded ({ElapsedMs}ms)",
-                    commandName,
-                    sw.ElapsedMilliseconds);
-            }
+            LogCommandResult(commandName, result, sw.ElapsedMilliseconds, isAsync: false);
         }
         catch (Exception e)
         {
             sw.Stop();
-            _log.Here().Err(e, "Command {CommandType} failed with unhandled exception ({ElapsedMs}ms)", commandName, sw.ElapsedMilliseconds);
-            _log.ForContext("CommandType", commandName)
-                .ForContext("ExceptionType", e.GetType().Name)
-                .ForContext("ExceptionMessage", e.Message)
-                .ForContext("DurationMs", sw.ElapsedMilliseconds)
-                .Here().Debug("Command exception details");
-            result = CommandResult.Fail(command, new CommandError.ExceptionOccurred(e));
+            LogCommandException(commandName, e, sw.ElapsedMilliseconds, isAsync: false);
+            result = Result.Fail<GameError>(new UnexpectedError(e));
         }
 
         return result;
     }
 
-    public async Task<CommandResult> ExecuteAsync(IAsyncGameBaseCommand baseCommand)
+    public async Task<Result<GameError>> ExecuteAsync(IAsyncGameBaseCommand baseCommand)
     {
         var commandName = baseCommand.GetType().Name;
         _log.Here().Debug("Executing async command {CommandType}", commandName);
 
         var sw = Stopwatch.StartNew();
-        CommandResult result;
+        Result<GameError> result;
         try
         {
             result = await baseCommand.ExecuteAsync(_context);
             sw.Stop();
-
-            if (result.IsFailure)
-            {
-                _log.Here().Warn(
-                    "Async command {CommandName} failed with code {ErrorCode} ({ElapsedMs}ms): {FailureReason}",
-                    commandName,
-                    result.Error?.Code ?? "UNKNOWN",
-                    sw.ElapsedMilliseconds,
-                    result.FailureReason);
-                
-                _log.ForContext("CommandType", commandName)
-                    .ForContext("ErrorCode", result.Error?.Code ?? "UNKNOWN")
-                    .ForContext("ErrorMessage", result.FailureReason)
-                    .ForContext("DurationMs", sw.ElapsedMilliseconds)
-                    .ForContext("ErrorType", result.Error?.GetType().Name ?? "Unknown")
-                    .Here().Debug("Async command failure details");
-            }
-            else
-            {
-                _log.Here().Debug(
-                    "Async command {CommandType} succeeded ({ElapsedMs}ms)",
-                    commandName,
-                    sw.ElapsedMilliseconds);
-            }
+            LogCommandResult(commandName, result, sw.ElapsedMilliseconds, isAsync: true);
         }
         catch (Exception e)
         {
             sw.Stop();
-            _log.Here().Err(e, "Async command {CommandType} failed with unhandled exception ({ElapsedMs}ms)", commandName, sw.ElapsedMilliseconds);
-            _log.ForContext("CommandType", commandName)
-                .ForContext("ExceptionType", e.GetType().Name)
-                .ForContext("ExceptionMessage", e.Message)
-                .ForContext("DurationMs", sw.ElapsedMilliseconds)
-                .Here().Debug("Async command exception details");
-            result = CommandResult.Fail(baseCommand, new CommandError.ExceptionOccurred(e));
+            LogCommandException(commandName, e, sw.ElapsedMilliseconds, isAsync: true);
+            result = Result.Fail<GameError>(new UnexpectedError(e));
         }
 
         return result;
+    }
+    
+    private void LogCommandResult(string commandName, Result<GameError> result, long durationMs, bool isAsync = false)
+    {
+        var prefix = isAsync ? "Async command" : "Command";
+
+        if (result.IsFailure)
+        {
+            _log.ForContext("CommandType", commandName)
+                .ForContext("ErrorCode", result.Error?.Code ?? "UNKNOWN")
+                .ForContext("ErrorMessage", result.Error?.Message)
+                .ForContext("DurationMs", durationMs)
+                .ForContext("ErrorType", result.Error?.GetType().Name ?? "Unknown")
+                .Here().Err("{Prefix} failed {ErrorCode}: {ErrorMessage}", prefix);
+        }
+        else
+        {
+            _log.Here().Debug(
+                "{Prefix} {CommandType} succeeded ({ElapsedMs}ms)",
+                prefix,
+                commandName,
+                durationMs);
+        }
+    }
+
+    private void LogCommandException(string commandName, Exception e, long durationMs, bool isAsync = false)
+    {
+        var prefix = isAsync ? "Async command" : "Command";
+        _log.ForContext("CommandType", commandName)
+            .ForContext("ExceptionType", e.GetType().Name)
+            .ForContext("ExceptionMessage", e.Message)
+            .ForContext("DurationMs", durationMs)
+            .Here().Err(e, "{Prefix} {CommandType} exception {ExceptionType} details: {ExceptionMessage}", prefix, commandName, e.GetType().Name, e.Message);
     }
 }
