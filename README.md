@@ -8,7 +8,8 @@ Command modular units with unique abilities over a tiled battlefield and see how
 > The original was seen as written by AI by the shipwrights *(hackclub stardance event).* \
 > To **respect** the shipwrights decision this is the main page, if you trust me *(selfproclaimed!: I did write the original myself)* or don't care if its written by AI \
 > i **recommend** you to read the [original Readme](ORIGINALREADME.md).
-Shipwrite Note: project can't be uploaded onto itch.io (as its written in c#); Also .exe is in .rar file in the release. 
+
+***Shipwrite Note: project can't be uploaded onto itch.io (as its written in c#); Also .exe is in .rar file in the release.***
 
 <p align="center">
   <a
