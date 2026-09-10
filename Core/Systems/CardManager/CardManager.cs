@@ -168,9 +168,9 @@ public partial class CardManager : Node2D, IBlockable
     // -- SELECTION STATE MANAGEMENT --
 
     private void HandleCardClick(AbilityCard? clickedCard)
-    {
+    {      
         if (clickedCard is null || IsBlocked) return;
-
+        
         if (SelectedCard is null)
         {
             SelectCard(clickedCard);
@@ -218,7 +218,7 @@ public partial class CardManager : Node2D, IBlockable
             _cachedAbilityPayload,
             SelectedCard.CardData.Ability
         );
-
+        
         _log.ForContext("NameTag", cardToSelect.CardData.Name)
             .ForContext("IdTag", cardToSelect.Id)
             .Here().Debug("Card selected {NameTag} (id: {IdTag})");
@@ -334,45 +334,20 @@ public partial class CardManager : Node2D, IBlockable
 
         try
         {
-            var castingPlayer = _gameContext.GameLoopManager.GetActivePlayer();
-            var validationResult = castingCard.ValidateCast(
-                _cachedAbilityContext,
-                _cachedAbilityPayload.AccumulatedTargets,
-                state: null,
-                balance: castingPlayer.Mana
-            );
-
-            if (validationResult.IsFailure)
-            {
-                _log.Here().Debug("Card {CardName} cast validation failed: {CastError}",
-                    castingCard.CardData.Name, validationResult.Error);
-                PlayerHand.MoveCardTo(castingCard, castingCard.HandPosition);
-                AbilityVisualizer.ClearEffectTilemap();
-                return;
-            }
-
-            var simPayload = validationResult.Value;
-
             // -- Cast start --
             hasCastStarted = true;
             EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, default(Variant),
                 castingCard.CardData.Ability);
 
-            var castResult = await castingCard.CastAsync(
-                _cachedAbilityContext,
-                _cachedAbilityPayload.AccumulatedTargets
-            );
+            var castCommand = new CastCardCommand(castingCard, _cachedAbilityContext, _cachedAbilityPayload);
+            var commandResult = await castCommand.ExecuteAsync(_gameContext);
 
-            if (castResult.IsFailure)
+            if (commandResult.IsFailure)
             {
-                _log.Here().Warn("Card {CardName} casting failed with error: {CastError}",
-                    castingCard.CardData.Name, castResult.Error);
+                _log.Here().Debug("Card {CardName} cast command failed: {CastError}",
+                    castingCard.CardData.Name, commandResult.Error);
                 return;
             }
-
-            // Commit state changes atomically on success
-            var manaCost = castingCard.CardData.Ability.GetCost(_cachedAbilityContext, simPayload);
-            castingPlayer.Mana -= manaCost;
 
             isSuccess = true;
             PlayerHand.RemoveCard(castingCard);
@@ -388,7 +363,7 @@ public partial class CardManager : Node2D, IBlockable
             // Return card to hand position if not successfully cast and freed
             if (!isSuccess && IsInstanceValid(castingCard) && !castingCard.IsQueuedForDeletion())
             {
-                PlayerHand.MoveCardTo(castingCard, castingCard.HandPosition);
+                PlayerHand.MoveCardTo(castingCard);
                 AbilityVisualizer.ClearEffectTilemap();
             }
 

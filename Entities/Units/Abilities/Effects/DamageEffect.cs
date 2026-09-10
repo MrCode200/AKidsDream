@@ -27,7 +27,6 @@ public partial class DamageEffect : EffectData
             target.HealthComp.Damage(Amount);
             outcomes.Add(new DamageOutcome
             {
-                Caster = context.Caster,
                 Target = target,
                 Tile = tile,
                 Amount = Amount
@@ -39,6 +38,6 @@ public partial class DamageEffect : EffectData
 
         return outcomes.Count == 1
             ? Result.Ok<EffectOutcome, EffectError>(outcomes[0])
-            : Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome { Outcomes = outcomes, Caster = context.Caster });
+            : Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome { Outcomes = outcomes });
     }
 }

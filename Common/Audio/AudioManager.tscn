@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dqlar4v0j4515"]
+
+[ext_resource type="Script" uid="uid://64mw18bygo3c" path="res://Common/Audio/AudioManager.cs" id="1_tr8w8"]
+[ext_resource type="Script" uid="uid://64cgabm4h54d" path="res://Common/Audio/Resources/SoundEffectSettings.cs" id="2_8fnyn"]
+[ext_resource type="Resource" uid="uid://c54aifooan5io" path="res://UI/UnitInfoBar/AbilityButton/Assets/ButtonClickedSoundEffect.tres" id="3_8fnyn"]
+[ext_resource type="Resource" uid="uid://drteka8g1bf7h" path="res://Entities/Cards/Assets/CardSelectedSfx.tres" id="4_4b63m"]
+[ext_resource type="Resource" uid="uid://dhfjd5ht5ddtk" path="res://Core/Systems/Controllers/Assets/TileSelectedSfx.tres" id="5_4b63m"]
+[ext_resource type="Resource" uid="uid://b8w2s5o50grfh" path="res://Entities/Units/Soldier/Abilities/SwordSlashSfx.tres" id="6_4b63m"]
+[ext_resource type="Resource" uid="uid://bibxj4shpmfdy" path="res://Entities/Units/Timmy/Assets/UwUSfx.tres" id="7_irsc1"]
+
+[node name="AudioManager" type="Node" unique_id=771463133]
+script = ExtResource("1_tr8w8")
+SoundEffects = Array[ExtResource("2_8fnyn")]([ExtResource("3_8fnyn"), ExtResource("4_4b63m"), ExtResource("5_4b63m"), ExtResource("6_4b63m"), ExtResource("7_irsc1")])

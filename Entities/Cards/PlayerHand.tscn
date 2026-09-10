@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://clgdcgoatwfaa"]
+
+[ext_resource type="Script" uid="uid://xbyufx1hp2mw" path="res://Entities/Cards/PlayerHand.cs" id="1_i76t1"]
+[ext_resource type="PackedScene" uid="uid://c4h6ufe6dmgvo" path="res://Entities/Cards/AbilityCard.tscn" id="2_cqq74"]
+[ext_resource type="Resource" uid="uid://c8xhy0vyekyc" path="res://Entities/Units/Timmy/TimmyCardData.tres" id="3_ix7ju"]
+
+[sub_resource type="Curve" id="Curve_uewhv"]
+_data = [Vector2(0, 0), 0.0, 5.105618, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.2651696, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+
+[node name="PlayerHand" type="Node2D" unique_id=1286073930]
+script = ExtResource("1_i76t1")
+PlayerHandSize = 6
+CardPositionCurve = SubResource("Curve_uewhv")
+CardSpacing = -60.0
+CardSpawnPoint = Vector2(600, 800)
+HandUpperBoundDeltaHeight = 50.0
+HandYScreenRatio = 0.827
+CardRotationHeightUnderHandY = 600.0
+MaxHandWidthScreenRatio = 0.8
+CardPrefab = ExtResource("2_cqq74")
+CardData = ExtResource("3_ix7ju")

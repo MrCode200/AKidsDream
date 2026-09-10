@@ -7,7 +7,11 @@ using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
 using AKidsDream.Common.Results;
+using AKidsDream.Core.Managers.Audio;
 using AKidsDream.Res.Common.Components.TweenComponent.Resources;
+using AKidsDream.Util.Identifiers;
+using AKidsDream.Utilities;
+using AKidsDream.Utilities.TypeExtensions;
 using Godot;
 using Serilog;
 
@@ -29,6 +33,9 @@ public partial class AbilityCard : Control
     [Export] public required TweenComponent SelectionTweenComp;
     
     public Vector2 HandPosition { get; set; }
+    public float HandRotation { get; set; }
+    private int _childSelfIndex;
+    private Tween? _rotationTween;
     private Tween? _disablingTween;
 
     private ILogger _log = GameLogger.For<AbilityCard>();
@@ -64,10 +71,28 @@ public partial class AbilityCard : Control
             
             _isSelected = value;
             
+            if (_isSelected)
+            {
+                _childSelfIndex = GetIndex();
+                GetParent()?.MoveChild(this, -1);
+            }
+            else if (_childSelfIndex != GetIndex())
+            {
+                GetParent()?.MoveChild(this, _childSelfIndex);
+            }
+            
             var tweenAnimation = _isSelected
                 ? nameof(TweenAnimationIdentifiers.OnSelectCard)
                 : nameof(TweenAnimationIdentifiers.OnDeselectCard);
             SelectionTweenComp.PlayTween(tweenAnimation);
+            
+            _rotationTween?.Kill();
+            _rotationTween = CreateTween();
+            _rotationTween.TweenProperty(this, "rotation_degrees", _isSelected ? 0 : HandRotation, 0.2f)
+                .SetEase(Tween.EaseType.Out)
+                .SetTrans(Tween.TransitionType.Quint);
+            
+            AudioManager.Instance.PlayAudio(SoundEffectType.CardSelected);
 
             var shaderMaterial = (ShaderMaterial)CardBackground.Material;
             shaderMaterial.SetShaderParameter("type" , _isSelected ? 1 : 0); // 1 = round, 0 = disabled
@@ -77,7 +102,7 @@ public partial class AbilityCard : Control
     [ExportToolButton("Set Portrait Scale")]
     private Callable SetPortraitScaleBtn => Callable.From(() =>
     {
-        _SetPortraitScale();
+        CardPortrait.ScaleToMatch(CardBackground, 5f);
         DisplayCard(CardData);
     });
 
@@ -87,21 +112,7 @@ public partial class AbilityCard : Control
             .ForContext("NameTag", CardData.Name + "Card");
 
         CardBackground.Material = SelectionMaterial;
-        _SetPortraitScale();
-    }
-    
-    private void _SetPortraitScale(float padding = 5f)
-    {
-        Vector2 portraitSize = CardPortrait.Texture.GetSize();
-        Vector2 availableSize = CardBackground.Texture.GetSize();
-
-        availableSize -= new Vector2(padding, padding);
-
-        var fitScale = Math.Min(
-            availableSize.X / portraitSize.X,
-            availableSize.Y / portraitSize.Y
-        );
-        CardPortrait.Scale = Vector2.One * fitScale;
+        CardPortrait.ScaleToMatch(CardBackground, 5f);
     }
 
     // -- LOGIC --
@@ -118,11 +129,22 @@ public partial class AbilityCard : Control
     public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>> CastAsync(
         AbilityContext abilityContext,
         List<Vector2I> targetedTiles,
-        AbilityState? state = null
+        AbilityState? state = null,
+        bool skipValidation = false,
+        int? balance = null
     )
     {
         try
         {
+            if (!skipValidation)
+            {
+                var validation = ValidateCast(abilityContext, targetedTiles, state: state, balance: balance);
+                if (validation.IsFailure)
+                {
+                    return Result.Fail<(CompositeOutcome, AbilityPayload), GameError>(validation.Error);
+                }
+            }
+            
             var castResult = await CardData.Ability.CastAsync(abilityContext, targetedTiles, state);
             if (castResult.IsFailure)
             {
@@ -159,25 +181,5 @@ public partial class AbilityCard : Control
             balance: balance);
 
         return validationResult;
-    }
-
-    /// <summary>
-    /// Validates and casts the card.
-    /// Use this for the standard casting flow without the need to access simulated payloads.
-    /// </summary>
-    public async Task<Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError>> ValidateAndCastAsync(
-        AbilityContext abilityContext,
-        List<Vector2I> targetedTiles,
-        AbilityState? state = null,
-        int? balance = null
-    )
-    {
-        var validation = ValidateCast(abilityContext, targetedTiles, state: state, balance: balance);
-        if (validation.IsFailure)
-        {
-            return Result.Fail<(CompositeOutcome, AbilityPayload), GameError>(validation.Error);
-        }
-
-        return await CastAsync(abilityContext, targetedTiles, state);
     }
 }

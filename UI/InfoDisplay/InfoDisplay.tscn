@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://f0e2ejne7mxf"]
+
+[ext_resource type="FontFile" uid="uid://ct7fyq24bf21v" path="res://Assets/Fonts/Peaberry-Font-v2.0/Peaberry Font Family/Peaberry Monospace/PeaberryMono.woff" id="1_ih8ts"]
+[ext_resource type="Script" uid="uid://bn8d3qdcwnyr7" path="res://UI/InfoDisplay/InfoDisplay.cs" id="1_ly640"]
+[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="3_turr8"]
+[ext_resource type="Resource" uid="uid://cbx68dur33vb8" path="res://UI/InfoDisplay/Tween/BumbUpRoundCounterTween.tres" id="4_fo0b2"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="4_uosot"]
+[ext_resource type="Resource" uid="uid://sn03am6t5ngo" path="res://UI/InfoDisplay/Tween/BumbUpPlayerName.tres" id="6_05p16"]
+[ext_resource type="PackedScene" uid="uid://djhx822tsjxm6" path="res://Common/VFX/FloatingText/FloatingText.tscn" id="7_sanjn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ly640"]
+font = ExtResource("1_ih8ts")
+font_size = 36
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_uosot"]
+font = ExtResource("1_ih8ts")
+font_size = 19
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="InfoDisplay" type="Control" unique_id=319109358 node_paths=PackedStringArray("RoundLabel", "PlayersTurnLabel", "ManaLabel", "ManaFloatingText", "PlayerLabelTweenComp", "RoundCounterTweenComp")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+script = ExtResource("1_ly640")
+RoundLabel = NodePath("RoundCounter")
+PlayersTurnLabel = NodePath("PlayersTurnName")
+ManaLabel = NodePath("ManaCounter")
+ManaFloatingText = NodePath("ManaFloatingText")
+PlayerLabelTweenComp = NodePath("PlayersTurnName/BumbUpPlayerNameTween")
+RoundCounterTweenComp = NodePath("RoundCounter/BumbUpRoundCounterTween")
+
+[node name="PlayersTurnName" type="Label" parent="." unique_id=1203659503]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -158.0
+offset_top = 11.0
+offset_right = 158.0
+offset_bottom = 47.0
+grow_horizontal = 2
+pivot_offset_ratio = Vector2(0.5, 0)
+offset_transform_enabled = true
+offset_transform_pivot_ratio = Vector2(0.5, 0.3)
+text = "MrMagic's Turn"
+label_settings = SubResource("LabelSettings_ly640")
+
+[node name="BumbUpPlayerNameTween" type="Node" parent="PlayersTurnName" unique_id=273332880 node_paths=PackedStringArray("Target")]
+script = ExtResource("3_turr8")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("4_uosot")]([ExtResource("6_05p16")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+
+[node name="RoundCounter" type="Label" parent="." unique_id=1711219465]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -79.0
+offset_top = 53.0
+offset_right = 79.0
+offset_bottom = 78.0
+grow_horizontal = 2
+pivot_offset_ratio = Vector2(0.5, 0)
+offset_transform_enabled = true
+offset_transform_pivot_ratio = Vector2(0.5, 0.3)
+text = "Round 3"
+label_settings = SubResource("LabelSettings_uosot")
+horizontal_alignment = 1
+
+[node name="BumbUpRoundCounterTween" type="Node" parent="RoundCounter" unique_id=844438552 node_paths=PackedStringArray("Target")]
+script = ExtResource("3_turr8")
+Target = NodePath("..")
+TweenDatas = Array[ExtResource("4_uosot")]([ExtResource("4_fo0b2")])
+metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+
+[node name="ManaFloatingText" parent="." unique_id=1135333433 instance=ExtResource("7_sanjn")]
+self_modulate = Color(0.40784314, 0.7607843, 0.9607843, 1)
+layout_mode = 1
+offset_left = -525.0
+offset_top = 431.0
+offset_right = -492.0
+offset_bottom = 454.0
+text = "+99"
+DefaultColor = Color(0.40784314, 0.7607843, 0.9607843, 1)
+
+[node name="ManaCounter" type="Label" parent="." unique_id=1743664400]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -569.0
+offset_top = 439.0
+offset_right = -497.0
+offset_bottom = 462.0
+grow_vertical = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+text = "Mana: XX"

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dfp2q2rabfaii"]
 
 [ext_resource type="Script" uid="uid://cjnlb2kmyi71s" path="res://UI/PoolBar/PoolItem/PoolItem.cs" id="1_h1dto"]
-[ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="1_htbee"]
+[ext_resource type="Texture2D" uid="uid://d1s83y4h8slhc" path="res://Entities/Units/Components/AbilityComponent/star.svg" id="2_h1dto"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_tjdi3"]
 font_size = 13
@@ -29,7 +29,7 @@ script = ExtResource("1_h1dto")
 PoolContainer = NodePath("HBoxContainer")
 PoolLabel = NodePath("HBoxContainer/CountLabel")
 DeltaCostLabel = NodePath("HBoxContainer/ChangeLabel")
-PoolIcon = NodePath("HBoxContainer/Sprite2D")
+PoolIcon = NodePath("HBoxContainer/PoolIcon")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=929875118]
 custom_minimum_size = Vector2(50, 20)
@@ -37,6 +37,15 @@ layout_mode = 0
 size_flags_horizontal = 0
 size_flags_vertical = 6
 tooltip_text = "Pool Name"
+
+[node name="PoolIcon" type="TextureRect" parent="HBoxContainer" unique_id=516570569]
+custom_minimum_size = Vector2(16, 16)
+custom_maximum_size = Vector2(16, 16)
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, 1.5)
+texture = ExtResource("2_h1dto")
+expand_mode = 1
 
 [node name="CountLabel" type="Label" parent="HBoxContainer" unique_id=1695032496]
 layout_mode = 2
@@ -48,8 +57,3 @@ label_settings = SubResource("LabelSettings_tjdi3")
 layout_mode = 2
 text = "(+00)"
 label_settings = SubResource("LabelSettings_h1dto")
-
-[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer" unique_id=1087154222]
-position = Vector2(-8.5, 10)
-scale = Vector2(1.21875, 1.1875)
-texture = ExtResource("1_htbee")

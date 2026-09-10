@@ -19,215 +19,236 @@ namespace AKidsDream.Common;
 
 [GlobalClass]
 [Tool]
+[Icon("res://Entities/Units/Components/AbilityComponent/star.svg")]
 public partial class AbilityComponent : Node
 {
-    private ILogger _log = GameLogger.For<AbilityComponent>();
-    public Unit Unit => (Unit)GetParent();
+	private ILogger _log = GameLogger.For<AbilityComponent>();
+	public Unit Unit => (Unit)GetParent();
 
-    /// <summary>
-    /// Contains the pool data for each ability pool.
-    /// Where the key is the pool name and the value is the PoolData resource.
-    /// </summary>
-    [Export] public Array<PoolData> InitialPoolDatas = [];
+	/// <summary>
+	/// Contains the pool data for each ability pool.
+	/// Where the key is the pool name and the value is the PoolData resource.
+	/// </summary>
+	[Export] public Array<PoolData> InitialPoolDatas = [];
 
-    public readonly System.Collections.Generic.Dictionary<StringName, PoolData> Pools = new();
+	public readonly System.Collections.Generic.Dictionary<StringName, PoolData> Pools = new();
 
-    [Export] public Array<AbilityData> InitialAbilityDatas = [];
-    public readonly System.Collections.Generic.Dictionary<StringName, AbilityData> Abilities = new();
-    public readonly System.Collections.Generic.Dictionary<StringName, AbilityState> AbilityStates = new();
+	[Export] public Array<AbilityData> InitialAbilityDatas = [];
+	public readonly System.Collections.Generic.Dictionary<StringName, AbilityData> Abilities = new();
+	public readonly System.Collections.Generic.Dictionary<StringName, AbilityState> AbilityStates = new();
 
-    public bool IsCasting { get; private set; }
+	public bool IsCasting { get; private set; }
 
-    [Signal]
-    public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData ability);
+	[Signal]
+	public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData ability);
 
-    [Signal]
-    public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability);
+	[Signal]
+	public delegate void AbilityCastEndEventHandler(Unit unit, AbilityData ability);
 
-    public override void _Ready()
-    {
-        _log = _log.ForContext("NameTag", Unit?.UnitName)
-            .ForContext("IdTag", Unit?.UnitId);
-        if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
+	public override void _Ready()
+	{
+		_log = _log.ForContext("NameTag", Unit?.UnitName)
+			.ForContext("IdTag", Unit?.UnitId);
+		if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
 
-        foreach (var poolData in InitialPoolDatas)
-        {
-            if (!Pools.TryAdd(poolData.Name, (PoolData)poolData.Duplicate()))
-                throw new ArgumentException($"Pool '{poolData.Name}' with the same name is already registered");
-        }
+		foreach (var poolData in InitialPoolDatas)
+		{
+			if (!Pools.TryAdd(poolData.Name, (PoolData)poolData.Duplicate()))
+				throw new ArgumentException($"Pool '{poolData.Name}' with the same name is already registered");
+		}
 
-        InitialPoolDatas.Clear();
+		InitialPoolDatas.Clear();
 
-        foreach (var abilityData in InitialAbilityDatas)
-        {
-            if (!Abilities.TryAdd(abilityData.Name, abilityData))
-                throw new ArgumentException(
-                    $"An Ability '{abilityData.Name}' with the same name is already registered");
-            if (!Pools.ContainsKey(abilityData.PoolName))
-                throw new ArgumentException($"Pool '{abilityData.PoolName}' not found");
-        }
+		foreach (var abilityData in InitialAbilityDatas)
+		{
+			if (!Abilities.TryAdd(abilityData.Name, abilityData))
+				throw new ArgumentException(
+					$"An Ability '{abilityData.Name}' with the same name is already registered");
+			if (!Pools.ContainsKey(abilityData.PoolName))
+				throw new ArgumentException($"Pool '{abilityData.PoolName}' not found");
+		}
 
-        InitialAbilityDatas.Clear();
+		InitialAbilityDatas.Clear();
 
-        ResetPool();
-    }
+		ResetPool();
+	}
 
-    // -- Pool Management --
+	// -- Pool Management --
 
-    public void ResetPool()
-    {
-        foreach (var (_, poolData) in Pools)
-        {
-            poolData.CurrentCount = poolData.MaxCount;
-        }
-    }
+	public void ResetPool()
+	{
+		foreach (var (_, poolData) in Pools)
+		{
+			poolData.CurrentCount = poolData.MaxCount;
+		}
+	}
 
-    public bool TryCanAffordBaseCost(StringName name, out bool canAfford)
-    {
-        canAfford = false;
+	public bool TryCanAffordBaseCost(StringName name, out bool canAfford)
+	{
+		canAfford = false;
 
-        if (!Abilities.TryGetValue(name, out var ability)) return false;
-        if (!Pools.TryGetValue(ability.PoolName, out var poolData)) return false;
+		if (!Abilities.TryGetValue(name, out var ability)) return false;
+		if (!Pools.TryGetValue(ability.PoolName, out var poolData)) return false;
 
-        if (ability.BaseCost <= poolData.CurrentCount)
-            canAfford = true;
+		if (ability.BaseCost <= poolData.CurrentCount)
+			canAfford = true;
 
-        return true;
-    }
+		return true;
+	}
 
 
-    // -- Ability Management --
-    public AbilityPayload CreatePayload(
-        StringName abilityName,
-        List<Vector2I> targetTiles,
-        Board board
-    )
-    {
-        if (!TryGetAbilityState(abilityName, out var state))
-            throw new ArgumentException($"Ability '{abilityName}' not found");
+	// -- Ability Management --
+	public AbilityPayload CreatePayload(
+		StringName abilityName,
+		List<Vector2I> targetTiles,
+		Board board
+	)
+	{
+		if (!TryGetAbilityState(abilityName, out var state))
+			throw new ArgumentException($"Ability '{abilityName}' not found");
 
-        var payload = new AbilityPayload
-        {
-            ProcessingTiles = targetTiles,
-            CurrentOrigin = Unit.TileLocation,
-            State = state
-        };
-        return payload;
-    }
+		var payload = new AbilityPayload
+		{
+			ProcessingTiles = targetTiles,
+			CurrentOrigin = Unit.TileLocation,
+			State = state
+		};
+		return payload;
+	}
 
-    public bool TryGetAbilityState(StringName abilityName, [NotNullWhen(true)] out AbilityState? state)
-    {
-        state = null;
-        if (!Abilities.TryGetValue(abilityName, out _))
-            return false;
+	public bool TryGetAbilityState(StringName abilityName, [NotNullWhen(true)] out AbilityState? state)
+	{
+		state = null;
+		if (!Abilities.TryGetValue(abilityName, out _))
+			return false;
 
-        if (!AbilityStates.ContainsKey(abilityName))
-            AbilityStates[abilityName] = new AbilityState();
-        state = AbilityStates[abilityName];
-        return true;
-    }
+		if (!AbilityStates.ContainsKey(abilityName))
+			AbilityStates[abilityName] = new AbilityState();
+		state = AbilityStates[abilityName];
+		return true;
+	}
 
-    // -- CASTING METHODS --
+	// -- CASTING METHODS --
 
-    /// <summary>
-    /// Main validation dispatcher. Validates target count and reach once for the ability,
-    /// then runs each effect's payload update (sequential or batch) in insertion order,
-    /// and finally checks affordability against the fully updated payload (unless skipCostCheck is true).
-    /// </summary>
-    public Result<AbilityPayload, AbilityError> ValidateCast(
-        StringName abilityName,
-        AbilityContext context,
-        List<Vector2I> targetedTiles,
-        bool skipCostCheck = false)
-    {
-        if (!Abilities.TryGetValue(abilityName, out var ability))
-        {
-            return Result.Fail<AbilityPayload, AbilityError>(
-                new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
-        }
+	/// <summary>
+	/// Main validation dispatcher. Validates target count and reach once for the ability,
+	/// then runs each effect's payload update (sequential or batch) in insertion order,
+	/// and finally checks affordability against the fully updated payload (unless skipCostCheck is true).
+	/// </summary>
+	public Result<AbilityPayload, AbilityError> ValidateCast(
+		StringName abilityName,
+		AbilityContext context,
+		List<Vector2I> targetedTiles,
+		bool skipCostCheck = false)
+	{
+		if (!Abilities.TryGetValue(abilityName, out var ability))
+		{
+			return Result.Fail<AbilityPayload, AbilityError>(
+				new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
+		}
 
-        if (!TryGetAbilityState(abilityName, out var liveState))
-        {
-            return Result.Fail<AbilityPayload, AbilityError>(
-                new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
-        }
-        
-        if (!Pools.TryGetValue(ability.PoolName, out var poolData))
-        {
-            return Result.Fail<AbilityPayload, AbilityError>(
-                new AbilityError.CannotAfford(Unit.UnitId, abilityName, ability.PoolName, 0, null));
-        }
+		if (!TryGetAbilityState(abilityName, out var liveState))
+		{
+			return Result.Fail<AbilityPayload, AbilityError>(
+				new AbilityError.AbilityNotFound(Unit.UnitId, abilityName));
+		}
+		
+		if (!Pools.TryGetValue(ability.PoolName, out var poolData))
+		{
+			return Result.Fail<AbilityPayload, AbilityError>(
+				new AbilityError.CannotAfford(Unit.UnitId, abilityName, ability.PoolName, 0, null));
+		}
 
-        var validationResult = ability.ValidateCast(
-            context,
-            targetedTiles,
-            skipCostCheck ? null : poolData.CurrentCount,
-            state: liveState
-        );
-        
-        if (validationResult.IsFailure)
-            return validationResult;
+		var validationResult = ability.ValidateCast(
+			context,
+			targetedTiles,
+			skipCostCheck ? null : poolData.CurrentCount,
+			state: liveState
+		);
+		
+		if (validationResult.IsFailure)
+			return validationResult;
 
-        var payload = validationResult.Value;
+		var payload = validationResult.Value;
 
-        return Result.Ok<AbilityPayload, AbilityError>(payload);
-    }
+		return Result.Ok<AbilityPayload, AbilityError>(payload);
+	}
 
-    public async Task<Result<CastOutcome, GameError>> CastAsync(
-        StringName abilityName,
-        AbilityContext context,
-        List<Vector2I> targetedTiles)
-    {
-        var validationResult = ValidateCast(abilityName, context, targetedTiles, skipCostCheck: false);
-        if (validationResult.IsFailure)
-            return Result.Fail<CastOutcome, GameError>(validationResult.Error);
+	public async Task<Result<CastOutcome, GameError>> CastAsync(
+		StringName abilityName,
+		AbilityContext context,
+		List<Vector2I> targetedTiles)
+	{
+		var validationResult = ValidateCast(abilityName, context, targetedTiles, skipCostCheck: false);
+		if (validationResult.IsFailure)
+			return Result.Fail<CastOutcome, GameError>(validationResult.Error);
 
-        var ability = Abilities[abilityName];
-        
-        var payload = validationResult.Value;
-        var cost = ability.GetCost(context, payload);
+		var ability = Abilities[abilityName];
+		
+		var payload = validationResult.Value;
+		var cost = ability.GetCost(context, payload);
+		var poolData = Pools[ability.PoolName];
+		var previousPoolCount = poolData.CurrentCount;
 
-        IsCasting = true;
+		IsCasting = true;
 
-        EmitSignal(SignalName.AbilityCastStart, Unit, ability);
-        EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, Unit, ability);
+		EmitSignal(SignalName.AbilityCastStart, Unit, ability);
+		EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastStart, Unit, ability);
 
-        try
-        {
-            TryGetAbilityState(abilityName, out var abilityState);
-            var castResult = await ability.CastAsync(context, targetedTiles, abilityState!);
+		Result<(CompositeOutcome Outcomes, AbilityPayload Payload), GameError> castResult = 
+			Result.Ok<(CompositeOutcome, AbilityPayload), GameError>((new CompositeOutcome([]), payload));
 
-            if (castResult.IsFailure)
-            {
-                _log.Here().Err("Ability '{AbilityName}' execution failed with {Error}",
-                    ability.Name, castResult.Error);
-                return Result.Fail<CastOutcome, GameError>(castResult.Error);
-            }
+		try
+		{
+			// Deduct cost before cast
+			poolData.CurrentCount -= cost;
+			EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCostUpdated, Unit, ability,
+				poolData.CurrentCount);
+			
+			TryGetAbilityState(abilityName, out var abilityState);
+			castResult = await ability.CastAsync(context, targetedTiles, abilityState!);
 
-            // Commit state changes atomically upon guaranteed success
-            Pools[ability.PoolName].CurrentCount -= cost;
-            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCostUpdated, Unit, ability,
-                Pools[ability.PoolName].CurrentCount);
+			if (castResult.IsFailure)
+			{
+				_log.Here().Err("Ability '{AbilityName}' execution failed with {Error}",
+					ability.Name, castResult.Error);
+				return Result.Fail<CastOutcome, GameError>(castResult.Error);
+			}
 
-            _log.Here().Info(
-                "Casted ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
-                ability.Name,
-                targetedTiles.Count,
-                cost,
-                ability.PoolName);
+			_log.Here().Info(
+				"Casted ability '{AbilityName}' at {TargetCount} targets, cost: {Cost} from pool '{PoolName}'",
+				ability.Name,
+				targetedTiles.Count,
+				cost,
+				ability.PoolName);
 
-            var outcome = new CastOutcome(
-                castResult.Value.Outcomes,
-                cost,
-                ability.PoolName.ToString()
-            );
-            return Result.Ok<CastOutcome, GameError>(outcome);
-        }
-        finally
-        {
-            IsCasting = false;
-            EmitSignal(SignalName.AbilityCastEnd, Unit, ability);
-            EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastEnd, Unit, ability);
-        }
-    }
+			var outcome = new CastOutcome(
+				context.Caster,
+				castResult.Value.Outcomes,
+				cost,
+				ability.PoolName.ToString()
+			);
+			return Result.Ok<CastOutcome, GameError>(outcome);
+		}
+		catch (Exception ex)
+		{
+			_log.Here().Err(ex, "Ability '{AbilityName}' threw exception during cast",
+				ability.Name);
+			return Result.Fail<CastOutcome, GameError>(new UnexpectedError(ex));
+		}
+		finally
+		{
+			if (castResult.IsFailure)
+			{
+				// Rollback cost on failure
+				poolData.CurrentCount = previousPoolCount;
+				EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCostUpdated, Unit, ability,
+					poolData.CurrentCount);
+			}
+
+			IsCasting = false;
+			EmitSignal(SignalName.AbilityCastEnd, Unit, ability);
+			EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityCastEnd, Unit, ability);
+		}
+	}
 }

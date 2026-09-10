@@ -58,12 +58,13 @@ public class GameCreationPayload
 	public static string testingFile = """
 									   [gd_resource type="Resource" format=3]
 
-									   [ext_resource type="Script" path="res://Entities/Board/Resources/BoardStateData.cs" id="1_vp3i7"]
+									   [ext_resource type="Script" path="res://Entities/Board/Resources/BoardState.cs" id="1_vp3i7"]
 									   [ext_resource type="Script" path="res://Core/Systems/TeamSystem/Resources/PlayerData.cs" id="2_ucnw2"]
 									   [ext_resource type="Script" path="res://Core/Systems/TeamSystem/Resources/TeamData.cs" id="3_4n8g7"]
 									   [ext_resource type="Script" path="res://Utilities/SaveSystem/Resources/UnitStateData.cs" id="4_dm7om"]
 									   [ext_resource type="Script" path="res://Entities/Units/Resources/UnitStatsData.cs" id="5_jsx6i"]
 									   [ext_resource type="Script" path="res://Utilities/SaveSystem/Resources/GameStateData.cs" id="6_nptp8"]
+									   
 									   [sub_resource type="Resource" id="Resource_e3xci"]
 									   script = ExtResource("1_vp3i7")
 									   Width = 12
@@ -71,14 +72,14 @@ public class GameCreationPayload
 									   [sub_resource type="Resource" id="Resource_r6a1v"]
 									   script = ExtResource("2_ucnw2")
 									   PlayerIdInt = 1
-									   PlayerName = "MrMagic"
+									   Name = "MrMagic"
 									   TeamIdInt = 1
 									   Mana = 10
 
 									   [sub_resource type="Resource" id="Resource_ojjb5"]
 									   script = ExtResource("2_ucnw2")
 									   PlayerIdInt = 2
-									   PlayerName = "MrSorceress"
+									   Name = "MrSorceress"
 									   TeamIdInt = 2
 									   UnitColor = 1
 									   Mana = 10
@@ -319,7 +320,7 @@ public partial class GameManager : Node2D
 
     private void InitializeNewBoard(GameCreationPayload gameCreationPayload)
     {
-        var newBoardState = new BoardStateData
+        var newBoardState = new BoardState
         {
             Width = gameCreationPayload.BoardSize.X,
             Height = gameCreationPayload.BoardSize.Y

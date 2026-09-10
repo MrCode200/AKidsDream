@@ -17,6 +17,8 @@ script = ExtResource("2_cnr0s")
 EffectPattern = SubResource("Resource_kto3l")
 EffectAtlasCoords = 4
 AnimationName = &""
+AudioType = 6
+PlaySound2D = true
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 
 [sub_resource type="Resource" id="Resource_1b4jp"]

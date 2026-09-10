@@ -12,9 +12,10 @@ public static class TweenAnimationIdentifiers
     public static readonly StringName UIBOnShow = new StringName("UIBOnShow");
     public static readonly StringName UIBOnHide = new StringName("UIBOnHide");
     public static readonly StringName FloatUpAndFade = new StringName("FloatUpAndFade");
+    public static readonly StringName BumbUpPlayerName = new StringName("BumbUpPlayerName");
     public static readonly StringName OnSelectCard = new StringName("OnSelectCard");
     public static readonly StringName OnDeselectCard = new StringName("OnDeselectCard");
     public static readonly StringName MouseEnterEnlargeCard = new StringName("MouseEnterEnlargeCard");
     public static readonly StringName MouseExitDelargeCard = new StringName("MouseExitDelargeCard");
-    public static readonly StringName RoundUp = new StringName("RoundUp");
+    public static readonly StringName BumbUpRoundCounter = new StringName("BumbUpRoundCounter");
 }

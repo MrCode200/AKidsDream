@@ -23,7 +23,7 @@ public partial class Board : Node2D
     // -- REFERENCES --
     /// <summary>
     /// TileMap layer used only for rendering the board visuals.
-    /// Gameplay data is stored separately in <see cref="StateData"/>.
+    /// Gameplay data is stored separately in <see cref="State"/>.
     /// </summary>
     [Export] public required TileMapLayer Tilemap;
 
@@ -31,7 +31,7 @@ public partial class Board : Node2D
     /// Contains the logical board data:
     /// dimensions, tiles, units, and other gameplay information.
     /// </summary>
-    public BoardStateData StateData = new();
+    public BoardState State = new();
 
     private ILogger _log = GameLogger.For<Board>();
 
@@ -46,7 +46,7 @@ public partial class Board : Node2D
     private Callable GenerateBoardBtn => Callable.From(() =>
     {
         Tilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
-        StateData = new BoardStateData();
+        State = new BoardState();
         _generateBoard();
     });
 
@@ -56,15 +56,15 @@ public partial class Board : Node2D
     }
     
     // -- LIFECYCLE --
-    public void Init(BoardStateData boardStateData, Array<Unit>? initialUnits = null)
+    public void Init(BoardState boardState, Array<Unit>? initialUnits = null)
     {
-        StateData = boardStateData;
+        State = boardState;
 
         _log.Here().Info(
             "Initializing board '{BoardName}' with {Width}x{Height} tiles and {InitialUnitCount} initial units",
             Name,
-            StateData.Width,
-            StateData.Height,
+            State.Width,
+            State.Height,
             initialUnits?.Count ?? 0);
 
         Tilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
@@ -88,7 +88,7 @@ public partial class Board : Node2D
     // -- GENERATION --
 
     /// <summary>
-    /// <para>Creates the board grid based on the dimensions defined in <see cref="StateData"/>.</para>
+    /// <para>Creates the board grid based on the dimensions defined in <see cref="State"/>.</para>
     /// 
     /// <para><b>Generates: </b>
     /// <list type="number">
@@ -100,12 +100,12 @@ public partial class Board : Node2D
     private void _generateBoard()
     {
         Tilemap.Clear();
-        StateData.Tiles.Clear();
+        State.Tiles.Clear();
         _log.Here().Info(
             "Generating board '{BoardName}' {Width}x{Height}; TilemapPath: {TileMapPath}",
             Name,
-            StateData.Width,
-            StateData.Height,
+            State.Width,
+            State.Height,
             Tilemap?.GetPath().ToString());
 
         // Starting atlas coordinate for the first tile.
@@ -113,17 +113,17 @@ public partial class Board : Node2D
         var atlasTile = Global.AtlasCoordsSprite.BeigeTile;
 
 
-        for (var y = 0; y < StateData.Height; y++)
+        for (var y = 0; y < State.Height; y++)
         {
             Array<TileData> row = [];
             
             // If width is even, alternate starting tile for checkerboard pattern.
-            if (StateData.Width % 2 == 0)
+            if (State.Width % 2 == 0)
                 atlasTile = atlasTile == Global.AtlasCoordsSprite.DarkVioletTile
                     ? Global.AtlasCoordsSprite.BeigeTile
                     : Global.AtlasCoordsSprite.DarkVioletTile;
                 
-            for (var x = 0; x < StateData.Width; x++)
+            for (var x = 0; x < State.Width; x++)
             {
                 var tileLocation = new Vector2I(x, y);
 
@@ -145,15 +145,15 @@ public partial class Board : Node2D
                 );
             }
 
-            StateData.Tiles.Add(row);
+            State.Tiles.Add(row);
         }
 
         _log.Here().Info(
             "Board generated '{BoardName}' {Width}x{Height} with {TileCount} Tiles",
             Name,
-            StateData.Width,
-            StateData.Height,
-            StateData.Width * StateData.Height);
+            State.Width,
+            State.Height,
+            State.Width * State.Height);
     }
 
     // -- Signal Handling --
@@ -190,7 +190,7 @@ public partial class Board : Node2D
             unit.TileLocation = tileLocation.Value;
         }
         
-        TileData tile = StateData.Tiles[unit.TileLocation.Y][unit.TileLocation.X];
+        TileData tile = State.Tiles[unit.TileLocation.Y][unit.TileLocation.X];
         tile.Unit = unit;
 
         // Check for duplicate unit id, if found, replace old registration
@@ -226,7 +226,7 @@ public partial class Board : Node2D
     /// <param name="tileLocation">The tile coordinate where the unit should be removed.</param>
     public void RemoveUnit(Vector2I tileLocation)
     {
-        TileData tile = StateData.Tiles[tileLocation.Y][tileLocation.X];
+        TileData tile = State.Tiles[tileLocation.Y][tileLocation.X];
         var removedUnit = tile.Unit;
 
         _unitsById.Remove(removedUnit?.UnitId ?? UnitId.None);
@@ -270,7 +270,7 @@ public partial class Board : Node2D
         unit = null;
         if (!TileInBoard(location)) return false;
 
-        unit = StateData.Tiles[location.Y][location.X].Unit;
+        unit = State.Tiles[location.Y][location.X].Unit;
         return unit is not null;
     }
 
@@ -288,7 +288,7 @@ public partial class Board : Node2D
         tile = null;
         if (!TileInBoard(location)) return false;
 
-        tile = StateData.Tiles[location.Y][location.X];
+        tile = State.Tiles[location.Y][location.X];
         return true;
     }
 
@@ -300,9 +300,9 @@ public partial class Board : Node2D
     public bool TileInBoard(Vector2I tileLocation)
     {
         return tileLocation.X >= 0 &&
-               tileLocation.X < StateData.Width &&
+               tileLocation.X < State.Width &&
                tileLocation.Y >= 0 &&
-               tileLocation.Y < StateData.Height;
+               tileLocation.Y < State.Height;
     }
 
     /// <summary>
@@ -314,7 +314,7 @@ public partial class Board : Node2D
     {
         var tilePosition = WorldPositionToTilePosition(worldPosition);
 
-        return TileInBoard(tilePosition) ? StateData.Tiles[tilePosition.Y][tilePosition.X] : null;
+        return TileInBoard(tilePosition) ? State.Tiles[tilePosition.Y][tilePosition.X] : null;
     }
 
     /// <summary>
@@ -354,7 +354,7 @@ public partial class Board : Node2D
     
     public TileData[] GetAllTiles()
     {
-        return [.. StateData.Tiles.SelectMany(t => t).ToArray()];
+        return [.. State.Tiles.SelectMany(t => t).ToArray()];
     }
 
     /// <summary>

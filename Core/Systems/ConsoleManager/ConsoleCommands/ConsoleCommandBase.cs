@@ -65,7 +65,7 @@ public abstract partial class ConsoleCommandBase : Node, IConsoleCommand
     protected static bool TryEnum<TEnum>(string raw, string name, out TEnum result)
         where TEnum : struct
     {
-        if (ArgParser.TryEnum<TEnum>(raw, name, out result, out var errMsg)) return true;
+        if (ArgParser.TryEnum(raw, name, out result, out var errMsg)) return true;
         PrintError(raw, typeof(TEnum), errMsg);
         return false;
     }

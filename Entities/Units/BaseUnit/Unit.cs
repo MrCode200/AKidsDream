@@ -153,9 +153,9 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     }
     
     // -- Signal Handlers --
-    private void OnTurnStarted(int playerIdInt, int round)
+    private void OnTurnStarted(PlayerData player, int round)
     {
-        if (OwnerIdInt == playerIdInt)
+        if (OwnerId == player.PlayerId)
         {
             AbilityC.ResetPool();
         }

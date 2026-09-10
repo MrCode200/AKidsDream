@@ -40,8 +40,8 @@ public partial class InputMoveComponent : Camera2D
 	{
 		// Center position to board upon creation
 		await ToSignal(EventBus.Instance, EventBus.SignalName.GameInitialized);
-		Position += new Vector2(Board.StateData.Width * Global.TileSize / 2,
-			Board.StateData.Height * Global.TileSize / 2) - GetScreenCenterPosition();
+		Position += new Vector2(Board.State.Width * Global.TileSize / 2,
+			Board.State.Height * Global.TileSize / 2) - GetScreenCenterPosition();
 		
 		_targetZoom = Zoom;
 		_targetPosition = Position;

@@ -8,6 +8,7 @@ using AKidsDream.Abilities.Effects;
 using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Results;
+using AKidsDream.Core.Managers.Audio;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
@@ -21,11 +22,11 @@ public partial class AbilityData : Resource
     [Export] public StringName Name = "AbilityName";
     [Export] public StringName? Description;
 
+    [ExportGroup("Reach & Effects")]
     /// <summary>
     /// The pattern that determines which tiles an ability can select.
     /// </summary>
     [Export] public required AccessFieldPattern? ReachPattern;
-
     [Export] public Global.AtlasCoordsSprite ReachAtlasCoords = Global.AtlasCoordsSprite.TransparentTile;
 
     /// <summary>
@@ -33,19 +34,20 @@ public partial class AbilityData : Resource
     /// </summary>
     [Export] public EffectData[] Effects = [];
 
+    [ExportGroup("Cost Settings")]
     [Export] public int BaseCost = 1;
     [Export] public CostModifier? CostMod;
-
     /// <summary>
     /// From which Pool the cost should be reduced.
     /// </summary>
     [Export] public required StringName PoolName;
-
+    
     /// <summary>
     /// The minimum number of Tiles the User needs to select.
     /// </summary>
+    [ExportGroup("Ability Targets")]
     private int _minTargets = 1;
-
+    
     [Export]
     public int MinTargets
     {
@@ -132,16 +134,17 @@ public partial class AbilityData : Resource
         };
 
         var outcomes = new List<EffectOutcome>(Effects.Length);
-        for (var i = 0; i < Effects.Length; i++)
+
+        foreach (var effect in Effects)
         {
-            var effectResult = await Effects[i].ExecuteAsync(context, targetedTiles, payload);
+            var effectResult = await effect.ExecuteAsync(context, targetedTiles, payload);
             if (effectResult.IsFailure)
                 return Result.Fail<(CompositeOutcome, AbilityPayload), GameError>(effectResult.Error);
 
             outcomes.Add(effectResult.Value);
         }
 
-        var compositeOutcome = new CompositeOutcome(outcomes, flatten: true) { Caster = context.Caster };
+        var compositeOutcome = new CompositeOutcome(outcomes);
         EmitSignal(SignalName.AbilityCast, this);
         return Result.Ok<(CompositeOutcome, AbilityPayload), GameError>((compositeOutcome, payload));
     }
@@ -197,7 +200,7 @@ public partial class AbilityData : Resource
 
         return true;
     }
-    
+
     public bool ValidateTargetDuplicates(List<Vector2I> targetTiles)
     {
         var duplicates = targetTiles.GroupBy(t => t)
@@ -209,7 +212,7 @@ public partial class AbilityData : Resource
             if (duplicate.Count > _maxDuplicateTargets)
                 return false;
         }
-        
+
         return true;
     }
 
@@ -313,8 +316,9 @@ public partial class AbilityData : Resource
 
         if (!ValidateTargetDuplicates(targetedTiles))
             return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.MaxDuplicateTargetsExceeded(
-                context.Caster.CasterId, context.Ability.Name, targetedTiles[0], _maxDuplicateTargets, targetedTiles.Count));
-        
+                context.Caster.CasterId, context.Ability.Name, targetedTiles[0], _maxDuplicateTargets,
+                targetedTiles.Count));
+
         var abilityState = state?.Copy() ?? new AbilityState();
 
         var payload = new AbilityPayload
@@ -325,10 +329,8 @@ public partial class AbilityData : Resource
             State = abilityState
         };
 
-        for (var i = 0; i < Effects.Length; i++)
+        foreach (var effect in Effects)
         {
-            var effect = Effects[i];
-
             if (effect.RunSequential)
             {
                 var seqResult = TryUpdatePayloadSequential(effect, context, targetedTiles, payload);
@@ -339,7 +341,8 @@ public partial class AbilityData : Resource
             {
                 if (targetedTiles.Count > 0 && !AllTilesInReach(context, targetedTiles, payload.CurrentOrigin))
                 {
-                    var invalidTile = targetedTiles.FirstOrDefault(t => !IsTileInReach(context, t, payload.CurrentOrigin));
+                    var invalidTile =
+                        targetedTiles.FirstOrDefault(t => !IsTileInReach(context, t, payload.CurrentOrigin));
                     return Result.Fail<AbilityPayload, AbilityError>(new AbilityError.TargetOutOfRange(
                         context.Caster.CasterId, context.Ability.Name, invalidTile, payload.CurrentOrigin));
                 }

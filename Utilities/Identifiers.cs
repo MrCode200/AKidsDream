@@ -1,7 +1,7 @@
 global using UnitId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.UnitIdTag>;
 global using PlayerId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.PlayerIdTag>;
-global using CardId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.CardIdTag>;
 global using TeamId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.TeamIdTag>;
+global using CardId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.CardIdTag>;
 
 using System;
 using AKidsDream.Common.Logging;

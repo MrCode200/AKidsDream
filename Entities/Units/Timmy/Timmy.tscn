@@ -5,35 +5,35 @@
 [ext_resource type="Texture2D" uid="uid://b5t07s83b1irx" path="res://Entities/Units/Timmy/Assets/BlueTimmy/Pawn_Idle Axe.png" id="2_h2gyg"]
 [ext_resource type="Texture2D" uid="uid://bk8tx5neerym5" path="res://Entities/Units/Timmy/Assets/RedTimmy/Pawn_Idle Axe.png" id="3_8nx1d"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="4_aflad"]
+[ext_resource type="Texture2D" uid="uid://d1s83y4h8slhc" path="res://Entities/Units/Components/AbilityComponent/star.svg" id="4_jrm1w"]
 [ext_resource type="Texture2D" uid="uid://dbtrhx33msrxr" path="res://Entities/Units/Timmy/Assets/BlueTimmy/Pawn_Run Axe.png" id="4_v0wiw"]
 [ext_resource type="Resource" uid="uid://rekyj0uehi61" path="res://Entities/Units/Timmy/Abilities/TimmySpecialAbility.tres" id="5_otb2k"]
-[ext_resource type="Resource" uid="uid://cxchs07a32ck2" path="res://Entities/Units/Timmy/Abilities/TPChainAbility.tres" id="6_aflad"]
+[ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="5_tph3e"]
 [ext_resource type="Texture2D" uid="uid://cw7mrlusc4je1" path="res://Entities/Units/Timmy/Assets/RedTimmy/Pawn_Run Axe.png" id="6_g28d0"]
 [ext_resource type="Script" uid="uid://b14gay7t266tc" path="res://UI/PoolBar/Resources/PoolData.cs" id="7_evswn"]
-[ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="8_6fdhl"]
-[ext_resource type="Texture2D" uid="uid://bmolx5cm6h2o7" path="res://UI/PoolBar/Assets/SwordPoint.png" id="9_6fdhl"]
+[ext_resource type="Resource" uid="uid://cxchs07a32ck2" path="res://Entities/Units/Timmy/Abilities/TPChainAbility.tres" id="8_81tp6"]
 
-[sub_resource type="Resource" id="Resource_tph3e"]
+[sub_resource type="Resource" id="Resource_cdn4x"]
 resource_local_to_scene = true
 script = ExtResource("2_12o5x")
 MaxHealth = 5
 Health = 5
 metadata/_custom_type_script = "uid://8ujfv88riuka"
 
-[sub_resource type="Resource" id="Resource_5mrbn"]
-script = ExtResource("7_evswn")
-MaxCount = 99
-CurrentCount = 99
-Name = &"Move"
-Icon = ExtResource("8_6fdhl")
-metadata/_custom_type_script = "uid://b14gay7t266tc"
-
-[sub_resource type="Resource" id="Resource_kt3ti"]
+[sub_resource type="Resource" id="Resource_35v56"]
 script = ExtResource("7_evswn")
 MaxCount = 5
 CurrentCount = 5
 Name = &"Special"
-Icon = ExtResource("9_6fdhl")
+Icon = ExtResource("4_jrm1w")
+metadata/_custom_type_script = "uid://b14gay7t266tc"
+
+[sub_resource type="Resource" id="Resource_07yln"]
+script = ExtResource("7_evswn")
+MaxCount = 99
+CurrentCount = 99
+Name = &"Move"
+Icon = ExtResource("5_tph3e")
 metadata/_custom_type_script = "uid://b14gay7t266tc"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fdhl"]
@@ -256,14 +256,21 @@ animations = [{
 }]
 
 [node name="Timmy" unique_id=1080513067 instance=ExtResource("1_hutqi")]
-UnitStats = SubResource("Resource_tph3e")
+UnitStats = SubResource("Resource_cdn4x")
 
 [node name="AbilityComponent" parent="." index="3" unique_id=509071314]
-InitialPoolDatas = Array[ExtResource("7_evswn")]([SubResource("Resource_5mrbn"), SubResource("Resource_kt3ti")])
-InitialAbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("5_otb2k"), ExtResource("6_aflad")])
+InitialPoolDatas = Array[ExtResource("7_evswn")]([SubResource("Resource_35v56"), SubResource("Resource_07yln")])
+InitialAbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("5_otb2k"), ExtResource("8_81tp6")])
 
 [node name="AnimatedSprite2D" parent="." index="4" unique_id=452479933]
 scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_fxtxd")
 animation = &"RedRun"
 autoplay = "BlueIdle"
+
+[node name="FloatingText" parent="." index="7" unique_id=1135333433]
+anchors_preset = 8
+offset_left = -39.5
+offset_top = -11.5
+offset_right = 39.5
+offset_bottom = 11.5

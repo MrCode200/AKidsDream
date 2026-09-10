@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Threading;
 using System.Threading.Tasks;
 using AKidsDream.Common.Logging;
 using Godot;
@@ -32,10 +33,14 @@ public partial class TweenComponent : Node
 	private bool _hasQueuedReplaySubscription;
 	private bool _hasFinishedSubscription;
 	private bool _isRunningOnHide;
-	private TaskCompletionSource<bool>? _tweenCompletion;
+	
+	private CancellationTokenSource? _cancellationSource = null;
+	private Task<Tween?>? _buildTask;
+	private TaskCompletionSource<bool>? _tweenAnimationCompleted;
 
 	private static readonly ILogger Log = GameLogger.For<TweenComponent>();
 
+	// ---------- EDITOR TOOL BUTTONS ----------
 	[ExportToolButton("Play")]
 	private Callable Play => Callable.From(() =>
 	{
@@ -55,11 +60,13 @@ public partial class TweenComponent : Node
 		_ = PlayAllAnimationsAsync();
 	});
 
-	private async Task PlayAllAnimationsAsync()
+	private async Task PlayAllAnimationsAsync(CancellationToken? token = null)
 	{
 		foreach (var data in TweenDatas)
 		{
 			await PlayTweenAsync(data);
+			if (token is { IsCancellationRequested: true })
+				return;
 		}
 	}
 
@@ -74,6 +81,7 @@ public partial class TweenComponent : Node
 			ResetToOriginalValues(data);
 	});
 
+	// ---------- TARGET RESOLUTION ----------
 	private void ResolveAllStepTargets()
 	{
 		foreach (var data in TweenDatas)
@@ -103,6 +111,7 @@ public partial class TweenComponent : Node
 		return resolved;
 	}
 
+	// ---------- VALUE STORAGE ----------
 	private void StoreOriginalValues(TweenAnimationData data)
 	{
 		var targets = _resolvedStepTargets[data];
@@ -127,6 +136,7 @@ public partial class TweenComponent : Node
 	}
 
 
+	// ---------- GODOT LIFECYCLE ----------
 	public override void _Ready()
 	{
 		ResolveAllStepTargets();
@@ -164,6 +174,7 @@ public partial class TweenComponent : Node
 		_runtimeUnsubscribers.Clear();
 	}
 
+	// ---------- TRIGGER SUBSCRIPTION ----------
 	private void _SubToTriggerEvents(TweenAnimationData data)
 	{
 		void RunAnimationWrapper() => PlayTween(data);
@@ -257,6 +268,7 @@ public partial class TweenComponent : Node
 		}
 	}
 
+	// ---------- VALIDATION ----------
 	private void _BakeCurves()
 	{
 		foreach (var data in TweenDatas)
@@ -338,11 +350,13 @@ public partial class TweenComponent : Node
 		return true;
 	}
 
+	// ---------- PUBLIC API ----------
 	public TweenAnimationData? GetAnimationDataByIdentifier(StringName identifier)
 	{
 		return TweenDatas.FirstOrDefault(data => data.Identifier == identifier);
 	}
 
+	// ---------- TRIGGER HANDLERS ----------
 	private void RunOnShow(TweenAnimationData data)
 	{
 		if (_isRunningOnHide)
@@ -381,6 +395,7 @@ public partial class TweenComponent : Node
 		}*/
 	}
 
+	// ---------- TWEEN PLAYBACK ----------
 	public async Task PlayTweenAsync(StringName identifier)
 	{
 		var data = GetAnimationDataByIdentifier(identifier);
@@ -402,8 +417,8 @@ public partial class TweenComponent : Node
 
 			PlayTween(data);
 
-			if (_tweenCompletion != null)
-				await _tweenCompletion.Task;
+			if (_tweenAnimationCompleted != null)
+				await _tweenAnimationCompleted.Task;
 		}
 		catch (Exception e)
 		{
@@ -459,10 +474,11 @@ public partial class TweenComponent : Node
 		_ = BuildTween(data);
 	}
 
+	// ---------- TWEEN CONTROL ----------
 	public void KillTween()
 	{
 		Tween?.Kill();
-		_tweenCompletion?.TrySetResult(false);
+		_tweenAnimationCompleted?.TrySetResult(false);
 		_queuedReplay = 0;
 		ClearRuntimeSubscribers();
 	}
@@ -486,58 +502,98 @@ public partial class TweenComponent : Node
 		_hasFinishedSubscription = false;
 	}
 	
-	// -- BUILDING TWEEN ---
+	// ---------- TWEEN BUILDING -----------
 
 	private async Task<Tween?> BuildTween(TweenAnimationData data)
 	{
 		if (DisableTween)
-			return null!;
+			return null;
 
-		_activeData = data;
-
-		// Delay
-		if (data.DelayAnimStart > 0)
+		if (_cancellationSource != null)
 		{
-			await ToSignal(
-				GetTree().CreateTimer(data.DelayAnimStart),
-				SceneTreeTimer.SignalName.Timeout
-			);
+			_cancellationSource?.Cancel();
+			if (_buildTask != null)
+				await _buildTask;
+		}			
+		
+		_cancellationSource = new CancellationTokenSource();
+		var token = _cancellationSource.Token;
+		
+		try {
+			_activeData = data;
+			var buildTask = BuildTweenInternal(data, token);
+			_buildTask = buildTask;
+			
+			return await buildTask;
+		}
+		finally
+		{
+			if (_cancellationSource.Token == token)
+				_cancellationSource = null;
+		}
+	}
 
-			if (_activeData != data)
+	private async Task<Tween?> BuildTweenInternal(TweenAnimationData data, CancellationToken token)
+	{
+		try {
+			// ---------- DELAY ----------
+			if (data.DelayAnimStart > 0)
+			{
+				await ToSignal(
+					GetTree().CreateTimer(data.DelayAnimStart),
+					SceneTreeTimer.SignalName.Timeout
+				);
+
+				if (token.IsCancellationRequested || _activeData != data)
+					return null;
+			}
+
+			var targets = _resolvedStepTargets[data];
+
+			KillTween();
+			Tween = Target.CreateTween();
+			Tween.SetPauseMode(data.PauseMode);
+
+			// ---------- BUILD TWEENERS ----------
+			var (fromValues, toValues) = _BuildForwardTween(data, targets, token);
+			if (token.IsCancellationRequested)
 				return null;
+
+			// ---------- PING PONG ----------
+			if (data.LoopMode == TweenLoopMode.PingPong)
+			{
+				_BuildBackwardTween(data, targets, fromValues, toValues, token);
+				if (token.IsCancellationRequested)
+					return null;
+			}
+
+			// ---------- LOOP MODE ----------
+			if (data.LoopMode != TweenLoopMode.None)
+			{
+				if (data.MaxLoopCount > 0)
+					Tween.SetLoops(data.MaxLoopCount);
+				else
+					Tween.SetLoops();
+			}
+			if (token.IsCancellationRequested)
+				return null;
+
+			// ---------- FINISHED SUBSCRIPTION ----------
+			_AddFinishedSubs(data);
+
+			return Tween;
 		}
-
-		var targets = _resolvedStepTargets[data];
-
-		KillTween();
-		Tween = Target.CreateTween();
-		Tween.SetPauseMode(data.PauseMode);
-
-		// Build Tweeners
-		var (fromValues, toValues) = _BuildForwardTween(data, targets);
-
-		// PingPong
-		if (data.LoopMode == TweenLoopMode.PingPong)
-			_BuildBackwardTween(data, targets, fromValues, toValues);
-
-		// LoopMode
-		if (data.LoopMode != TweenLoopMode.None)
+		catch (Exception e)
 		{
-			if (data.MaxLoopCount > 0)
-				Tween.SetLoops(data.MaxLoopCount);
-			else
-				Tween.SetLoops();
+			Log.Here().Err(e, "Exception in BuildTween");
+			return null;
 		}
-
-		// Finished event subscription
-		_AddFinishedSubs(data);
-
-		return Tween;
 	}
 
 	private (Variant[] fromValues, Variant[] toValues) _BuildForwardTween(
 		TweenAnimationData data,
-		Node[] targets
+		Node[] targets,
+		CancellationToken token
 		)
 	{
 		var count = data.Steps.Count;
@@ -546,6 +602,9 @@ public partial class TweenComponent : Node
 
 		for (var i = 0; i < count; i++)
 		{
+			if (token.IsCancellationRequested)
+				return (fromValues, toValues);
+			
 			var step = data.Steps[i];
 			if (step.Disable)
 				continue;
@@ -614,11 +673,20 @@ public partial class TweenComponent : Node
 		return (fromValues, toValues);
 	}
 	
-	private void _BuildBackwardTween(TweenAnimationData data, Node[] targets, Variant[] fromValues, Variant[] toValues)
+	private void _BuildBackwardTween(
+		TweenAnimationData data, 
+		Node[] targets, 
+		Variant[] fromValues, 
+		Variant[] toValues,
+		CancellationToken token
+	)
 	{
 		var count = data.Steps.Count;
 		for (var i = count - 1; i >= 0; i--)
 		{
+			if (token.IsCancellationRequested)
+				return;
+			
 			var step = data.Steps[i];
 			var stepTarget = targets[i];
 			var prevStep = i < count - 1 ? data.Steps[i + 1] : null;
@@ -679,19 +747,22 @@ public partial class TweenComponent : Node
 		if (_hasFinishedSubscription) return;
 		
 		_hasFinishedSubscription = true;
-		_tweenCompletion = new TaskCompletionSource<bool>();
-
+		
+		_tweenAnimationCompleted?.TrySetCanceled();
+		_tweenAnimationCompleted = null;
+		_tweenAnimationCompleted = new TaskCompletionSource<bool>();
+		
 		Tween!.Finished += OnTweenFinishedWrapper;
 		_runtimeUnsubscribers.Add(() => Tween.Finished -= OnTweenFinishedWrapper);
 		return;
 
 		void OnTweenFinishedWrapper()
 		{
-			_tweenCompletion?.TrySetResult(true);
 			OnTweenFinished(data);
 		}
 	}
 
+	// ---------- UTILITY ----------
 	private static Variant Negate(Variant value)
 	{
 		return value.VariantType switch
@@ -729,13 +800,13 @@ public partial class TweenComponent : Node
 		if (_activeData != data)
 			return;
 
-		if (data.QueueFreeTargetOnFinish)
-		{
-			Target.QueueFree();
-			return;
-		}
-
 		if (data.HideTargetOnFinish)
 			Target.Visible = false;
+		
+		_tweenAnimationCompleted?.TrySetResult(true);
+		
+		if (data.QueueFreeTargetOnFinish)
+			Target.QueueFree();
+		
 	}
 }

@@ -11,6 +11,7 @@ using Godot;
 namespace AKidsDream.Common.Components.TweenComponent.Resources;
 
 public sealed record CastOutcome(
+    IAbilityCaster Caster,
     CompositeOutcome Outcomes,
     int CostPaid,
     string PoolName

@@ -1,10 +1,8 @@
 #nullable enable
 using System;
-using System.Linq;
 using AKidsDream.Abilities;
 using AKidsDream.Commands;
 using AKidsDream.Common.Logging;
-using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.StateMachines;
 using AKidsDream.Common;
@@ -142,7 +140,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 
 		_lastHoveredTile = interaction.TileLocationAtMousePos;
 		var tileIsInsideReach = IsTileInsideReach(interaction.TileLocationAtMousePos);
-		
+
 		AbilityPayload? previewPayload = null;
 
 		// 1. If the tile is inside the reach, add it to the preview payload
@@ -152,22 +150,22 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 			previewPayload.ProcessingTiles.Add(interaction.TileLocationAtMousePos!.Value);
 			previewPayload.AccumulatedTargets.Add(interaction.TileLocationAtMousePos!.Value);
 		}
-		
+
 		var visualizationPayload = previewPayload ?? _abilityPayload;
-		
+
 		// 2. Show effect visualization for all effects
 		pic.GCtx.AbilityVisualizer.ShowEffectVisualization(
 			_abilityContext,
 			visualizationPayload,
 			_ability.Effects
 		); // TODO add to the above /* */ to see if its needed there or not... (prob needed xd)
-		
+
 		// 3. Remove number visualization if only 1 target, if tile is outside reach update visualization
 		if (visualizationPayload.AccumulatedTargets.Count <= 1)
 			pic.GCtx.AbilityVisualizer.ClearNumberedTilemap();
 		else if (!tileIsInsideReach)
 			pic.GCtx.AbilityVisualizer.ShowNumberedTilemap(visualizationPayload.AccumulatedTargets);
-		
+
 		// 4. Emit signal to update preview cost on tile hover
 		EventBus.Instance.EmitSignal(
 			EventBus.SignalName.NewTileHovered,
@@ -189,8 +187,10 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 		if (!result.IsSuccess)
 			return; // logs in command executor
 
+		/* shouldn't be neededa s already done in the command above
 		// Recalculate and update reach visualization after target addition
 		pic.GCtx.AbilityVisualizer.ShowReachVisualization(_abilityContext, _abilityPayload, _ability);
+		*/
 
 		// If reached Max Targets, cast the ability.
 		if (_abilityPayload.AccumulatedTargets.Count >= _ability.MaxTargets)

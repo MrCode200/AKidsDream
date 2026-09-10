@@ -10,7 +10,7 @@ public partial class PoolItem : Control
     [ExportCategory("UI Nodes")] [Export] public HBoxContainer PoolContainer = null!;
     [Export] public Label PoolLabel = null!;
     [Export] public Label DeltaCostLabel = null!;
-    [Export] public Sprite2D PoolIcon = null!;
+    [Export] public TextureRect PoolIcon = null!;
 
     [ExportCategory("Animation Parameters")] [Export]
     public float SecondsPerValue = 0.2f;

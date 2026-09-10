@@ -9,7 +9,8 @@ script = ExtResource("2_nmitr")
 Property = NodePath("modulate:a")
 FromValue = 0.0
 ToValue = 1.0
-Duration = 0.38
+Duration = 0.33
+Delay = 0.17
 Transition = 1
 Ease = 1
 

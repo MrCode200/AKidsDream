@@ -15,108 +15,115 @@ namespace AKidsDream.Managers;
 [GlobalClass]
 public partial class GameLoopManager : Node
 {
-	public int CurrentRound;
-	public PlayerId ActivePlayerId { get; private set; }
-	private Dictionary<PlayerId, PlayerData> _playerTurnOrder = new();
-	public Dictionary<PlayerId, PlayerData> PlayerTurnOrder() => new(_playerTurnOrder);
-	
-	private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
-	private bool _stateLoaded;
-	private GameContext _context;
+    public int CurrentRound;
+    public PlayerId ActivePlayerId { get; private set; }
+    private Dictionary<PlayerId, PlayerData> _playerTurnOrder = new();
+    public Dictionary<PlayerId, PlayerData> PlayerTurnOrder() => new(_playerTurnOrder);
 
-	public void Init(GameContext context)
-	{
-		_context = context;
-	}
-	
-	public void LoadState(GameStateData state)
-	{
-		CurrentRound = state.GameRound;
-		_playerTurnOrder = state.PlayerTurnOrder;
-		ActivePlayerId = new PlayerId(state.ActivePlayerIdInt);
-		_stateLoaded = true; // Flag to skip default initialization in _Ready
-		Log.Here().Info("Loaded game state: Round={CurrentRound}, ActivePlayer={ActivePlayerId}, PlayerCount={PlayerCount}", 
-			state.GameRound, state.ActivePlayerIdInt, state.PlayerTurnOrder.Count);	}
-	
-	public override async void _Ready()
-	{
-		try
-		{
-			await ToSignal(EventBus.Instance, EventBus.SignalName.GameInitialized);
-		
-			if (!_stateLoaded)
-			{
-				// Default initialization for new games
-				SetTurnOrder(_context.PlayerTeamRegistry.GetAllPlayers());
-				ActivePlayerId = _playerTurnOrder.Keys.First();
-				CurrentRound = 1;
-			}
-		
-			EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted, ActivePlayerId.Value, CurrentRound);
+    private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
+    private bool _stateLoaded;
+    private GameContext _context;
 
-			Log.Here().Info("GameLoopManager initialized, starting Player is {ActivePlayerId}", ActivePlayerId);
-			
-			_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
-			EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
-				ActivePlayerId.Value, CurrentRound);
-		}
-		catch (Exception e)
-		{
-			Log.Here().Err("A unexpected error occurred in GameLoopManager _Ready: {exception}", e);
-		}
-	}
+    public void Init(GameContext context)
+    {
+        _context = context;
+    }
 
-	private void SetTurnOrder(PlayerData[] players)
-	{
-		_playerTurnOrder = players.ToDictionary(p => p.PlayerId, p => p);
-	}
+    public void LoadState(GameStateData state)
+    {
+        CurrentRound = state.GameRound;
+        _playerTurnOrder = state.PlayerTurnOrder;
+        ActivePlayerId = new PlayerId(state.ActivePlayerIdInt);
+        _stateLoaded = true; // Flag to skip default initialization in _Ready
+        Log.Here().Info(
+            "Loaded game state: Round={CurrentRound}, ActivePlayer={ActivePlayerId}, PlayerCount={PlayerCount}",
+            state.GameRound, state.ActivePlayerIdInt, state.PlayerTurnOrder.Count);
+    }
 
-	/// <summary>
-	/// Ends the turn for the specified player, if it's their turn.
-	/// </summary>
-	/// <param name="playerId">The ID of the player ending their turn.</param>
-	/// <returns>True if the turn was successfully ended, false if the player is not the active player.</returns>
-	public bool EndPlayerTurn(PlayerId playerId)
-	{
-		if (playerId != ActivePlayerId)
-		{
-			Log.Here().Warn("Player {PlayerId} tried to end turn, but it's not their turn", playerId);
-			return false;
-		}
+    public override async void _Ready()
+    {
+        try
+        {
+            await ToSignal(EventBus.Instance, EventBus.SignalName.GameInitialized);
 
-		_playerTurnOrder[ActivePlayerId].Controller.EndTurn();
-		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnEnded, 
-			ActivePlayerId.Value, CurrentRound);
+            if (!_stateLoaded)
+            {
+                // Default initialization for new games
+                SetTurnOrder(_context.PlayerTeamRegistry.GetAllPlayers());
+                ActivePlayerId = _playerTurnOrder.Keys.First();
+                CurrentRound = 1;
+            }
 
-		var idList = _playerTurnOrder.Keys.ToList();
-		var nextPlayerId = idList[(idList.IndexOf(playerId) + 1) % idList.Count];
-		ActivePlayerId = nextPlayerId;
-		
-		TryStartNewRound(nextPlayerId, idList.First());
-		
-		Log.Here().Info("Player {PlayerId} ended turn, starting {NextPlayerId}", playerId, nextPlayerId);
+            EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted,
+                ActivePlayerId.Value,
+                _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId).Name,
+                CurrentRound
+            );
 
-		_playerTurnOrder[ActivePlayerId].Mana += 1;
-		_playerTurnOrder[ActivePlayerId].Controller.StartTurn();
-		EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted, 
-			ActivePlayerId.Value, CurrentRound);
-		return true;
-	}
-	
-	private void TryStartNewRound(PlayerId nextPlayerId, PlayerId firstPlayer)
-	{
-		// Increment round when we cycle back to the first player
-		if (nextPlayerId == firstPlayer)
-		{
-			CurrentRound++;
-		
-			Log.Here().Info("Starting new round {RoundNumber}", CurrentRound);
-			
-			EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted, 
-				nextPlayerId.Value, CurrentRound);
-		}
-	}
-	
-	// -- UTILS --
-	public PlayerData GetActivePlayer() => _playerTurnOrder[ActivePlayerId];
+            Log.Here().Info("GameLoopManager initialized, starting Player is {ActivePlayerId}", ActivePlayerId);
+
+            _playerTurnOrder[ActivePlayerId].Controller.StartTurn();
+            EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted,
+                _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId), CurrentRound);
+        }
+        catch (Exception e)
+        {
+            Log.Here().Err("A unexpected error occurred in GameLoopManager _Ready: {exception}", e);
+        }
+    }
+
+    private void SetTurnOrder(PlayerData[] players)
+    {
+        _playerTurnOrder = players.ToDictionary(p => p.PlayerId, p => p);
+    }
+
+    /// <summary>
+    /// Ends the turn for the specified player, if it's their turn.
+    /// </summary>
+    /// <param name="playerId">The ID of the player ending their turn.</param>
+    /// <returns>True if the turn was successfully ended, false if the player is not the active player.</returns>
+    public bool EndPlayerTurn(PlayerId playerId)
+    {
+        if (playerId != ActivePlayerId)
+        {
+            Log.Here().Warn("Player {PlayerId} tried to end turn, but it's not their turn", playerId);
+            return false;
+        }
+
+        _playerTurnOrder[ActivePlayerId].Controller.EndTurn();
+        EventBus.Instance.EmitSignal(EventBus.SignalName.TurnEnded,
+            ActivePlayerId.Value, CurrentRound);
+
+        var idList = _playerTurnOrder.Keys.ToList();
+        var nextPlayerId = idList[(idList.IndexOf(playerId) + 1) % idList.Count];
+        ActivePlayerId = nextPlayerId;
+
+        TryStartNewRound(nextPlayerId, idList.First());
+
+        Log.Here().Info("Player {PlayerId} ended turn, starting {NextPlayerId}", playerId, nextPlayerId);
+
+        _playerTurnOrder[ActivePlayerId].Mana += Global.ManaPerRound;
+        _playerTurnOrder[ActivePlayerId].Controller.StartTurn();
+        GD.Print("Player {ActivePlayerId} started turn", ActivePlayerId);
+        EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted,
+            _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId) ,CurrentRound);
+        return true;
+    }
+
+    private void TryStartNewRound(PlayerId nextPlayerId, PlayerId firstPlayer)
+    {
+        // Increment round when we cycle back to the first player
+        if (nextPlayerId == firstPlayer)
+        {
+            CurrentRound++;
+
+            Log.Here().Info("Starting new round {RoundNumber}", CurrentRound);
+
+            EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted,
+                nextPlayerId.Value, CurrentRound);
+        }
+    }
+
+    // -- UTILS --
+    public PlayerData GetActivePlayer() => _playerTurnOrder[ActivePlayerId];
 }

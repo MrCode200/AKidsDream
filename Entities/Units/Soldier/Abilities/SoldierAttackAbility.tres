@@ -16,8 +16,12 @@ script = ExtResource("2_63ouf")
 EffectPattern = SubResource("Resource_h4qxv")
 EffectAtlasCoords = 4
 AnimationName = &"Attack"
-Trigger = 4
-TriggerValue = 2
+AudioType = 5
+PlaySound2D = true
+AudioTrigger = 4
+TriggerValueAudio = 2
+EffectTrigger = 4
+TriggerValueEffect = 2
 metadata/_custom_type_script = "uid://ccpad80gncajp"
 
 [sub_resource type="Resource" id="Resource_qf1xv"]

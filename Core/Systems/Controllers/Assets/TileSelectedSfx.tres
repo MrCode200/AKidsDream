@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://dhfjd5ht5ddtk"]
+
+[ext_resource type="AudioStream" uid="uid://xde6x4cqniwl" path="res://Core/Systems/Controllers/Assets/tileSelectedSfx.mp3" id="1_d5lmo"]
+[ext_resource type="Script" uid="uid://64cgabm4h54d" path="res://Common/Audio/Resources/SoundEffectSettings.cs" id="2_vp70u"]
+
+[resource]
+script = ExtResource("2_vp70u")
+Type = 4
+SoundEffect = ExtResource("1_d5lmo")
+Volume = -6.949
+VolumeRandomness = 0.1
+PitchScale = 0.582
+PitchRandomness = 0.055
+Bus = 2
+metadata/_custom_type_script = "uid://64cgabm4h54d"

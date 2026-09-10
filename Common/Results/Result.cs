@@ -102,7 +102,7 @@ public readonly record struct Result<TValue, TError>
     }
 
     // Tap
-    public Result<TValue, TError> TapSuccess(Action<TValue> action)
+    public Result<TValue, TError> Tap(Action<TValue> action)
     {
         if (IsSuccess) action(_value!);
         return this;
@@ -126,6 +126,14 @@ public readonly record struct Result<TValue, TError>
     {
         if (IsFailure) return this;
         if (!condition(_value!)) return Result.Fail<TValue, TError>(error);
+        return this;
+    }
+    
+    public Result<TValue, TError> Ensure(Func<Result<TError>> condition)
+    {
+        if (IsFailure) return this;
+        var result = condition();
+        if (result.IsFailure) return Result.Fail<TValue, TError>(result.Error);
         return this;
     }
 
@@ -166,6 +174,9 @@ public readonly record struct Result<TError>
     // Map
     public Result<TNewError> Map<TNewError>(Func<TError, TNewError> onError) =>
         IsFailure ? Result.Fail(onError(_error!)) : Result.Ok<TNewError>();
+    
+    // Ensure
+    public Result<TError> Ensure(Func<bool> condition, TError error) => condition() ? this : Result.Fail(error);   
     
     public override string ToString() =>
         IsSuccess ? "Success()" : $"Failure({_error})";

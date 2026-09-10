@@ -5,7 +5,7 @@ namespace AKidsDream.Managers.SaveSystem.Resources;
 
 [GlobalClass]
 [Tool]
-public partial class BoardStateData : Resource
+public partial class BoardState : Resource
 {
 	[Export(PropertyHint.Range, "1,1,1,or_greater,suffix:tiles")] public int Width = 9;
 	[Export(PropertyHint.Range, "1,1,1,or_greater,suffix:tiles")] public int Height = 9;

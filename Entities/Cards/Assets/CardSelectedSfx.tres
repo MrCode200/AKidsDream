@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://drteka8g1bf7h"]
+
+[ext_resource type="AudioStream" uid="uid://d37n6y5irqn5n" path="res://Entities/Cards/Assets/selectionSoundEffect.wav" id="1_a7ada"]
+[ext_resource type="Script" uid="uid://64cgabm4h54d" path="res://Common/Audio/Resources/SoundEffectSettings.cs" id="2_q685l"]
+
+[resource]
+script = ExtResource("2_q685l")
+Type = 2
+SoundEffect = ExtResource("1_a7ada")
+Limit = 1
+Volume = -10.0
+PitchScale = 0.922
+PitchRandomness = 0.071
+Bus = 2
+DebugLog = true
+metadata/_custom_type_script = "uid://64cgabm4h54d"

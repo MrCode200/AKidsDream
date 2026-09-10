@@ -39,6 +39,8 @@ public class PlayerTeamRegistry(TeamRelationResolver teamRelationResolver)
         return true;
     }
     
+    public PlayerData GetPlayer(PlayerId playerId) => _players[playerId];
+    
     public bool TryGetTeam(TeamId teamId, [NotNullWhen(true)] out TeamData? team)
     {
         team = null;

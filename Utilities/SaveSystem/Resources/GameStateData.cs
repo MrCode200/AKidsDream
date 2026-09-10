@@ -14,7 +14,7 @@ public partial class GameStateData : Resource
     [Export] public int GameRound;  
     [Export] private Dictionary<int, PlayerData> _playerTurnOrder = new();
     [Export] public int ActivePlayerIdInt;
-    [Export] public BoardStateData BoardStateData = new();
+    [Export] public BoardState BoardState = new();
     [Export] public Array<PlayerData> PlayerData = [];
     // [Export] public int LocalPlayerIdInt;
     [Export] public Array<TeamData> TeamData = [];

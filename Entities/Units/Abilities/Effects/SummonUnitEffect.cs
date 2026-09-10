@@ -46,7 +46,6 @@ public partial class SummonUnitEffect : EffectData
 
             outcomes.Add(new SummonOutcome
             {
-                Caster = context.Caster,
                 Summoned = summoned,
                 Tile = tile
             });
@@ -56,7 +55,6 @@ public partial class SummonUnitEffect : EffectData
             ? Result.Ok<EffectOutcome, EffectError>(outcomes[0])
             : Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome
             {
-                Caster = context.Caster,
                 Outcomes = outcomes
             });
     }

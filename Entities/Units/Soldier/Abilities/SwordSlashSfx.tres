@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://b8w2s5o50grfh"]
+
+[ext_resource type="AudioStream" uid="uid://bkfbq7w2aqudu" path="res://Entities/Units/Soldier/Assets/swordSlashSfx.mp3" id="1_c76c7"]
+[ext_resource type="Script" uid="uid://64cgabm4h54d" path="res://Common/Audio/Resources/SoundEffectSettings.cs" id="2_fk65f"]
+
+[resource]
+script = ExtResource("2_fk65f")
+Type = 5
+SoundEffect = ExtResource("1_c76c7")
+PitchScale = 0.843
+Bus = 2
+PanningStrength = 2.212
+DebugLog = true
+metadata/_custom_type_script = "uid://64cgabm4h54d"

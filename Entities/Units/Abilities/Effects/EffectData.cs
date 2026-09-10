@@ -11,12 +11,13 @@ using AKidsDream.Common.Results;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Core.Managers.Audio;
 using Godot.Collections;
 using Serilog;
 
 namespace AKidsDream.Abilities.Effects;
 
-public enum EffectTrigger
+public enum ExecutionTrigger
 {
     Instant = 1 << 0, // NOTE: This doesn't emit the Signals for TriggerStart and TriggerEnd
     TimerEnd = 1 << 1,
@@ -33,53 +34,104 @@ public abstract partial class EffectData : Resource
     [Export] public AccessFieldPattern? EffectPattern;
     [Export] public Global.AtlasCoordsSprite EffectAtlasCoords;
 
-    /// <summary>
-    /// If false, <see cref="ExecuteAsync"/> will get be called for each target tile separately.
-    /// </summary>
-    [Export] public bool RunSequential;
-
     // Animation
     [ExportGroup("Animation")] [Export] public StringName? AnimationName;
     [Export] public bool ReplayIfAlreadyPlaying;
 
-    private EffectTrigger _trigger = EffectTrigger.Instant;
 
-    [ExportGroup("Trigger")]
-    [Export]
-    public EffectTrigger Trigger
+    [ExportGroup("Sound Settings")]
+    private SoundEffectType _audioType = SoundEffectType.UnassignedSound;
+    [Export] public SoundEffectType AudioType
     {
-        get => _trigger;
+        get => _audioType;
         set
         {
-            _trigger = value;
+            _audioType = value;
+            NotifyPropertyListChanged();
+        }
+    }
+    [Export] public bool PlaySound2D;
+    private ExecutionTrigger _audioTrigger = ExecutionTrigger.Instant;
+    [Export] public ExecutionTrigger AudioTrigger
+    {
+        get => _audioTrigger;
+        set
+        {
+            _audioTrigger = value;
+            NotifyPropertyListChanged();
+        }
+    }
+    [Export] public float DelaySecondsAudio;
+    [Export] public int TriggerValueAudio;
+
+    [ExportGroup("Trigger")]
+    private ExecutionTrigger _effectTrigger = ExecutionTrigger.Instant;
+
+    [Export]
+    public ExecutionTrigger EffectTrigger
+    {
+        get => _effectTrigger;
+        set
+        {
+            _effectTrigger = value;
             NotifyPropertyListChanged();
         }
     }
 
     [Export] public bool BlockOnTrigger = true;
-    [Export] public float DelaySeconds;
-    [Export] public int TriggerValue;
+    [Export] public float DelaySecondsEffect;
+    [Export] public int TriggerValueEffect;
+
+    /// <summary>
+    /// If false, <see cref="ExecuteAsync"/> will get be called for each target tile separately.
+    /// </summary>
+    [ExportGroup("")] [Export] public bool RunSequential;
 
     private static readonly ILogger Log = GameLogger.For(typeof(EffectData));
 
     public override void _ValidateProperty(Dictionary property)
     {
-        var propertyName = property["name"].AsStringName();
+        var propertyName = property["name"].AsString();
 
         var show = true;
         switch (propertyName)
         {
-            case nameof(DelaySeconds):
-                if (_trigger != EffectTrigger.TimerEnd) show = false;
+            case nameof(DelaySecondsEffect):
+                if (EffectTrigger != ExecutionTrigger.TimerEnd) show = false;
                 break;
-            case nameof(TriggerValue):
-                if (_trigger is EffectTrigger.TimerEnd or EffectTrigger.Instant) show = false;
+            case nameof(TriggerValueEffect):
+                if (EffectTrigger is ExecutionTrigger.TimerEnd or ExecutionTrigger.Instant) show = false;
+                break;
+            
+            case nameof(DelaySecondsAudio):
+                if (AudioType == SoundEffectType.UnassignedSound || 
+                    AudioTrigger != ExecutionTrigger.TimerEnd) show = false;
+                break;
+            case nameof(TriggerValueAudio):
+                if (AudioType == SoundEffectType.UnassignedSound || 
+                    AudioTrigger is ExecutionTrigger.TimerEnd or ExecutionTrigger.Instant) show = false;
                 break;
         }
-
-
+        
         if (!show)
+        {
             property["usage"] = (int)PropertyUsageFlags.NoEditor;
+            return;
+        }
+        
+        var (disable, hint) = propertyName switch
+        {
+            nameof(AudioTrigger) => (AudioType == SoundEffectType.UnassignedSound,
+                "To use AudioTrigger, AudioType must be set to a valid SoundEffectType."),
+            
+            _ => (false, "")
+        };
+
+        if (!string.IsNullOrEmpty(hint))
+            property["hint_text"] = hint;
+        
+        if (disable)
+            property["usage"] = (int)(property["usage"].AsInt32() | (long)PropertyUsageFlags.ReadOnly);
     }
 
 
@@ -126,7 +178,6 @@ public abstract partial class EffectData : Resource
 
             return Result.Ok<EffectOutcome, EffectError>(new CompositeOutcome
             {
-                Caster = ctx.Caster,
                 Outcomes = outcomes
             });
         }
@@ -144,13 +195,14 @@ public abstract partial class EffectData : Resource
     private async Task<Result<EffectOutcome, EffectError>> ExecuteEffectAsync(AbilityContext ctx, AbilityPayload payload)
     {
         PlayAnimationIfNeeded(ctx);
+        PlaySoundIfNeeded(ctx, payload);
 
         // Trigger Logic (& UpdatePayload)
-        if (_trigger != EffectTrigger.Instant)
+        if (EffectTrigger != ExecutionTrigger.Instant)
         {
             EventBus.Instance.EmitSignal(EventBus.SignalName.EffectTriggerStart, ctx.CasterNode, ctx.Ability, this);
 
-            var waitTask = AwaitTriggerAsync(ctx);
+            var waitTask = AwaitTriggerAsync(ctx, EffectTrigger, DelaySecondsEffect, TriggerValueEffect);
             UpdatePayload(ctx, payload);
             await waitTask;
 
@@ -161,6 +213,7 @@ public abstract partial class EffectData : Resource
             UpdatePayload(ctx, payload);
         }
 
+        // Effect Application
         var affectedTiles = GetAffectedTiles(ctx, payload);
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.EffectApplyStart, ctx.CasterNode, ctx.Ability, this);
@@ -179,40 +232,62 @@ public abstract partial class EffectData : Resource
         ctx.Caster.AnimComp.PlayAnimation(AnimationName);
     }
 
-    private async Task AwaitTriggerAsync(AbilityContext context)
+    private async void PlaySoundIfNeeded(AbilityContext ctx, AbilityPayload payload)
+    {
+        if (AudioType == SoundEffectType.UnassignedSound) return;
+        
+        await AwaitTriggerAsync(ctx, AudioTrigger, DelaySecondsAudio, TriggerValueAudio);
+
+        if (PlaySound2D)
+        {
+            if (payload.CurrentOrigin is { } origin)
+            {
+                AudioManager.Instance.PlayAudioAtLocation(AudioType, origin);
+                return;
+            }            
+            
+            Log.Here().Warn("Cannot play 2D sound effect without a valid origin. Fallback to non 2D Audio Playing");
+        }
+        
+        AudioManager.Instance.PlayAudio(AudioType);
+    }
+
+    private async Task AwaitTriggerAsync(AbilityContext context, ExecutionTrigger trigger, float delaySeconds = 0, int triggerValue = 0)
     {
         var hasAnimComp = context.Caster.AnimComp != null;
         Log.Here().Debug("Awaiting trigger {Trigger} with value {TriggerValue}, hasAnimComp: {hasAnimComp}",
-            _trigger, TriggerValue, hasAnimComp);
+            trigger, triggerValue, hasAnimComp);
 
-        switch (_trigger)
+        switch (trigger)
         {
-            case EffectTrigger.Instant:
+            case ExecutionTrigger.Instant:
                 break;
-            case EffectTrigger.TimerEnd:
-                var timer = context.GameContext.GameManager.GetTree().CreateTimer(DelaySeconds);
+            case ExecutionTrigger.TimerEnd:
+                var timer = context.GameContext.GameManager.GetTree().CreateTimer(delaySeconds);
                 await context.GameContext.GameManager.ToSignal(timer, SceneTreeTimer.SignalName.Timeout);
                 break;
-            case EffectTrigger.CastOnFrame when hasAnimComp:
-                if (context.Caster.AnimComp!.HasReachedFrame(TriggerValue))
+            case ExecutionTrigger.CastOnFrame when hasAnimComp:
+                if (context.Caster.AnimComp!.HasReachedFrame(triggerValue))
                     break;
-                Log.Here().Debug("Waiting for frame {TriggerValue}, current frame: {CurrentFrame}, animation: {Animation}",
-                    TriggerValue, context.Caster.AnimComp.GetCurrentFrame(), context.Caster.AnimComp.GetCurrentAnimation());
-                await context.Caster.AnimComp.WaitForTargetFrame(TriggerValue);
-                Log.Here().Debug("Reached frame {TriggerValue}", TriggerValue);
+                Log.Here().Debug(
+                    "Waiting for frame {TriggerValue}, current frame: {CurrentFrame}, animation: {Animation}",
+                    triggerValue, context.Caster.AnimComp.GetCurrentFrame(),
+                    context.Caster.AnimComp.GetCurrentAnimation());
+                await context.Caster.AnimComp.WaitForTargetFrame(triggerValue);
+                Log.Here().Debug("Reached frame {TriggerValue}", triggerValue);
                 break;
-            case EffectTrigger.CastAfterLoops when hasAnimComp:
-                await context.Caster.AnimComp!.WaitForLoopCount(TriggerValue);
+            case ExecutionTrigger.CastAfterLoops when hasAnimComp:
+                await context.Caster.AnimComp!.WaitForLoopCount(triggerValue);
                 break;
-            case EffectTrigger.CastAfterFrames when hasAnimComp:
-                await context.Caster.AnimComp!.WaitForFrames(TriggerValue);
+            case ExecutionTrigger.CastAfterFrames when hasAnimComp:
+                await context.Caster.AnimComp!.WaitForFrames(triggerValue);
                 break;
-            case EffectTrigger.CastOnLoop when hasAnimComp:
-                await context.Caster.AnimComp!.WaitForTargetLoop(TriggerValue);
+            case ExecutionTrigger.CastOnLoop when hasAnimComp:
+                await context.Caster.AnimComp!.WaitForTargetLoop(triggerValue);
                 break;
             default:
                 Log.Here().Warn("Invalid Trigger '{Trigger}' was requested in context: {hasAnimComp}",
-                    _trigger, hasAnimComp);
+                    trigger, hasAnimComp);
                 break;
         }
     }
@@ -263,7 +338,8 @@ public abstract partial class EffectData : Resource
     }
 
 
-    public abstract Result<EffectOutcome, EffectError> ApplyEffect(AbilityContext context, AbilityPayload payload, Vector2I[] affectedTiles);
+    public abstract Result<EffectOutcome, EffectError> ApplyEffect(AbilityContext context, AbilityPayload payload,
+        Vector2I[] affectedTiles);
 
     public virtual void UpdatePayload(AbilityContext context, AbilityPayload payload)
     {

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4myuye6y7fs4"
-path="res://.godot/imported/BigBlueButton_Regular_Jont.png-bde1ff3c578770fbcd9abc0f40717e37.ctex"
+uid="uid://d07uplkvojro4"
+path="res://.godot/imported/BigBlueButton_Regular.png-7f37d7aa398f804f40480994c82f8f6b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://UI/UnitInfoBar/AbilityButton/BigBlueButton_Regular_Jont.png"
-dest_files=["res://.godot/imported/BigBlueButton_Regular_Jont.png-bde1ff3c578770fbcd9abc0f40717e37.ctex"]
+source_file="res://UI/UnitInfoBar/AbilityButton/Assets/BigBlueButton_Regular.png"
+dest_files=["res://.godot/imported/BigBlueButton_Regular.png-7f37d7aa398f804f40480994c82f8f6b.ctex"]
 
 [params]
 

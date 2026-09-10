@@ -59,7 +59,6 @@ public partial class MoveSelfEffect : EffectData
 
         return Result.Ok<EffectOutcome, EffectError>(new MoveOutcome
         {
-            Caster = castingUnit,
             Target = castingUnit,
             From = from,
             To = to

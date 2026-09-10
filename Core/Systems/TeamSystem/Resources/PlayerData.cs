@@ -8,7 +8,7 @@ namespace AKidsDream.Core.Teams;
 public partial class PlayerData : Resource
 {
 	[Export] public int PlayerIdInt;
-	[Export] public string PlayerName;
+	[Export] public string Name;
 	[Export] public int TeamIdInt;
 	[Export] public Global.UnitColor UnitColor;
 	[Export] public ControllerType ControllerType;
@@ -29,7 +29,7 @@ public partial class PlayerData : Resource
 	
 	public PlayerData(
 		PlayerId playerId, 
-		string playerName, 
+		string name, 
 		TeamId teamId, 
 		Global.UnitColor unitColor, 
 		ControllerType controllerType,
@@ -37,10 +37,13 @@ public partial class PlayerData : Resource
 		)
 	{
 		PlayerIdInt = playerId.Value;
-		PlayerName = playerName;
+		Name = name;
 		TeamIdInt = teamId.Value;
 		UnitColor = unitColor;
 		ControllerType = controllerType;
 		Mana = mana;
 	}
+	
+	// ------------------------------------------------ Utils ------------------------------------------------
+	public bool UsesPIC => ControllerType == ControllerType.PlayerInteractionController;
 }

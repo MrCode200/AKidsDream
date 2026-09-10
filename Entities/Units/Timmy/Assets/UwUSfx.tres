@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SoundEffectSettings" format=3 uid="uid://bibxj4shpmfdy"]
+
+[ext_resource type="AudioStream" uid="uid://dijykiygpcuvl" path="res://Entities/Units/Timmy/Assets/TimmyUwuSfx.mp3" id="1_uv14s"]
+[ext_resource type="Script" uid="uid://64cgabm4h54d" path="res://Common/Audio/Resources/SoundEffectSettings.cs" id="2_78yep"]
+
+[resource]
+script = ExtResource("2_78yep")
+Type = 6
+SoundEffect = ExtResource("1_uv14s")
+PitchScale = 0.606
+PitchRandomness = 0.111
+Attenuation = 1.25
+PanningStrength = 2.091
+metadata/_custom_type_script = "uid://64cgabm4h54d"

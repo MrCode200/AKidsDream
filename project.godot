@@ -18,13 +18,14 @@ config/icon="res://icon.svg"
 
 [audio]
 
-buses/default_bus_layout=""
+buses/default_bus_layout="uid://clcin2ukd0ry1"
 
 [autoload]
 
 EventBus="*uid://bjmcgayj4xwls"
 Console="*uid://ouiu5xh1cs8n"
 ConsoleCS="*uid://bdi2oxut3dsra"
+AudioManager="*uid://dqlar4v0j4515"
 
 [display]
 

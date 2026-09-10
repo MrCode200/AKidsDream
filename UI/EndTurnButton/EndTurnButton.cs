@@ -1,5 +1,6 @@
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Core.Managers;
+using AKidsDream.Core.Teams;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 using Godot.Collections;
@@ -29,10 +30,10 @@ public partial class EndTurnButton : TextureButton, IBlockable
 
 	// -- LOGIC --
 
-	private void OnTurnStarted(int playerIdInt, int round)
+	private void OnTurnStarted(PlayerData player, int round)
 	{
-		_currentTurnPlayerId = new PlayerId(playerIdInt);
-		Disabled = !HasPlayerInteractionController(playerIdInt);
+		_currentTurnPlayerId = player.PlayerId;
+		Disabled = !HasPlayerInteractionController(player.PlayerId.Value);
 	}
 
 	public override void _Pressed()

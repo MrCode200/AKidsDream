@@ -75,8 +75,10 @@ public static class Global
 		{ AtlasCoordsSprite.RedTile, new Vector2I(5, 0) },
 		{ AtlasCoordsSprite.PurpleTile, new Vector2I(6, 0) },
 	};
-	
-	/* 
+
+	public const int ManaPerRound = 1;
+
+	/*
 	public override void _Ready()
 	{
 		Instance = this;

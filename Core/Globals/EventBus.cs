@@ -2,6 +2,7 @@ using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Common;
 using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Core.Teams;
 using AKidsDream.Entities.Cards;
 using Godot;
 
@@ -33,7 +34,7 @@ public partial class EventBus : Node
         Instance = null;
     }
 
-    // -- GAME SIGNALS --
+    // ---------------------------------------------- GAME SIGNALS ------------------------------------------
 
     [Signal]
     public delegate void GameInitializedEventHandler();
@@ -42,7 +43,7 @@ public partial class EventBus : Node
     public delegate void NewRoundStartedEventHandler(int playerIdInt, int newRound);
 
     [Signal]
-    public delegate void TurnStartedEventHandler(int playerIdInt, int round);
+    public delegate void TurnStartedEventHandler(PlayerData player, int round);
 
     [Signal]
     public delegate void TurnEndedEventHandler(int playerIdInt, int round);
@@ -52,7 +53,7 @@ public partial class EventBus : Node
     [Signal]
     public delegate void RoundStartedEventHandler(int round);
 
-    // -- UNIT SIGNALS --
+    // --------------------------------------------- UNIT SIGNALS ----------------------------------------
 
     // NOTE: Unit Created gets emitted on _Ready not on Unit.Init(...);
 
@@ -78,7 +79,7 @@ public partial class EventBus : Node
     [Signal]
     public delegate void NewTileHoveredEventHandler(Unit unit, AbilityContext ctx, AbilityPayload payload);
 
-    // -- Abilities --
+    // -------------------------------------- Abilities ----------------------------------------
 
     [Signal]
     public delegate void AbilityCastStartEventHandler(Unit unit, AbilityData abilityData);
@@ -104,12 +105,14 @@ public partial class EventBus : Node
     [Signal]
     public delegate void AbilityDeselectedEventHandler(Unit unit);
     
-    // -- CARD SIGNALS --
+    // ------------------------------------ CARD SIGNALS -----------------------------------
     [Signal] public delegate void CardSelectedEventHandler(AbilityCard card);
     [Signal] public delegate void CardChangedEventHandler(AbilityCard oldCard, AbilityCard newCard);
     [Signal] public delegate void CardDeselectedEventHandler(AbilityCard card);
+    [Signal] public delegate void ManaChangedEventHandler(int oldMana, int newMana);
 
-    // -- UI SIGNALS --
+
+    // -------------------------------------- UI SIGNALS ---------------------------------------
 
     [Signal]
     public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);

@@ -3,6 +3,7 @@ using AKidsDream.Abilities.Effects;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Common;
+using AKidsDream.Core.Managers.Audio;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
@@ -23,8 +24,6 @@ public partial class AbilityButton : Control
         set
         {
             _disabled = _cannotAfford ? true : value;
-            GD.Print("Disabled: " + _disabled);
-            GD.Print("Cannot afford: " + _cannotAfford);
             Button.Disabled = _disabled;
         }
     }
@@ -61,6 +60,7 @@ public partial class AbilityButton : Control
 
     private void OnAbilityButtonPressed()
     {
+        AudioManager.Instance.PlayAudio(SoundEffectType.ButtonClick);
         EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityBtnPressed, Unit, Ability);
     }
 

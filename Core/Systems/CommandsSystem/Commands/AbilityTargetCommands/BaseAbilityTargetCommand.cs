@@ -6,6 +6,7 @@ using AKidsDream.Common.Components.TweenComponent.Resources;
 using AKidsDream.Common.Errors;
 using AKidsDream.Common.Logging;
 using AKidsDream.Common.Results;
+using AKidsDream.Core.Managers.Audio;
 using Godot;
 using Serilog;
 
@@ -48,6 +49,21 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
         var resimulatedPayload = validationResult.Value;
         Payload.SetValuesTo(resimulatedPayload);
 
+        // Visualization
+        context.AbilityVisualizer.ShowEffectVisualization(Ctx, resimulatedPayload, ability.Effects);
+        context.AbilityVisualizer.ShowReachVisualization(Ctx, resimulatedPayload, ability);
+        if (resimulatedPayload.AccumulatedTargets.Count <= 1)
+            context.AbilityVisualizer.ClearNumberedTilemap();
+        else
+            context.AbilityVisualizer.ShowNumberedTilemap(resimulatedPayload.AccumulatedTargets);
+        
+        // Audio
+        if (AudioManager.Instance.SoundEffectTypeMap.TryGetValue(SoundEffectType.TileSelected, out var soundEffect))
+            AudioManager.Instance.PlayAudio(
+                SoundEffectType.TileSelected,
+                pitch: soundEffect.PitchScale + Mathf.Min(0.16f * resimulatedPayload.AccumulatedTargets.Count, 1.4f)
+            );
+        
         Log.Here().Info(
             "{Action} target {TargetTile} for ability '{AbilityName}'",
             GetActionName(),
@@ -55,9 +71,6 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
             Ctx.Ability.Name,
             Ctx.Caster.CasterName,
             Ctx.Caster.CasterId);
-
-        context.AbilityVisualizer.ShowEffectVisualization(Ctx, resimulatedPayload, ability.Effects);
-        context.AbilityVisualizer.ShowReachVisualization(Ctx, resimulatedPayload, ability);
 
         return Result<GameError>.Ok();
     }

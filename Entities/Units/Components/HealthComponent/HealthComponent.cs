@@ -87,7 +87,7 @@ public partial class HealthComponent : Node
 		UnitStats.Health -= amount;
 
 		PlayDamageShader();
-		FloatingText?.SetNewFloatingText($"-{amount} HP", new Color(220, 90, 90));
+		FloatingText?.SetNewFloatingText($"-{amount} HP", Color.Color8(220, 90, 90));
 
 		_log.Here().Info(
 			"Took {DamageAmount} damage, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",
@@ -114,7 +114,7 @@ public partial class HealthComponent : Node
 		var previousHealth = UnitStats.Health;
 		amount = Math.Min(UnitStats.MaxHealth - UnitStats.Health, amount);
 		UnitStats.Health += amount;
-		FloatingText?.SetNewFloatingText($"+{amount} HP", new Color(140, 210, 140));
+		FloatingText?.SetNewFloatingText($"+{amount} HP", Color.Color8(140, 210, 140));
 		
 		_log.Here().Info(
 			"Healed {HealAmount} health, health: {PreviousHealth} → {CurrentHealth}/{MaxHealth}",

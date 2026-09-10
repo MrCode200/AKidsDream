@@ -41,8 +41,8 @@ public partial class UnitCrudConsoleCommands : ConsoleCommandBase
         var ok = true;
         ok &= TryInt(playerId, "playerId", out var playerIdInt,
             allowedValues: [.. Context.PlayerTeamRegistry.GetAllPlayers().Select(p => p.PlayerId.Value)]);
-        ok &= TryInt(tileX, "tileX", out var tileXInt, min: 0, max: Context.Board.StateData.Width);
-        ok &= TryInt(tileY, "tileY", out var tileYInt, min: 0, max: Context.Board.StateData.Height);
+        ok &= TryInt(tileX, "tileX", out var tileXInt, min: 0, max: Context.Board.State.Width);
+        ok &= TryInt(tileY, "tileY", out var tileYInt, min: 0, max: Context.Board.State.Height);
         ok &= TryEnum<Global.UnitName>(unitName, "unitName", out var parsedUnitName);
 
         if (!ok) return;
@@ -74,6 +74,7 @@ public partial class UnitCrudConsoleCommands : ConsoleCommandBase
         }
         else
         {
+            Log.Here().Err("Failed to create unit. CreatedUnits.Count == 0, unitStateData: {UnitStateData}", unitStateData);
             Console.PrintError("Failed to create unit");
         }
     }

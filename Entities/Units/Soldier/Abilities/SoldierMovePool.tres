@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PoolData" format=3 uid="uid://bav7k5klltty6"]
+
+[ext_resource type="Texture2D" uid="uid://b58symhfb4h88" path="res://UI/PoolBar/Assets/MovePoint.png" id="1_uun3j"]
+[ext_resource type="Script" uid="uid://b14gay7t266tc" path="res://UI/PoolBar/Resources/PoolData.cs" id="2_k0mxp"]
+
+[resource]
+script = ExtResource("2_k0mxp")
+MaxCount = 1
+CurrentCount = 1
+Name = &"Move"
+Icon = ExtResource("1_uun3j")
+metadata/_custom_type_script = "uid://b14gay7t266tc"

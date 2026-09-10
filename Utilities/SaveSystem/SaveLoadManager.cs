@@ -72,7 +72,7 @@ public static class SaveLoadManager
                 gameManager.PlayerTeamRegistry,
                 board
             );
-        board.Init(state.BoardStateData, initializedUnits);
+        board.Init(state.BoardState, initializedUnits);
 
         Log.Here()
             .Debug("LoadGameState completed successfully");
@@ -104,7 +104,7 @@ public static class SaveLoadManager
             PlayerData = new Array<PlayerData>(playerTeamRegistry.GetAllPlayers()),
             TeamData = new Array<TeamData>(playerTeamRegistry.GetAllTeams()),
             TeamRelations = teamRelationResolver.Relations,
-            BoardStateData = board.StateData
+            BoardState = board.State
         };
 
         // Iterate through BoardState tiles instead of scene tree

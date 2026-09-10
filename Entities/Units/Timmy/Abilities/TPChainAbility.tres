@@ -20,12 +20,11 @@ metadata/_custom_type_script = "uid://dqpieu0uvgg8d"
 script = ExtResource("3_ctw0t")
 EffectPattern = SubResource("Resource_lf0ek")
 EffectAtlasCoords = 5
-RunSequential = true
 AnimationName = &"Run"
 ReplayIfAlreadyPlaying = true
-Trigger = 32
-DelaySeconds = 5.0
-TriggerValue = 1
+EffectTrigger = 8
+TriggerValueEffect = 1
+RunSequential = true
 metadata/_custom_type_script = "uid://cnajkqpahjyk1"
 
 [sub_resource type="Resource" id="Resource_5mrbn"]

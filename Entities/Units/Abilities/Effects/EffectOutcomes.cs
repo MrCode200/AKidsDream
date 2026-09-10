@@ -7,7 +7,6 @@ namespace AKidsDream.Abilities.Effects;
 
 public abstract record EffectOutcome
 {
-    public IAbilityCaster? Caster { get; init; }
 }
 
 public sealed record DamageOutcome : EffectOutcome
