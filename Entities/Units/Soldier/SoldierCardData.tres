@@ -33,16 +33,16 @@ metadata/_custom_type_script = "uid://mkx7yawfebu6"
 [sub_resource type="Resource" id="Resource_f7psw"]
 script = ExtResource("6_jw57k")
 Icon = SubResource("AtlasTexture_eovly")
-Name = &"SummonUnit"
+Name = &"Soldier"
 Description = &"Summons a Soldier Unit"
 ReachPattern = SubResource("Resource_s4yto")
+ReachAtlasCoords = 3
 Effects = [SubResource("Resource_4tjwn")]
 PoolName = &""
 metadata/_custom_type_script = "uid://bc2xq8b7msrkv"
 
 [resource]
 script = ExtResource("1_q55t2")
-ManaCost = 2
 SpawnDelay = 1
 Ability = SubResource("Resource_f7psw")
 metadata/_custom_type_script = "uid://cwvfcr5urb3ha"

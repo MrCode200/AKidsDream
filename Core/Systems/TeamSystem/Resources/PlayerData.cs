@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
+using Godot.Collections;
 
 namespace AKidsDream.Core.Teams;
 
@@ -12,7 +14,8 @@ public partial class PlayerData : Resource
 	[Export] public int TeamIdInt;
 	[Export] public Global.UnitColor UnitColor;
 	[Export] public ControllerType ControllerType;
-
+	[Export] public Array<Global.UnitName> PlayerHand = [];
+	
 	private int _mana;
 	[Export]
 	public int Mana
@@ -45,5 +48,5 @@ public partial class PlayerData : Resource
 	}
 	
 	// ------------------------------------------------ Utils ------------------------------------------------
-	public bool UsesPIC => ControllerType == ControllerType.PlayerInteractionController;
+	public bool UsesPIC => ControllerType == ControllerType.PlayerInteractionController;  
 }

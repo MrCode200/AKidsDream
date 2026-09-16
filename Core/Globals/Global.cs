@@ -43,7 +43,8 @@ public static class Global
 	}
 	
 	public enum UnitName
-	{ 
+	{
+		Unassigned,
 		Timmy,
 		Soldier
 	}
@@ -77,6 +78,7 @@ public static class Global
 	};
 
 	public const int ManaPerRound = 1;
+	public const int CardsPerRound = 3;
 
 	/*
 	public override void _Ready()

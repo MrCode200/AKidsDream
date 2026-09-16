@@ -4,6 +4,7 @@ using AKidsDream.Common.Errors;
 using AKidsDream.Common.Results;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
+using AKidsDream.Entities.Cards;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers;
 using AKidsDream.Managers.SaveSystems;
@@ -41,7 +42,8 @@ public sealed class GameContext(
     GameLoopManager gameLoopManager,
     AbilityVisualizer abilityVisualizer,
     Node entityLayer,
-    CommandExecutor commandExecutor
+    CommandExecutor commandExecutor,
+    PlayerHand playerHand
 )
 {
     public GameManager GameManager { get; } = gameManager;
@@ -53,6 +55,7 @@ public sealed class GameContext(
     public CommandExecutor CommandExecutor { get; } = commandExecutor;
     public PlayerTeamRegistry PlayerTeamRegistry { get; } = playerTeamRegistry;
     public TeamRelationResolver TeamRelationResolver { get; } = teamRelationResolver;
+    public PlayerHand PlayerHand { get; } = playerHand;
 
     public SceneTree GetTree() => GameManager.GetTree();
 }

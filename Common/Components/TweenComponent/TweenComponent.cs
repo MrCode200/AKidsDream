@@ -190,8 +190,8 @@ public partial class TweenComponent : Node
 
 		if (data.Triggers.Contains(TweenTrigger.Hide))
 		{
-			Log.Here().Warn(
-				"Subscribing to Hidden event may contain bugs (especially if subscribing to Show at the same time(?))");
+			//Log.Here().Warn(
+				//"Subscribing to Hidden event may contain bugs (especially if subscribing to Show at the same time(?))");
 			void RunOnHideWrapper() => RunOnHide(data);
 			Target.Hidden += RunOnHideWrapper;
 			_unsubscribers.Add(() => Target.Hidden -= RunOnHideWrapper);

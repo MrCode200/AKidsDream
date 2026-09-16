@@ -123,6 +123,7 @@ public partial class CardManager : Node2D, IBlockable
                 _isDragging = false;
                 _cardDraggingAnchor = null;
                 _lastTargetTile = null;
+                _pressedCard.IsDragging = false;
                 TryCastCard();
             }
             else
@@ -146,11 +147,11 @@ public partial class CardManager : Node2D, IBlockable
 
             _isDragging = true;
             _cardDraggingAnchor = mouseMotion.Position - _pressedCard.Position;
+            _pressedCard.IsDragging = true;
 
             if (SelectedCard is null || SelectedCard != _pressedCard)
             {
                 HandleCardClick(_pressedCard);
-                SelectedCard?.SelectionTweenComp.KillTween();
             }
             else
                 BuildAbilityContextPayload();
@@ -363,7 +364,7 @@ public partial class CardManager : Node2D, IBlockable
             // Return card to hand position if not successfully cast and freed
             if (!isSuccess && IsInstanceValid(castingCard) && !castingCard.IsQueuedForDeletion())
             {
-                PlayerHand.MoveCardTo(castingCard);
+                castingCard.MoveToHand(null, 0);
                 AbilityVisualizer.ClearEffectTilemap();
             }
 

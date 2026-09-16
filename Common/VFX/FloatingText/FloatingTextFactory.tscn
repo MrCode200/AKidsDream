@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://clwfldkieby2s"]
+
+[ext_resource type="Script" uid="uid://ns00u257laor" path="res://Common/VFX/FloatingText/FloatingTextFactory.cs" id="1_bk0xj"]
+[ext_resource type="PackedScene" uid="uid://djhx822tsjxm6" path="res://Common/VFX/FloatingText/FloatingText.tscn" id="2_u6vqn"]
+
+[node name="FloatingTextFactory" type="Control" unique_id=299892699]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_bk0xj")
+FloatingTextScene = ExtResource("2_u6vqn")

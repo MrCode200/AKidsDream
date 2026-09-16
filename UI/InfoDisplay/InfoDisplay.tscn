@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://cbx68dur33vb8" path="res://UI/InfoDisplay/Tween/BumbUpRoundCounterTween.tres" id="4_fo0b2"]
 [ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="4_uosot"]
 [ext_resource type="Resource" uid="uid://sn03am6t5ngo" path="res://UI/InfoDisplay/Tween/BumbUpPlayerName.tres" id="6_05p16"]
-[ext_resource type="PackedScene" uid="uid://djhx822tsjxm6" path="res://Common/VFX/FloatingText/FloatingText.tscn" id="7_sanjn"]
+[ext_resource type="PackedScene" uid="uid://clwfldkieby2s" path="res://Common/VFX/FloatingText/FloatingTextFactory.tscn" id="7_sanjn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ly640"]
 font = ExtResource("1_ih8ts")
@@ -20,7 +20,7 @@ font_size = 19
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
-[node name="InfoDisplay" type="Control" unique_id=319109358 node_paths=PackedStringArray("RoundLabel", "PlayersTurnLabel", "ManaLabel", "ManaFloatingText", "PlayerLabelTweenComp", "RoundCounterTweenComp")]
+[node name="InfoDisplay" type="Control" unique_id=319109358 node_paths=PackedStringArray("RoundLabel", "PlayersTurnLabel", "ManaLabel", "FloatingTextFactory", "PlayerLabelTweenComp", "RoundCounterTweenComp")]
 layout_mode = 3
 anchors_preset = 5
 anchor_left = 0.5
@@ -30,7 +30,7 @@ script = ExtResource("1_ly640")
 RoundLabel = NodePath("RoundCounter")
 PlayersTurnLabel = NodePath("PlayersTurnName")
 ManaLabel = NodePath("ManaCounter")
-ManaFloatingText = NodePath("ManaFloatingText")
+FloatingTextFactory = NodePath("ManaCounter/FloatingTextFactory")
 PlayerLabelTweenComp = NodePath("PlayersTurnName/BumbUpPlayerNameTween")
 RoundCounterTweenComp = NodePath("RoundCounter/BumbUpRoundCounterTween")
 
@@ -79,16 +79,6 @@ Target = NodePath("..")
 TweenDatas = Array[ExtResource("4_uosot")]([ExtResource("4_fo0b2")])
 metadata/_custom_type_script = "uid://1l3wvsl0yenm"
 
-[node name="ManaFloatingText" parent="." unique_id=1135333433 instance=ExtResource("7_sanjn")]
-self_modulate = Color(0.40784314, 0.7607843, 0.9607843, 1)
-layout_mode = 1
-offset_left = -525.0
-offset_top = 431.0
-offset_right = -492.0
-offset_bottom = 454.0
-text = "+99"
-DefaultColor = Color(0.40784314, 0.7607843, 0.9607843, 1)
-
 [node name="ManaCounter" type="Label" parent="." unique_id=1743664400]
 layout_mode = 1
 anchors_preset = 4
@@ -103,3 +93,8 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 text = "Mana: XX"
+
+[node name="FloatingTextFactory" parent="ManaCounter" unique_id=299892699 instance=ExtResource("7_sanjn")]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 13.0

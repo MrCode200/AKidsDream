@@ -12,11 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://d2yy7wcxi8s4u" path="res://Core/Systems/ConsoleManager/ConsoleManager.tscn" id="10_7vbhu"]
 [ext_resource type="PackedScene" uid="uid://b0nx8wkcv0h57" path="res://Core/Systems/BlockingManager/BlockingManager.tscn" id="11_7vbhu"]
 [ext_resource type="PackedScene" uid="uid://ddst6dppshn3c" path="res://UI/EndTurnButton/EndTurnButton.tscn" id="12_7hfl2"]
-[ext_resource type="PackedScene" uid="uid://bbvgn3fa8g1e4" path="res://Core/Systems/CardManager/CardManager.tscn" id="12_c66ua"]
+[ext_resource type="PackedScene" uid="uid://bbvgn3fa8g1e4" path="res://Core/Systems/CardSystem/CardManager.tscn" id="12_c66ua"]
 [ext_resource type="PackedScene" uid="uid://f0e2ejne7mxf" path="res://UI/InfoDisplay/InfoDisplay.tscn" id="12_j3kke"]
-[ext_resource type="Script" uid="uid://bhj4qnvac3my3" path="res://Core/Systems/CardManager/CardManager.cs" id="13_emgvh"]
+[ext_resource type="Script" uid="uid://bhj4qnvac3my3" path="res://Core/Systems/CardSystem/CardManager.cs" id="13_emgvh"]
 [ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="13_ruhs7"]
-[ext_resource type="PackedScene" uid="uid://clgdcgoatwfaa" path="res://Entities/Cards/PlayerHand.tscn" id="17_c66ua"]
+[ext_resource type="PackedScene" uid="uid://clgdcgoatwfaa" path="res://Core/Systems/CardSystem/PlayerHand/PlayerHand.tscn" id="17_c66ua"]
 
 [sub_resource type="Resource" id="Resource_c66ua"]
 resource_local_to_scene = true
@@ -32,7 +32,7 @@ MaxHealth = 2
 Health = 2
 metadata/_custom_type_script = "uid://8ujfv88riuka"
 
-[node name="GameManager" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "GameBoard", "CommandExecutor", "AbilityVisualizer", "ConsoleManager", "EntityLayer", "GameLoopManager", "CardManager")]
+[node name="GameManager" type="Node2D" unique_id=402806751 node_paths=PackedStringArray("ControllerFactory", "GameBoard", "CommandExecutor", "AbilityVisualizer", "ConsoleManager", "EntityLayer", "GameLoopManager", "CardManager", "PlayerHand")]
 script = ExtResource("1_ypqj4")
 LoadFileName = "NewSave.tres"
 SaveOnExit = false
@@ -44,6 +44,7 @@ ConsoleManager = NodePath("SystemsLayer/ConsoleManager")
 EntityLayer = NodePath("EntityLayer")
 GameLoopManager = NodePath("SystemsLayer/GameLoopManager")
 CardManager = NodePath("SystemsLayer/CardManager")
+PlayerHand = NodePath("UILayer/PlayerHand")
 
 [node name="SystemsLayer" type="Node" parent="." unique_id=1659508561]
 

@@ -8,6 +8,7 @@ using AKidsDream.Util.Identifiers;
 using AKidsDream.Util.Identifiers.Commands;
 using AKidsDream.Managers;
 using AKidsDream.Commands;
+using AKidsDream.Entities.Cards;
 using Godot;
 using Godot.Collections;
 using Serilog;
@@ -102,7 +103,7 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 1
 									   OwnerId = 1
-									   UnitName = 1
+									   UnitName = 2
 									   TileLocation = Vector2i(5, 6)
 									   UnitStats = SubResource("Resource_vp3i7")
 
@@ -116,7 +117,7 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 2
 									   OwnerId = 2
-									   UnitName = 1
+									   UnitName = 2
 									   TileLocation = Vector2i(4, 5)
 									   UnitStats = SubResource("Resource_4n8g7")
 
@@ -130,6 +131,7 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 3
 									   OwnerId = 1
+									   UnitName = 1
 									   TileLocation = Vector2i(6, 6)
 									   UnitStats = SubResource("Resource_jsx6i")
 
@@ -181,6 +183,7 @@ public partial class GameManager : Node2D
     [Export] public Node EntityLayer;
     [Export] public GameLoopManager GameLoopManager;
     [Export] public CardManager CardManager;
+    [Export] public PlayerHand PlayerHand;
 
 
     private readonly ILogger _log = GameLogger.For<GameManager>();
@@ -206,7 +209,8 @@ public partial class GameManager : Node2D
             GameLoopManager,
             AbilityVisualizer,
             EntityLayer,
-            CommandExecutor
+            CommandExecutor,
+            PlayerHand
         );
 
         // Initialize systems with the context
@@ -269,7 +273,7 @@ public partial class GameManager : Node2D
         InitializeNewBoard(gameCreationPayload);
         EventBus.Instance.EmitSignal(EventBus.SignalName.GameInitialized);
     }
-
+	
     public void InitializeControllers(Array<PlayerData> players)
     {
         foreach (var playerData in players)

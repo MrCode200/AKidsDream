@@ -94,14 +94,10 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
         UnitId? unitId = null
     )
     {
-        var externalIdPassed = false;
-
         if (unitId is null)
             UnitId = UnitId.GetNextId();
         else
         {
-            // externalId shouldn't be a bug... (LoadSaveSystem)
-            externalIdPassed = true;
             UnitId = unitId.Value;
         }
 
@@ -128,13 +124,7 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
         _log = _log.ForContext("IdTag", UnitId)
             .ForContext("NameTag", UnitName)
             .ForContext("PlayerId", OwnerIdInt);
-
-        if (externalIdPassed)
-            _log.ForContext("TileLocation", TileLocation)
-                .Here()
-                .Warn(
-                    "Unit Initialized With External Id at {TileLocation} with ID: {UnitId}",
-                    TileLocation);
+        _log.Here().Info("Unit initialized");
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitCreated, this);
     }

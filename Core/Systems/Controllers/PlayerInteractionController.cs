@@ -8,6 +8,7 @@ using AKidsDream.StateMachines;
 using AKidsDream.Common;
 using AKidsDream.Common.Logging;
 using AKidsDream.Core.Teams;
+using AKidsDream.Entities.Cards;
 using AKidsDream.Managers;
 using AKidsDream.Util.Identifiers;
 using Godot;
@@ -58,7 +59,8 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 	public readonly GameContext GCtx = null!; 
 	public Unit? CurrentSelectedUnit;
 	public AbilityData? CurrentSelectedAbility;
-	public PlayerId PlayerId;
+	public PlayerData PlayerData;
+	public PlayerId PlayerId => PlayerData.PlayerId;
 
 	private static readonly ILogger Log = GameLogger.For<PlayerInteractionController>();
 	private bool _isMyTurn;
@@ -69,7 +71,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 
 	public PlayerInteractionController(GameContext context, PlayerData playerData)
 	{
-		PlayerId = playerData.PlayerId;
+		PlayerData = playerData;
 
 		GCtx = context;
 	}
@@ -100,6 +102,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 
 	public void StartTurn()
 	{
+		LoadPlayerCards(GCtx.PlayerHand);
 		StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
 		_isMyTurn = true;
 	}
@@ -157,8 +160,16 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 		GCtx.CommandExecutor.Execute(new EndTurnCommand(PlayerId));
 	}
 
-	// -- --
+	// -- METHODS --
 
+	private void LoadPlayerCards(PlayerHand playerHand)
+	{
+		if (playerHand.ActivePlayer == null || playerHand.ActivePlayer.PlayerId != PlayerId) 
+			playerHand.LoadPlayerHand(PlayerData);
+		
+		playerHand.DrawCards(Global.CardsPerRound);
+	}
+	
 	public void SelectUnit(Unit unit)
 	{
 		if (CurrentSelectedUnit == unit)
