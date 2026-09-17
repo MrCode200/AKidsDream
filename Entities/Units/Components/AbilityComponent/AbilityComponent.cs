@@ -23,6 +23,7 @@ namespace AKidsDream.Common;
 public partial class AbilityComponent : Node
 {
 	private ILogger _log = GameLogger.For<AbilityComponent>();
+	
 	public Unit Unit => (Unit)GetParent();
 
 	/// <summary>

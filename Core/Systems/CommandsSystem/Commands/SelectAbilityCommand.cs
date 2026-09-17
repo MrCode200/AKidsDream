@@ -18,7 +18,7 @@ public class SelectAbilityCommand(
 {
     public Result<GameError> Execute(GameContext context)
     {
-        if (!caster.AbilityC.Abilities.TryGetValue(abilityName, out var ability))
+        if (!caster.AbilityComp.Abilities.TryGetValue(abilityName, out var ability))
             return Result<GameError>.Fail(new AbilityError.AbilityNotFound(caster.CasterId, abilityName));
 
         context.AbilityVisualizer.ShowReachVisualization(

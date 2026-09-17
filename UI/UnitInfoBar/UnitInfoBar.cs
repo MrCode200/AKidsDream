@@ -86,7 +86,7 @@ public partial class UnitInfoBar : Control, IBlockable
 		UnitHealthLabel.Text = newUnit.UnitStats.Health.ToString();
 
 		// Update ability buttons using ZipLongest to handle additions/removals/updates
-		var newAbilities = newUnit.AbilityC.Abilities.Values.ToList();
+		var newAbilities = newUnit.AbilityComp.Abilities.Values.ToList();
 		
 		foreach (var (abilityButton, newAbility) in Utils.ZipLongest(_abilityButtonsMap.Values, newAbilities))
 		{

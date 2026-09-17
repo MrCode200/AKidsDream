@@ -19,7 +19,7 @@ public class CastAbilityBaseCommand(
 {
     public async Task<Result<GameError>> ExecuteAsync(GameContext context)
     {
-        var castResult = await caster.AbilityC.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
+        var castResult = await caster.AbilityComp.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
 
         if (castResult.IsFailure)
             return castResult.DropValue();

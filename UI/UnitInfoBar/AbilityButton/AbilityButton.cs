@@ -67,7 +67,7 @@ public partial class AbilityButton : Control
     private void CheckCanAffordCast(AbilityData ability)
     {
         if (!ability.CanReplenishPool() &&
-            Unit.AbilityC.TryCanAffordBaseCost(ability.Name, out var canAfford) &&
+            Unit.AbilityComp.TryCanAffordBaseCost(ability.Name, out var canAfford) &&
             !canAfford)
         {
             _cannotAfford = true;

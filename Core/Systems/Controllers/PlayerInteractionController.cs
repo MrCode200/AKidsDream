@@ -209,7 +209,7 @@ public partial class PlayerInteractionController : Node2D, IPlayerController
 			return;
 
 		// Check if any unit is currently casting a blocking ability
-		bool isAnyUnitCasting = GCtx.Board.GetAllUnits().Any(unit => unit.AbilityC.IsCasting);
+		bool isAnyUnitCasting = GCtx.Board.GetAllUnits().Any(unit => unit.AbilityComp.IsCasting);
 
 		if (!isAnyUnitCasting)
 			GCtx.AbilityVisualizer.ClearTilemaps();

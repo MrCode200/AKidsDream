@@ -45,7 +45,7 @@ public partial class PoolBar : Control
             child.QueueFree();
         }
 
-        foreach (var (_, poolData) in unit.AbilityC.Pools)
+        foreach (var (_, poolData) in unit.AbilityComp.Pools)
         {
             var poolItem = PoolItem.Instantiate() as PoolItem;
             PoolItem.ResourceName = poolData.Name;
@@ -59,7 +59,7 @@ public partial class PoolBar : Control
     {
         if (_selectedUnit == null) return;
 
-        foreach (var (_, poolData) in _selectedUnit.AbilityC.Pools)
+        foreach (var (_, poolData) in _selectedUnit.AbilityComp.Pools)
         {
             if (!setAll && !poolsToSet.Contains(poolData.Name)) continue;
             if (_poolItemsMap.TryGetValue(poolData.Name, out var poolItem))

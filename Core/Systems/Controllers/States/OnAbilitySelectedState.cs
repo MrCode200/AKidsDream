@@ -40,7 +40,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 		_ability = pic.CurrentSelectedAbility!;
 		_caster = pic.CurrentSelectedUnit!;
 
-		_abilityPayload = _caster.AbilityC.CreatePayload(
+		_abilityPayload = _caster.AbilityComp.CreatePayload(
 			_ability.Name,
 			[],
 			pic.GCtx.Board
@@ -79,7 +79,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 				break;
 		}
 
-		if (_caster.AbilityC.IsCasting)
+		if (_caster.AbilityComp.IsCasting)
 		{
 			// REMOVE HIGHLIGHTS OF ALREADY PROCESSED TILES
 		}
@@ -109,7 +109,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 	private void HandleDeselectClick(PlayerInteractionPayload interaction)
 	{
 		// Prevent tile removal while ability is being cast
-		if (_caster.AbilityC.IsCasting)
+		if (_caster.AbilityComp.IsCasting)
 		{
 			Log.Here().Debug(
 				"Cannot remove target - ability '{AbilityName}' is currently being cast for unit '{UnitName}' (id: {UnitId})",
@@ -135,7 +135,7 @@ public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 
 	private void HandleHover(PlayerInteractionPayload interaction)
 	{
-		if (_caster.AbilityC.IsCasting || _lastHoveredTile == interaction.TileLocationAtMousePos)
+		if (_caster.AbilityComp.IsCasting || _lastHoveredTile == interaction.TileLocationAtMousePos)
 			return;
 
 		_lastHoveredTile = interaction.TileLocationAtMousePos;

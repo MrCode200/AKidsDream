@@ -26,7 +26,7 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
         if (Ctx.Caster is not Unit caster)
             throw new InvalidOperationException($"The caster is not a unit. Caster type: {Ctx.Caster.GetType().Name}");
 
-        if (!caster.AbilityC.Abilities.TryGetValue(Ctx.Ability.Name, out var ability))
+        if (!caster.AbilityComp.Abilities.TryGetValue(Ctx.Ability.Name, out var ability))
             return Result<GameError>.Fail(new AbilityError.AbilityNotFound(caster.CasterId, Ctx.Ability.Name));
 
         var preconditionsResult = ValidatePreconditions();
@@ -35,7 +35,7 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
 
         var modifiedTargets = GetModifiedTargets();
 
-        var validationResult = caster.AbilityC.ValidateCast(
+        var validationResult = caster.AbilityComp.ValidateCast(
             Ctx.Ability.Name,
             Ctx,
             modifiedTargets,

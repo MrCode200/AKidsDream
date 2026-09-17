@@ -14,6 +14,7 @@ public partial class PlayerHand : Node2D
 {
     [ExportCategory("Card Settings")] [Export(PropertyHint.Range, "0, 10")]
     public int MaxHandSize;
+
     [Export] public Curve CardPositionCurve;
     [Export] public float CardSpacing = -30f;
     [Export] public Vector2 CardSpawnPoint;
@@ -26,7 +27,7 @@ public partial class PlayerHand : Node2D
     [Export] public bool UseDelayedHandTween;
 
     [ExportGroup("Dependencies")] [Export] public PackedScene CardPrefab;
-    
+
     public PlayerData ActivePlayer;
     public readonly List<AbilityCard> Hand = [];
     private Vector2 _cardSize;
@@ -46,17 +47,17 @@ public partial class PlayerHand : Node2D
         var tempCard = CardPrefab.Instantiate<AbilityCard>();
         _cardSize = tempCard.Size * tempCard.Scale;
         tempCard.QueueFree();
-    }     
-    
+    }
+
     public void LoadPlayerHand(PlayerData playerData)
     {
-        ActivePlayer = playerData; 
+        ActivePlayer = playerData;
         _log = _log.ForContext("IdTag", playerData.PlayerId)
             .ForContext("NameTag", playerData.Name);
-        
+
         HideHand();
         Hand.Clear();
-        
+
         foreach (var unit in playerData.PlayerHand)
         {
             AddCard(unit, false);
@@ -76,17 +77,19 @@ public partial class PlayerHand : Node2D
         var i = 0;
         foreach (var card in Hand)
         {
+            if (card.IsSelected)
+                card.IsSelected = false;
             card.MoveToHand(CardSpawnPoint, i * 0.025f);
             i++;
-        } 
+        }
     }
 
     public void DrawCards(int count)
-    { 
+    {
         count = Math.Min(count, MaxHandSize - Hand.Count);
-        
+
         _log.Here().Debug("Drawing {CardCount} cards for player {PlayerId}", count, ActivePlayer?.PlayerId);
-        
+
         for (var i = 0; i < count; i++)
         {
             AddCard();
@@ -94,23 +97,24 @@ public partial class PlayerHand : Node2D
 
         RefreshHandLayout();
     }
-    
+
     public void AddCard(Global.UnitName unitName = Global.UnitName.Unassigned, bool updatePlayerData = true)
     {
         unitName = unitName == Global.UnitName.Unassigned ? GetRandomUnitName() : unitName;
         var cardPath = Utils.GetCardPath(unitName);
-        var cardData = (AbilityCardData)ResourceLoader.Load(cardPath);        
+        var cardData = (AbilityCardData)ResourceLoader.Load(cardPath);
 
         var newCard = CardPrefab.Instantiate<AbilityCard>();
 
         newCard.DisplayCard(cardData);
         newCard.Position = CardSpawnPoint;
-        
+
         AddChild(newCard);
         Hand.Add(newCard);
-        
-        _log.Here().Debug("Added card {UnitName} (id: {CardId}) to hand, hand size: {HandSize}", unitName, newCard.Id, Hand.Count);
-        
+
+        _log.Here().Debug("Added card {UnitName} (id: {CardId}) to hand, hand size: {HandSize}", unitName, newCard.Id,
+            Hand.Count);
+
         if (updatePlayerData)
             ActivePlayer.PlayerHand.Add(unitName);
     }
@@ -129,8 +133,9 @@ public partial class PlayerHand : Node2D
         Hand.Remove(card);
         ActivePlayer.PlayerHand.Remove(unitName);
         RefreshHandLayout();
-        
-        _log.Here().Debug("Removed card {UnitName} (id: {CardId}) from hand, hand size: {HandSize}", unitName, card.Id, Hand.Count);
+
+        _log.Here().Debug("Removed card {UnitName} (id: {CardId}) from hand, hand size: {HandSize}", unitName, card.Id,
+            Hand.Count);
     }
 
     private void RefreshHandLayout()
@@ -176,5 +181,22 @@ public partial class PlayerHand : Node2D
         var dy = cardRotationPivot.Y - cardPosition.Y;
         var angle = Math.Atan2(dy, dx) * 180f / Math.PI;
         return 90 - (float)angle;
+    }
+
+    public void SyncCardZOrder()
+    {
+        AbilityCard selectedCard = null;
+        for (var i = 0; i < Hand.Count; i++)
+        {
+            var card = Hand[i];
+            if (card.IsSelected) selectedCard = card;
+            if (card.GetIndex() != i)
+            {
+                MoveChild(card, i);
+            }
+        }
+
+        if (selectedCard != null)
+            MoveChild(selectedCard, -1);
     }
 }

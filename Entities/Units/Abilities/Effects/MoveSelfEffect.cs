@@ -43,6 +43,12 @@ public partial class MoveSelfEffect : EffectData
                                                 $"Caster type: {context.Caster.GetType().Name}");
         }
 
+        var moveComp = castingUnit.GetNode<MoveComponent>("MoveComponent");
+        if (moveComp is null)
+        {
+            throw new InvalidOperationException($"Cannot apply MoveSelfEffect to a Unit without a MoveComponent.");
+        }
+
         if (affectedTiles.Length != 1)
         {
             return Result.Fail<EffectOutcome, EffectError>(
@@ -51,7 +57,7 @@ public partial class MoveSelfEffect : EffectData
 
         Vector2I from = castingUnit.TileLocation;
         Vector2I to = affectedTiles[0];
-        if (!castingUnit.Move(to))
+        if (!moveComp.Move(to))
         {
             return Result.Fail<EffectOutcome, EffectError>(
                 new EffectError.ExecutionFailed($"Unit move from {from} to tile {to} failed."));

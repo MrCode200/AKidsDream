@@ -25,18 +25,19 @@ public partial class AbilityCard : Control
     [Export] public required Label CardName;
     [Export] public required Sprite2D CardBackground;
     [Export] public required Sprite2D CardPortrait;
-    
+
     [Export] public required ShaderMaterial SelectionMaterial;
-    
+
     public Vector2 HandPosition { get; set; }
     public float HandRotation { get; set; }
     public bool IsDragging { get; set; }
-    
-    private int _childSelfIndex;
+
     private Tween? _animationTween;
     private Tween? _disablingTween;
     private bool _isMovingToHand;
-    private const float SelectedHeightDelta = 25f;
+    private const float SelectedHeightDelta = 35f;
+    private bool _isHovered;
+    private PlayerHand _playerHand;
 
     private ILogger _log = GameLogger.For<AbilityCard>();
 
@@ -68,47 +69,31 @@ public partial class AbilityCard : Control
         set
         {
             if (_isSelected.Equals(value)) return;
-            
+
             _isSelected = value;
             
             if (_isSelected)
-            {
-                _childSelfIndex = GetIndex();
-                GetParent()?.MoveChild(this, -1);
-            }
-            else if (_childSelfIndex != GetIndex())
-            {
-                GetParent()?.MoveChild(this, _childSelfIndex);
-            }
-            
+                BringToFront();
+            else
+                RestoreChildIndex();
+
             // Only animate selection height if not dragging and not moving to hand
             if (!IsDragging && !_isMovingToHand)
             {
-                _animationTween?.Kill();
-                _animationTween = CreateTween();
-                _animationTween.SetParallel();
-                
-                var targetY = _isSelected ? HandPosition.Y - SelectedHeightDelta : HandPosition.Y;
-                _animationTween.TweenProperty(this, "position:y", targetY, 0.25f)
-                    .SetEase(Tween.EaseType.Out)
-                    .SetTrans(Tween.TransitionType.Quint);
-                
-                _animationTween.TweenProperty(this, "rotation_degrees", _isSelected ? 0 : HandRotation, 0.25f)
-                    .SetEase(Tween.EaseType.Out)
-                    .SetTrans(Tween.TransitionType.Quint);
+                AnimateToState(_isSelected);
             }
             else if (_isMovingToHand)
             {
                 MoveToHand();
             }
-            
+
             AudioManager.Instance.PlayAudio(SoundEffectType.CardSelected);
 
             var shaderMaterial = (ShaderMaterial)CardBackground.Material;
-            shaderMaterial.SetShaderParameter("type" , _isSelected ? 1 : 0); // 1 = round, 0 = disabled
+            shaderMaterial.SetShaderParameter("type", _isSelected ? 1 : 0); // 1 = round, 0 = disabled
         }
     }
-    
+
     [ExportToolButton("Set Portrait Scale")]
     private Callable SetPortraitScaleBtn => Callable.From(() =>
     {
@@ -121,8 +106,67 @@ public partial class AbilityCard : Control
         _log = _log.ForContext("IdTag", Id)
             .ForContext("NameTag", CardData.Name + "Card");
 
+        _playerHand = GetParent<PlayerHand>();
+        
         CardBackground.Material = SelectionMaterial;
         CardPortrait.ScaleToMatch(CardBackground, 5f);
+
+        MouseEntered += OnMouseEntered;
+        MouseExited += OnMouseExited;
+    }
+
+    public override void _ExitTree()
+    {
+        MouseEntered -= OnMouseEntered;
+        MouseExited -= OnMouseExited;
+    }
+
+    private void OnMouseEntered()
+    {
+        if (_isHovered || IsSelected || IsDragging || _isMovingToHand) return;
+
+        _isHovered = true;
+        BringToFront();
+        AnimateToState(true);
+    }
+
+    private void OnMouseExited()
+    {
+        if (!_isHovered || IsSelected || IsDragging || _isMovingToHand) return;
+
+        _isHovered = false;
+        RestoreChildIndex();
+        AnimateToState(false);
+    }
+
+    private void BringToFront()
+    {
+        _playerHand.MoveChild(this, -1);
+    }
+
+    private void RestoreChildIndex()
+    {
+        var targetIndex = _playerHand.Hand.IndexOf(this);
+        
+        _playerHand.MoveChild(this, targetIndex);
+        _playerHand.SyncCardZOrder();
+    }
+
+    private void AnimateToState(bool isElevated)
+    {
+        _animationTween?.Kill();
+        _animationTween = CreateTween();
+        _animationTween.SetParallel();
+        
+        var targetY = isElevated ? HandPosition.Y - SelectedHeightDelta : HandPosition.Y;
+        _animationTween.TweenProperty(this, "position:y", targetY, 0.25f)
+            .SetEase(Tween.EaseType.Out)
+            .SetTrans(Tween.TransitionType.Quint);
+        
+        var targetRotation = isElevated ? 0 : HandRotation;
+        _animationTween.TweenProperty(this, "rotation_degrees", targetRotation, 0.25f)
+            .SetEase(Tween.EaseType.Out)
+            .SetTrans(Tween.TransitionType.Quint);
     }
 
     // -- LOGIC --

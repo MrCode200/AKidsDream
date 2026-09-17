@@ -50,7 +50,9 @@ public partial class HealthComponent : Node
 		_damageShaderTimer = new Timer() { OneShot = true };
 		_damageShaderTimer.Timeout += StopDamageShader;
 		AddChild(_damageShaderTimer);
-	}
+	}		
+	
+	public void Init(UnitStatsData unitStats) => UnitStats = unitStats;
 
 	/// <summary>
 	/// Sets the maximum health value.

@@ -10,5 +10,4 @@ SoundEffect = ExtResource("1_c76c7")
 PitchScale = 0.843
 Bus = 2
 PanningStrength = 2.212
-DebugLog = true
 metadata/_custom_type_script = "uid://64cgabm4h54d"

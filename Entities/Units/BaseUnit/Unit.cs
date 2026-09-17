@@ -56,9 +56,10 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     /// </summary>
     public HealthComponent HealthComp { get; private set; }
     public SelectableComponent SelectableComp { get; private set; }
-    public DeathComponent DeathC { get; private set; }
-    public AbilityComponent AbilityC { get; private set; }
+    public DeathComponent DeathComp { get; private set; }
+    public AbilityComponent AbilityComp { get; private set; }
     public AnimationComponent AnimComp { get; private set; }
+    public MoveComponent MoveComp { get; private set; }
     private Board Board { get; set; }
 
 
@@ -131,15 +132,18 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
 
     private void _initializeDependencies(Global.UnitColor unitColor)
     {
-        DeathC = GetNode<DeathComponent>("DeathComponent");
+        DeathComp = GetNode<DeathComponent>("DeathComponent");
         SelectableComp = GetNode<SelectableComponent>("SelectableComponent");
-        AbilityC = GetNode<AbilityComponent>("AbilityComponent");
+        AbilityComp = GetNode<AbilityComponent>("AbilityComponent");
         
         AnimComp = GetNode<AnimationComponent>("AnimationComponent");
         AnimComp!.Init(this, unitColor);
 
         HealthComp = GetNode<HealthComponent>("HealthComponent");
-        HealthComp.UnitStats = UnitStats;
+        HealthComp.Init(UnitStats);
+        
+        MoveComp = GetNode<MoveComponent>("MoveComponent");
+        MoveComp.Init(this, Board);
     }
     
     // -- Signal Handlers --
@@ -147,25 +151,7 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     {
         if (OwnerId == player.PlayerId)
         {
-            AbilityC.ResetPool();
+            AbilityComp.ResetPool();
         }
-    }
-
-    // --- LOGIC ---
-    public bool Move(Vector2I toTile)
-    {
-        if (Board is null)
-        {
-            _log.Here().Err("Board not found in group '{GroupName}'", nameof(Global.Groups.Board));
-            return false;
-        }        
-        
-        if (!Board.MoveUnit(this, toTile, out var position))
-            return false;
-
-        Position = position;
-        TileLocation = toTile;
-
-        return true;
     }
 }
