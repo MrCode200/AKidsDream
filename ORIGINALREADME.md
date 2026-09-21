@@ -78,16 +78,16 @@ To run locally with the project files:
 
 - [ ] 🤖 Add Enemy AI Logic
 - [ ] 👀 More unique Units
-- [ ] 💎 Mana System and Upgrades
+- [X] 💎 Mana System and Cards
 - [ ] 🌐 Online matchmaking
 
 ## 🎮 How to play (quick)
 
-- Left click — select units and interact with tiles
+- Left click — select units/cards and interact with tiles
 - End Turn — finish your turn
 - `~` (tilde) — open developer console for debug/test commands
 
-Short loop: select a unit → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
+Short loop: select a unit/card → move → use ability → end turn. Win by (... maybe you can tell me how to win ?:0 (looking for suggestions :)))
 
 ## 🛠️ Developer console commands
 
@@ -98,7 +98,7 @@ Short loop: select a unit → move → use ability → end turn. Win by (... may
 > (currently only 1 or 2 work for player_id. ex: unit_create Soldier 1 2 4)
 
 ## 📃 Documentation
-View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).
+View the project structure as well as roadmap in [miro](https://miro.com/app/board/uXjVH4avfyE=/?share_link_id=420032532025).(slightly outdated)
 
 Or ask an AI directly for precise questions with [devin](https://app.devin.ai/org/navidyaghmaei/wiki/MrCode200/AKidsDream/page/1?branch=main)
 
@@ -106,6 +106,7 @@ Or ask an AI directly for precise questions with [devin](https://app.devin.ai/or
 
 A Kid's Dream is built around a *modular & data-driven* architecture.
 - `Units` which are built from `components`
+- `Cards` which are playable abilities.
 - `Abilities` which are built from `Effects`
 - `Paylaods&States` which allow Abilities to talk to each other 
 
