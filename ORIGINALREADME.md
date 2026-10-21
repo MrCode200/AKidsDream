@@ -143,6 +143,7 @@ AI was used as a development assitante, in the areas for debugging, suggestion f
 
 - Author: MrCode200
 - Thanks to the helpful members of the Godot Discord community who helped me solve problems during development
+- Thanks to the awesome free assets by (to be used for prototyping ;)): https://pixelfrog-assets.itch.io/tiny-swords
 - Built with Godot 4 and C#
 
 ---
