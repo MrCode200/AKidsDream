@@ -118,4 +118,5 @@ AI was used as a development assitante, in the areas for debugging, suggestion f
 ## Credits
 
 - Thanks to the Godot Discord community for help during development
+- Thanks to the awesome free assets by (to be used for prototyping ;)): https://pixelfrog-assets.itch.io/tiny-swords
 - Built with Godot 4 and C#
