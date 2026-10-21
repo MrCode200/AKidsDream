@@ -2,9 +2,9 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Godot;
 using Serilog;
 
@@ -19,6 +19,7 @@ public partial class CommandExecutor : Node
     public void Init(GameContext context)
     {
         _context = context;
+        _log.Here().Debug("CommandExecutor initialized with GameContext");
     }
 
     public Result<GameError> Execute(IGameCommand command)

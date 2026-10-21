@@ -1,8 +1,8 @@
 #nullable enable
 using System.Collections.Generic;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Results;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Results;
 using Godot;
 
 namespace AKidsDream.Abilities.Effects;

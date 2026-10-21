@@ -1,9 +1,9 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.GameBoard;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using Godot;
 using Godot.Collections;
 using Serilog;
@@ -52,13 +52,13 @@ public static class UnitStateInitializer
 
         Log.Here()
             .Debug("Attempting to create unit '{UnitName}' at {TileLocation}",
-                state.UnitName, state.TileLocation);
+                state.UnitKey, state.TileLocation);
 
         if (!UnitOwnershipResolver.TryResolve(state, playerTeamRegistry, out var ownership))
             return false;
 
-        var unitName = state.UnitName.ToString();
-        var unitScene = LoadUnitScene(unitName);
+        var unitKey = state.UnitKey.ToString();
+        var unitScene = LoadUnitScene(unitKey);
         if (unitScene == null)
             return false;
 
@@ -83,14 +83,13 @@ public static class UnitStateInitializer
         return true;
     }
 
-    private static PackedScene? LoadUnitScene(string unitName)
+    private static PackedScene? LoadUnitScene(string unitKey)
     {
-        var scenePath = $"res://Entities/Units/{unitName}/{unitName}.tscn";
-        var unitScene = GD.Load<PackedScene>(scenePath);
+        var unitScene = Global.UnitRegistry.Get(unitKey)?.Prefab;
 
         if (unitScene == null)
         {
-            Log.Here().Warn("Failed to load unit scene at '{ScenePath}' for '{UnitName}'", scenePath, unitName);
+            Log.Here().Warn("Failed to load unit scene at '{ScenePath}' for '{UnitName}'", unitKey, unitKey);
         }
 
         return unitScene;

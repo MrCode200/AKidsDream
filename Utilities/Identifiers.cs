@@ -4,7 +4,7 @@ global using TeamId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers
 global using CardId = AKidsDream.Util.Identifiers.Id<AKidsDream.Util.Identifiers.CardIdTag>;
 
 using System;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using Serilog;
 
 
@@ -80,4 +80,62 @@ public readonly struct Id<TTag> : IEquatable<Id<TTag>>, IIdTag where TTag : IIdT
     public static bool operator !=(Id<TTag> a, int b) => a.Value != b;
     public static bool operator ==(int a, Id<TTag> b) => a == b.Value;
     public static bool operator !=(int a, Id<TTag> b) => a != b.Value;
+}
+
+public readonly record struct NamespacedKey : IEquatable<NamespacedKey>, IComparable<NamespacedKey>
+{
+    public const string DefaultNamespace = "core";
+
+    public string Namespace { get; }
+    public string Path { get; }
+
+    public NamespacedKey(string @namespace, string path)
+    {
+        Namespace = string.IsNullOrWhiteSpace(@namespace) ? DefaultNamespace : @namespace.Trim().ToLowerInvariant();
+        Path = (path ?? throw new ArgumentNullException(nameof(path))).Trim().ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(Path))
+            throw new ArgumentException("Path cannot be empty or whitespace.", nameof(path));
+    }
+
+    public static NamespacedKey From(string raw, string defaultNs = DefaultNamespace)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            throw new ArgumentException("Key cannot be empty or whitespace.", nameof(raw));
+
+        int colon = raw.IndexOf(':');
+        return colon >= 0
+            ? new NamespacedKey(raw[..colon], raw[(colon + 1)..])
+            : new NamespacedKey(defaultNs, raw);
+    }
+
+    public static bool TryParse(string raw, out NamespacedKey key, string defaultNs = DefaultNamespace)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            key = default;
+            return false;
+        }
+
+        try
+        {
+            key = From(raw, defaultNs);
+            return true;
+        }
+        catch
+        {
+            key = default;
+            return false;
+        }
+    }
+
+    public int CompareTo(NamespacedKey other)
+    {
+        int nsComparison = string.Compare(Namespace, other.Namespace, StringComparison.OrdinalIgnoreCase);
+        return nsComparison != 0 ? nsComparison : string.Compare(Path, other.Path, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public override string ToString() => $"{Namespace}:{Path}";
+
+    public static implicit operator string(NamespacedKey key) => key.ToString();
+    public static implicit operator NamespacedKey(string raw) => From(raw);
 }

@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using System.Threading.Tasks;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Results;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
 using AKidsDream.Entities.Cards;

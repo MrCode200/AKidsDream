@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace AKidsDream.Utilities.TypeExtensions;
+namespace AKidsDream.Utilities.Registry.TypeExtensions;
 
 /// <summary>
 /// Attribute used to associate a typed value with enum fields.

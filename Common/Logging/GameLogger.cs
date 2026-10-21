@@ -1,13 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Godot;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.GodotConsole;
-using Serilog.Sinks.SystemConsole.Themes;
 
-namespace AKidsDream.Common.Logging;
+namespace AKidsDream.Utilities.Logging;
 
 //[2026-07-31 12:34:56,789] [WARNING | fake_file.py | lineno(123) | fake_function] ...
 
@@ -55,7 +57,7 @@ public readonly struct CallerLogger
 public static class GameLogger
 {
     private static bool _isSetup;
-    private static readonly object _lock = new();
+    private static readonly Lock Lock = new();
 
         // Shared "intent" palette. The Godot sink turns these into BBCode hex colors;
     // the plain console sink can't use arbitrary hex (it relies on Serilog's ANSI
@@ -89,7 +91,7 @@ public static class GameLogger
             "[[color=" + LogColors.SourceContext + "]{ShortSourceContext}[/color] | " +
             "[color=" + LogColors.MethodLine + "]{Method}:{Line}[/color]] " +
             "[color=" + levelColor + "]" + levelOpen + "[{Level:u3}]" + levelClose + "[/color] => " +
-            "[color=" + LogColors.UnitTag + "][{NameTag}:{IdTag}][/color]: " +
+            "[color=" + LogColors.UnitTag + "][{NameTag:l}:{IdTag:l}][/color]: " +
             "[color=" + levelColor + "]{Message:lj}[/color]" +
             "{NewLine}" +
             "[color=" + LogColors.Error + "]{Exception}[/color]";
@@ -99,7 +101,7 @@ public static class GameLogger
     {
         if (_isSetup) return;
 
-        lock (_lock)
+        lock (Lock)
         {
             if (_isSetup) return;
             _isSetup = true;
@@ -110,18 +112,21 @@ public static class GameLogger
                 .MinimumLevel.Is(debug ? LogEventLevel.Debug : LogEventLevel.Information)
                 .Enrich.FromLogContext() // enables LogContext.PushProperty scopes later
                 .Enrich.With<ShortSourceContextEnricher>()
-                .WriteTo.GodotConsole(
-                    templateSelector: logEvent => logEvent.Level switch
-                    {
-                        LogEventLevel.Verbose     => BuildGodotTemplate(LogColors.Verbose),
-                        LogEventLevel.Debug       => BuildGodotTemplate(LogColors.Debug),
-                        LogEventLevel.Information => BuildGodotTemplate(LogColors.Information),
-                        LogEventLevel.Warning     => BuildGodotTemplate(LogColors.Warning),
-                        LogEventLevel.Error       => BuildGodotTemplate(LogColors.Error),
-                        LogEventLevel.Fatal       => BuildGodotTemplate(LogColors.Fatal, boldLevel: true),
-                        _                         => BuildGodotTemplate(LogColors.Debug)
-                    },
-                    pushErrorsToDebugger: false
+                .WriteTo.Logger(lc => lc
+                    .Enrich.With<TagConsolidationEnricher>() // Only for console
+                    .WriteTo.GodotConsole(
+                        templateSelector: logEvent => logEvent.Level switch
+                        {
+                            LogEventLevel.Verbose     => BuildGodotTemplate(LogColors.Verbose),
+                            LogEventLevel.Debug       => BuildGodotTemplate(LogColors.Debug),
+                            LogEventLevel.Information => BuildGodotTemplate(LogColors.Information),
+                            LogEventLevel.Warning     => BuildGodotTemplate(LogColors.Warning),
+                            LogEventLevel.Error       => BuildGodotTemplate(LogColors.Error),
+                            LogEventLevel.Fatal       => BuildGodotTemplate(LogColors.Fatal, boldLevel: true),
+                            _                         => BuildGodotTemplate(LogColors.Debug)
+                        },
+                        pushErrorsToDebugger: false
+                    )
                 ) // CONFIG: which logging to show in console
                 /*
                 .WriteTo.Console(outputTemplate:
@@ -166,5 +171,33 @@ public static class GameLogger
     {
         EnsureSetup();
         return Log.ForContext(type);
+    }
+
+    /// <summary>
+    /// Enricher that consolidates *NameTag and *IdTag properties into standard NameTag/IdTag
+    /// for console display. Original prefixed properties are preserved for file output.
+    /// </summary>
+    private class TagConsolidationEnricher : ILogEventEnricher
+    {
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+        {
+            var properties = logEvent.Properties.ToList();
+
+            // Find the first property ending with NameTag
+            var nameTagProp = properties.FirstOrDefault(p => p.Key.EndsWith("NameTag"));
+            if (!string.IsNullOrEmpty(nameTagProp.Key))
+            {
+                var nameTag = propertyFactory.CreateProperty("NameTag", nameTagProp.Value);
+                logEvent.AddOrUpdateProperty(nameTag);
+            }
+
+            // Find the first property ending with IdTag
+            var idTagProp = properties.FirstOrDefault(p => p.Key.EndsWith("IdTag"));
+            if (!string.IsNullOrEmpty(idTagProp.Key))
+            {
+                var idTag = propertyFactory.CreateProperty("IdTag", idTagProp.Value);
+                logEvent.AddOrUpdateProperty(idTag);
+            }
+        }
     }
 }

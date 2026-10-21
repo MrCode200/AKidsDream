@@ -1,9 +1,10 @@
+using AKidsDream.Utilities;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using Serilog;
 
-namespace AKidsDream.Common.Components.TweenComponent.Resources;
+namespace TweenComp.Resources.Blueprint;
 
 [GlobalClass]
 [Icon("res://Entities/Units/Components/DeathComponent/Skull.png")]
@@ -18,8 +19,8 @@ public partial class DeathComponent : Node
 
 	public override void _Ready()
 	{
-		_log = _log.ForContext("NameTag", Unit.UnitName)
-			.ForContext("IdTag", Unit.UnitId);
+		_log = _log.ForContext("UnitNameTag", Unit.UnitType)
+			.ForContext("UnitIdTag", Unit.UnitId);
 		HealthC.HealthDepleted += OnHealthDepleted;
 	}
 

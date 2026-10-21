@@ -1,5 +1,5 @@
 using System;
-using AKidsDream.Common.Components.TweenComponent.Resources;
+using TweenComp.Resources.Blueprint;
 using Godot;
 
 namespace AKidsDream.Abilities.CostModifiers;

@@ -1,5 +1,6 @@
+#nullable enable
 using System.Diagnostics.CodeAnalysis;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Core.Managers;
@@ -38,8 +39,9 @@ public class PlayerTeamRegistry(TeamRelationResolver teamRelationResolver)
         if (!_players.TryGetValue(playerId, out player)) return false;
         return true;
     }
-    
+
     public PlayerData GetPlayer(PlayerId playerId) => _players[playerId];
+    public PlayerData GetPlayer(int playerIdInt) => GetPlayer(new PlayerId(playerIdInt));
     
     public bool TryGetTeam(TeamId teamId, [NotNullWhen(true)] out TeamData? team)
     {
@@ -62,6 +64,8 @@ public class PlayerTeamRegistry(TeamRelationResolver teamRelationResolver)
         teamId = player.TeamId;
         return true;
     }
+    
+    public int PlayerCount => _players.Count;
     
     public PlayerData[] GetAllPlayers()
     {

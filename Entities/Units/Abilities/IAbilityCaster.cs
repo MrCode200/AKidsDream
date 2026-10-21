@@ -1,5 +1,5 @@
 ﻿#nullable enable
-using AKidsDream.Common.Components.TweenComponent.Resources;
+using TweenComp.Resources.Blueprint;
 using AKidsDream.Util.Identifiers;
 using Godot;
 

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace AKidsDream.Common.Errors;
+namespace AKidsDream.Utilities.Errors;
 
 public interface IGameError
 {

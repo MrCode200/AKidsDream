@@ -1,7 +1,7 @@
 ﻿using AKidsDream.Managers.SaveSystems;
 using Godot;
 
-namespace AKidsDream.Common;
+namespace AKidsDream.Utilities;
 
 // TODO: add pool count etc to save logic
 [Tool]
@@ -10,7 +10,7 @@ public partial class UnitStateData : Resource
     [Export] public int UnitId;
     [Export] public int OwnerId;
     
-    [Export] public Global.UnitName UnitName;
+    [Export] public string UnitKey;
     [Export] public Vector2I TileLocation;
     [Export] public UnitStatsData UnitStats;
 
@@ -20,7 +20,7 @@ public partial class UnitStateData : Resource
         {
             UnitId = unit.UnitId.Value,
             OwnerId = unit.OwnerIdInt,
-            UnitName = unit.UnitName,
+            UnitKey = unit.ToString(),
             TileLocation = unit.TileLocation,
             UnitStats = (UnitStatsData)unit.UnitStats.Duplicate()
         };

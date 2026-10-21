@@ -2,15 +2,16 @@
 using System.Linq;
 using Godot;
 using AKidsDream.Abilities;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Res.Common.Components.TweenComponent.Resources;
 using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Res.Common.Components.TweenComponent.Resources;
+using AKidsDream.Utilities.Registry;
 using Godot.Collections;
 using Serilog;
+using TweenComp.Source;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
@@ -26,7 +27,9 @@ public partial class UnitInfoBar : Control, IBlockable
 		BlockingStrategy.BlockOnBlockingTrigger,
 		BlockingStrategy.BlockOnEffectApply
 	];
-
+	[Export] public float ShowDelay = 0.2f;
+	
+	[ExportGroup("Dependencies")]
 	[Export] public Label UnitNameLabel = null!;
 	[Export] public Label UnitHealthLabel = null!;
 	[Export] public HBoxContainer AbilityContainer = null!;
@@ -44,7 +47,7 @@ public partial class UnitInfoBar : Control, IBlockable
 	private void OnUnitDeselected(Unit _)
 	{
 		_selectedUnit = null;
-		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.UIBOnHide);
+		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.FadeOut);
 	}
 
 	public override void _Ready()
@@ -66,10 +69,15 @@ public partial class UnitInfoBar : Control, IBlockable
 	}
 	
 	// -- SIGNAL HANDLING --
-	private void CreateUnitBar(Unit unit)
+	private async void CreateUnitBar(Unit unit)
 	{
+		// Check if timer create, or use node timer
+		_selectedUnit = unit;
+		await ToSignal(GetTree().CreateTimer(ShowDelay), "timeout");
+		if (_selectedUnit is null || _selectedUnit != unit) return;
+		
 		Visible = true;
-		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.UIBOnShow);
+		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.FadeInAndBounce);
 		// _abilityButtonsMap.Clear();
 
 		// foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();
@@ -78,11 +86,12 @@ public partial class UnitInfoBar : Control, IBlockable
 	}
 	
 	private void UpdateUnitBar(Unit? _, Unit newUnit)
-	{
+	{  
+		// TODO: create once 4 buttons, then change if they visible or not, don't destory create each time
 		_selectedUnit = newUnit;
 		PoolBar.SetPool(newUnit);
 
-		UnitNameLabel.Text = newUnit.UnitName.ToString();
+		UnitNameLabel.Text = newUnit.UnitType.ToString();
 		UnitHealthLabel.Text = newUnit.UnitStats.Health.ToString();
 
 		// Update ability buttons using ZipLongest to handle additions/removals/updates

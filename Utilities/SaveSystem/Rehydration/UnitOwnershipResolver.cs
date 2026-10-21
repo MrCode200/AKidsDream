@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Managers;
 using AKidsDream.Util.Identifiers;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using AKidsDream.Core.Teams;
 using Serilog;
 
@@ -25,10 +25,10 @@ public static class UnitOwnershipResolver
         // own invariant check.
         if (state.OwnerId <= 0)
         {
-            Log.ForContext("NameTag", state.UnitName)
+            Log.ForContext("NameTag", state.UnitKey)
                 .Here()
                 .Err("Unit '{UnitName}' has invalid OwnerId {OwnerId} in save data; skipping unit",
-                    state.UnitName, state.OwnerId);
+                    state.UnitKey, state.OwnerId);
             return false;
         }
 
@@ -37,10 +37,10 @@ public static class UnitOwnershipResolver
             !playerTeamRegistry.TryGetPlayer(new PlayerId(state.OwnerId), out var player) ||
             player.PlayerIdInt == 0)
         {
-            Log.ForContext("NameTag", state.UnitName)
+            Log.ForContext("NameTag", state.UnitKey)
                 .Here()
                 .Err("Unit '{UnitName}' has an unregistered or invalid owner (OwnerId: {OwnerId}); skipping unit",
-                    state.UnitName, state.OwnerId);
+                    state.UnitKey, state.OwnerId);
             return false;
         }
 
@@ -49,10 +49,10 @@ public static class UnitOwnershipResolver
             teamId?.Value == 0
         )
         {
-            Log.ForContext("NameTag", state.UnitName)
+            Log.ForContext("NameTag", state.UnitKey)
                 .Here()
                 .Err("Unit '{UnitName}' owner (OwnerId: {OwnerId}) has no valid registered team; skipping unit",
-                    state.UnitName, state.OwnerId);
+                    state.UnitKey, state.OwnerId);
             return false;
         }
 

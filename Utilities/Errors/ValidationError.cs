@@ -1,7 +1,7 @@
 using System;
 using AKidsDream.Util.Identifiers;
 
-namespace AKidsDream.Common.Errors;
+namespace AKidsDream.Utilities.Errors;
 
 public abstract record ValidationError(string Code, string Message) : GameError(Code, Message)
 {

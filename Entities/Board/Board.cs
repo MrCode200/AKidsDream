@@ -1,10 +1,10 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Managers.SaveSystem.Resources;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using Godot;
 using Godot.Collections;
 using Serilog;
@@ -200,10 +200,10 @@ public partial class Board : Node2D
                 "Duplicate unit id detected while adding unit to board; " +
                 "replacing existing registration '{OldUnitName}' (id: {OldUnitId}) at {OldTileLocation} " +
                 "with '{UnitName}' (id: {UnitId}) at {TileLocation} in Board '{BoardName}'",
-                oldUnit.UnitName,
+                oldUnit.UnitType,
                 oldUnit.UnitId,
                 oldUnit.TileLocation,
-                unit.UnitName,
+                unit.UnitType,
                 unit.UnitId,
                 unit.TileLocation,
                 Name);
@@ -213,7 +213,7 @@ public partial class Board : Node2D
         _unitsById.Add(unit.UnitId, unit);
         _log.Here().Debug(
             "Added unit '{UnitName}' (id: {UnitId}) at {TileLocation} to board '{BoardName}'",
-            unit.UnitName,
+            unit.UnitType,
             unit.UnitId,
             unit.TileLocation,
             Name
@@ -234,7 +234,7 @@ public partial class Board : Node2D
 
         _log.Here().Debug(
             "Removed unit '{UnitName}' (id: {UnitId}) from {TileLocation} in board '{BoardName}'",
-            removedUnit?.UnitName,
+            removedUnit?.UnitType,
             removedUnit?.UnitId,
             tileLocation,
             Name);
@@ -371,7 +371,7 @@ public partial class Board : Node2D
 
         if (!TileInBoard(toTile))
         {
-            _log.ForContext("Unit", unit.UnitName)
+            _log.ForContext("Unit", unit.UnitType)
                 .ForContext("IdTag", unit.UnitId)
                 .ForContext("FromTile", oldTile)
                 .Here()
@@ -382,11 +382,11 @@ public partial class Board : Node2D
         // Validate target tile is not occupied by another unit
         if (TryGetUnitAt(toTile, out var occupyingUnit) && occupyingUnit != unit)
         {
-            _log.ForContext("Unit", unit.UnitName)
+            _log.ForContext("Unit", unit.UnitType)
                 .ForContext("IdTag", unit.UnitId)
                 .ForContext("FromTile", oldTile)
                 .Here()
-                .Warn("Move failed: target tile {ToTile} is occupied by {OccupyingUnit}", toTile, occupyingUnit.UnitName);
+                .Warn("Move failed: target tile {ToTile} is occupied by {OccupyingUnit}", toTile, occupyingUnit.UnitType);
             return false;
         }
 
@@ -397,7 +397,7 @@ public partial class Board : Node2D
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitMoved, unit, oldTile, toTile);
 
-        _log.ForContext("Unit", unit.UnitName)
+        _log.ForContext("Unit", unit.UnitType)
             .ForContext("IdTag", unit.UnitId)
             .Here()
             .Debug("Moved unit from {FromTile} to {ToTile}", oldTile, toTile);

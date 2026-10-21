@@ -1,14 +1,22 @@
+using System.Collections.Generic;
 using System.IO;
-using AKidsDream.Common.Logging;
+using System.Linq;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Managers.SaveSystems.Rehydration;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Util.Identifiers.Commands;
 using AKidsDream.Managers;
 using AKidsDream.Commands;
+using AKidsDream.Utilities;
+using AKidsDream.Core.Content;
+using AKidsDream.Core.Managers.GameModeManager;
+using AKidsDream.Core.Managers.ModManager;
 using AKidsDream.Entities.Cards;
+using AKidsDream.Tests;
 using Godot;
 using Godot.Collections;
 using Serilog;
@@ -22,6 +30,7 @@ namespace AKidsDream.Core.Managers;
 public class GameCreationPayload
 {
 	public readonly string LoadGameFileName = "NewSave.tres";
+	public readonly string GameMode = "KingSlayer";
 	public readonly int LocalPlayerId = 1;
 	public readonly Vector2I BoardSize = new(14, 9);
 
@@ -32,7 +41,7 @@ public class GameCreationPayload
 			"MrMagic",
 			new TeamId(1),
 			Global.UnitColor.Blue,
-			ControllerType.PlayerInteractionController,
+			"core:player_interaction_controller",
 			5
 		),
 		new PlayerData(
@@ -40,7 +49,7 @@ public class GameCreationPayload
 			"MrSorceress",
 			new TeamId(2),
 			Global.UnitColor.Red,
-			ControllerType.PlayerInteractionController,
+			"core:player_interaction_controller",
 			5
 		)
 	];
@@ -75,6 +84,7 @@ public class GameCreationPayload
 									   PlayerIdInt = 1
 									   Name = "MrMagic"
 									   TeamIdInt = 1
+									   ControllerKey = "core:player_interaction_controller"
 									   Mana = 10
 
 									   [sub_resource type="Resource" id="Resource_ojjb5"]
@@ -82,6 +92,7 @@ public class GameCreationPayload
 									   PlayerIdInt = 2
 									   Name = "MrSorceress"
 									   TeamIdInt = 2
+									   ControllerKey = "core:player_interaction_controller"
 									   UnitColor = 1
 									   Mana = 10
 
@@ -103,7 +114,7 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 1
 									   OwnerId = 1
-									   UnitName = 2
+									   UnitKey = "core:soldier"
 									   TileLocation = Vector2i(5, 6)
 									   UnitStats = SubResource("Resource_vp3i7")
 
@@ -117,7 +128,7 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 2
 									   OwnerId = 2
-									   UnitName = 2
+									   UnitKey = "core:soldier"
 									   TileLocation = Vector2i(4, 5)
 									   UnitStats = SubResource("Resource_4n8g7")
 
@@ -131,12 +142,13 @@ public class GameCreationPayload
 									   script = ExtResource("4_dm7om")
 									   UnitId = 3
 									   OwnerId = 1
-									   UnitName = 1
+									   UnitKey = "core:soldier"
 									   TileLocation = Vector2i(6, 6)
 									   UnitStats = SubResource("Resource_jsx6i")
 
 									   [resource]
 									   script = ExtResource("6_nptp8")
+									   GameMode = "KingSlayer"
 									   GameRound = 3
 									   _playerTurnOrder = Dictionary[int, ExtResource("2_ucnw2")]({
 									   1: SubResource("Resource_r6a1v"),
@@ -184,6 +196,7 @@ public partial class GameManager : Node2D
     [Export] public GameLoopManager GameLoopManager;
     [Export] public CardManager CardManager;
     [Export] public PlayerHand PlayerHand;
+    [Export] public GameModeLoader GameModeLoader;
 
 
     private readonly ILogger _log = GameLogger.For<GameManager>();
@@ -197,6 +210,8 @@ public partial class GameManager : Node2D
     /// </summary>
     public override void _Ready()
     {
+        _log.Here().Info("GameManager _Ready starting initialization");
+
         // Create the unified GameContext once
         PlayerTeamRegistry = new PlayerTeamRegistry(TeamRelationResolver);
 
@@ -213,12 +228,8 @@ public partial class GameManager : Node2D
             PlayerHand
         );
 
-        // Initialize systems with the context
-        CommandExecutor.Init(_gameContext);
-        ControllerFactory.Init(_gameContext);
-        ConsoleManager.Init(_gameContext);
-        GameLoopManager.Init(_gameContext);
-        CardManager.Init(_gameContext);
+        // Phase 1: Initialize core systems (both load and new game paths)
+        InitializeCoreSystems();
 
         var gameCreationPayload = new GameCreationPayload();
         // Prefer an explicit LoadFileName set in the inspector; fall back to the
@@ -244,36 +255,119 @@ public partial class GameManager : Node2D
 
         if (!string.IsNullOrEmpty(loadFileName))
         {
-            //TODO: make LoagGamestate return CreationPayload, as most Initialize Methods and signals are duplicates
+            // Phase 2: Load existing game
             _log.Here().Info(
 				"GameManager initializing with LoadFileName: '{LoadFileName}', SaveFileName: '{SaveFileName}'",
                 loadFileName,
                 SaveFileName);
 
-            // NOTE: delete later the 2 following lines (force creates save file for testing)
+            // NOTE: delete later the 2/4 following lines (force creates save file for testing)
             // TODO: move the verification for existing directory into SaveLoadManager(?) or how to make sure that those folders exist..
             var savePath = Path.Combine(Global.SavePath, gameCreationPayload.LoadGameFileName);
             var directory = Path.GetDirectoryName(savePath);
             if (!string.IsNullOrEmpty(directory))
             {
                 Directory.CreateDirectory(directory);
+                _log.Here().Debug("Created save directory: {Directory}", directory);
             }
-
             File.WriteAllText(savePath, GameCreationPayload.testingFile);
 
-            SaveLoadManager.LoadGameState(loadFileName, GameBoard, GameLoopManager, EntityLayer, this);
+            LoadGame(loadFileName);
             EventBus.Instance.EmitSignal(EventBus.SignalName.GameInitialized);
             return;
         }
 
-        // -- Create new game --
+        // Phase 2: Create new game
+        _log.Here().Info("Creating new game with LocalPlayerId: {LocalPlayerId}", gameCreationPayload.LocalPlayerId);
         LocalPlayerId = new PlayerId(gameCreationPayload.LocalPlayerId);
-        InitializeRegistries(gameCreationPayload.Players, gameCreationPayload.Teams, gameCreationPayload.TeamRelations);
-        InitializeControllers(gameCreationPayload.Players);
-        InitializeNewBoard(gameCreationPayload);
+        CreateNewGame(gameCreationPayload);
         EventBus.Instance.EmitSignal(EventBus.SignalName.GameInitialized);
+        _log.Here().Info("New game created and initialized successfully");
     }
-	
+
+    private void InitializeCoreSystems()
+    {
+        _log.Here().Debug("Initializing core systems with GameContext");
+
+        // Load mods (content registration phase)
+        var modLoader = new ModLoader(_gameContext);
+        var loadResult = modLoader.Load();
+        if (loadResult.IsFailure)
+        {
+            _log.Here().Err("Failed to complete mod loading lifecycle: {Error}", loadResult.Error?.Message);
+        }
+
+        // Initialize systems with the context
+        CommandExecutor.Init(_gameContext);
+        ControllerFactory.Init(_gameContext);
+        ConsoleManager.Init(_gameContext);
+        GameLoopManager.Init(PlayerTeamRegistry);
+        CardManager.Init(_gameContext);
+
+        _log.Here().Debug("Core systems initialized successfully");
+    }
+
+    private void LoadGame(string loadFileName)
+    {
+        _log.Here().Info("Loading game from file: '{LoadFileName}'", loadFileName);
+
+        // Load game state data
+        var state = SaveLoadManager.LoadGameState(loadFileName);
+
+        InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
+        InitializeControllers(state.PlayerData);
+
+        GameLoopManager.LoadState(state);
+        GameModeLoader.Init(state.GameMode, _gameContext);
+
+        // Assign next IDs from loaded data
+        AssignNextIds(state.UnitStateResources!, state.PlayerData, state.TeamData);
+
+        // Initialize units from loaded data
+        var initializedUnits =
+            UnitStateInitializer.InitializeUnits(
+                EntityLayer,
+                state.UnitStateResources,
+                PlayerTeamRegistry,
+                GameBoard
+            );
+
+        // Initialize board with loaded state and units
+        GameBoard.Init(state.BoardState, initializedUnits);
+
+        _log.Here().Info("Game loaded successfully");
+    }
+
+    private void CreateNewGame(GameCreationPayload gcp)
+    {
+        _log.Here().Debug("Creating new game");
+
+        InitializeRegistries(gcp.Players, gcp.Teams, gcp.TeamRelations);
+        InitializeNewBoard(gcp);
+        InitializeControllers(gcp.Players);
+        GameModeLoader.Init(gcp.GameMode, _gameContext);
+
+        _log.Here().Debug("New game created successfully");
+    }
+
+    private void AssignNextIds(IEnumerable<UnitStateData> units, IEnumerable<PlayerData> players,
+        IEnumerable<TeamData> teams)
+    {
+        var highestUnitId = units.Select(u => u.UnitId).DefaultIfEmpty(1).Max();
+        UnitId.SetNextId(highestUnitId + 1);
+
+        var highestPlayerId = players.Select(p => p.PlayerId.Value).DefaultIfEmpty(1).Max();
+        PlayerId.SetNextId(highestPlayerId + 1);
+
+        var highestTeamId = teams.Select(t => t.TeamId.Value).DefaultIfEmpty(1).Max();
+        TeamId.SetNextId(highestTeamId + 1);
+
+        _log.Here().Debug(
+            "Set nextId for UnitId to {HighestUnitId}, PlayerId to {HighestPlayerId}, TeamId to {HighestTeamId}",
+            highestUnitId + 1, highestPlayerId + 1, highestTeamId + 1
+        );
+    }
+
     public void InitializeControllers(Array<PlayerData> players)
     {
         foreach (var playerData in players)
@@ -291,7 +385,7 @@ public partial class GameManager : Node2D
 				"GameManager exiting, saving game state to '{SaveFileName}'",
                 SaveFileName);
             SaveLoadManager.SaveState(GameBoard, PlayerTeamRegistry, TeamRelationResolver, GameLoopManager,
-                SaveFileName);
+                GameModeLoader, SaveFileName);
         }
         else
         {
@@ -324,6 +418,8 @@ public partial class GameManager : Node2D
 
     private void InitializeNewBoard(GameCreationPayload gameCreationPayload)
     {
+        _log.Here().Debug("Initializing new board with size: {Width}x{Height}",
+            gameCreationPayload.BoardSize.X, gameCreationPayload.BoardSize.Y);
         var newBoardState = new BoardState
         {
             Width = gameCreationPayload.BoardSize.X,
@@ -331,6 +427,7 @@ public partial class GameManager : Node2D
         };
 
         GameBoard.Init(newBoardState);
+        _log.Here().Debug("New board initialized successfully");
     }
 
     // -- HELPER METHODS --

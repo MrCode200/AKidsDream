@@ -1,4 +1,3 @@
-using AKidsDream.Util.Identifiers;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
 using AKidsDream.Managers.SaveSystems;
@@ -9,8 +8,6 @@ namespace AKidsDream.UI;
 
 public partial class EndTurnButton : TextureButton, IBlockable
 {
-	[Export] public GameManager GameManager;
-	private PlayerId? _currentTurnPlayerId;
 	public bool IsBlocked { get; set; }
 
 	[Export] public Array<BlockingStrategy> BlockingStrategies { get; set; } =
@@ -32,22 +29,13 @@ public partial class EndTurnButton : TextureButton, IBlockable
 
 	private void OnTurnStarted(PlayerData player, int round)
 	{
-		_currentTurnPlayerId = player.PlayerId;
-		Disabled = !HasPlayerInteractionController(player.PlayerId.Value);
+		Disabled = !player.Controller.UseEndTurnButton;
 	}
 
 	public override void _Pressed()
 	{
-		if (_currentTurnPlayerId is null) return;
 		Disabled = true;
-		EventBus.Instance.EmitSignal(EventBus.SignalName.EndTurnButtonPressed, _currentTurnPlayerId.Value.Value);
-	}
-
-
-	private bool HasPlayerInteractionController(int playerIdInt)
-	{
-		GameManager.PlayerTeamRegistry.TryGetPlayer(new PlayerId(playerIdInt), out var playerData);
-		return playerData?.ControllerType == ControllerType.PlayerInteractionController;
+		EventBus.Instance.EmitSignal(EventBus.SignalName.EndTurnButtonPressed);
 	}
 	
 	public void SetBlocked(bool block)

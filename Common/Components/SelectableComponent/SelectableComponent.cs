@@ -1,7 +1,7 @@
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
-namespace AKidsDream.Common.Components.TweenComponent.Resources;
+namespace TweenComp.Resources.Blueprint;
 
 /// <summary>
 /// A reusable component that makes a Node2D selectable and hoverable.

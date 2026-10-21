@@ -4,7 +4,7 @@ using System.Linq;
 using AKidsDream.Commands;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
 using AKidsDream.Managers.SaveSystem.Resources;
@@ -22,15 +22,17 @@ public partial class GameLoopManager : Node
 
     private static readonly ILogger Log = GameLogger.For(typeof(GameLoopManager));
     private bool _stateLoaded;
-    private GameContext _context;
+    private PlayerTeamRegistry _playerTeamRegistry;
 
-    public void Init(GameContext context)
+    public void Init(PlayerTeamRegistry playerTeamRegistry)
     {
-        _context = context;
+        _playerTeamRegistry = playerTeamRegistry;
+        Log.Here().Debug("GameLoopManager initialized with GameContext");
     }
 
     public void LoadState(GameStateData state)
     {
+        Log.Here().Debug("Loading game state from save data");
         CurrentRound = state.GameRound;
         _playerTurnOrder = state.PlayerTurnOrder;
         ActivePlayerId = new PlayerId(state.ActivePlayerIdInt);
@@ -42,6 +44,7 @@ public partial class GameLoopManager : Node
 
     public override async void _Ready()
     {
+        Log.Here().Debug("GameLoopManager _Ready waiting for GameInitialized signal");
         try
         {
             await ToSignal(EventBus.Instance, EventBus.SignalName.GameInitialized);
@@ -49,14 +52,15 @@ public partial class GameLoopManager : Node
             if (!_stateLoaded)
             {
                 // Default initialization for new games
-                SetTurnOrder(_context.PlayerTeamRegistry.GetAllPlayers());
+                Log.Here().Debug("Initializing new game turn order");
+                SetTurnOrder(_playerTeamRegistry.GetAllPlayers());
                 ActivePlayerId = _playerTurnOrder.Keys.First();
                 CurrentRound = 1;
             }
 
             EventBus.Instance.EmitSignal(EventBus.SignalName.NewRoundStarted,
                 ActivePlayerId.Value,
-                _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId).Name,
+                _playerTeamRegistry.GetPlayer(ActivePlayerId).Name,
                 CurrentRound
             );
 
@@ -64,7 +68,7 @@ public partial class GameLoopManager : Node
 
             _playerTurnOrder[ActivePlayerId].Controller.StartTurn();
             EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted,
-                _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId), CurrentRound);
+                _playerTeamRegistry.GetPlayer(ActivePlayerId), CurrentRound);
         }
         catch (Exception e)
         {
@@ -75,6 +79,7 @@ public partial class GameLoopManager : Node
     private void SetTurnOrder(PlayerData[] players)
     {
         _playerTurnOrder = players.ToDictionary(p => p.PlayerId, p => p);
+        Log.Here().Debug("Set turn order for {PlayerCount} players", players.Length);
     }
 
     /// <summary>
@@ -103,10 +108,11 @@ public partial class GameLoopManager : Node
         Log.Here().Info("Player {PlayerId} ended turn, starting {NextPlayerId}", playerId, nextPlayerId);
 
         _playerTurnOrder[ActivePlayerId].Mana += Global.ManaPerRound;
+        Log.Here().Debug("Added {ManaAmount} mana to player {PlayerId} (new total: {NewMana})",
+            Global.ManaPerRound, ActivePlayerId, _playerTurnOrder[ActivePlayerId].Mana);
         _playerTurnOrder[ActivePlayerId].Controller.StartTurn();
-        GD.Print("Player {ActivePlayerId} started turn", ActivePlayerId);
         EventBus.Instance.EmitSignal(EventBus.SignalName.TurnStarted,
-            _context.PlayerTeamRegistry.GetPlayer(ActivePlayerId) ,CurrentRound);
+            _playerTeamRegistry.GetPlayer(ActivePlayerId) ,CurrentRound);
         return true;
     }
 

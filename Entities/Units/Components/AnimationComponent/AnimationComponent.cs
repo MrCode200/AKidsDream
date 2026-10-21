@@ -2,9 +2,9 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using Serilog;
 
 [GlobalClass]
@@ -66,7 +66,7 @@ public partial class AnimationComponent : Node
 		Unit = unit;
 		UnitColor = unitColor;
 		
-		_log = _log.ForContext("NameTag", Unit?.UnitName)
+		_log = _log.ForContext("NameTag", Unit?.UnitType)
 			.ForContext("IdTag", Unit?.UnitId);
 
 		if (Animator == null) return;

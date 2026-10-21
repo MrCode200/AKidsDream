@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace AKidsDream.Utilities.TypeExtensions;
+namespace AKidsDream.Utilities.Registry.TypeExtensions;
 
 public static class DictionaryExtensions
 {

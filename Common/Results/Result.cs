@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AKidsDream.Common.Results;
+namespace AKidsDream.Utilities.Results;
 
 public static class Result
 {

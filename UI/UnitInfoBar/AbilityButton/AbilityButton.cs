@@ -2,7 +2,7 @@ using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using AKidsDream.Core.Managers.Audio;
 
 namespace AKidsDream.UnitInfoBar.UI;

@@ -2,10 +2,11 @@
 
 [ext_resource type="Script" uid="uid://bxppoo78as3rs" path="res://UI/UnitInfoBar/AbilityButton/AbilityButton.cs" id="1_6y4ib"]
 [ext_resource type="Texture2D" uid="uid://4myuye6y7fs4" path="res://UI/UnitInfoBar/AbilityButton/Assets/BigBlueButton_Regular_Jont.png" id="1_g0mcq"]
-[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="2_mvhx4"]
 [ext_resource type="Texture2D" uid="uid://i2b0lo6q3utp" path="res://Entities/Units/Abilities/Assets/AbilityIcons/Icon_09.png" id="3_6y4ib"]
-[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="5_53lnc"]
+[ext_resource type="Script" uid="uid://bf4sis3utsfxc" path="res://addons/TweenComponent/Source/TweenComponent.cs" id="4_c0fnx"]
 [ext_resource type="Resource" uid="uid://dci64dn3kcor2" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnMouseEnteredTween.tres" id="5_mvhx4"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenBlueprint.cs" id="5_t77bu"]
+[ext_resource type="PackedScene" uid="uid://brlo37ft0qflt" path="res://addons/TweenComponent/Source/TweenComponent.tscn" id="8_1xjmn"]
 [ext_resource type="Resource" uid="uid://ux8g57pgldjc" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnMouseExitTween.tres" id="8_c0fnx"]
 [ext_resource type="Resource" uid="uid://bvv474knme5pp" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnSpawnTween.tres" id="9_t77bu"]
 
@@ -78,11 +79,14 @@ icon = ExtResource("3_6y4ib")
 icon_alignment = 1
 expand_icon = true
 
-[node name="TweenOnMouse" type="Node" parent="VSplitContainer/MarginContainer" unique_id=1536189066 node_paths=PackedStringArray("Target")]
-script = ExtResource("2_mvhx4")
-Target = NodePath("../Button")
-TweenDatas = Array[ExtResource("5_53lnc")]([ExtResource("8_c0fnx"), ExtResource("5_mvhx4")])
-metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+[node name="TweenOnMouse" type="Node" parent="VSplitContainer/MarginContainer" unique_id=148036308 node_paths=PackedStringArray("Target")]
+script = ExtResource("4_c0fnx")
+Target = NodePath("..")
+TweenBlueprints = Dictionary[StringName, ExtResource("5_t77bu")]({
+&"OnMouseEnter": ExtResource("5_mvhx4"),
+&"OnMouseExit": ExtResource("8_c0fnx")
+})
+metadata/_custom_type_script = "uid://bf4sis3utsfxc"
 
 [node name="AbilityName" type="Label" parent="VSplitContainer" unique_id=504616585]
 custom_minimum_size = Vector2(115, 0)
@@ -94,8 +98,8 @@ label_settings = SubResource("LabelSettings_m53bf")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="TweenSpawn" type="Node" parent="VSplitContainer" unique_id=521254148 node_paths=PackedStringArray("Target")]
-script = ExtResource("2_mvhx4")
+[node name="SpawnTweenComponent" parent="VSplitContainer" unique_id=263332114 node_paths=PackedStringArray("Target") instance=ExtResource("8_1xjmn")]
 Target = NodePath("..")
-TweenDatas = Array[ExtResource("5_53lnc")]([ExtResource("9_t77bu")])
-metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+TweenBlueprints = Dictionary[StringName, ExtResource("5_t77bu")]({
+&"SpawnTween": ExtResource("9_t77bu")
+})

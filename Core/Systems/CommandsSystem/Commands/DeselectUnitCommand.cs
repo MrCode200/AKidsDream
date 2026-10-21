@@ -1,19 +1,21 @@
 ﻿#nullable enable
-using AKidsDream.Common;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Serilog;
 
 namespace AKidsDream.Commands;
 
 public sealed class DeselectUnitCommand(Unit unit) : IGameCommand
 {
+    private static readonly ILogger _log = GameLogger.For<DeselectUnitCommand>();
+
     public Result<GameError> Execute(GameContext context)
     {
-        Log.ForContext<DeselectUnitCommand>().Here().Info(
+        _log.ForContext<DeselectUnitCommand>().Here().Info(
             "Deselected unit '{UnitName}' (id: {UnitId})",
-            unit.UnitName,
+            unit.UnitType,
             unit.UnitId);
 
         unit.SelectableComp.IsSelected = false;

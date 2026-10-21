@@ -13,8 +13,9 @@ public partial class PlayerData : Resource
 	[Export] public string Name;
 	[Export] public int TeamIdInt;
 	[Export] public Global.UnitColor UnitColor;
-	[Export] public ControllerType ControllerType;
-	[Export] public Array<Global.UnitName> PlayerHand = [];
+	[Export] public string ControllerKey;
+	[Export] public bool Defeated;
+	[Export] public Array<string> PlayerHand = [];
 	
 	private int _mana;
 	[Export]
@@ -26,7 +27,7 @@ public partial class PlayerData : Resource
 	
 	public PlayerId PlayerId => new(PlayerIdInt);
 	public TeamId TeamId => new(TeamIdInt);
-	public IPlayerController Controller { get; set; }
+	public IController Controller { get; set; }
 	
 	public PlayerData() { }
 	
@@ -35,7 +36,7 @@ public partial class PlayerData : Resource
 		string name, 
 		TeamId teamId, 
 		Global.UnitColor unitColor, 
-		ControllerType controllerType,
+		string controllerKey,
 		int mana
 		)
 	{
@@ -43,10 +44,10 @@ public partial class PlayerData : Resource
 		Name = name;
 		TeamIdInt = teamId.Value;
 		UnitColor = unitColor;
-		ControllerType = controllerType;
+		ControllerKey = controllerKey;
 		Mana = mana;
 	}
 	
 	// ------------------------------------------------ Utils ------------------------------------------------
-	public bool UsesPIC => ControllerType == ControllerType.PlayerInteractionController;  
+	public bool UsesPIC => ControllerKey == "PlayerInteractionController";
 }

@@ -1,7 +1,7 @@
 ﻿using AKidsDream.Util.Identifiers;
 using Godot;
 
-namespace AKidsDream.Common.Errors;
+namespace AKidsDream.Utilities.Errors;
 
 public abstract record AbilityError(
     string Code,

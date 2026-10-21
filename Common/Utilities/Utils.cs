@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
-namespace AKidsDream.Utilities;
+namespace AKidsDream.Utilities.Registry;
 
 /// <summary>
 /// Global utility class providing helper functions for resource management and other common operations.
@@ -12,10 +12,10 @@ namespace AKidsDream.Utilities;
 [Tool]
 public static class Utils
 {
-    public static string GetUnitPath(Global.UnitName unitName) => $"res://Entities/Units/{unitName.ToString()}/";
+    public static string GetUnitPath(string unitName) => $"res://Entities/Units/{unitName}/";
 
-    public static string GetCardPath(Global.UnitName unitName) =>
-        GetUnitPath(unitName) + $"{unitName.ToString()}CardData.tres";
+    public static string GetCardPath(string unitName) =>
+        GetUnitPath(unitName) + $"{unitName}CardData.tres";
     
     /// <summary>
     /// Rebuilds a resource by copying all properties from a source resource to a new typed instance.

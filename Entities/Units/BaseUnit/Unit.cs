@@ -1,14 +1,14 @@
 using AKidsDream.Abilities;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Logging;
+using TweenComp.Resources.Blueprint;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Utilities.Logging;
 using Godot;
 using Serilog;
 
-namespace AKidsDream.Common;
+namespace AKidsDream.Utilities;
 
 /// <summary>
 /// Base class for all unit types in the game.
@@ -21,9 +21,9 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     // -- PROPERTIES --
     public UnitId UnitId { get; private set; }
     public IIdTag CasterId => UnitId; // IAbilityCaster interface
-    public string CasterName => UnitName.ToString(); // IAbilityCaster interface
+    public string CasterName => UnitType.ToString(); // IAbilityCaster interface
 
-    [Export] public Global.UnitName UnitName;
+    [Export] public Global.UnitType UnitType;
 
     [Export] public int TeamIdInt;
     [Export] public int OwnerIdInt;
@@ -104,7 +104,7 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
 
         Board = board;
         
-        UnitName = unitStats.UnitName;
+        UnitType = unitStats.UnitType;
         OwnerIdInt = ownerPlayerData.PlayerId.Value;
         TeamIdInt = ownerPlayerData.TeamId.Value;
         TileLocation = tileLocation;
@@ -122,8 +122,8 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
         EmitSignal(SignalName.UnitInitialized);
 
         // Set static context for all future log calls
-        _log = _log.ForContext("IdTag", UnitId)
-            .ForContext("NameTag", UnitName)
+        _log = _log.ForContext("UnitIdTag", UnitId)
+            .ForContext("UnitNameTag", UnitType)
             .ForContext("PlayerId", OwnerIdInt);
         _log.Here().Info("Unit initialized");
 

@@ -1,5 +1,5 @@
-using AKidsDream.Common;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities;
+using AKidsDream.Utilities.Logging;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystem.Resources;

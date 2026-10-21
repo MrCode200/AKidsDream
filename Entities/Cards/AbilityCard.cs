@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AKidsDream.Abilities.Effects;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using AKidsDream.Core.Managers.Audio;
-using AKidsDream.Utilities.TypeExtensions;
+using AKidsDream.Utilities.Registry.TypeExtensions;
 using Godot;
 using Serilog;
 
@@ -103,8 +103,8 @@ public partial class AbilityCard : Control
 
     public override void _Ready()
     {
-        _log = _log.ForContext("IdTag", Id)
-            .ForContext("NameTag", CardData.Name + "Card");
+        _log = _log.ForContext("CardIdTag", Id)
+            .ForContext("CardNameTag", CardData.Name + "Card");
 
         _playerHand = GetParent<PlayerHand>();
         
@@ -172,7 +172,7 @@ public partial class AbilityCard : Control
     // -- LOGIC --
     public void DisplayCard(AbilityCardData cardData)
     {
-        CardPortrait.Texture = cardData.Ability.Icon;
+        CardPortrait.Texture = cardData.Icon;
         CardName.Text = cardData.Name;
         CardData = cardData;
     }

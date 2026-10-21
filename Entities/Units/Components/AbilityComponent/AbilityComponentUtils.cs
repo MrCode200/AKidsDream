@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.Commands;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Results;
 using AKidsDream.GameBoard;
 using Godot;
 
-namespace AKidsDream.Common.Components.TweenComponent.Resources;
+namespace TweenComp.Resources.Blueprint;
 
 public sealed record CastOutcome(
     IAbilityCaster Caster,

@@ -11,6 +11,6 @@ Limit = 1
 Volume = -10.0
 PitchScale = 0.922
 PitchRandomness = 0.031
-Bus = 2
+Bus = 3
 DebugLog = true
 metadata/_custom_type_script = "uid://64cgabm4h54d"

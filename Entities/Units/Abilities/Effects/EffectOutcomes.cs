@@ -1,6 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
 using Godot;
 
 namespace AKidsDream.Abilities.Effects;

@@ -2,21 +2,18 @@
 using System;
 using AKidsDream.Commands;
 using AKidsDream.Controllers;
+using AKidsDream.Core.Content;
 using AKidsDream.Core.Teams;
-using AKidsDream.GameBoard;
-using AKidsDream.Managers;
-using AKidsDream.StateMachines;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Managers.SaveSystems;
 using Godot;
+using Serilog;
 
 namespace AKidsDream.Util.Identifiers;
 
-public enum ControllerType
+public interface IController
 {
-	PlayerInteractionController,
-}
-
-public interface IPlayerController
-{
+	public bool UseEndTurnButton { get; set; }
 	public void StartTurn();
 	public void EndTurn();
 }
@@ -25,10 +22,12 @@ public interface IPlayerController
 public partial class ControllerFactory : Node
 {
 	private GameContext? _context;
+	private readonly ILogger _log = GameLogger.For<ControllerFactory>();
 
 	public void Init(GameContext context)
 	{
 		_context = context;
+		_log.Here().Debug("ControllerFactory initialized with GameContext");
 	}
 
 	// -- FACTORY --
@@ -37,24 +36,24 @@ public partial class ControllerFactory : Node
 	/// </summary>
 	/// <param name="playerData">The Player to whom the controller belongs</param>
 	/// <returns></returns>
-	/// <exception cref="ArgumentException">If no controller with the specified <see cref="ControllerType"/> is found</exception>
-	public IPlayerController CreateController(PlayerData playerData)
+	/// <exception cref="ArgumentException">If no controller with the specified string is found in the registry</exception>
+	public IController CreateController(PlayerData playerData)
 	{
 		if (_context == null)
 			throw new InvalidOperationException("ControllerFactory not initialized. Call Initialize() first.");
 		
-		IPlayerController? controller = null;
-		switch (playerData.ControllerType)
-		{
-			case ControllerType.PlayerInteractionController:
-				controller = new PlayerInteractionController(_context, playerData);
-				break;
-			default:
-				throw new ArgumentException($"Unknown controller type: {playerData.ControllerType}");
-		}
+		_log.Here().Debug("Creating controller of type {ControllerType} for player {PlayerName} (id: {PlayerId})",
+			playerData.ControllerKey, playerData.Name, playerData.PlayerId);
+		
+		var controllerDef = Global.ControllerRegistry.Get(playerData.ControllerKey);
+		IController controller = controllerDef.Factory(_context, playerData);
 
 		if (controller is Node node)
 			AddChild(node);
+		
+		_log.Here().Debug("Successfully created and added {ControllerType} controller for player {PlayerName}",
+			playerData.ControllerKey, playerData.Name);
+		
 		return controller;
 	}
 }

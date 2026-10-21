@@ -2,7 +2,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace AKidsDream.Common.Logging;
+namespace AKidsDream.Utilities.Logging;
 
 public class ShortSourceContextEnricher : ILogEventEnricher
 {

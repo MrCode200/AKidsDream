@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://dg0r723sd4a8x"]
 
-[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_mjq01"]
-[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_pq7l7"]
-[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_5aq04"]
+[ext_resource type="Script" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_mjq01"]
+[ext_resource type="Script" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_pq7l7"]
+[ext_resource type="Script" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_5aq04"]
 
 [sub_resource type="Curve" id="Curve_2i624"]
 _data = [Vector2(0, 0), 0.0, -0.48689127, 0, 0, Vector2(1, 1), -1.7406373, 0.0, 0, 0]

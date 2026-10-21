@@ -1,0 +1,11 @@
+﻿{
+  "id": "testing",
+  "name": "Testing Mod",
+  "author": "MrCode200",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "dependencies": [],
+  "entryPoint": "TestingMod.dll", 
+  "ResourcePackPath": "",
+  "description": "Features to test game logic and co"
+}

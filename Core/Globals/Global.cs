@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
-using AKidsDream.Utilities.TypeExtensions;
+using AKidsDream.Common.Registry;
+using AKidsDream.Utilities;
+using AKidsDream.Core.Content;
+using AKidsDream.Core.Managers.GameModeManager;
+using AKidsDream.Core.Managers.ModManager;
+using AKidsDream.Entities.Cards;
+using AKidsDream.Util.Identifiers;
+using AKidsDream.Utilities.Registry;
+using AKidsDream.Utilities.Registry.TypeExtensions;
 using Godot;
 
 namespace AKidsDream.Managers.SaveSystems;
@@ -14,11 +22,20 @@ public static class Global
 	public static Global Instance { get; private set; }
 	*/
 	
+	// REGISTRIES
+	public static readonly Registry<NamespacedKey, ModManifest> ModRegistry = new("ModRegistry");
+	public static readonly Registry<NamespacedKey, UnitDefinition> UnitRegistry = new("UnitRegistry");
+	public static readonly Registry<NamespacedKey, CardDefinition> CardRegistry = new("CardRegistry");
+	public static readonly Registry<NamespacedKey, GameModeDefinition> GameModeRegistry = new("GameModeRegistry");
+	public static readonly Registry<NamespacedKey, ControllerDefinition> ControllerRegistry = new("ControllerRegistry");
+	public static readonly Registry<NamespacedKey, ConsoleCommandDefinition> ConsoleCommandRegistry = new("ConsoleCommandRegistry");
+	
 	// [Export(PropertyHint.Range, "1,1,1,or_greater,suffix:px")] 
 	// NOTE: could result in floating point error for specific numbers
 	public const float TileMapScale = 3.25f;
 	public const int TileSize = (int)(16 * TileMapScale); // 16 * 3.25(scale) = 52
 	public static readonly string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
+	public static readonly string ModsPath = ProjectSettings.GlobalizePath("res://Mods");
 
 	public enum Groups
 	{
@@ -42,11 +59,12 @@ public static class Global
 		Red
 	}
 	
-	public enum UnitName
+	public enum UnitType
 	{
 		Unassigned,
 		Timmy,
-		Soldier
+		Soldier,
+		King
 	}
 
 	public enum InputMapActions

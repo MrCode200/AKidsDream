@@ -11,4 +11,4 @@ Limit = 1
 VolumeRandomness = 0.15
 PitchScale = 0.9
 PitchRandomness = 0.1
-Bus = 2
+Bus = 3

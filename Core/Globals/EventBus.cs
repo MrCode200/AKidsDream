@@ -1,7 +1,7 @@
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
+using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
 using AKidsDream.Core.Teams;
 using AKidsDream.Entities.Cards;
 using Godot;
@@ -118,5 +118,5 @@ public partial class EventBus : Node
     public delegate void AbilityBtnPressedEventHandler(Unit unit, AbilityData ability);
 
     [Signal]
-    public delegate void EndTurnButtonPressedEventHandler(int callerPlayerIdInt);
+    public delegate void EndTurnButtonPressedEventHandler();
 }

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="AKidsDream"
-config/version="0.1.0-pre-alpha.1"
+config/version="0.2.0.1"
 run/main_scene="uid://cyhkas8bsi7kd"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
@@ -38,7 +38,7 @@ project/assembly_name="AKidsDream"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/console/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg")
+enabled=PackedStringArray("res://addons/TweenComponent/plugin.cfg", "res://addons/console/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg")
 
 [input]
 

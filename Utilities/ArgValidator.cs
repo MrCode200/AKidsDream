@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AKidsDream.Utilities.TypeExtensions;
+namespace AKidsDream.Utilities.Registry.TypeExtensions;
 
 public static class ArgValidator
 {

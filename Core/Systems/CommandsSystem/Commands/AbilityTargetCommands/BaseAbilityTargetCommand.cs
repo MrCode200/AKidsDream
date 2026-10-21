@@ -1,11 +1,11 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using AKidsDream.Core.Managers.Audio;
 using Godot;
 using Serilog;
@@ -64,13 +64,13 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
                 pitch: soundEffect.PitchScale + Mathf.Min(0.16f * resimulatedPayload.AccumulatedTargets.Count, 1.4f)
             );
         
-        Log.Here().Info(
-            "{Action} target {TargetTile} for ability '{AbilityName}'",
+        Log.ForContext("UnitIdTag", caster.UnitId)
+            .ForContext("UnitNameTag", caster.UnitType)
+            .ForContext("AbilityName", Ctx.Ability.Name)
+            .Here().Info(
+            "{Action} target {TargetTile}",
             GetActionName(),
-            TargetedTile,
-            Ctx.Ability.Name,
-            Ctx.Caster.CasterName,
-            Ctx.Caster.CasterId);
+            TargetedTile);
 
         return Result<GameError>.Ok();
     }

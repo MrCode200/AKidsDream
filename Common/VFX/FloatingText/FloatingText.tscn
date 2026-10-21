@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://djhx822tsjxm6"]
 
 [ext_resource type="Script" uid="uid://begttxk4pgx0p" path="res://Common/VFX/FloatingText/FloatingText.cs" id="1_jdf5u"]
-[ext_resource type="Script" uid="uid://1l3wvsl0yenm" path="res://Common/Components/TweenComponent/TweenComponent.cs" id="2_imc32"]
-[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_r41e1"]
+[ext_resource type="Script" uid="uid://bf4sis3utsfxc" path="res://addons/TweenComponent/Source/TweenComponent.cs" id="2_y8dj0"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenBlueprint.cs" id="3_imc32"]
 [ext_resource type="Resource" uid="uid://basi3xn2nv474" path="res://Common/VFX/FloatingText/Tweens/FloatUpAndFadeTween.tres" id="4_y8dj0"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_imc32"]
@@ -29,8 +29,10 @@ vertical_alignment = 1
 script = ExtResource("1_jdf5u")
 TweenComponent = NodePath("TweenComponent")
 
-[node name="TweenComponent" type="Node" parent="." unique_id=407187244 node_paths=PackedStringArray("Target")]
-script = ExtResource("2_imc32")
+[node name="TweenComponent" type="Node" parent="." unique_id=1193408507 node_paths=PackedStringArray("Target")]
+script = ExtResource("2_y8dj0")
 Target = NodePath("..")
-TweenDatas = Array[ExtResource("3_r41e1")]([ExtResource("4_y8dj0")])
-metadata/_custom_type_script = "uid://1l3wvsl0yenm"
+TweenBlueprints = Dictionary[StringName, ExtResource("3_imc32")]({
+&"FloatUpAndFade": ExtResource("4_y8dj0")
+})
+metadata/_custom_type_script = "uid://bf4sis3utsfxc"

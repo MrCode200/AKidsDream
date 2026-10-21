@@ -1,4 +1,4 @@
-namespace AKidsDream.Common.Errors;
+namespace AKidsDream.Utilities.Errors;
 
 public abstract record EffectError(string Code, string Message) : GameError(Code, Message)
 {

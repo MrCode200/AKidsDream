@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AKidsDream.Common.VFX;
+namespace AKidsDream.Utilities.VFX;
 
 [GlobalClass]  
 public partial class FloatingTextFactory : Control

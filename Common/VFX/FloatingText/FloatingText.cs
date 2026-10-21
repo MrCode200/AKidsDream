@@ -1,9 +1,11 @@
 using Godot;
 using System;
-using AKidsDream.Common.Components.TweenComponent.Resources;
+using System.Threading.Tasks;
+using TweenComp.Resources.Blueprint;
 using AKidsDream.Res.Common.Components.TweenComponent.Resources;
+using TweenComp.Source;
 
-namespace AKidsDream.Common.VFX;
+namespace AKidsDream.Utilities.VFX;
 
 [GlobalClass]
 public partial class FloatingText : Label
@@ -27,8 +29,11 @@ public partial class FloatingText : Label
 
         if (destroyOnFinish)
         {
-            await TweenComponent.PlayTweenAsync(TweenAnimationIdentifiers.FloatUpAndFade);
-            QueueFree();
+            if (TweenComponent.PlayTween(TweenAnimationIdentifiers.FloatUpAndFade) != null)
+            {
+                await ToSignal(TweenComponent, TweenComponent.SignalName.FinishedPlayingTween);
+                QueueFree();
+            }
         }
         else
         {

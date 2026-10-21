@@ -1,7 +1,7 @@
 using Godot;
 using AKidsDream.Util.Identifiers;
 
-namespace AKidsDream.Common;
+namespace AKidsDream.Utilities;
 
 [GlobalClass]
 [Tool]

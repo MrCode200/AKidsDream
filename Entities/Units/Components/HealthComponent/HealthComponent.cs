@@ -1,11 +1,12 @@
 #nullable enable
 using System;
+using AKidsDream.Utilities;
 using Godot;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.VFX;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.VFX;
 using Serilog;
 
-namespace AKidsDream.Common.Components.TweenComponent.Resources;
+namespace TweenComp.Resources.Blueprint;
 
 /// <summary>
 /// Manages health-related functionality for a game entity.
@@ -44,8 +45,8 @@ public partial class HealthComponent : Node
 	public override void _Ready()
 	{
 		var unit = Owner as Unit;
-		_log = _log.ForContext("NameTag", unit?.UnitName)
-			.ForContext("IdTag", unit?.UnitId);
+		_log = _log.ForContext("UnitNameTag", unit?.UnitType)
+			.ForContext("UnitIdTag", unit?.UnitId);
 
 		_damageShaderTimer = new Timer() { OneShot = true };
 		_damageShaderTimer.Timeout += StopDamageShader;

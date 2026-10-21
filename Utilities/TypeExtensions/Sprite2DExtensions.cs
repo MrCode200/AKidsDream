@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace AKidsDream.Utilities.TypeExtensions;
+namespace AKidsDream.Utilities.Registry.TypeExtensions;
 
 public static class Sprite2DExtensions
 {

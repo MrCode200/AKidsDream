@@ -1,14 +1,15 @@
 #nullable enable
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
-using AKidsDream.GameBoard;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Serilog;
 
 namespace AKidsDream.Commands;
 
 public class EndTurnCommand(PlayerId playerId) : IGameCommand
 {
+    private static readonly ILogger Log = GameLogger.For<EndTurnCommand>();
+
     public Result<GameError> Execute(GameContext context)
     {
         var activePlayer = context.GameLoopManager.GetActivePlayer();
@@ -17,10 +18,8 @@ public class EndTurnCommand(PlayerId playerId) : IGameCommand
             return Result<GameError>.Fail(new ValidationError.NotPlayerTurn(activePlayer.PlayerId, playerId, "End turn"));
         }
 
-        Log.ForContext<EndTurnCommand>().Here().Info(
-            "Successfully ended {PlayerId}'s turn",
-            playerId
-        );
+        Log.ForContext("PlayerIdTag", playerId)
+            .Here().Info("Successfully ended turn");
         return Result<GameError>.Ok();
     }
 }

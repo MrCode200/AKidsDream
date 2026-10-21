@@ -1,10 +1,11 @@
- using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.VFX;
+ using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.VFX;
 using AKidsDream.Core.Teams;
 using Godot;
 using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Res.Common.Components.TweenComponent.Resources;
- 
+using TweenComp.Source;
+
 namespace AKidsDream.UI.RoundCounter;
 
 public partial class InfoDisplay : Control
@@ -49,13 +50,13 @@ public partial class InfoDisplay : Control
 	private void OnNewRoundStarted(int playerIdInt, int newRound)
 	{
 		RoundLabel.Text = "Round " + newRound;
-		RoundCounterTweenComp.PlayTween(TweenAnimationIdentifiers.BumbUpRoundCounter);
+		RoundCounterTweenComp.PlayTween(TweenAnimationIdentifiers.BumpUp);
 	}
 
 	private void OnTurnStarted(PlayerData player, int round)
 	{
 		PlayersTurnLabel.Text = $"{player.Name}'s Turn";
-		PlayerLabelTweenComp.PlayTween(TweenAnimationIdentifiers.BumbUpPlayerName);
+		PlayerLabelTweenComp.PlayTween(TweenAnimationIdentifiers.BumpUpDelayed);
 
 		if (!player.UsesPIC) return;
 		

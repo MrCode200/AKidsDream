@@ -2,7 +2,7 @@
 using System;
 using Godot;
 using System.Collections.Generic;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using Serilog;
 
 namespace AKidsDream.StateMachines;

@@ -1,9 +1,9 @@
 #nullable enable
 using System;
 using AKidsDream.Commands;
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Entities.Cards;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers;
@@ -61,6 +61,7 @@ public partial class CardManager : Node2D, IBlockable
 
     public override void _Ready()
     {
+        _log.Here().Debug("CardManager _Ready starting initialization");
         BlockingManager.Instance.Register(this);
         _cachedAbilityPayload = new AbilityPayload
         {
@@ -72,10 +73,12 @@ public partial class CardManager : Node2D, IBlockable
 
         EventBus.Instance.UnitSelected += OnUnitSelected;
         EventBus.Instance.UnitDeselected += OnUnitDeselected;
+        _log.Here().Debug("CardManager registered with BlockingManager and EventBus");
     }
 
     public override void _ExitTree()
     {
+        _log.Here().Debug("CardManager _ExitTree cleaning up");
         BlockingManager.Instance.Unregister(this);
         EventBus.Instance.UnitSelected -= OnUnitSelected;
         EventBus.Instance.UnitDeselected -= OnUnitDeselected;
@@ -97,6 +100,7 @@ public partial class CardManager : Node2D, IBlockable
     public void Init(GameContext gameContext)
     {
         _gameContext = gameContext;
+        _log.Here().Debug("CardManager initialized with GameContext");
     }
 
     public override void _Input(InputEvent @event)
@@ -219,10 +223,10 @@ public partial class CardManager : Node2D, IBlockable
             _cachedAbilityPayload,
             SelectedCard.CardData.Ability
         );
-        
-        _log.ForContext("NameTag", cardToSelect.CardData.Name)
-            .ForContext("IdTag", cardToSelect.Id)
-            .Here().Debug("Card selected {NameTag} (id: {IdTag})");
+
+        _log.ForContext("CardNameTag", cardToSelect.CardData.Name)
+            .ForContext("CardIdTag", cardToSelect.Id)
+            .Here().Debug("Card selected {CardNameTag} (id: {CardIdTag})");
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.CardSelected, cardToSelect);
     }
@@ -324,6 +328,8 @@ public partial class CardManager : Node2D, IBlockable
         if (SelectedCard is null || _isCasting) return;
 
         var castingCard = SelectedCard;
+        _log.Here().Debug("Attempting to cast card {CardNameTag} (id: {CardIdTag})", castingCard.CardData.Name, castingCard.Id);
+        
         if (_cachedAbilityContext is null)
             BuildAbilityContextPayload();
 
@@ -351,6 +357,7 @@ public partial class CardManager : Node2D, IBlockable
             }
 
             isSuccess = true;
+            _log.Here().Info("Card {CardNameTag} cast successfully", castingCard.CardData.Name);
             PlayerHand.RemoveCard(castingCard);
             DeselectCard(castingCard);
             castingCard.QueueFree();
@@ -392,6 +399,7 @@ public partial class CardManager : Node2D, IBlockable
 
     public void SetBlocked(bool block)
     {
+        _log.Here().Debug("CardManager SetBlocked: {IsBlocked}", block);
         IsBlocked = block;
         UpdateCardDisable(block);
         if (SelectedCard is not null)

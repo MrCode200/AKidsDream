@@ -1,5 +1,5 @@
 ﻿using System;
-using AKidsDream.Common.Errors;
+using AKidsDream.Utilities.Errors;
 
 namespace AKidsDream.Core.Managers.Audio;
 

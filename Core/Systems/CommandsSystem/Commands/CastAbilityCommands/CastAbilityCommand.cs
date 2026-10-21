@@ -1,10 +1,10 @@
 #nullable enable
 using System.Threading.Tasks;
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Godot;
 using Serilog;
 
@@ -17,6 +17,8 @@ public class CastAbilityBaseCommand(
     AbilityPayload payload
 ) : IAsyncGameBaseCommand
 {
+    private static readonly ILogger Log = GameLogger.For<CastAbilityBaseCommand>();
+
     public async Task<Result<GameError>> ExecuteAsync(GameContext context)
     {
         var castResult = await caster.AbilityComp.CastAsync(abilityName, abilityContext, payload.AccumulatedTargets);
@@ -26,11 +28,11 @@ public class CastAbilityBaseCommand(
 
         context.AbilityVisualizer.ClearTilemaps();
 
-        Log.ForContext<CastAbilityBaseCommand>().Here().Info(
-            "Casted ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId}) at {TargetCount} target(s)",
-            abilityName,
-            caster.UnitName,
-            caster.UnitId,
+        Log.ForContext("UnitIdTag", caster.UnitId)
+            .ForContext("UnitNameTag", caster.UnitType)
+            .ForContext("AbilityNameTag", abilityName)
+            .Here().Info(
+            "Casted ability at {TargetCount} target(s)",
             payload.ProcessingTiles.Count);
 
         return Result<GameError>.Ok();

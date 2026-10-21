@@ -1,29 +1,31 @@
-[gd_resource type="Resource" script_class="TweenAnimationData" format=3 uid="uid://basi3xn2nv474"]
+[gd_resource type="Resource" script_class="TweenBlueprint" format=3 uid="uid://basi3xn2nv474"]
 
-[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://Common/Components/TweenComponent/Resources/CustomSignalData.cs" id="1_uqonn"]
-[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://Common/Components/TweenComponent/Resources/TweenStep.cs" id="2_xamx4"]
-[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://Common/Components/TweenComponent/Resources/TweenAnimationData.cs" id="3_t5fn1"]
+[ext_resource type="Script" uid="uid://bdnteh7isw3xe" path="res://addons/TweenComponent/Source/Resources/Blueprints/CustomSignalData.cs" id="1_o8722"]
+[ext_resource type="Script" uid="uid://babs031xcw23x" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenStep.cs" id="2_83847"]
+[ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenBlueprint.cs" id="3_7sm7e"]
 
 [sub_resource type="Resource" id="Resource_sanjn"]
-script = ExtResource("2_xamx4")
+script = ExtResource("2_83847")
 Property = NodePath("self_modulate:a")
 UseExplicitFrom = true
 FromValue = 0.0
 ToValue = 1.0
 Duration = 0.15
 Transition = 1
+TargetOverride = NodePath("")
 metadata/_custom_type_script = "uid://babs031xcw23x"
 
 [sub_resource type="Resource" id="Resource_rnaty"]
-script = ExtResource("2_xamx4")
+script = ExtResource("2_83847")
 Property = NodePath("self_modulate:a")
 UseExplicitFrom = true
 FromValue = 1.0
 ToValue = 0.0
 Duration = 0.75
+TargetOverride = NodePath("")
 
 [sub_resource type="Resource" id="Resource_s4tw3"]
-script = ExtResource("2_xamx4")
+script = ExtResource("2_83847")
 Property = NodePath("position")
 FromValue = Vector2(0, -16)
 ToValue = Vector2(0, -64)
@@ -32,20 +34,23 @@ Duration = 0.75
 Transition = 7
 Ease = 0
 RunParallelWithPrevious = true
+TargetOverride = NodePath("")
 metadata/_custom_type_script = "uid://babs031xcw23x"
 
 [sub_resource type="Resource" id="Resource_fkssm"]
-script = ExtResource("2_xamx4")
+script = ExtResource("2_83847")
 Property = NodePath("position")
 FromValue = null
 ToValue = Vector2(0, 64)
 SetValueRelative = true
 Duration = 0.001
+TargetOverride = NodePath("")
 metadata/_custom_type_script = "uid://babs031xcw23x"
 
 [resource]
-script = ExtResource("3_t5fn1")
-Steps = Array[ExtResource("2_xamx4")]([SubResource("Resource_sanjn"), SubResource("Resource_rnaty"), SubResource("Resource_s4tw3"), SubResource("Resource_fkssm")])
+script = ExtResource("3_7sm7e")
+Steps = Array[ExtResource("2_83847")]([SubResource("Resource_sanjn"), SubResource("Resource_rnaty"), SubResource("Resource_s4tw3"), SubResource("Resource_fkssm")])
 Triggers = Array[int]([])
-Identifier = &"FloatUpAndFade"
+MaxLoopCount = -1
+OtherConflictPolicy = 0
 metadata/_custom_type_script = "uid://dgx06qq13talq"

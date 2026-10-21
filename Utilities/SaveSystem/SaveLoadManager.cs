@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using AKidsDream.Core.Managers;
 using AKidsDream.Core.Teams;
 using AKidsDream.GameBoard;
-using AKidsDream.Common;
+using AKidsDream.Utilities;
+using AKidsDream.Core.Managers.GameModeManager;
 using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Managers.SaveSystems.Rehydration;
 using Godot;
@@ -30,17 +31,8 @@ public static class SaveLoadManager
     /// Loads the game state from a file.
     /// </summary>
     /// <param name="stateFileName">The filename to be loaded</param>
-    /// <param name="board">The board, which gets used to init itself.</param>
-    /// <param name="gameLoopManager">The GameLoopManager, which gets used to init itself.</param>
-    /// <param name="entityLayer">To where the child Unit Nodes should be added to</param>
-    /// <param name="gameManager"></param>
-    public static void LoadGameState(
-        string stateFileName,
-        Board board,
-        GameLoopManager gameLoopManager,
-        Node entityLayer,
-        GameManager gameManager
-    )
+    /// <returns>The loaded GameStateData</returns>
+    public static GameStateData LoadGameState(string stateFileName)
     {
         Log.ForContext("StateFileName", stateFileName)
             .Here()
@@ -59,23 +51,9 @@ public static class SaveLoadManager
             throw;
         }
 
-        gameManager.InitializeRegistries(state.PlayerData, state.TeamData, state.TeamRelations);
-        gameManager.InitializeControllers(state.PlayerData);
-
-        gameLoopManager.LoadState(state);
-
-        AssignNextIds(state.UnitStateResources!, state.PlayerData, state.TeamData);
-        var initializedUnits =
-            UnitStateInitializer.InitializeUnits(
-                entityLayer,
-                state.UnitStateResources,
-                gameManager.PlayerTeamRegistry,
-                board
-            );
-        board.Init(state.BoardState, initializedUnits);
-
         Log.Here()
             .Debug("LoadGameState completed successfully");
+        return state;
     }
 
     /// <summary>
@@ -92,12 +70,17 @@ public static class SaveLoadManager
         PlayerTeamRegistry playerTeamRegistry,
         TeamRelationResolver teamRelationResolver,
         GameLoopManager gameLoopManager,
+        GameModeLoader gameModeLoader,
         string? saveFileName = null
     )
     {
         saveFileName ??= "GameState" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+        Log.ForContext("SaveFileName", saveFileName)
+            .Here().Debug("Saving game state to '{SaveFileName}'", saveFileName);
+        
         var state = new GameStateData
         {
+            GameMode = gameModeLoader.GetCurrentGameMode(),
             GameRound = gameLoopManager.CurrentRound,
             PlayerTurnOrder = gameLoopManager.PlayerTurnOrder(),
             ActivePlayerIdInt = gameLoopManager.ActivePlayerId.Value,
@@ -114,28 +97,7 @@ public static class SaveLoadManager
         }
 
         GameStateRepository.Save(state, saveFileName);
-    }
-
-    private static void AssignNextIds(IEnumerable<UnitStateData> units, IEnumerable<PlayerData> players,
-        IEnumerable<TeamData> teams)
-    {
-        var highestUnitId = units.Select(u => u.UnitId).DefaultIfEmpty(1).Max();
-        UnitId.SetNextId(highestUnitId + 1);
-
-        var highestPlayerId = players.Select(p => p.PlayerId.Value).DefaultIfEmpty(1).Max();
-        PlayerId.SetNextId(highestPlayerId + 1);
-
-        var highestTeamId = teams.Select(t => t.TeamId.Value).DefaultIfEmpty(1).Max();
-        TeamId.SetNextId(highestTeamId + 1);
-
-
-        Log.ForContext("HighestUnitId", highestUnitId)
-            .ForContext("HighestPlayerId", highestPlayerId)
-            .ForContext("HighestTeamId", highestTeamId)
-            .Here()
-            .Debug(
-                "Set nextId for UnitId to {HighestUnitId}, PlayerId to {HighestPlayerId}, TeamId to {HighestTeamId}",
-                highestUnitId + 1, highestPlayerId + 1, highestTeamId + 1
-            );
+        Log.Here().Info("Game state saved successfully to '{SaveFileName}' with {UnitCount} units",
+            saveFileName, state.UnitStateResources.Count);
     }
 }

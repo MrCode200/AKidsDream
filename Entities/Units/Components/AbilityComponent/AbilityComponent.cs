@@ -5,17 +5,17 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using TweenComp.Resources.Blueprint;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Godot;
 using Godot.Collections;
 using Serilog;
 
-namespace AKidsDream.Common;
+namespace AKidsDream.Utilities;
 
 [GlobalClass]
 [Tool]
@@ -48,8 +48,8 @@ public partial class AbilityComponent : Node
 
 	public override void _Ready()
 	{
-		_log = _log.ForContext("NameTag", Unit?.UnitName)
-			.ForContext("IdTag", Unit?.UnitId);
+		_log = _log.ForContext("UnitNameTag", Unit?.UnitType)
+			.ForContext("UnitIdTag", Unit?.UnitId);
 		if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
 
 		foreach (var poolData in InitialPoolDatas)

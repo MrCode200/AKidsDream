@@ -1,9 +1,9 @@
 #nullable enable
-using AKidsDream.Common;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Godot;
 using Serilog;
 
@@ -16,6 +16,8 @@ public class SelectAbilityCommand(
     AbilityPayload payload
 ) : IGameCommand
 {
+    private static readonly ILogger Log = GameLogger.For<SelectAbilityCommand>();
+
     public Result<GameError> Execute(GameContext context)
     {
         if (!caster.AbilityComp.Abilities.TryGetValue(abilityName, out var ability))
@@ -27,10 +29,13 @@ public class SelectAbilityCommand(
             ability
         );
 
-        Log.ForContext<SelectAbilityCommand>().Here().Info(
+        Log.ForContext<SelectAbilityCommand>()
+            .ForContext("CasterIdTag", caster.CasterId)
+            .ForContext("CasterNameTag", caster.CasterName)
+            .Here().Info(
             "Selected ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
             abilityName,
-            caster.UnitName,
+            caster.UnitType,
             caster.UnitId
         );
 

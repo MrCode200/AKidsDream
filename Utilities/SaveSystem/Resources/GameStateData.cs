@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using AKidsDream.Core.Teams;
 using AKidsDream.Util.Identifiers;
-using AKidsDream.Utilities.TypeExtensions;
-using AKidsDream.Common;
+using AKidsDream.Utilities.Registry.TypeExtensions;
+using AKidsDream.Utilities;
 using Godot;
 using Godot.Collections;
 
@@ -11,6 +11,7 @@ namespace AKidsDream.Managers.SaveSystem.Resources;
 [Tool]
 public partial class GameStateData : Resource
 {
+    [Export] public string GameMode;
     [Export] public int GameRound;  
     [Export] private Dictionary<int, PlayerData> _playerTurnOrder = new();
     [Export] public int ActivePlayerIdInt;

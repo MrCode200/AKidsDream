@@ -1,0 +1,226 @@
+#nullable enable
+using System.Linq;
+using AKidsDream.Abilities;
+using AKidsDream.Commands;
+using AKidsDream.Managers.SaveSystems;
+using AKidsDream.StateMachines;
+using AKidsDream.Utilities;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Core.Teams;
+using AKidsDream.Entities.Cards;
+using AKidsDream.Util.Identifiers;
+using Godot;
+using Serilog;
+using TileData = AKidsDream.Managers.SaveSystem.Resources;
+
+namespace AKidsDream.Controllers;
+
+/*
+Handles Clicks based on Rules:
+
+No Ability Selected:
+1. Clicking the selected friendly Unit deselects it.
+2. Clicking another friendly Unit selects that unit and deselects the previous one.
+3. Clicking an enemy Unit shows stats.
+4. Clicking an empty board does nothing.
+
+Ability Selected:
+1. Clicking outside the ability reach cancels the active ability.
+   The click is consumed and does not select another unit on the same frame. (Config Option) // CONFIG:
+2. Clicking inside the reach pattern targets that tile.
+   Upon reaching Max Targets Selected, cast automatically. (Config Option) // CONFIG:
+3. Hovering inside the reach pattern previews the effect.
+4. After casting, the unit remains selected and ability state is cleared.
+*/
+public readonly struct PlayerInteractionPayload(
+	InputEvent inputEvent,
+	TileData.TileData? tileAtMousePos,
+	bool isSelectPressed,
+	bool isDeselectPressed
+)
+{
+	public readonly InputEvent InputEvent = inputEvent;
+	public readonly TileData.TileData? TileAtMousePos = tileAtMousePos;
+	public readonly bool IsSelectPressed = isSelectPressed;
+	public readonly bool IsDeselectPressed = isDeselectPressed;
+
+	public Unit? UnitAtMousePos => TileAtMousePos?.Unit;
+	public Vector2I? TileLocationAtMousePos => TileAtMousePos?.TileLocation;
+	public bool HasTile => TileAtMousePos is not null;
+	public bool HasUnit => UnitAtMousePos is not null;
+}
+
+public partial class InteractionController : Node2D, IController
+{
+	[Export] public StateMachine StateMachine = null!;
+
+	public readonly GameContext GCtx = null!; 
+	public Unit? CurrentSelectedUnit;
+	public AbilityData? CurrentSelectedAbility;
+	public PlayerData PlayerData;
+	public PlayerId PlayerId => PlayerData.PlayerId;
+
+	private static ILogger _log = GameLogger.For<InteractionController>();
+	private bool _isMyTurn;
+	
+	public bool UseEndTurnButton { get; set; } = true;
+
+	public InteractionController()
+	{
+	}
+
+	public InteractionController(GameContext context, PlayerData playerData)
+	{
+		PlayerData = playerData;
+
+		GCtx = context;
+	}
+
+	public override void _Ready()
+	{
+		_log = _log.ForContext("PlayerIdTag", PlayerId)
+			.ForContext("PlayerNameTag", PlayerData.Name);
+		
+		StateMachine = new StateMachine();
+		AddChild(StateMachine);
+
+		EventBus.Instance.AbilityBtnPressed += OnAbilityBtnPressed;
+		EventBus.Instance.EndTurnButtonPressed += OnEndTurnButtonPressed;
+		EventBus.Instance.UnitKilled += OnUnitKilled;
+
+		StateMachine.AddState(new NoAbilitySelectedState(this));
+		StateMachine.AddState(new OnAbilitySelectedState(this));
+		StateMachine.AddState(new EnemyTurnObservationState(this));
+		StateMachine.ChangeState(null, nameof(EnemyTurnObservationState), true);
+
+		_log.Here().Info("PlayerController initialized");
+	}
+
+	public override void _ExitTree()
+	{
+		EventBus.Instance.AbilityBtnPressed -= OnAbilityBtnPressed;
+		EventBus.Instance.EndTurnButtonPressed -= OnEndTurnButtonPressed;
+		EventBus.Instance.UnitKilled -= OnUnitKilled;
+	}
+	
+	public void StartTurn()
+	{
+		LoadPlayerCards(GCtx.PlayerHand);
+		StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
+		_isMyTurn = true;
+	}
+
+	public void EndTurn()
+	{
+		DeselectCurrentUnit();
+		StateMachine.ChangeState(null, nameof(EnemyTurnObservationState), true);
+		_isMyTurn = false;
+	}
+
+	// -- INPUT --
+
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (!_isMyTurn)
+			return;
+		// User still may want information on the Enemy/its own units, how to handle that (more states :///)
+		StateMachine.Update(CreatePayload(@event));
+	}
+
+	private PlayerInteractionPayload CreatePayload(InputEvent @event)
+	{
+		var tile = GCtx.Board.WorldPositionToTile(GetGlobalMousePosition());
+
+		return new PlayerInteractionPayload(
+			@event,
+			tile,
+			Input.IsActionJustPressed(nameof(Global.InputMapActions.Select)),
+			Input.IsActionJustPressed(nameof(Global.InputMapActions.Deselect))
+		);
+	}
+
+	// -- EVENT CALLBACKS --
+
+	private void OnUnitKilled(Unit unit)
+	{
+		if (CurrentSelectedUnit == unit)
+			DeselectCurrentUnit();
+	}
+
+	private void OnAbilityBtnPressed(Unit unit, AbilityData ability)
+	{
+		if (!_isMyTurn) return;
+		
+		ClearCurrentAbility();
+		CurrentSelectedAbility = ability;
+
+		StateMachine.ChangeState(null, nameof(OnAbilitySelectedState), true);
+	}
+
+	private void OnEndTurnButtonPressed()
+	{
+		if (!_isMyTurn) return;
+		GCtx.CommandExecutor.Execute(new EndTurnCommand(PlayerId));
+	}
+
+	// -- METHODS --
+
+	private void LoadPlayerCards(PlayerHand playerHand)
+	{
+		if (playerHand.ActivePlayer == null || playerHand.ActivePlayer.PlayerId != PlayerId) 
+			playerHand.LoadPlayerHand(PlayerData);
+		
+		playerHand.DrawCards(Global.CardsPerRound);
+	}
+	
+	public void SelectUnit(Unit unit)
+	{
+		if (CurrentSelectedUnit == unit)
+			return;
+
+		if (CurrentSelectedUnit is not null)
+		{
+			// Switch from one unit to another without firing selected/deselected in succession
+			var oldUnit = CurrentSelectedUnit;
+			CurrentSelectedUnit = unit;
+			GCtx.CommandExecutor.Execute(new SwitchUnitCommand(oldUnit, unit));
+		}
+		else
+		{
+			// No unit was previously selected, just select the new one
+			CurrentSelectedUnit = unit;
+			GCtx.CommandExecutor.Execute(new SelectUnitCommand(unit));
+		}
+	}
+
+	/// <summary>
+	/// Deselects the current unit and clear the current ability
+	/// </summary>
+	public void DeselectCurrentUnit()
+	{
+		if (CurrentSelectedUnit is null)
+			return;
+		
+		GCtx.CommandExecutor.Execute(new DeselectUnitCommand(CurrentSelectedUnit));
+		ClearCurrentAbility();
+		CurrentSelectedUnit = null;
+	}
+
+	public void ClearCurrentAbility()
+	{
+		if (CurrentSelectedAbility is null)
+			return;
+
+		// Check if any unit is currently casting a blocking ability
+		bool isAnyUnitCasting = GCtx.Board.GetAllUnits().Any(unit => unit.AbilityComp.IsCasting);
+
+		if (!isAnyUnitCasting)
+			GCtx.AbilityVisualizer.ClearTilemaps();
+
+		if (CurrentSelectedUnit != null)
+			EventBus.Instance.EmitSignal(EventBus.SignalName.AbilityDeselected, CurrentSelectedUnit);
+
+		CurrentSelectedAbility = null;
+		StateMachine.ChangeState(null, nameof(NoAbilitySelectedState), true);
+	}
+}

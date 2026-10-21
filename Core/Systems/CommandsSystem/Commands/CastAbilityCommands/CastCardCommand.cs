@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using AKidsDream.Commands;
-using AKidsDream.Common.Components.TweenComponent.Resources;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using TweenComp.Resources.Blueprint;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using AKidsDream.Entities.Cards;
 using AKidsDream.Managers.SaveSystems;
 using Serilog;
@@ -21,6 +21,8 @@ public class CastCardCommand(
     AbilityPayload payload
 ) : IAsyncGameBaseCommand
 {
+    private static readonly ILogger Log = GameLogger.For<CastCardCommand>();
+
     public async Task<Result<GameError>> ExecuteAsync(GameContext context)
     {
         var castingPlayer = context.GameLoopManager.GetActivePlayer();
@@ -36,10 +38,10 @@ public class CastCardCommand(
 
         if (validationResult.IsFailure)
         {
-            Log.ForContext<CastCardCommand>().Here().Debug(
-                "Card '{CardName}' (id: {CardId}) cast validation failed: {CastError}",
-                card.CardData.Name,
-                card.Id,
+            Log.ForContext("CardIdTag", card.Id)
+                .ForContext("CardNameTag", card.CardData.Name)
+                .Here().Debug(
+                "Card cast validation failed: {CastError}",
                 validationResult.Error);
             return validationResult.DropValue().Map<GameError>(error => error);
         }
@@ -61,18 +63,18 @@ public class CastCardCommand(
         {
             // Rollback mana on failure
             castingPlayer.Mana = previousMana;
-            Log.ForContext<CastCardCommand>().Here().Warn(
-                "Card '{CardName}' (id: {CardId}) casting failed with error: {CastError}",
-                card.CardData.Name,
-                card.Id,
+            Log.ForContext("CardIdTag", card.Id)
+                .ForContext("CardNameTag", card.CardData.Name)
+                .Here().Warn(
+                "Card casting failed with error: {CastError}",
                 castResult.Error);
             return castResult.DropValue();
         }
         
-        Log.ForContext<CastCardCommand>().Here().Info(
-            "Casted card '{CardName}' (id: {CardId}) at {TargetCount} target(s)",
-            card.CardData.Name,
-            card.Id,
+        Log.ForContext("CardIdTag", card.Id)
+            .ForContext("CardNameTag", card.CardData.Name)
+            .Here().Info(
+            "Casted card at {TargetCount} target(s)",
             payload.ProcessingTiles.Count);
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.ManaChanged, previousMana, castingPlayer.Mana);

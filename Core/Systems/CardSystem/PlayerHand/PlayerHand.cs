@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Core.Content;
 using AKidsDream.Core.Teams;
 using AKidsDream.Managers.SaveSystems;
-using AKidsDream.Utilities;
+using AKidsDream.Utilities.Registry;
 using Godot;
 using Serilog;
 using Vector2 = Godot.Vector2;
@@ -52,8 +53,8 @@ public partial class PlayerHand : Node2D
     public void LoadPlayerHand(PlayerData playerData)
     {
         ActivePlayer = playerData;
-        _log = _log.ForContext("IdTag", playerData.PlayerId)
-            .ForContext("NameTag", playerData.Name);
+        _log = _log.ForContext("PlayerIdTag", playerData.PlayerId)
+            .ForContext("PlayerNameTag", playerData.Name);
 
         HideHand();
         Hand.Clear();
@@ -64,7 +65,7 @@ public partial class PlayerHand : Node2D
         }
 
         RefreshHandLayout();
-        _log.Here().Info("Loaded hand for player {PlayerId}, hand size: {HandSize}", playerData.PlayerId, Hand.Count);
+        _log.Here().Info("Loaded hand for player {PlayerIdTag}, hand size: {HandSize}", playerData.PlayerId, Hand.Count);
     }
 
     public void ShowHand()
@@ -98,43 +99,51 @@ public partial class PlayerHand : Node2D
         RefreshHandLayout();
     }
 
-    public void AddCard(Global.UnitName unitName = Global.UnitName.Unassigned, bool updatePlayerData = true)
+    public void AddCard(string cardName = null, bool updatePlayerData = true)
     {
-        unitName = unitName == Global.UnitName.Unassigned ? GetRandomUnitName() : unitName;
-        var cardPath = Utils.GetCardPath(unitName);
-        var cardData = (AbilityCardData)ResourceLoader.Load(cardPath);
+        CardDefinition cardDef = null;
+        if (string.IsNullOrEmpty(cardName))
+        {
+            var allCards = Global.CardRegistry.GetAllValues();
+            if (allCards.Count > 0)
+                cardDef = allCards[GD.RandRange(0, allCards.Count - 1)];
+        }
+        else
+        {
+            Global.CardRegistry.TryGet(cardName, out cardDef);
+        }
+
+        if (cardDef == null)
+        {
+            _log.Here().Err("Card {CardName} not found in CardRegistry", cardName);
+            return;
+        }
 
         var newCard = CardPrefab.Instantiate<AbilityCard>();
 
-        newCard.DisplayCard(cardData);
+        newCard.DisplayCard(cardDef.CardData);
         newCard.Position = CardSpawnPoint;
 
         AddChild(newCard);
         Hand.Add(newCard);
 
-        _log.Here().Debug("Added card {UnitName} (id: {CardId}) to hand, hand size: {HandSize}", unitName, newCard.Id,
+        _log.Here().Debug("Added card {UnitName} (id: {CardId}) to hand, hand size: {HandSize}", cardName, newCard.Id,
             Hand.Count);
 
         if (updatePlayerData)
-            ActivePlayer.PlayerHand.Add(unitName);
-    }
-
-    private Global.UnitName GetRandomUnitName()
-    {
-        var unitNames = Enum.GetNames<Global.UnitName>();
-        return Enum.Parse<Global.UnitName>(unitNames[GD.RandRange(1, unitNames.Length - 1)]);
+            ActivePlayer.PlayerHand.Add(cardName);
     }
 
     public void RemoveCard(AbilityCard card)
     {
         if (!Hand.Contains(card)) return;
 
-        var unitName = Enum.Parse<Global.UnitName>(card.CardData.Name);
+        var cardName = card.CardData.Name;
         Hand.Remove(card);
-        ActivePlayer.PlayerHand.Remove(unitName);
+        ActivePlayer.PlayerHand.Remove(cardName);
         RefreshHandLayout();
 
-        _log.Here().Debug("Removed card {UnitName} (id: {CardId}) from hand, hand size: {HandSize}", unitName, card.Id,
+        _log.Here().Debug("Removed card {CardName} (id: {CardId}) from hand, hand size: {HandSize}", cardName, card.Id,
             Hand.Count);
     }
 

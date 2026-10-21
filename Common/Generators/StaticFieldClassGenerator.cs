@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using AKidsDream.Common.Logging;
+using AKidsDream.Utilities.Logging;
 using Godot;
 using Serilog;
 using FileAccess = Godot.FileAccess;
 
-namespace AKidsDream.Common.Generators;
+namespace AKidsDream.Utilities.Generators;
 
 public class StaticFieldClassGenerator
 {

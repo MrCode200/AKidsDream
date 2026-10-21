@@ -1,8 +1,8 @@
 #nullable enable
-using AKidsDream.Common;
-using AKidsDream.Common.Errors;
-using AKidsDream.Common.Logging;
-using AKidsDream.Common.Results;
+using AKidsDream.Utilities;
+using AKidsDream.Utilities.Errors;
+using AKidsDream.Utilities.Logging;
+using AKidsDream.Utilities.Results;
 using Serilog;
 
 namespace AKidsDream.Commands;
@@ -13,7 +13,7 @@ public sealed class SelectUnitCommand(Unit unit) : IGameCommand
     {
         Log.ForContext<SelectUnitCommand>().Here().Info(
             "Selected unit '{UnitName}' (id: {UnitId}) at {TileLocation}",
-            unit.UnitName,
+            unit.UnitType,
             unit.UnitId,
             unit.TileLocation);
 
