@@ -48,6 +48,7 @@ When I was a child, I created a small board game using paper and scissors. It wa
 Tip: use the developer console to spawn units for testing (see Developer console commands).
 
 I attach exported builds on the Releases page, those run without Godot.
+Extract all the files in one place, then run the exe, and have fun ( •̀ ω •́ )✧
 
 To run locally:
 
