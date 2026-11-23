@@ -1,7 +1,9 @@
 ﻿#nullable enable
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using Godot;
 
 namespace AKidsDream.Core.Systems.ModLoader;
 
@@ -17,19 +19,32 @@ public sealed class ModLoadContext(string modId, string modEntryPath)
     : AssemblyLoadContext(name: $"Mod_{modId}", isCollectible: true)
 {
     public string ModId { get; } = modId;
+    private readonly string[] _sharedAssemblies = ["AKidsDream", "GodotSharp"];
 
     private readonly AssemblyDependencyResolver _resolver = new(modEntryPath); // TODO: how does resolver actually work?
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+        if (_sharedAssemblies.Contains(assemblyName.Name))
+        {
+            //GD.Print(string.Join(", ", AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetName().Name)));
+            var loadedAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == assemblyName.Name);
+                
+            if (loadedAssembly is not null)
+                return loadedAssembly;
+            
+            return null;
+        }
+
         var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        
+
         if (assemblyPath != null)
             return LoadFromAssemblyPath(assemblyPath);
-        
+
         return null;
     }
-    
+
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName) // TODO: what is this func, and return type?
     {
         string? libraryPath =

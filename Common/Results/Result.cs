@@ -47,8 +47,8 @@ public readonly record struct Result<TValue, TError>
     public static Result<TValue, TError> Fail(TError error) => new(error);
 
     public bool TryGetValue(
-        [NotNullWhen(true)] out TValue? value,
-        [NotNullWhen(false)] out TError? error
+        [MaybeNullWhen(false)] out TValue value,
+        [MaybeNullWhen(true)] out TError error
     )
     {
         if (IsSuccess)

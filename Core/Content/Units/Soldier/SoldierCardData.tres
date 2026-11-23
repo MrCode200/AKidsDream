@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="AbilityCardData" format=3 uid="uid://bx1sbsbwx45mq"]
 
-[ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://Entities/Units/Soldier/SoldierStats.tres" id="1_lbqnu"]
+[ext_resource type="Resource" uid="uid://cejcwp3udo64y" path="res://Core/Content/Units/Soldier/SoldierStats.tres" id="1_lbqnu"]
 [ext_resource type="Script" uid="uid://cwvfcr5urb3ha" path="res://Entities/Cards/AbilityCardData.cs" id="1_q55t2"]
 [ext_resource type="Script" uid="uid://dqpieu0uvgg8d" path="res://Entities/Units/Abilities/Patterns/OneTilePattern.cs" id="1_wk3mm"]
-[ext_resource type="Texture2D" uid="uid://caiwykggikuff" path="res://Entities/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png" id="2_50sek"]
-[ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Entities/Units/Soldier/Soldier.tscn" id="2_h7kju"]
+[ext_resource type="Texture2D" uid="uid://caiwykggikuff" path="res://Core/Content/Units/Soldier/Assets/RedSoldier/Warrior_Attack1.png" id="2_50sek"]
+[ext_resource type="PackedScene" uid="uid://ce8br630nspxi" path="res://Core/Content/Units/Soldier/Soldier.tscn" id="2_h7kju"]
 [ext_resource type="Script" uid="uid://c5p6dks07705g" path="res://Entities/Units/Abilities/Effects/SummonUnitEffect.cs" id="4_r4p8i"]
 [ext_resource type="Script" uid="uid://mkx7yawfebu6" path="res://Entities/Units/Abilities/Patterns/AllTilesPattern.cs" id="6_h7kju"]
 [ext_resource type="Script" uid="uid://bc2xq8b7msrkv" path="res://Entities/Units/Abilities/AbilityData.cs" id="6_jw57k"]
@@ -43,6 +43,5 @@ metadata/_custom_type_script = "uid://bc2xq8b7msrkv"
 
 [resource]
 script = ExtResource("1_q55t2")
-SpawnDelay = 1
 Ability = SubResource("Resource_f7psw")
 metadata/_custom_type_script = "uid://cwvfcr5urb3ha"

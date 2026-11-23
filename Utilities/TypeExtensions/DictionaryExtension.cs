@@ -5,10 +5,10 @@ namespace AKidsDream.Utilities.Registry.TypeExtensions;
 
 public static class DictionaryExtensions
 {
-    public static Dictionary<TKey, TValue> ToGodotDictionary<[MustBeVariant]TKey, [MustBeVariant]TValue>(
+    public static Godot.Collections.Dictionary<TKey, TValue> ToGodotDictionary<[MustBeVariant]TKey, [MustBeVariant]TValue>(
         this System.Collections.Generic.Dictionary<TKey, TValue> dictionary)
     {
-        var result = new Dictionary<TKey, TValue>();
+        var result = new Godot.Collections.Dictionary<TKey, TValue>();
         foreach (var (key, value) in dictionary)
         {
             result[key] = value;

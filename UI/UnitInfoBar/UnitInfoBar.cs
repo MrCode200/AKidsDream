@@ -15,10 +15,6 @@ using TweenComp.Source;
 
 namespace AKidsDream.UnitInfoBar.UI;
 
-// TODO:
-// remake how UnitSeleciton is handled, add UpdateUnitInfoBar Method
-// If new unit is selected deselect old unit silently?/new signal for unit changed
-// When updated play animation only if deselected with no other unit selected,
 public partial class UnitInfoBar : Control, IBlockable
 {
 	[Export]
@@ -39,17 +35,10 @@ public partial class UnitInfoBar : Control, IBlockable
 
 	private readonly ILogger _log = GameLogger.For<UnitInfoBar>();
 	
-	private Dictionary<StringName, AbilityButton> _abilityButtonsMap = new();
+	private System.Collections.Generic.Dictionary<StringName, AbilityButton> _abilityButtonsMap = new();
 	private Unit? _selectedUnit;
 	public bool IsBlocked { get; set; }
-
-
-	private void OnUnitDeselected(Unit _)
-	{
-		_selectedUnit = null;
-		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.FadeOut);
-	}
-
+	
 	public override void _Ready()
 	{
 		foreach (Node child in AbilityContainer.GetChildren()) child.QueueFree();
@@ -69,6 +58,13 @@ public partial class UnitInfoBar : Control, IBlockable
 	}
 	
 	// -- SIGNAL HANDLING --
+	
+	private void OnUnitDeselected(Unit _)
+	{
+		_selectedUnit = null;
+		SpawnTweenComponent.PlayTween(TweenAnimationIdentifiers.FadeOut);
+	}
+
 	private async void CreateUnitBar(Unit unit)
 	{
 		// Check if timer create, or use node timer
@@ -88,16 +84,17 @@ public partial class UnitInfoBar : Control, IBlockable
 	private void UpdateUnitBar(Unit? _, Unit newUnit)
 	{  
 		// TODO: create once 4 buttons, then change if they visible or not, don't destory create each time
+		// TODO: call btn spawn animation then just on show
 		_selectedUnit = newUnit;
 		PoolBar.SetPool(newUnit);
 
-		UnitNameLabel.Text = newUnit.UnitType.ToString();
+		UnitNameLabel.Text = newUnit.UnitTypeName;
 		UnitHealthLabel.Text = newUnit.UnitStats.Health.ToString();
 
 		// Update ability buttons using ZipLongest to handle additions/removals/updates
 		var newAbilities = newUnit.AbilityComp.Abilities.Values.ToList();
 		
-		foreach (var (abilityButton, newAbility) in Utils.ZipLongest(_abilityButtonsMap.Values, newAbilities))
+		foreach (var (abilityButton, newAbility) in Utils.ZipLongest(_abilityButtonsMap.Values.ToList(), newAbilities))
 		{
 			if (abilityButton is null && newAbility is not null)
 			{

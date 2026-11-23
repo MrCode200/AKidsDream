@@ -12,10 +12,6 @@ namespace AKidsDream.Utilities.Registry;
 [Tool]
 public static class Utils
 {
-    public static string GetUnitPath(string unitName) => $"res://Entities/Units/{unitName}/";
-
-    public static string GetCardPath(string unitName) =>
-        GetUnitPath(unitName) + $"{unitName}CardData.tres";
     
     /// <summary>
     /// Rebuilds a resource by copying all properties from a source resource to a new typed instance.

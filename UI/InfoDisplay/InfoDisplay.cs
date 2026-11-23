@@ -23,7 +23,6 @@ public partial class InfoDisplay : Control
 		EventBus.Instance.NewRoundStarted += OnNewRoundStarted;
 		EventBus.Instance.TurnStarted += OnTurnStarted;
 		EventBus.Instance.ManaChanged += OnManaChanged;
-		EventBus.Instance.TurnStarted += OnTurnStarted;
 		FloatingTextFactory.DefaultColor = Color.Color8(104, 194, 245);
 	}
 

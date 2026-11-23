@@ -22,7 +22,7 @@ Upon reaching Max Targets Selected, cast automatically. (Config Option) // CONFI
 4. Hovering inside the reach pattern previews the effect. (removes tile, order remains same)
 5. After casting, the unit remains selected and ability state is cleared.
 */
-public class OnAbilitySelectedState(InteractionController pic) : IState
+public class OnAbilitySelectedState(PlayerInteractionController pic) : IState
 {
 	public Action<IState, string, bool> ChangeState { get; set; } = null!;
 
@@ -114,7 +114,7 @@ public class OnAbilitySelectedState(InteractionController pic) : IState
 			Log.Here().Debug(
 				"Cannot remove target - ability '{AbilityName}' is currently being cast for unit '{UnitName}' (id: {UnitId})",
 				_ability.Name,
-				_caster.UnitType,
+				_caster.UnitTypeName,
 				_caster.UnitId);
 			return;
 		}
@@ -195,7 +195,7 @@ public class OnAbilitySelectedState(InteractionController pic) : IState
 		// If reached Max Targets, cast the ability.
 		if (_abilityPayload.AccumulatedTargets.Count >= _ability.MaxTargets)
 		{
-			Log.ForContext("NameTag", _caster.UnitType)
+			Log.ForContext("NameTag", _caster.UnitTypeName)
 				.ForContext("IdTag", _caster.UnitId)
 				.Here()
 				.Debug("Max targets reached for ability '{AbilityName}', Auto-Casting...", _ability.Name);
@@ -230,7 +230,7 @@ public class OnAbilitySelectedState(InteractionController pic) : IState
 		Log.Here().Debug(
 			"Ability '{AbilityName}' cancelled due to click outside reach for unit '{UnitName}' (id: {UnitId})",
 			_ability.Name,
-			_caster.UnitType,
+			_caster.UnitTypeName,
 			_caster.UnitId);
 		pic.ClearCurrentAbility(); // StateChange is called in that function
 		pic.GetViewport().SetInputAsHandled(); // So that on click doesn't select Unit again when canceled.

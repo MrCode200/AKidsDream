@@ -35,6 +35,7 @@ public partial class EndTurnButton : TextureButton, IBlockable
 	public override void _Pressed()
 	{
 		Disabled = true;
+		GD.Print("EndTurnButton pressed");
 		EventBus.Instance.EmitSignal(EventBus.SignalName.EndTurnButtonPressed);
 	}
 	

@@ -65,7 +65,7 @@ public abstract class BaseAbilityTargetCommand(Vector2I targetedTile, AbilityCon
             );
         
         Log.ForContext("UnitIdTag", caster.UnitId)
-            .ForContext("UnitNameTag", caster.UnitType)
+            .ForContext("UnitNameTag", caster.UnitTypeName)
             .ForContext("AbilityName", Ctx.Ability.Name)
             .Here().Info(
             "{Action} target {TargetTile}",

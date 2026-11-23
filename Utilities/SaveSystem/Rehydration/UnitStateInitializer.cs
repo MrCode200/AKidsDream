@@ -68,8 +68,8 @@ public static class UnitStateInitializer
         newUnit.Init(
             ownership.Value.PlayerData,
             state.TileLocation,
-            state.UnitStats,
             board,
+            state.UnitStats,
             unitId
         );
 

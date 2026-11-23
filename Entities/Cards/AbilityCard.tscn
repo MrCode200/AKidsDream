@@ -1,17 +1,15 @@
 [gd_scene format=3 uid="uid://c4h6ufe6dmgvo"]
 
 [ext_resource type="Script" uid="uid://dt2i0bugje5e7" path="res://Entities/Cards/AbilityCard.cs" id="1_5scqc"]
-[ext_resource type="Resource" uid="uid://c8xhy0vyekyc" path="res://Entities/Units/Timmy/TimmyCardData.tres" id="2_52sku"]
 [ext_resource type="Texture2D" uid="uid://bknwtl1exv8ce" path="res://Entities/Cards/Assets/pixcard_border_40x51.png" id="2_e2rsf"]
+[ext_resource type="Resource" uid="uid://bx1sbsbwx45mq" path="res://Core/Content/Units/Soldier/SoldierCardData.tres" id="2_nsx0u"]
 [ext_resource type="Material" uid="uid://bogcpv1c0qi5q" path="res://Entities/Cards/Assets/CardSelectionShader.tres" id="3_ifk1h"]
-[ext_resource type="Texture2D" uid="uid://g50tl2yoi4cy" path="res://Entities/Units/Timmy/Assets/BlueTimmy/Pawn_Run Gold.png" id="9_exwvu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cgf4g"]
 atlas = ExtResource("2_e2rsf")
 region = Rect2(7, 204, 42, 53)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k24um"]
-atlas = ExtResource("9_exwvu")
 region = Rect2(638, 59, 82, 90)
 
 [node name="AbilityCard" type="Control" unique_id=1986214613 node_paths=PackedStringArray("CardName", "CardBackground", "CardPortrait")]
@@ -29,7 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset_ratio = Vector2(0.5, 0.5)
 script = ExtResource("1_5scqc")
-CardData = ExtResource("2_52sku")
+CardData = ExtResource("2_nsx0u")
 CardName = NodePath("CardBackground/UnitNameLabel")
 CardBackground = NodePath("CardBackground")
 CardPortrait = NodePath("CardBackground/UnitPortrait")

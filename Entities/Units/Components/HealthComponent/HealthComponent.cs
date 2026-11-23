@@ -5,6 +5,7 @@ using Godot;
 using AKidsDream.Utilities.Logging;
 using AKidsDream.Utilities.VFX;
 using Serilog;
+using Timer = Godot.Timer;
 
 namespace TweenComp.Resources.Blueprint;
 
@@ -45,7 +46,7 @@ public partial class HealthComponent : Node
 	public override void _Ready()
 	{
 		var unit = Owner as Unit;
-		_log = _log.ForContext("UnitNameTag", unit?.UnitType)
+		_log = _log.ForContext("UnitNameTag", unit?.UnitTypeName)
 			.ForContext("UnitIdTag", unit?.UnitId);
 
 		_damageShaderTimer = new Timer() { OneShot = true };

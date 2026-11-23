@@ -48,7 +48,7 @@ public partial class AbilityComponent : Node
 
 	public override void _Ready()
 	{
-		_log = _log.ForContext("UnitNameTag", Unit?.UnitType)
+		_log = _log.ForContext("UnitNameTag", Unit?.UnitTypeName)
 			.ForContext("UnitIdTag", Unit?.UnitId);
 		if (Unit is null) _log.Here().Warn("Unit for AbilityComponent is null, couldn't set Context");
 

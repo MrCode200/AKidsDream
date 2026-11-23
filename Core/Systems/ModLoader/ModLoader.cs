@@ -24,13 +24,13 @@ public class ModLoader
 {
     private static readonly ILogger Log = GameLogger.For<ModLoader>();
 
-    private readonly GameContext? _ctx;
+    private readonly GameContext _ctx;
     private readonly Dictionary<NamespacedKey, IMod> _loadedMods = new();
     private readonly Dictionary<string, ModAssemblyLoadContextCheatSheet> _modLoadContexts = new(StringComparer.OrdinalIgnoreCase);
 
     public IReadOnlyDictionary<NamespacedKey, IMod> LoadedMods => _loadedMods;
 
-    public ModLoader(GameContext? ctx = null)
+    public ModLoader(GameContext ctx)
     {
         _ctx = ctx;
     }
@@ -44,25 +44,22 @@ public class ModLoader
 
         // 2. Discover mods in Mods directory
         var discoveryResult = DiscoverMods(Global.ModsPath);
-        if (discoveryResult.IsFailure)
+        if (!discoveryResult.TryGetValue(out var discoveredMods, out _))
         {
             Log.Here().Err("Mod discovery failed: {Error}", discoveryResult.Error?.Message);
-            return Result.Fail<ModError>(discoveryResult.Error!);
+            return Result.Fail(discoveryResult.Error!);
         }
 
-        var discoveredMods = discoveryResult.Value;
         Log.Here().Info("Discovered {Count} valid mod manifests", discoveredMods.Count);
 
         // 3. Topological Sort dependency graph
         var sortResult = SortByDependencies(discoveredMods);
-        if (sortResult.IsFailure)
+        if (!sortResult.TryGetValue(out var sortedMods, out _))
         {
             Log.Here().Err("Dependency resolution failed: {Error}", sortResult.Error?.Message);
             return Result.Fail(sortResult.Error!);
         }
-
-        var sortedMods = sortResult.Value;
-
+        
         // 4. Load mods in dependency order
         foreach (var (manifest, modDir) in sortedMods)
         {
@@ -83,10 +80,8 @@ public class ModLoader
         Global.ConsoleCommandRegistry.Freeze();
 
         // 6. Initialize mods if GameContext is present
-        if (_ctx != null)
-        {
-            InitMods(_ctx);
-        }
+        InitMods(_ctx);
+        
 
         Log.Here().Info("Mod loading pipeline completed successfully. Total mods active: {ModCount}", _loadedMods.Count);
         return Result.Ok<ModError>();
@@ -172,11 +167,16 @@ public class ModLoader
         Log.Here().Info("Loading mod '{ModName}' ({ModId} v{Version})...", manifest.Name, manifest.Id, manifest.Version);
 
         // 1. Mount Godot .pck resource pack if present
-        var pckPath = Path.Combine(modDir, $"{manifest.ResourcePackPath}.pck");
-        if (File.Exists(pckPath))
+        if (manifest.ResourcePackPath is not null and not "")
         {
-            bool mounted = ProjectSettings.LoadResourcePack(pckPath);
-            Log.Here().Info("Mounted PCK pack '{PckPath}': {Success}", pckPath, mounted);
+            var pckPath = Path.Combine(modDir, Path.ChangeExtension(manifest.ResourcePackPath, ".pck"));
+            if (File.Exists(pckPath))
+            {
+                bool mounted = ProjectSettings.LoadResourcePack(pckPath);
+                Log.Here().Info("Mounted PCK pack '{PckPath}': {Success}", pckPath, mounted);
+            }
+            else
+                Log.Here().Info("PackPath File not found {PckPath}'", pckPath);
         }
 
         // 2. Prepare dependency ALCs
@@ -235,7 +235,7 @@ public class ModLoader
             modInstance.RegisterContent(registrar);
             Global.ModRegistry.Register(manifest.Id, manifest);
             _loadedMods.Add(manifest.Id, modInstance);
-            Log.Here().Info("Mod '{ModId}' content registered successfully", manifest.Id);
+            Log.Here().Info("Mod '{ModId}'s content registration successful", manifest.Id);
         } 
         catch (Exception ex)
         {

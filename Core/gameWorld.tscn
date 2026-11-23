@@ -19,14 +19,14 @@
 [ext_resource type="Script" uid="uid://8ujfv88riuka" path="res://Entities/Units/Resources/UnitStatsData.cs" id="13_ruhs7"]
 [ext_resource type="PackedScene" uid="uid://clgdcgoatwfaa" path="res://Core/Systems/CardSystem/PlayerHand/PlayerHand.tscn" id="17_c66ua"]
 
-[sub_resource type="Resource" id="Resource_ruhs7"]
+[sub_resource type="Resource" id="Resource_emgvh"]
 resource_local_to_scene = true
 script = ExtResource("13_ruhs7")
 MaxHealth = 2
 Health = 2
 metadata/_custom_type_script = "uid://8ujfv88riuka"
 
-[sub_resource type="Resource" id="Resource_078hk"]
+[sub_resource type="Resource" id="Resource_ruhs7"]
 resource_local_to_scene = true
 script = ExtResource("13_ruhs7")
 MaxHealth = 2
@@ -96,14 +96,14 @@ position = Vector2(26, 78)
 TeamIdInt = 2
 OwnerIdInt = 2
 TileLocation = Vector2i(0, 1)
-UnitStats = SubResource("Resource_ruhs7")
+UnitStats = SubResource("Resource_emgvh")
 
 [node name="Soldier2" parent="EntityLayer" unique_id=2133163599 instance=ExtResource("9_n2opw")]
 position = Vector2(78, 78)
 TeamIdInt = 1
 OwnerIdInt = 1
 TileLocation = Vector2i(1, 1)
-UnitStats = SubResource("Resource_078hk")
+UnitStats = SubResource("Resource_ruhs7")
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=140492902]
 layer = 50

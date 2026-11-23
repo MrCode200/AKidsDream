@@ -22,7 +22,6 @@ public static class CoreContentInitializer
 
         // Register core units
         registrar.RegisterUnit("soldier", new UnitDefinition(
-            Id: new NamespacedKey(registrar.ModId, "soldier"),
             DisplayName: "Soldier",
             Description: "Standard melee warrior",
             Icon: null,
@@ -35,14 +34,12 @@ public static class CoreContentInitializer
         if (soldierCardData != null)
         {
             registrar.RegisterCard("spawn_soldier", new CardDefinition(
-                Id: new NamespacedKey(registrar.ModId, "spawn_soldier"),
                 CardData: soldierCardData
             ));
         }
 
         // Register core game modes
         registrar.RegisterGameMode("kingslayer", new GameModeDefinition(
-            Id: new NamespacedKey(registrar.ModId, "kingslayer"),
             DisplayName: "King Slayer",
             Description: "Defeat the enemy king to win",
             Factory: ctx => new KingSlayerGameMode()
@@ -51,15 +48,13 @@ public static class CoreContentInitializer
         // Register core controllers
         var controllerPath = nameof(ControllerType.PlayerInteractionController).ToSnakeCase();
         registrar.RegisterController(controllerPath, new ControllerDefinition(
-            Id: new NamespacedKey(registrar.ModId, controllerPath),
             DisplayName: "Player Interaction Controller",
             Description: "Standard player interaction controller",
-            Factory: (ctx, playerData) => new InteractionController(ctx, playerData)
+            Factory: (ctx, playerData) => new PlayerInteractionController(ctx, playerData)
         ));
 
         // Register core console commands
         registrar.RegisterConsoleCommand("crud_unit_command", new ConsoleCommandDefinition(
-            Id: new NamespacedKey(registrar.ModId, "crud_unit_command"),
             Command: new UnitCrudConsoleCommands()
         ));
         

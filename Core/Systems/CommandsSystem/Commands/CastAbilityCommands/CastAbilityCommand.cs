@@ -29,7 +29,7 @@ public class CastAbilityBaseCommand(
         context.AbilityVisualizer.ClearTilemaps();
 
         Log.ForContext("UnitIdTag", caster.UnitId)
-            .ForContext("UnitNameTag", caster.UnitType)
+            .ForContext("UnitNameTag", caster.UnitTypeName)
             .ForContext("AbilityNameTag", abilityName)
             .Here().Info(
             "Casted ability at {TargetCount} target(s)",

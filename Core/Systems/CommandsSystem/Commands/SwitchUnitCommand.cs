@@ -19,9 +19,9 @@ public sealed class SwitchUnitCommand(Unit oldUnit, Unit newUnit) : IGameCommand
         
         _log.ForContext<SwitchUnitCommand>().Here().Info(
             "Switched from unit '{OldUnitName}' (id: {OldUnitId}) to unit '{NewUnitName}' (id: {NewUnitId})",
-            oldUnit.UnitType,
+            oldUnit.UnitTypeName,
             oldUnit.UnitId,
-            newUnit.UnitType,
+            newUnit.UnitTypeName,
             newUnit.UnitId);
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitChanged, oldUnit, newUnit);

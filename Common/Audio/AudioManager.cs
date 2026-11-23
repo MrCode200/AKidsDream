@@ -15,8 +15,8 @@ public partial class AudioManager : Node
 
     public static AudioManager Instance { get; private set; }
 
-    public readonly Dictionary<SoundEffectType, SoundEffectSettings> SoundEffectTypeMap = new();
-    private readonly Dictionary<SoundEffectType, AudioStream> _soundEffectAudioStreamsMap = new();
+    public readonly System.Collections.Generic.Dictionary<SoundEffectType, SoundEffectSettings> SoundEffectTypeMap = new();
+    private readonly System.Collections.Generic.Dictionary<SoundEffectType, AudioStream> _soundEffectAudioStreamsMap = new();
 
     public override void _Ready()
     {

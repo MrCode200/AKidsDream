@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Utilities;
 using AKidsDream.Utilities.Errors;
 using AKidsDream.Utilities.Logging;
@@ -15,10 +16,11 @@ public sealed class DeselectUnitCommand(Unit unit) : IGameCommand
     {
         _log.ForContext<DeselectUnitCommand>().Here().Info(
             "Deselected unit '{UnitName}' (id: {UnitId})",
-            unit.UnitType,
+            unit.UnitTypeName,
             unit.UnitId);
 
         unit.SelectableComp.IsSelected = false;
+        EventBus.Instance.EmitSignal(EventBus.SignalName.UnitDeselected, unit);
 
         return Result<GameError>.Ok();
     }

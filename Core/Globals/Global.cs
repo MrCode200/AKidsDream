@@ -35,7 +35,7 @@ public static class Global
 	public const float TileMapScale = 3.25f;
 	public const int TileSize = (int)(16 * TileMapScale); // 16 * 3.25(scale) = 52
 	public static readonly string SavePath = Path.Combine(OS.GetUserDataDir(), "saves");
-	public static readonly string ModsPath = ProjectSettings.GlobalizePath("res://Mods");
+	public static readonly string ModsPath = ProjectSettings.GlobalizePath("user://Mods");
 
 	public enum Groups
 	{
@@ -57,14 +57,6 @@ public static class Global
 	{
 		Blue,
 		Red
-	}
-	
-	public enum UnitType
-	{
-		Unassigned,
-		Timmy,
-		Soldier,
-		King
 	}
 
 	public enum InputMapActions

@@ -13,13 +13,13 @@ public partial class GameStateData : Resource
 {
     [Export] public string GameMode;
     [Export] public int GameRound;  
-    [Export] private Dictionary<int, PlayerData> _playerTurnOrder = new();
+    [Export] private Godot.Collections.Dictionary<int, PlayerData> _playerTurnOrder = new();
     [Export] public int ActivePlayerIdInt;
     [Export] public BoardState BoardState = new();
     [Export] public Array<PlayerData> PlayerData = [];
     // [Export] public int LocalPlayerIdInt;
     [Export] public Array<TeamData> TeamData = [];
-    [Export] private Dictionary<Vector2I, TeamRelation> _teamRelations = new();
+    [Export] private Godot.Collections.Dictionary<Vector2I, TeamRelation> _teamRelations = new();
     [Export] public Array<UnitStateData> UnitStateResources = [];
 
     public System.Collections.Generic.Dictionary<PlayerId, PlayerData> PlayerTurnOrder

@@ -21,9 +21,12 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     // -- PROPERTIES --
     public UnitId UnitId { get; private set; }
     public IIdTag CasterId => UnitId; // IAbilityCaster interface
-    public string CasterName => UnitType.ToString(); // IAbilityCaster interface
+    public string CasterName => UnitTypeName.ToString(); // IAbilityCaster interface
 
-    [Export] public Global.UnitType UnitType;
+    // TODO:
+    // change UnitType to UnitName string, ... so that modders don't have to change Global.UnitType enum, 
+    // Make Global.UnitType enum to CoreContent.UnitType
+    [Export] public StringName UnitTypeName;
 
     [Export] public int TeamIdInt;
     [Export] public int OwnerIdInt;
@@ -90,27 +93,22 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
     public void Init(
         PlayerData ownerPlayerData,
         Vector2I tileLocation,
-        UnitStatsData unitStats,
         Board board,
+        UnitStatsData? unitStats = null,
         UnitId? unitId = null
     )
     {
-        if (unitId is null)
-            UnitId = UnitId.GetNextId();
-        else
-        {
-            UnitId = unitId.Value;
-        }
+        UnitId = unitId ?? UnitId.GetNextId();
 
         Board = board;
         
-        UnitType = unitStats.UnitType;
         OwnerIdInt = ownerPlayerData.PlayerId.Value;
         TeamIdInt = ownerPlayerData.TeamId.Value;
         TileLocation = tileLocation;
         Position = Board.TileToWorldPosition(TileLocation);
 
-        UnitStats = (UnitStatsData)unitStats.Duplicate();
+        if (unitStats is not null)
+            UnitStats = (UnitStatsData)unitStats.Duplicate();
 
         AddToGroup(nameof(Global.Groups.Units));
         AddToGroup(ownerPlayerData.TeamId.ToString());
@@ -123,7 +121,7 @@ public partial class Unit : CharacterBody2D, IAbilityCaster
 
         // Set static context for all future log calls
         _log = _log.ForContext("UnitIdTag", UnitId)
-            .ForContext("UnitNameTag", UnitType)
+            .ForContext("UnitNameTag", UnitTypeName)
             .ForContext("PlayerId", OwnerIdInt);
         _log.Here().Info("Unit initialized");
 

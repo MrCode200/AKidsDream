@@ -200,10 +200,10 @@ public partial class Board : Node2D
                 "Duplicate unit id detected while adding unit to board; " +
                 "replacing existing registration '{OldUnitName}' (id: {OldUnitId}) at {OldTileLocation} " +
                 "with '{UnitName}' (id: {UnitId}) at {TileLocation} in Board '{BoardName}'",
-                oldUnit.UnitType,
+                oldUnit.UnitTypeName,
                 oldUnit.UnitId,
                 oldUnit.TileLocation,
-                unit.UnitType,
+                unit.UnitTypeName,
                 unit.UnitId,
                 unit.TileLocation,
                 Name);
@@ -213,7 +213,7 @@ public partial class Board : Node2D
         _unitsById.Add(unit.UnitId, unit);
         _log.Here().Debug(
             "Added unit '{UnitName}' (id: {UnitId}) at {TileLocation} to board '{BoardName}'",
-            unit.UnitType,
+            unit.UnitTypeName,
             unit.UnitId,
             unit.TileLocation,
             Name
@@ -234,7 +234,7 @@ public partial class Board : Node2D
 
         _log.Here().Debug(
             "Removed unit '{UnitName}' (id: {UnitId}) from {TileLocation} in board '{BoardName}'",
-            removedUnit?.UnitType,
+            removedUnit?.UnitTypeName,
             removedUnit?.UnitId,
             tileLocation,
             Name);
@@ -371,7 +371,7 @@ public partial class Board : Node2D
 
         if (!TileInBoard(toTile))
         {
-            _log.ForContext("Unit", unit.UnitType)
+            _log.ForContext("Unit", unit.UnitTypeName)
                 .ForContext("IdTag", unit.UnitId)
                 .ForContext("FromTile", oldTile)
                 .Here()
@@ -382,11 +382,11 @@ public partial class Board : Node2D
         // Validate target tile is not occupied by another unit
         if (TryGetUnitAt(toTile, out var occupyingUnit) && occupyingUnit != unit)
         {
-            _log.ForContext("Unit", unit.UnitType)
+            _log.ForContext("Unit", unit.UnitTypeName)
                 .ForContext("IdTag", unit.UnitId)
                 .ForContext("FromTile", oldTile)
                 .Here()
-                .Warn("Move failed: target tile {ToTile} is occupied by {OccupyingUnit}", toTile, occupyingUnit.UnitType);
+                .Warn("Move failed: target tile {ToTile} is occupied by {OccupyingUnit}", toTile, occupyingUnit.UnitTypeName);
             return false;
         }
 
@@ -397,7 +397,7 @@ public partial class Board : Node2D
 
         EventBus.Instance.EmitSignal(EventBus.SignalName.UnitMoved, unit, oldTile, toTile);
 
-        _log.ForContext("Unit", unit.UnitType)
+        _log.ForContext("Unit", unit.UnitTypeName)
             .ForContext("IdTag", unit.UnitId)
             .Here()
             .Debug("Moved unit from {FromTile} to {ToTile}", oldTile, toTile);

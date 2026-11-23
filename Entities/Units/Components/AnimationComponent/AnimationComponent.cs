@@ -66,7 +66,7 @@ public partial class AnimationComponent : Node
 		Unit = unit;
 		UnitColor = unitColor;
 		
-		_log = _log.ForContext("NameTag", Unit?.UnitType)
+		_log = _log.ForContext("NameTag", Unit?.UnitTypeName)
 			.ForContext("IdTag", Unit?.UnitId);
 
 		if (Animator == null) return;

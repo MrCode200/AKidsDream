@@ -1,5 +1,6 @@
 ﻿using System;
 using AKidsDream.Commands;
+using AKidsDream.Core.Content;
 using AKidsDream.Utilities;
 using AKidsDream.Core.Managers.GameModeManager;
 using AKidsDream.Managers.SaveSystems;
@@ -32,7 +33,7 @@ public partial class KingSlayerGameMode : Node, IGameMode
 
     private void OnUnitKilled(Unit unit)
     {
-        if (unit.UnitType != Global.UnitType.King)
+        if (unit.UnitTypeName != nameof(UnitTypeName.King))
             return;
         
         _playerTeamRegistry.GetPlayer(unit.OwnerId).Defeated = true;

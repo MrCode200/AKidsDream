@@ -35,7 +35,7 @@ public class SelectAbilityCommand(
             .Here().Info(
             "Selected ability '{AbilityName}' for unit '{UnitName}' (id: {UnitId})",
             abilityName,
-            caster.UnitType,
+            caster.UnitTypeName,
             caster.UnitId
         );
 

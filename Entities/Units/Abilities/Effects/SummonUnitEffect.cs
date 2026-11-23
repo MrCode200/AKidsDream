@@ -14,7 +14,7 @@ namespace AKidsDream.Abilities.Effects;
 public partial class SummonUnitEffect : EffectData
 {
     [Export] public required PackedScene SummonedUnit;
-    [Export] public required UnitStatsData SummonedUnitStats;
+    [Export] public UnitStatsData? SummonedUnitStats;
 
     public override Result<EffectOutcome, EffectError> ApplyEffect(
         AbilityContext context,
@@ -23,10 +23,7 @@ public partial class SummonUnitEffect : EffectData
     {
         if (SummonedUnit == null)
             throw new InvalidOperationException("SummonUnitEffect.SummonedUnit is not set. This is a configuration error.");
-
-        if (SummonedUnitStats == null)
-            throw new InvalidOperationException("SummonUnitEffect.SummonedUnitStats is not set. This is a configuration error.");
-
+        
         var outcomes = new List<EffectOutcome>();
         foreach (var tile in affectedTiles)
         {
@@ -39,8 +36,8 @@ public partial class SummonUnitEffect : EffectData
             summoned.Init(
                 playerData,
                 tile,
-                SummonedUnitStats,
-                context.GameContext.Board
+                context.GameContext.Board,               
+                SummonedUnitStats
             );
             context.GameContext.EntityLayer.AddChild(summoned);
 

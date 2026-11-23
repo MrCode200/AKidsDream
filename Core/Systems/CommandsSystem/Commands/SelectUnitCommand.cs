@@ -1,4 +1,5 @@
 #nullable enable
+using AKidsDream.Managers.SaveSystems;
 using AKidsDream.Utilities;
 using AKidsDream.Utilities.Errors;
 using AKidsDream.Utilities.Logging;
@@ -13,11 +14,12 @@ public sealed class SelectUnitCommand(Unit unit) : IGameCommand
     {
         Log.ForContext<SelectUnitCommand>().Here().Info(
             "Selected unit '{UnitName}' (id: {UnitId}) at {TileLocation}",
-            unit.UnitType,
+            unit.UnitTypeName,
             unit.UnitId,
             unit.TileLocation);
 
         unit.SelectableComp.IsSelected = true;
+        EventBus.Instance.EmitSignal(EventBus.SignalName.UnitSelected, unit);
 
         return Result<GameError>.Ok();
     }

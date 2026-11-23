@@ -277,12 +277,8 @@ public partial class AbilityCard : Control
             
             var castResult = await CardData.Ability.CastAsync(abilityContext, targetedTiles, state);
             if (castResult.IsFailure)
-            {
                 _log.Here().Err("Card cast failed: {CastError}", castResult.Error);
-                return castResult;
-            }
 
-            _log.Here().Info("Card cast successfully");
             return castResult;
         }
         catch (Exception e)

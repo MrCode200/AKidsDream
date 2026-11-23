@@ -112,8 +112,8 @@ shape = SubResource("RectangleShape2D_2atpx")
 
 [node name="SelectableComponent" parent="." unique_id=1872887520 node_paths=PackedStringArray("SelectionIndicator") instance=ExtResource("3_v54ow")]
 SelectionIndicator = NodePath("SelectionIndicatorSprite")
-OnSelectCallEventBus = &"UnitSelected"
-OnDeselectCallEventBus = &"UnitDeselected"
+OnSelectCallEventBus = &""
+OnDeselectCallEventBus = &""
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SelectableComponent" unique_id=1804653846]
 shape = SubResource("RectangleShape2D_tk6em")

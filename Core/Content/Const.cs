@@ -4,3 +4,10 @@ public enum ControllerType
 {
     PlayerInteractionController
 }
+
+public enum UnitTypeName
+{
+    Unassigned,
+    Soldier,
+    King
+}
