@@ -20,6 +20,16 @@ using Serilog;
 
 namespace AKidsDream.Core.Managers.ModManager;
 
+/// <summary>
+/// [node name="AbilityComponent" parent="." index="3" unique_id=509071314]
+///InitialPoolDatas = Array[ExtResource("7_evswn")]([SubResource("Resource_4admh"), SubResource("Resource_sia6e")])
+///InitialAbilityDatas = Array[ExtResource("4_aflad")]([ExtResource("5_otb2k"), ExtResource("8_81tp6")])
+///     when removeing the types it has different error of casting ... but the curr error goes away
+/// [node name="AbilityComponent" parent="." index="3" unique_id=509071314]
+///InitialPoolDatas = [SubResurce("Resource_4admh"), SubResource("Resource_sia6e")]
+///InitialAbilityDatas = [ExtResource("5_otb2k"), ExtResource("8_81tp6")]
+/// </summary>
+
 public class ModLoader
 {
     private static readonly ILogger Log = GameLogger.For<ModLoader>();

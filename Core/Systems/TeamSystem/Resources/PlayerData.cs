@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AKidsDream.Abilities.Effects;
 using AKidsDream.Util.Identifiers;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
@@ -15,6 +16,8 @@ public partial class PlayerData : Resource
 	[Export] public Global.UnitColor UnitColor;
 	[Export] public string ControllerKey;
 	[Export] public bool Defeated;
+	[Export] public Vector2I OwnedOriginTile;
+	[Export] public AccessFieldPattern OwnedAreaPatter;
 	[Export] public Array<string> PlayerHand = [];
 	
 	private int _mana;

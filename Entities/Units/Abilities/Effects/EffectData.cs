@@ -63,7 +63,7 @@ public abstract partial class EffectData : Resource
     }
     [Export] public float DelaySecondsAudio;
     [Export] public int TriggerValueAudio;
-
+    
     [ExportGroup("Trigger")]
     private ExecutionTrigger _effectTrigger = ExecutionTrigger.Instant;
 

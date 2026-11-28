@@ -1,5 +1,4 @@
 ﻿using AKidsDream.Abilities;
-using AKidsDream.Util.Identifiers;
 using Godot;
 
 namespace AKidsDream.Entities.Cards;
@@ -13,6 +12,7 @@ public partial class AbilityCardData : Resource
     [Export] public string Description { get; set; } = "";
     [Export] public Texture2D? OverrideIcon { get; set; }
     [Export] public AbilityData Ability;
+    [Export] public bool OverrideReachWithPlayersReach = true;
     
     public Texture2D Icon => OverrideIcon ?? Ability.Icon;
     public string Name => string.IsNullOrEmpty(OverrideDisplayName) ? Ability.Name.ToString() : OverrideDisplayName;

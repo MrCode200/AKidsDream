@@ -191,5 +191,9 @@
         <!-- Exclude Testing mod C# files from main project -->
         <Compile Remove="Mods\**\*.cs" />
         <Compile Remove="Core\Systems\Controllers\States\EnemyTurnObservationState.cs" />
+        <Compile Remove="Playground\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Remove="Playground\**" />
     </ItemGroup>
 </Project>

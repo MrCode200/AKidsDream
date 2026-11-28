@@ -1,8 +1,11 @@
 ﻿using System;
+using AKidsDream.Abilities.Effects;
 using AKidsDream.Commands;
 using AKidsDream.Core.Content;
 using AKidsDream.Utilities;
 using AKidsDream.Core.Managers.GameModeManager;
+using AKidsDream.GameBoard;
+using AKidsDream.Managers.SaveSystem.Resources;
 using AKidsDream.Managers.SaveSystems;
 using Godot;
 
@@ -27,6 +30,43 @@ public partial class KingSlayerGameMode : Node, IGameMode
     {
         _playerTeamRegistry = ctx.PlayerTeamRegistry;
         _remainingPlayers = _playerTeamRegistry.PlayerCount;
+        
+        SetupPlayers(ctx.Board.State);
+    }
+    
+    private void SetupPlayers(BoardState boardState)
+    {
+        var i = 0;
+        foreach (var player in _playerTeamRegistry.GetAllPlayers())
+        {
+            var spawnPattern = new RectPattern();
+            spawnPattern.FromCenter = true;
+            
+            switch (i)
+            {
+                case 0:
+                    player.OwnedOriginTile = new Vector2I((boardState.Width - 1 ) / 2, boardState.Height - 1);
+                    spawnPattern.Size = new Vector2I(boardState.Width, 2);
+                    break;
+                case 1:
+                    player.OwnedOriginTile = new Vector2I((boardState.Width - 1) / 2, 1);
+                    spawnPattern.Size = new Vector2I(boardState.Width, 2);
+                    break;
+                case 2:
+                    player.OwnedOriginTile = new Vector2I(boardState.Width - 1, (boardState.Height + 1) / 2);
+                    spawnPattern.Size = new Vector2I(2, boardState.Height);
+                    break;
+                case 3:
+                    player.OwnedOriginTile = new Vector2I(0, (boardState.Height + 1) / 2);
+                    spawnPattern.Size = new Vector2I(2, boardState.Height);
+                    break;
+                default:
+                    throw new NotSupportedException("Player's count above 4 is not Support for this game Mode");
+            }
+            
+            player.OwnedAreaPatter = spawnPattern;
+            i++;
+        }
     }
     
     // ----------------------------------------------- SIGNAL HANDLERS -----------------------------------------------

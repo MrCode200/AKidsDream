@@ -120,11 +120,13 @@ public partial class PlayerHand : Node2D
         }
 
         var newCard = CardPrefab.Instantiate<AbilityCard>();
-
+        
         newCard.DisplayCard(cardDef.CardData);
         newCard.Position = CardSpawnPoint;
-
+        
         AddChild(newCard);
+        newCard.Init(ActivePlayer);
+
         Hand.Add(newCard);
 
         _log.Here().Debug("Added card {UnitName} (id: {CardId}) to hand, hand size: {HandSize}", cardName, newCard.Id,

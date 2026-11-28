@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AKidsDream.Abilities.Effects;
+using AKidsDream.Core.Managers;
 using TweenComp.Resources.Blueprint;
 using AKidsDream.Utilities.Errors;
 using AKidsDream.Utilities.Logging;
 using AKidsDream.Utilities.Results;
 using AKidsDream.Core.Managers.Audio;
+using AKidsDream.Core.Teams;
 using AKidsDream.Utilities.Registry.TypeExtensions;
 using Godot;
 using Serilog;
@@ -101,15 +103,18 @@ public partial class AbilityCard : Control
         DisplayCard(CardData);
     });
 
-    public override void _Ready()
+    public void Init(PlayerData owner)
     {
         _log = _log.ForContext("CardIdTag", Id)
             .ForContext("CardNameTag", CardData.Name + "Card");
-
+        
         _playerHand = GetParent<PlayerHand>();
         
         CardBackground.Material = SelectionMaterial;
         CardPortrait.ScaleToMatch(CardBackground, 5f);
+
+        if (CardData.OverrideReachWithPlayersReach)
+            CardData.Ability.ReachPattern = owner.OwnedAreaPatter;
 
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;

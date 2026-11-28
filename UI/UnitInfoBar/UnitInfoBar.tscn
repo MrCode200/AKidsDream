@@ -6,10 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://mpiuf05xt6im" path="res://UI/UnitInfoBar/Assets/SmallRibbons_Joint.png" id="3_bvm5s"]
 [ext_resource type="Texture2D" uid="uid://wdubof7h8qfu" path="res://UI/UnitInfoBar/Assets/Big Heart Idle (18x14).png" id="4_hvlrc"]
 [ext_resource type="PackedScene" uid="uid://dlrjsccvo38gr" path="res://UI/PoolBar/PoolBar.tscn" id="6_3yeci"]
-[ext_resource type="PackedScene" uid="uid://brlo37ft0qflt" path="res://addons/TweenComponent/Source/TweenComponent.tscn" id="7_lbkgl"]
+[ext_resource type="PackedScene" path="res://addons/TweenComponent/Source/TweenComponent.tscn" id="7_lbkgl"]
 [ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenBlueprint.cs" id="8_hxn7v"]
 [ext_resource type="Script" uid="uid://bf4sis3utsfxc" path="res://addons/TweenComponent/Source/TweenComponent.cs" id="9_csb2e"]
-[ext_resource type="Resource" uid="uid://claswqmgsghq1" path="res://addons/TweenComponent/TweenPresets/HoverTween.tres" id="9_h4pqt"]
+[ext_resource type="Resource" path="res://addons/TweenComponent/TweenPresets/HoverTween.tres" id="9_h4pqt"]
 [ext_resource type="Resource" uid="uid://bkxhhs2fa8hia" path="res://UI/UnitInfoBar/Tween/FadeInAndBounceTween.tres" id="11_h4pqt"]
 [ext_resource type="Resource" uid="uid://b4mqfv5p7ca6s" path="res://UI/UnitInfoBar/Tween/FadeOutTween.tres" id="12_t08io"]
 

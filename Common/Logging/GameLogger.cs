@@ -28,6 +28,8 @@ public static class LoggerExtensions
         => new CallerLogger(log, member, line);
 }
 
+// TODO: commit and write devlog
+
 public readonly struct CallerLogger
 {
     private readonly ILogger _log;

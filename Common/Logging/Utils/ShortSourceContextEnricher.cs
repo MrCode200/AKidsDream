@@ -17,7 +17,7 @@ public class ShortSourceContextEnricher : ILogEventEnricher
             {
                 shortName = fullName.Substring(fullName.LastIndexOf('.') + 1);
             }
-            catch (ArgumentOutOfRangeException exception)
+            catch (ArgumentOutOfRangeException)
             {
                 shortName = fullName;
             }

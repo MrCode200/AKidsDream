@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://bf4sis3utsfxc" path="res://addons/TweenComponent/Source/TweenComponent.cs" id="4_c0fnx"]
 [ext_resource type="Resource" uid="uid://dci64dn3kcor2" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnMouseEnteredTween.tres" id="5_mvhx4"]
 [ext_resource type="Script" uid="uid://dgx06qq13talq" path="res://addons/TweenComponent/Source/Resources/Blueprints/TweenBlueprint.cs" id="5_t77bu"]
-[ext_resource type="PackedScene" uid="uid://brlo37ft0qflt" path="res://addons/TweenComponent/Source/TweenComponent.tscn" id="8_1xjmn"]
+[ext_resource type="PackedScene" path="res://addons/TweenComponent/Source/TweenComponent.tscn" id="8_1xjmn"]
 [ext_resource type="Resource" uid="uid://ux8g57pgldjc" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnMouseExitTween.tres" id="8_c0fnx"]
 [ext_resource type="Resource" uid="uid://bvv474knme5pp" path="res://UI/UnitInfoBar/AbilityButton/Assets/BtnSpawnTween.tres" id="9_t77bu"]
 

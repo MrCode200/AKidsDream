@@ -4,7 +4,9 @@ using AKidsDream.Abilities;
 using AKidsDream.Abilities.Effects;
 using AKidsDream.GameBoard;
 using AKidsDream.Managers.SaveSystems;
+using AKidsDream.Utilities.Logging;
 using Godot;
+using Serilog;
 using TweenComp.Resources.Blueprint;
 
 namespace AKidsDream.Managers;
@@ -17,6 +19,8 @@ public partial class AbilityVisualizer : Node
 	[Export] public TileMapLayer EffectTilemap;
 	[Export] public TileMapLayer NumberedTilemap;
 
+	private static ILogger _log = GameLogger.For<AbilityVisualizer>();
+	
 	public override void _Ready()
 	{
 		EffectTilemap.Scale = new Vector2(Global.TileMapScale, Global.TileMapScale);
@@ -31,6 +35,7 @@ public partial class AbilityVisualizer : Node
 		
 		var visualizationData = ability.GetReachVisualizationData(context, payload);
 		ShowVisualization(ReachTilemap, [visualizationData]);
+		_log.Here().Debug("Showing reach visualization for {AbilityNameTag}", ability.Name);
 	}
 	
 	public void ShowEffectVisualization(AbilityContext context, AbilityPayload payload, EffectData[] effects, bool clearPrevious = true)
@@ -50,6 +55,7 @@ public partial class AbilityVisualizer : Node
 		
 		if (payload.AccumulatedTargets.Count > 1)
 			ShowNumberedTilemap(payload.AccumulatedTargets);
+		_log.Here().Debug("Showing effect visualization for {AbilityNameTag}", context.Ability.Name);
 	}
 	
 	public void ShowNumberedTilemap(IEnumerable<Vector2I> tiles, bool clearPrevious = true)

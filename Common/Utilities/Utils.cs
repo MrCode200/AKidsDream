@@ -6,9 +6,6 @@ using Godot;
 
 namespace AKidsDream.Utilities.Registry;
 
-/// <summary>
-/// Global utility class providing helper functions for resource management and other common operations.
-/// </summary>
 [Tool]
 public static class Utils
 {

@@ -129,7 +129,7 @@ public partial class AbilityData : Resource
         state ??= new AbilityState();
         var payload = new AbilityPayload
         {
-            CurrentOrigin = context.Caster.TileLocation,
+            CurrentOrigin = context.Caster.OriginTile,
             State = state
         };
 
@@ -323,7 +323,7 @@ public partial class AbilityData : Resource
 
         var payload = new AbilityPayload
         {
-            CurrentOrigin = context.Caster.TileLocation,
+            CurrentOrigin = context.Caster.OriginTile,
             ProcessingTiles = targetedTiles,
             AccumulatedTargets = targetedTiles,
             State = abilityState

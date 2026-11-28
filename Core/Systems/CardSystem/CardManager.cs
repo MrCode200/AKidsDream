@@ -301,11 +301,15 @@ public partial class CardManager : Node2D, IBlockable
     {
         if (SelectedCard is null) return;
 
+        var activePlayer = _gameContext.GameLoopManager.GetActivePlayer();
         var cardCaster = new CardCaster(
             SelectedCard.Id,
-            _gameContext.GameLoopManager.ActivePlayerId,
-            $"{SelectedCard.CardData.Name}Card"
+            activePlayer.PlayerId,
+            $"{SelectedCard.CardData.Name}Card",
+            activePlayer.OwnedOriginTile
         );
+        
+        _cachedAbilityPayload.CurrentOrigin = activePlayer.OwnedOriginTile;
 
         _cachedAbilityContext = new AbilityContext
         {

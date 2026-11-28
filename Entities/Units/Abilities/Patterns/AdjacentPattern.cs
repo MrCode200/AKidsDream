@@ -11,7 +11,7 @@ namespace AKidsDream.Abilities.Effects;
 public partial class AdjacentPattern : AccessFieldPattern
 {
 	[Export] public int Radius = 1;
-	[Export] public int Width = 1;
+	[Export] public int BorderThickness = 1;
 	
 	// [RequiresOrigin]
 	public override Vector2I[] GetTilesUnfiltered(Vector2I? origin, Board board)
@@ -25,8 +25,8 @@ public partial class AdjacentPattern : AccessFieldPattern
 		// i %: 3, 5, 7 // -1, -2, -3
 		
 		return Enumerable.Range(0, numRowTiles * numRowTiles)
-			.Where(i => i <= numRowTiles * Width || numRowTiles * (numRowTiles - Width) < i || // Let Through Top and Bottom Rows
-			            i % numRowTiles <= (Width - 1) || i % numRowTiles >= numRowTiles - Width) // Let Through Left and Right Columns size of Width
+			.Where(i => i <= numRowTiles * BorderThickness || numRowTiles * (numRowTiles - BorderThickness) < i || // Let Through Top and Bottom Rows
+			            i % numRowTiles <= (BorderThickness - 1) || i % numRowTiles >= numRowTiles - BorderThickness) // Let Through Left and Right Columns size of Width
 			.Select(i => new Vector2I(i % numRowTiles - Radius, i / numRowTiles - Radius)) 
 			.Select(offset => o + offset)
 			.Where(board.TileInBoard)

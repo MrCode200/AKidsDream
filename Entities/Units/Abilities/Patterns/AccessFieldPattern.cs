@@ -66,8 +66,9 @@ public class RequiresOriginAttribute(bool required = true) : Attribute
 public abstract partial class AccessFieldPattern : Resource
 {
     [Export] public TargetFilter AllowedTargets { get; set; } = TargetFilter.EmptyTiles;
+    [Export] public bool OverrideToPlayerOrigin;
 
-    public Vector2I[] GetTiles(Vector2I? origin, Board board, PlayerId playerCasterId,
+    public virtual Vector2I[] GetTiles(Vector2I? origin, Board board, PlayerId playerCasterId,
         PlayerTeamRegistry playerTeamRegistry)
     {
         /*
@@ -80,10 +81,19 @@ public abstract partial class AccessFieldPattern : Resource
             return [];
             */
 
+        if (OverrideToPlayerOrigin)
+            origin = playerTeamRegistry.GetPlayer(playerCasterId).OwnedOriginTile;
+        
         var tiles = GetTilesUnfiltered(origin, board);
         if (tiles.Length == 0 || AllowedTargets == TargetFilter.AnyTile) return tiles;
+        
+        return FilterTiles(tiles, board, playerCasterId, playerTeamRegistry);
+    }
 
-        tiles = tiles.Where(tile =>
+    public Vector2I[] FilterTiles(Vector2I[] tiles, Board board, PlayerId playerCasterId,
+        PlayerTeamRegistry playerTeamRegistry)
+    {
+        return tiles.Where(tile =>
         {
             if (!board.TryGetTileAt(tile, out var tileData)) return false;
 
@@ -115,8 +125,6 @@ public abstract partial class AccessFieldPattern : Resource
 
             return false;
         }).ToArray();
-
-        return tiles;
     }
 
     public abstract Vector2I[] GetTilesUnfiltered(Vector2I? origin, Board board);
